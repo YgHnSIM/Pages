@@ -497,6 +497,309 @@
     }
 
     /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
@@ -714,7 +1017,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-1"><a href="#상자-페이지-점프-메모지" class="toc-link">상자, 페이지, 점프, 메모지</a></li><li class="depth-3"><a href="#포인터가-없던-세계에서-자기수정-코드가-필요했던-이유" class="toc-link">포인터가 없던 세계에서 자기수정 코드가 필요했던 이유</a></li><li class="depth-2"><a href="#이-노트를-읽는-법" class="toc-link">이 노트를 읽는 법</a></li><li class="depth-2"><a href="#0-이-강의가-메우는-빈칸" class="toc-link">0. 이 강의가 메우는 빈칸</a></li><li class="depth-1"><a href="#1장-창고-번호와-내용" class="toc-link">1장. 창고: 번호와 내용</a></li><li class="depth-1"><a href="#2장-레시피도-같은-창고에-있다" class="toc-link">2장. 레시피도 같은 창고에 있다</a></li><li class="depth-1"><a href="#3장-실행-순서는-누가-정하는가" class="toc-link">3장. 실행 순서는 누가 정하는가</a></li><li class="depth-1"><a href="#4장-어셈블리를-처음부터" class="toc-link">4장. 어셈블리를 처음부터</a></li><li class="depth-2"><a href="#41-기계어와-어셈블리" class="toc-link">4.1 기계어와 어셈블리</a></li><li class="depth-2"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="toc-link">4.2 레지스터: CPU 안의 손바닥 상자</a></li><li class="depth-2"><a href="#43-대괄호-하나가-전부다" class="toc-link">4.3 대괄호 `[]` 하나가 전부다</a></li><li class="depth-2"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="toc-link">4.4 이 노트에서 쓰는 명령 여덟 개</a></li><li class="depth-3"><a href="#mov-옮겨-담기" class="toc-link">`mov` — 옮겨 담기</a></li><li class="depth-3"><a href="#add-더하기" class="toc-link">`add` — 더하기</a></li><li class="depth-3"><a href="#inc-1-증가" class="toc-link">`inc` — 1 증가</a></li><li class="depth-3"><a href="#cmp-비교만-하고-기억" class="toc-link">`cmp` — 비교만 하고 기억</a></li><li class="depth-3"><a href="#jmp-무조건-점프" class="toc-link">`jmp` — 무조건 점프</a></li><li class="depth-3"><a href="#jne-jl-jb-조건부-점프" class="toc-link">`jne` / `jl` / `jb` — 조건부 점프</a></li><li class="depth-3"><a href="#라벨-상자-번호-대신-붙이는-이름" class="toc-link">라벨 — 상자 번호 대신 붙이는 이름</a></li><li class="depth-3"><a href="#nop-아무것도-하지-않음" class="toc-link">`nop` — 아무것도 하지 않음</a></li><li class="depth-1"><a href="#5장-점프와-goto" class="toc-link">5장. 점프와 goto</a></li><li class="depth-1"><a href="#6장-루프는-점프의-응용이다" class="toc-link">6장. 루프는 점프의 응용이다</a></li><li class="depth-1"><a href="#7장-왜-자기수정이-나왔는가" class="toc-link">7장. 왜 자기수정이 나왔는가</a></li><li class="depth-1"><a href="#8장-슬로모션-숫자-두-개" class="toc-link">8장. 슬로모션 — 숫자 두 개</a></li><li class="depth-2"><a href="#81-자기수정-버전-가상-기계" class="toc-link">8.1 자기수정 버전 (가상 기계)</a></li><li class="depth-2"><a href="#82-포인터-버전-가상-기계" class="toc-link">8.2 포인터 버전 (가상 기계)</a></li><li class="depth-1"><a href="#9장-실제-x86으로-옮기기" class="toc-link">9장. 실제 x86으로 옮기기</a></li><li class="depth-2"><a href="#91-먼저-포인터-버전이-정석이다" class="toc-link">9.1 먼저, 포인터 버전이 정석이다</a></li><li class="depth-2"><a href="#92-자기수정-버전-명령의-주소-칸을-고친다" class="toc-link">9.2 자기수정 버전 — 명령의 주소 칸을 고친다</a></li><li class="depth-3"><a href="#6502-8비트에서-더-잘-보이는-형태" class="toc-link">6502 / 8비트에서 더 잘 보이는 형태</a></li><li class="depth-2"><a href="#93-두-버전의-기계어-차이-한-줄로" class="toc-link">9.3 두 버전의 기계어 차이, 한 줄로</a></li><li class="depth-1"><a href="#10장-자기수정이-악몽인-이유" class="toc-link">10장. 자기수정이 악몽인 이유</a></li><li class="depth-1"><a href="#11장-포인터와-레지스터" class="toc-link">11장. 포인터와 레지스터</a></li><li class="depth-2"><a href="#질문" class="toc-link">질문</a></li><li class="depth-2"><a href="#답" class="toc-link">답</a></li><li class="depth-1"><a href="#12장-역사" class="toc-link">12장. 역사</a></li><li class="depth-1"><a href="#13장-한-창고에-모두-올려놓기" class="toc-link">13장. 한 창고에 모두 올려놓기</a></li><li class="depth-1"><a href="#부록-a-어셈블리-치트시트-이-노트-범위" class="toc-link">부록 A. 어셈블리 치트시트 (이 노트 범위)</a></li><li class="depth-1"><a href="#부록-b-복습-사다리" class="toc-link">부록 B. 복습 사다리</a></li><li class="depth-1"><a href="#부록-c-더-읽을거리-층별" class="toc-link">부록 C. 더 읽을거리 (층별)</a></li></ul>
+      <ul class="toc-list"><li class="depth-1"><a href="#상자-페이지-점프-메모지" class="toc-link">상자, 페이지, 점프, 메모지</a></li><li class="depth-3"><a href="#포인터가-없던-세계에서-자기수정-코드가-필요했던-이유" class="toc-link">포인터가 없던 세계에서 자기수정 코드가 필요했던 이유</a></li><li class="depth-2"><a href="#이-노트를-읽는-법" class="toc-link">이 노트를 읽는 법</a></li><li class="depth-2"><a href="#0-이-강의가-메우는-빈칸" class="toc-link">0. 이 강의가 메우는 빈칸</a></li><li class="depth-1"><a href="#1장-창고-번호와-내용" class="toc-link">1장. 창고: 번호와 내용</a></li><li class="depth-1"><a href="#2장-레시피도-같은-창고에-있다" class="toc-link">2장. 레시피도 같은 창고에 있다</a></li><li class="depth-1"><a href="#3장-실행-순서는-누가-정하는가" class="toc-link">3장. 실행 순서는 누가 정하는가</a></li><li class="depth-1"><a href="#4장-어셈블리를-처음부터" class="toc-link">4장. 어셈블리를 처음부터</a></li><li class="depth-2"><a href="#41-기계어와-어셈블리" class="toc-link">4.1 기계어와 어셈블리</a></li><li class="depth-2"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="toc-link">4.2 레지스터: CPU 안의 손바닥 상자</a></li><li class="depth-2"><a href="#43-대괄호-하나가-전부다" class="toc-link">4.3 대괄호 `[]` 하나가 전부다</a></li><li class="depth-2"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="toc-link">4.4 이 노트에서 쓰는 명령 여덟 개</a></li><li class="depth-3"><a href="#mov-옮겨-담기" class="toc-link">`mov` — 옮겨 담기</a></li><li class="depth-3"><a href="#add-더하기" class="toc-link">`add` — 더하기</a></li><li class="depth-3"><a href="#inc-1-증가" class="toc-link">`inc` — 1 증가</a></li><li class="depth-3"><a href="#cmp-비교만-하고-기억" class="toc-link">`cmp` — 비교만 하고 기억</a></li><li class="depth-3"><a href="#jmp-무조건-점프" class="toc-link">`jmp` — 무조건 점프</a></li><li class="depth-3"><a href="#jne-jl-jb-조건부-점프" class="toc-link">`jne` / `jl` / `jb` — 조건부 점프</a></li><li class="depth-3"><a href="#라벨-상자-번호-대신-붙이는-이름" class="toc-link">라벨 — 상자 번호 대신 붙이는 이름</a></li><li class="depth-3"><a href="#nop-아무것도-하지-않음" class="toc-link">`nop` — 아무것도 하지 않음</a></li><li class="depth-1"><a href="#5장-점프와-goto" class="toc-link">5장. 점프와 goto</a></li><li class="depth-1"><a href="#6장-루프는-점프의-응용이다" class="toc-link">6장. 루프는 점프의 응용이다</a></li><li class="depth-1"><a href="#7장-왜-자기수정이-나왔는가" class="toc-link">7장. 왜 자기수정이 나왔는가</a></li><li class="depth-1"><a href="#8장-슬로모션-숫자-두-개" class="toc-link">8장. 슬로모션 — 숫자 두 개</a></li><li class="depth-2"><a href="#81-자기수정-버전-가상-기계" class="toc-link">8.1 자기수정 버전 (가상 기계)</a></li><li class="depth-2"><a href="#82-포인터-버전-가상-기계" class="toc-link">8.2 포인터 버전 (가상 기계)</a></li><li class="depth-2"><a href="#83-인터랙티브-슬로모션-시뮬레이터" class="toc-link">8.3 인터랙티브 슬로모션 시뮬레이터</a></li><li class="depth-1"><a href="#9장-실제-x86으로-옮기기" class="toc-link">9장. 실제 x86으로 옮기기</a></li><li class="depth-2"><a href="#91-먼저-포인터-버전이-정석이다" class="toc-link">9.1 먼저, 포인터 버전이 정석이다</a></li><li class="depth-2"><a href="#92-자기수정-버전-명령의-주소-칸을-고친다" class="toc-link">9.2 자기수정 버전 — 명령의 주소 칸을 고친다</a></li><li class="depth-3"><a href="#6502-8비트에서-더-잘-보이는-형태" class="toc-link">6502 / 8비트에서 더 잘 보이는 형태</a></li><li class="depth-2"><a href="#93-두-버전의-기계어-차이-한-줄로" class="toc-link">9.3 두 버전의 기계어 차이, 한 줄로</a></li><li class="depth-1"><a href="#10장-자기수정이-악몽인-이유" class="toc-link">10장. 자기수정이 악몽인 이유</a></li><li class="depth-1"><a href="#11장-포인터와-레지스터" class="toc-link">11장. 포인터와 레지스터</a></li><li class="depth-2"><a href="#질문" class="toc-link">질문</a></li><li class="depth-2"><a href="#답" class="toc-link">답</a></li><li class="depth-1"><a href="#12장-역사" class="toc-link">12장. 역사</a></li><li class="depth-1"><a href="#13장-한-창고에-모두-올려놓기" class="toc-link">13장. 한 창고에 모두 올려놓기</a></li><li class="depth-1"><a href="#부록-a-어셈블리-치트시트-이-노트-범위" class="toc-link">부록 A. 어셈블리 치트시트 (이 노트 범위)</a></li><li class="depth-1"><a href="#부록-b-복습-사다리" class="toc-link">부록 B. 복습 사다리</a></li><li class="depth-1"><a href="#부록-c-더-읽을거리-층별" class="toc-link">부록 C. 더 읽을거리 (층별)</a></li></ul>
     </div>
   </aside>
 
@@ -724,7 +1027,7 @@
       <header class="article-header">
         <div class="article-meta">
           <span class="meta-badge">📅 2026-03-01</span>
-          <span class="meta-badge">⏱️ 약 24분</span>
+          <span class="meta-badge">⏱️ 약 29분</span>
           
         </div>
         <h1 class="article-title">상자, 페이지, 점프, 메모지</h1>
@@ -1145,7 +1448,43 @@ bad:
 【4쪽】 3쪽 빈칸에 1을 더해 다시 적어라
 【5쪽】 끝이 아니면 3쪽으로 가라</code></pre>
 </div><p>같은 3쪽을 반복해 읽지만, 읽을 때마다 3쪽 글자가 다르다.</p>
-<p>1950년대 IBM 701, 초기 EDSAC 등이 배열을 이렇게 훑었다.<br>인덱스 레지스터(맨체스터 B레지스터, 1949)가 생기기 전의 표준 우회였다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[자기수정 방식: 레시피 자체의 잉크를 긁어고친다]
+┌────────────────────────────────────────────────────────┐
+│ CPU (일꾼)                                             │
+│   1. [주소 6]의 잉크를 긁어 '20' → '21'로 고쳐 쓴다   │
+│   2. 고쳐진 명령(add [21])을 실행하여 21호를 연다       │
+└───────────┬────────────────────────────────────────────┘
+            │ 잉크 수정 (명령 파괴)
+            ▼
+┌─────────────────────────┐         ┌────────────────────┐
+│ [주소 6] 코드 영역      │ ──────▶ │ [주소 21] 데이터   │
+│ "add [21]" (변질된 코드)│ (읽기)  │ 재료: 3            │
+└─────────────────────────┘         └────────────────────┘
+
+[포인터 방식: 레시피는 불변, 별도 메모지만 고친다]
+┌────────────────────────────────────────────────────────┐
+│ CPU (일꾼)                                             │
+│   1. [주소 3] 메모지의 숫자를 20 → 21로 바꾼다         │
+│   2. 고정된 명령(add [*p])을 보며 메모지(21호)를 연다  │
+└───────────┬────────────────────────────────────────────┘
+            │ 메모지 값만 수정 (명령 보존)
+            ▼
+┌─────────────────────────┐         ┌────────────────────┐
+│ [주소 3] 메모지 (포인터)│ ──────▶ │ [주소 21] 데이터   │
+│ 값: 21 (가리키는 곳)    │ (간접)  │ 재료: 3            │
+└─────────────────────────┘         └────────────────────┘</code></pre>
+</div><p>1950년대 IBM 701, 초기 EDSAC 등이 배열을 이렇게 훑었다.<br>인덱스 레지스터(맨체스터 B레지스터, 1949)가 생기기 전의 표준 우회였다.</p>
+<div class="callout-box info">
+  <div class="callout-title">💡 역사 속의 자기수정: 휠러 점프 (Wheeler Jump)</div>
+  <p>1949년 케임브리지 대학교의 데이비드 휠러(David Wheeler)는 세계 최초의 실용 저장 프로그램 컴퓨터 EDSAC에서 서브루틴(함수) 호출 기법을 고안했습니다. 당시 하드웨어에는 함수가 끝나고 돌아갈 주소를 저장할 '스택(Stack)'이나 전용 레지스터가 없었습니다. 그래서 호출자가 함수를 호출하기 직전, 서브루틴 맨 끝에 위치한 <code>jmp</code> 명령의 주소 필드에 "내가 돌아갈 복귀 주소"를 직접 덮어쓰는 자기수정 코드를 사용했습니다. 이를 <strong>휠러 점프</strong>라고 부르며, 초기 소프트웨어 역사에서 가장 유명한 자기수정의 사례 중 하나입니다.</p>
+</div>
+
 <hr>
 <h1 id="8장-슬로모션-숫자-두-개"><a href="#8장-슬로모션-숫자-두-개" class="heading-anchor" aria-hidden="true">#</a> 8장. 슬로모션 — 숫자 두 개</h1><p>재료:</p>
 <ul>
@@ -1182,7 +1521,7 @@ bad:
 loop:
     ; ----- 주소 6 : 매 바퀴 글자가 바뀌는 줄 -----
     add  [4], [20]         ; 처음엔 [20], 다음에는 [21] ...
-patch_addr 만큼의 칸이 이 줄의 "20" 이다
+                           ; ↑ 이 줄의 '20' 주소 필드가 바로 수정 대상(patch_addr)
 
     inc  dword [loop+주소칸] ; 6호 명령의 주소 필드 +1
 
@@ -1193,66 +1532,66 @@ patch_addr 만큼의 칸이 이 줄의 "20" 이다
 <div class="table-wrapper"><table>
 <thead>
 <tr>
-<th>박자</th>
-<th>PC</th>
-<th>실행</th>
-<th>합계(4)</th>
-<th>6호 명령</th>
-<th>다음 PC</th>
+<th align="center">박자</th>
+<th align="center">PC</th>
+<th align="left">실행</th>
+<th align="center">합계(4)</th>
+<th align="center"><strong>6호 명령(변질)</strong></th>
+<th align="center">다음 PC</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>1</td>
-<td>6</td>
-<td>20호의 7을 더함</td>
-<td>0→<strong>7</strong></td>
-<td>add [20]</td>
-<td>7</td>
+<td align="center">1</td>
+<td align="center">6</td>
+<td align="left">20호의 7을 더함</td>
+<td align="center">0→<strong>7</strong></td>
+<td align="center"><code>add [20]</code></td>
+<td align="center">7</td>
 </tr>
 <tr>
-<td>2</td>
-<td>7</td>
-<td>주소 칸 +1</td>
-<td>7</td>
-<td><strong>add [21]</strong></td>
-<td>8</td>
+<td align="center">2</td>
+<td align="center">7</td>
+<td align="left">주소 칸 +1</td>
+<td align="center">7</td>
+<td align="center"><strong><code>add [21]</code></strong></td>
+<td align="center">8</td>
 </tr>
 <tr>
-<td>3</td>
-<td>8</td>
-<td>21≠22, 점프</td>
-<td>7</td>
-<td>add [21]</td>
-<td><strong>6</strong></td>
+<td align="center">3</td>
+<td align="center">8</td>
+<td align="left">21≠22, 점프</td>
+<td align="center">7</td>
+<td align="center"><code>add [21]</code></td>
+<td align="center"><strong>6</strong></td>
 </tr>
 <tr>
-<td>4</td>
-<td>6</td>
-<td>21호의 3을 더함</td>
-<td>7→<strong>10</strong></td>
-<td>add [21]</td>
-<td>7</td>
+<td align="center">4</td>
+<td align="center">6</td>
+<td align="left">21호의 3을 더함</td>
+<td align="center">7→<strong>10</strong></td>
+<td align="center"><code>add [21]</code></td>
+<td align="center">7</td>
 </tr>
 <tr>
-<td>5</td>
-<td>7</td>
-<td>주소 칸 +1</td>
-<td>10</td>
-<td><strong>add [22]</strong></td>
-<td>8</td>
+<td align="center">5</td>
+<td align="center">7</td>
+<td align="left">주소 칸 +1</td>
+<td align="center">10</td>
+<td align="center"><strong><code>add [22]</code></strong></td>
+<td align="center">8</td>
 </tr>
 <tr>
-<td>6</td>
-<td>8</td>
-<td>22=22, 점프 안 함</td>
-<td>10</td>
-<td>add [22]</td>
-<td>9</td>
+<td align="center">6</td>
+<td align="center">8</td>
+<td align="left">22=22, 점프 안 함</td>
+<td align="center">10</td>
+<td align="center"><code>add [22]</code></td>
+<td align="center">9</td>
 </tr>
 </tbody></table>
-</div><p>끝난 뒤 6호는 <code>add [22]</code> 로 남는다. 레시피가 원본이 아니다.</p>
-<p>재료 20, 21은 한 번도 내용이 바뀌지 않는다. 읽히기만 한다.</p>
-<h2 id="82-포인터-버전-가상-기계"><a href="#82-포인터-버전-가상-기계" class="heading-anchor" aria-hidden="true">#</a> 8.2 포인터 버전 (가상 기계)</h2>
+</div><p>끝난 뒤 6호는 <code>add [22]</code> 로 남는다. 레시피가 원본이 아니다.<br>재료 20, 21은 한 번도 내용이 바뀌지 않는다. 읽히기만 한다.</p>
+<h2 id="82-포인터-버전-가상-기계"><a href="#82-포인터-버전-가상-기계" class="heading-anchor" aria-hidden="true">#</a> 8.2 포인터 버전 (가상 기계)</h2><p>창고 배치:</p>
+
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">text</span>
@@ -1260,24 +1599,202 @@ patch_addr 만큼의 칸이 이 줄의 "20" 이다
   </div>
   <pre><code class="language-text">주소 3 : 메모지 = 20
 주소 4 : 합계 = 0
-주소 6 : add [ 3호가 가리키는 곳 ]   ← 글자 고정
-주소 7 : 3호 +1
-주소 8 : 3호가 22가 아니면 6으로 점프</code></pre>
-</div>
+주소 6 : add [4], [[3]]    ← 글자 영원히 고정
+주소 7 : 3호 메모지 +1
+주소 8 : 3호 메모지가 22가 아니면 6으로 점프
+주소 9 : 끝</code></pre>
+</div><p>가상 어셈블리:</p>
+
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
-  <pre><code class="language-asm">    mov  [3], 20
-    mov  [4], 0
+  <pre><code class="language-asm">    mov  [3], 20           ; 3호(메모지) = 20
+    mov  [4], 0            ; 4호(합계) = 0
+
 loop:
-    ; p = [3] 이라고 할 때
-    ; [4] += [[3]]     메모지가 가리키는 곳을 더함
-    inc  dword [3]
-    cmp  dword [3], 22
-    jne  loop</code></pre>
-</div><p>점프 경로 6→7→8→6→…→9 는 같다.<br>박자 2와 5에서 바뀌는 것이 6호가 아니라 3호 메모지다.<br>끝난 뒤 6호 글자는 원본 그대로다.</p>
+    ; ----- 주소 6 : 글자가 영원히 고정된 줄 -----
+    add  [4], [[3]]        ; 4호에 [3호 메모지가 가리키는 상자 안]을 더함
+    inc  dword [3]         ; 3호 메모지의 숫자 +1
+    cmp  dword [3], 22     ; 메모지가 22에 닿았는가?
+    jne  loop
+    ; 끝</code></pre>
+</div><p>박자표:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th align="center">박자</th>
+<th align="center">PC</th>
+<th align="left">실행</th>
+<th align="center">합계(4)</th>
+<th align="center"><strong>메모지(3)</strong></th>
+<th align="center"><strong>6호 명령(불변)</strong></th>
+<th align="center">다음 PC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">6</td>
+<td align="left">3호가 가리키는 20호의 7을 더함</td>
+<td align="center">0→<strong>7</strong></td>
+<td align="center">20</td>
+<td align="center"><code>add [4], [[3]]</code></td>
+<td align="center">7</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">7</td>
+<td align="left">3호 메모지 +1</td>
+<td align="center">7</td>
+<td align="center"><strong>21</strong></td>
+<td align="center"><code>add [4], [[3]]</code></td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">8</td>
+<td align="left">3호(21)≠22, 점프</td>
+<td align="center">7</td>
+<td align="center">21</td>
+<td align="center"><code>add [4], [[3]]</code></td>
+<td align="center"><strong>6</strong></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">6</td>
+<td align="left">3호가 가리키는 21호의 3을 더함</td>
+<td align="center">7→<strong>10</strong></td>
+<td align="center">21</td>
+<td align="center"><code>add [4], [[3]]</code></td>
+<td align="center">7</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">7</td>
+<td align="left">3호 메모지 +1</td>
+<td align="center">10</td>
+<td align="center"><strong>22</strong></td>
+<td align="center"><code>add [4], [[3]]</code></td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">8</td>
+<td align="left">3호(22)=22, 점프 안 함</td>
+<td align="center">10</td>
+<td align="center">22</td>
+<td align="center"><code>add [4], [[3]]</code></td>
+<td align="center">9</td>
+</tr>
+</tbody></table>
+</div><p>점프 경로 6→7→8→6→…→9 는 같다.<br>박자 2와 5에서 바뀌는 것이 6호가 아니라 3호 메모지다.<br>끝난 뒤에도 6호 글자는 <code>add [4], [[3]]</code> 원본 그대로다.</p>
+<h2 id="83-인터랙티브-슬로모션-시뮬레이터"><a href="#83-인터랙티브-슬로모션-시뮬레이터" class="heading-anchor" aria-hidden="true">#</a> 8.3 인터랙티브 슬로모션 시뮬레이터</h2><p>아래 위젯에서 <strong>자기수정 방식</strong>과 <strong>포인터 방식</strong>을 직접 전환하고, 박자별 버튼을 눌러 CPU와 메모리 상자가 어떻게 반응하는지 확인해 보세요.</p>
+<div class="sim-container" id="interactive-simulator">
+<div class="sim-header">
+<div class="sim-title"><span>🎮</span> 슬로모션 메모리 시뮬레이터</div>
+<div class="sim-tabs">
+<button class="sim-tab-btn active" id="sim-tab-smc" type="button">🔄 자기수정 방식</button>
+<button class="sim-tab-btn" id="sim-tab-ptr" type="button">📌 포인터 방식</button>
+</div>
+</div>
+<div class="sim-controls">
+<div class="sim-btn-group">
+<button class="sim-btn" id="sim-reset" type="button">⏮ 처음으로</button>
+<button class="sim-btn" id="sim-prev" type="button">◀ 이전 박자</button>
+<button class="sim-btn primary" id="sim-next" type="button">다음 박자 ▶</button>
+<button class="sim-btn" id="sim-play" type="button">▶ 자동 재생</button>
+</div>
+<div class="sim-status-badge">
+<span id="sim-val-beat">박자 1 / 6</span>
+</div>
+</div>
+<div class="sim-grid">
+<div class="sim-panel">
+<div class="sim-panel-title">
+<span>⚙️ CPU 상태</span>
+<span style="font-size:12px; font-weight:normal; color:var(--text-muted);">레지스터 & PC</span>
+</div>
+<div class="sim-registers">
+<div class="sim-reg-card">
+<div class="sim-reg-label">현재 PC (실행 주소)</div>
+<div class="sim-reg-val" id="sim-val-pc">6호</div>
+</div>
+<div class="sim-reg-card">
+<div class="sim-reg-label">다음 PC</div>
+<div class="sim-reg-val" id="sim-val-nextpc">7호</div>
+</div>
+</div>
+<div style="margin-top:10px; padding:8px 10px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border);">
+<div class="sim-reg-label">이번 박자 동작</div>
+<div style="font-size:13.5px; font-weight:700; color:var(--text-main);" id="sim-val-action">20호 상자 안의 값(7)을 합계에 더함</div>
+</div>
+</div>
+<div class="sim-panel">
+<div class="sim-panel-title">
+<span>📦 창고(RAM) 상자 상태</span>
+<span style="font-size:12px; font-weight:normal; color:var(--text-muted);">주소 : 내용</span>
+</div>
+<div class="sim-mem-list">
+<div class="sim-mem-row" id="mem-3">
+<span>[주소 3] 메모지 (포인터)</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong id="sim-mem-3-val">-</strong>
+<span class="sim-badge-sm badge-data">포인터</span>
+</span>
+</div>
+<div class="sim-mem-row" id="mem-4">
+<span>[주소 4] 합계 상자</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong id="sim-mem-4-val">0</strong>
+<span class="sim-badge-sm badge-data">데이터</span>
+</span>
+</div>
+<div class="sim-mem-row" id="mem-6">
+<span>[주소 6] 레시피 (명령)</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong id="sim-mem-6-val">add [20]</strong>
+<span class="sim-badge-sm badge-code">명령</span>
+</span>
+</div>
+<div class="sim-mem-row" id="mem-7">
+<span>[주소 7] 레시피 (명령)</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong>주소/메모지 +1</strong>
+<span class="sim-badge-sm badge-code">명령</span>
+</span>
+</div>
+<div class="sim-mem-row" id="mem-8">
+<span>[주소 8] 레시피 (명령)</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong>22 검사 & 점프</strong>
+<span class="sim-badge-sm badge-code">명령</span>
+</span>
+</div>
+<div class="sim-mem-row" id="mem-20">
+<span>[주소 20] 재료 상자</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong>7</strong>
+<span class="sim-badge-sm badge-data">불변</span>
+</span>
+</div>
+<div class="sim-mem-row" id="mem-21">
+<span>[주소 21] 재료 상자</span>
+<span style="display:flex; align-items:center; gap:6px;">
+<strong>3</strong>
+<span class="sim-badge-sm badge-data">불변</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+<div class="sim-desc-box">
+<div class="sim-desc-step" id="sim-val-desc">
+<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)
+</div>
+</div>
+</div>
+
 <hr>
 <h1 id="9장-실제-x86으로-옮기기"><a href="#9장-실제-x86으로-옮기기" class="heading-anchor" aria-hidden="true">#</a> 9장. 실제 x86으로 옮기기</h1><p>가상 기계를 떠나, 지금 PC에서 흔히 보는 32비트 x86 문법으로 같은 일을 적는다.<br>한 명령이 여러 바이트인 점만 추가하면 된다.</p>
 <h2 id="91-먼저-포인터-버전이-정석이다"><a href="#91-먼저-포인터-버전이-정석이다" class="heading-anchor" aria-hidden="true">#</a> 9.1 먼저, 포인터 버전이 정석이다</h2>
@@ -1424,7 +1941,7 @@ STO: ADC $2000          ; 처음엔 $2000, 다음엔 $2001
 </li>
 <li><p><strong>현대 CPU는 명령을 미리 읽는다</strong><br>I-cache와 파이프라인에 옛 바이트가 남을 수 있다. x86은 같은 선형 주소로 고치면 어느 정도 맞춰 주지만, 파이프라인을 비우는 대가를 치른다. ARM 계열은 캐시 동기화를 직접 해야 한다.</p>
 </li>
-<li><p><strong>W^X / NX</strong><br>현대 OS는 “실행 가능한 페이지는 쓰지 말라”는 정책을 쓴다. JIT처럼 코드를 만들 때는 권한을 잠시 바꿨다가 실행 전용으로 되돌린다.</p>
+<li><p><strong>W^X (Write XOR Execute) / NX 보안 정책</strong><br>현대 운영체제는 악의적인 셸코드 삽입 공격을 막기 위해 <strong>W^X (쓰기 권한과 실행 권한을 동시에 주지 않음)</strong> 정책과 NX(No-Execute) / DEP(Data Execution Prevention) 비트를 강제합니다.<br>즉, 코드가 있는 메모리 페이지는 읽기/실행만 가능하고 쓰기가 금지되며, 데이터를 쓰는 페이지는 실행이 불가능합니다.<br>따라서 일반적인 사용자 프로그램에서 자기수정 코드를 실행하려 하면 운영체제가 즉시 세그멘테이션 폴트(Segmentation Fault / Access Violation)를 일으켜 프로그램을 강제 종료시킵니다.<br>*참고: V8(자바스크립트), JVM HotSpot 등 런타임에 기계어를 생성하는 <strong>JIT(Just-In-Time) 컴파일러</strong>는 <code>VirtualProtect</code>(Windows)나 <code>mprotect</code>(Linux/macOS) 시스템 호출을 사용해 일시적으로 메모리 권한을 쓰기 가능으로 바꾼 뒤 코드를 작성하고, 다시 실행 전용으로 되돌리는 엄격한 절차를 거칩니다.*</p>
 </li>
 </ol>
 <hr>
@@ -1746,6 +2263,272 @@ jne loop           방금 비교가 불일치면 loop로 가라</code></pre>
         }
       });
     });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum');
+      const elMemo = document.getElementById('sim-val-memo');
+      const elCmd6 = document.getElementById('sim-val-cmd6');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+
+        elBeat.textContent = `박자 ${data.beat} / ${steps.length}`;
+        elPc.textContent = `${data.pc}호`;
+        elNextPc.textContent = `${data.nextPc}호`;
+        elAction.textContent = data.action;
+        elSum.textContent = data.sum;
+        elMemo.textContent = data.memo;
+        elCmd6.textContent = data.cmd6;
+        elDesc.innerHTML = data.desc;
+
+        btnPrev.disabled = currentStep === 0;
+        btnNext.disabled = currentStep === steps.length - 1;
+
+        // Reset memory row highlight classes
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        // Dynamic memory row texts
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          currentMode = 'smc';
+          tabSmc.classList.add('active');
+          tabPtr.classList.remove('active');
+          const memoRow = document.getElementById('mem-3');
+          if (memoRow) memoRow.style.opacity = '0.4';
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          currentMode = 'ptr';
+          tabPtr.classList.add('active');
+          tabSmc.classList.remove('active');
+          const memoRow = document.getElementById('mem-3');
+          if (memoRow) memoRow.style.opacity = '1';
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state
+      const initialMemoRow = document.getElementById('mem-3');
+      if (initialMemoRow) initialMemoRow.style.opacity = '0.4';
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
   </script>
 </body>
 </html>
