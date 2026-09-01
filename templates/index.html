@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Reading Hub — 모바일 아티클 저장소</title>
+  <meta name="description" content="흥미로운 주제를 모바일에서 편안하게 읽는 웹 아카이브">
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --card-hover-border: #cbd5e1;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --card-hover-border: #3b82f6;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --card-hover-border: #3b82f6;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --card-hover-border: #cbd5e1;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+    }
+
+    .header-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      font-size: 22px;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .theme-btn {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    /* Main Container */
+    .main-container {
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 30px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 640px) {
+      .main-container {
+        padding: 44px 20px 100px;
+      }
+    }
+
+    /* Hero Section */
+    .hero-section {
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 6vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .hero-desc {
+      font-size: 15.5px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    /* Search & Filter Bar */
+    .search-box-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 44px 0 44px;
+      font-size: 15.5px;
+      font-family: var(--font-sans);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      pointer-events: none;
+      display: flex;
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 6px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+    }
+
+    .search-clear-btn.active {
+      display: flex;
+    }
+
+    .filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .tag-filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: var(--font-sans);
+    }
+
+    .tag-filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .tag-filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* List Stats Bar */
+    .list-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+
+    /* Timeline Feed List */
+    .feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .article-item {
+      display: block;
+      text-decoration: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 20px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .article-item:hover, .article-item:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--card-hover-border);
+    }
+
+    .item-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .item-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .item-date {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .item-reading-time {
+      background: var(--bg-surface);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .item-arrow {
+      color: var(--text-light);
+      transition: transform 0.16s ease, color 0.16s ease;
+    }
+
+    .article-item:hover .item-arrow {
+      transform: translateX(4px);
+      color: var(--primary);
+    }
+
+    .item-title {
+      font-size: 18.5px;
+      font-weight: 750;
+      color: var(--text-main);
+      line-height: 1.38;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .item-summary {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .item-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .item-tag {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border);
+    }
+
+    .empty-state.active {
+      display: block;
+    }
+
+    .empty-state-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 24px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-icon">📚</span>
+        <span class="brand-title">Pages Hub</span>
+      </a>
+      <button class="theme-btn" id="theme-toggle" aria-label="테마 전환">🌓</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="hero-section">
+      <h1 class="hero-title">모바일 아티클 저장소</h1>
+      <p class="hero-desc">흥미로운 기술 및 이론 주제를 모바일에서 읽기 편하게 정리한 아카이브입니다.</p>
+      
+      <div class="search-box-wrapper">
+        <span class="search-icon-left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <input type="text" id="search-input" class="search-input" placeholder="제목, 태그, 내용 검색..." autocomplete="off" />
+        <button id="search-clear" class="search-clear-btn" aria-label="검색어 지우기">&times;</button>
+      </div>
+
+      <div class="filter-tags" id="tag-filters">
+        <button class="tag-filter-btn active" data-tag="all">전체</button>
+        {{#all_tags}}
+        <button class="tag-filter-btn" data-tag="{{.}}">#{{.}}</button>
+        {{/all_tags}}
+      </div>
+    </section>
+
+    <div class="list-stats">
+      <span>아티클 목록</span>
+      <span id="article-count">총 {{total_count}}편</span>
+    </div>
+
+    <div class="feed-list" id="feed-list">
+      {{#articles}}
+      <a href="{{url}}" class="article-item" data-title="{{title}}" data-summary="{{summary}}" data-tags="{{tag_string}}">
+        <div class="item-top-row">
+          <div class="item-badges">
+            <span class="item-date">📅 {{date}}</span>
+            <span class="item-reading-time">⏱️ 약 {{reading_time}}분</span>
+          </div>
+          <span class="item-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </div>
+        <h2 class="item-title">{{title}}</h2>
+        <p class="item-summary">{{summary}}</p>
+        <div class="item-tags">
+          {{#tags}}
+          <span class="item-tag">#{{.}}</span>
+          {{/tags}}
+        </div>
+      </a>
+      {{/articles}}
+    </div>
+
+    <div class="empty-state" id="empty-state">
+      <div class="empty-state-icon">🔍</div>
+      <p class="empty-state-text">일치하는 아티클을 찾을 수 없습니다.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© Curated Reading Hub · 지속적으로 업데이트되는 아티클 저장소</p>
+  </footer>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeToggle) {
+        themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+    }
+
+    // Search and Filtering
+    const searchInput = document.getElementById('search-input');
+    const searchClear = document.getElementById('search-clear');
+    const tagButtons = document.querySelectorAll('.tag-filter-btn');
+    const articleItems = document.querySelectorAll('.article-item');
+    const articleCount = document.getElementById('article-count');
+    const emptyState = document.getElementById('empty-state');
+
+    let currentTag = 'all';
+    let searchQuery = '';
+
+    function filterArticles() {
+      let visibleCount = 0;
+      const query = searchQuery.trim().toLowerCase();
+
+      articleItems.forEach(item => {
+        const title = (item.getAttribute('data-title') || '').toLowerCase();
+        const summary = (item.getAttribute('data-summary') || '').toLowerCase();
+        const tags = (item.getAttribute('data-tags') || '').toLowerCase();
+
+        const matchesTag = currentTag === 'all' || tags.includes(currentTag.toLowerCase());
+        const matchesQuery = !query || title.includes(query) || summary.includes(query) || tags.includes(query);
+
+        if (matchesTag && matchesQuery) {
+          item.style.display = 'block';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      if (articleCount) articleCount.textContent = `총 ${visibleCount}편`;
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.add('active');
+        } else {
+          emptyState.classList.remove('active');
+        }
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        if (searchClear) {
+          searchClear.classList.toggle('active', searchQuery.length > 0);
+        }
+        filterArticles();
+      });
+    }
+
+    if (searchClear) {
+      searchClear.addEventListener('click', () => {
+        if (searchInput) {
+          searchInput.value = '';
+          searchQuery = '';
+          searchClear.classList.remove('active');
+          searchInput.focus();
+          filterArticles();
+        }
+      });
+    }
+
+    tagButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tagButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTag = btn.getAttribute('data-tag');
+        filterArticles();
+      });
+    });
+  </script>
+</body>
+</html>

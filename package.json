@@ -1,0 +1,14 @@
+{
+  "name": "pages-repository",
+  "version": "1.0.0",
+  "description": "Mobile-optimized curated reading web pages repository",
+  "main": "build.js",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "serve": "npx serve ."
+  },
+  "dependencies": {
+    "marked": "^15.0.7"
+  }
+}

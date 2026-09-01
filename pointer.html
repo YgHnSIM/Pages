@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>포인터와 메모리 모델 시리즈</title>
+  <meta name="description" content="프로그래밍 언어의 의미론적 추상 기계에서 포인터가 단순한 정수 주소가 될 수 없는 이유와 포인터 출처(Provenance), 바이트 모델의 실체를 명쾌하게 다룹니다.">
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 57px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: justify;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.6em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      max-width: 85vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 40px;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 8px;
+    }
+
+    .toc-drawer-body li.depth-2 { padding-left: 0; }
+    .toc-drawer-body li.depth-3 { padding-left: 14px; }
+    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.45;
+      display: block;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">포인터와 메모리 모델 시리즈</span>
+    </div>
+    
+    <div class="nav-right">
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Reading Progress Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-1"><a href="#포인터와-메모리-모델-시리즈" class="toc-link">포인터와 메모리 모델 시리즈</a></li><li class="depth-1"><a href="#1편-포인터는-복잡합니다-혹은-바이트-안에는-무엇이-들어있을까요" class="toc-link">1편: 포인터는 복잡합니다, 혹은: 바이트 안에는 무엇이 들어있을까요?</a></li><li class="depth-2"><a href="#단순한-멘탈-모델의-붕괴" class="toc-link">단순한 멘탈 모델의 붕괴</a></li><li class="depth-2"><a href="#초기화되지-않은-메모리-uninitialized-memory" class="toc-link">초기화되지 않은 메모리 (Uninitialized Memory)</a></li><li class="depth-2"><a href="#포인터는-단순한-정수가-아니다-포인터-출처-pointer-provenance" class="toc-link">포인터는 단순한 정수가 아니다: 포인터 출처 (Pointer Provenance)</a></li><li class="depth-2"><a href="#추상-기계에서-바이트란-무엇인가" class="toc-link">추상 기계에서 "바이트"란 무엇인가?</a></li><li class="depth-2"><a href="#1편-결론" class="toc-link">1편 결론</a></li><li class="depth-1"><a href="#2편-포인터는-복잡합니다-ii-혹은-포인터-출처provenance란-무엇인가" class="toc-link">2편: 포인터는 복잡합니다 II, 혹은: 포인터 출처(Provenance)란 무엇인가?</a></li><li class="depth-2"><a href="#기본-문제-앨리어싱과-최적화" class="toc-link">기본 문제: 앨리어싱과 최적화</a></li><li class="depth-2"><a href="#주소-추측guessing-addresses과-출처의-필요성" class="toc-link">주소 추측(Guessing Addresses)과 출처의 필요성</a></li><li class="depth-2"><a href="#진짜-난제-정수와-포인터-간의-형변환-int2ptr-ptr2int" class="toc-link">진짜 난제: 정수와 포인터 간의 형변환 (int2ptr & ptr2int)</a></li><li class="depth-3"><a href="#1-pvi-provenance-via-integers" class="toc-link">1. PVI (Provenance Via Integers)</a></li><li class="depth-3"><a href="#2-pnvi-provenance-not-via-integers" class="toc-link">2. PNVI (Provenance Not Via Integers)</a></li><li class="depth-3"><a href="#3-엄격한-출처-모델-strict-provenance" class="toc-link">3. 엄격한 출처 모델 (Strict Provenance)</a></li><li class="depth-2"><a href="#2편-요약-및-결론" class="toc-link">2편 요약 및 결론</a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2020-12-14</span>
+          <span class="meta-badge">⏱️ 약 19분</span>
+          <span class="meta-badge">✍️ Ralf Jung (한국어 완역본)</span>
+        </div>
+        <h1 class="article-title">포인터와 메모리 모델 시리즈</h1>
+        <p class="article-subtitle">포인터는 복잡합니다 (Pointers Are Complicated) - Ralf Jung</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#C/C++</span>
+          
+          <span class="tag-pill">#Rust</span>
+          
+          <span class="tag-pill">#메모리 모델</span>
+          
+          <span class="tag-pill">#컴파일러 최적화</span>
+          
+          <span class="tag-pill">#포인터</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <h1 id="포인터와-메모리-모델-시리즈"><a href="#포인터와-메모리-모델-시리즈" class="heading-anchor" aria-hidden="true">#</a> 포인터와 메모리 모델 시리즈</h1><p>저자: <strong>Ralf Jung</strong> (한국어 완역본)</p>
+<hr>
+<h1 id="1편-포인터는-복잡합니다-혹은-바이트-안에는-무엇이-들어있을까요"><a href="#1편-포인터는-복잡합니다-혹은-바이트-안에는-무엇이-들어있을까요" class="heading-anchor" aria-hidden="true">#</a> 1편: 포인터는 복잡합니다, 혹은: 바이트 안에는 무엇이 들어있을까요?</h1><ul>
+<li><strong>작성일</strong>: 2018년 7월 24일</li>
+<li><strong>원문</strong>: <a href="https://www.ralfj.de/blog/2018/07/24/pointers-and-bytes.html">ralfj.de/blog/2018/07/24/pointers-and-bytes.html</a></li>
+</ul>
+<p>C, C++, Rust와 같은 저수준 언어에서 프로그래밍을 배울 때 보통 가장 먼저 배우는 멘탈 모델 중 하나는 &quot;메모리는 그저 바이트들의 거대한 배열일 뿐이며, 포인터는 그 배열의 인덱스(즉, 정수 주소)에 불과하다&quot;라는 것입니다. 하드웨어 관점에서 볼 때 이것은 거의 사실에 가깝습니다. 하지만 프로그래밍 언어의 의미론(semantics) 관점, 그리고 컴파일러가 프로그램을 최적화하는 방식의 관점에서 볼 때 이 멘탈 모델은 심각하게 망가져 있습니다.</p>
+<p>이 글에서는 &quot;바이트&quot;와 &quot;포인터&quot;가 실제로 무엇인지를 설명하고, 왜 이들이 단순한 $0$부터 $255$까지의 숫자나 정수 주소가 될 수 없는지 다루고자 합니다.</p>
+<h2 id="단순한-멘탈-모델의-붕괴"><a href="#단순한-멘탈-모델의-붕괴" class="heading-anchor" aria-hidden="true">#</a> 단순한 멘탈 모델의 붕괴</h2><p>만약 포인터가 정말 단순한 정수이고 메모리가 바이트의 배열일 뿐이라면, 컴파일러는 수많은 최적화를 수행할 수 없게 됩니다. 다음 C 코드를 생각해 봅시다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int foo(int *x, int *y) {
+    *x = 42;
+    *y = 7;
+    return *x;
+}</code></pre>
+</div><p>컴파일러는 <code>*x</code>와 <code>*y</code>가 서로 다른 메모리 위치를 가리킨다고(즉, 앨리어싱되지 않는다고) 가정할 수 있을 때, 마지막 <code>return *x;</code>를 <code>return 42;</code>로 최적화하고 메모리 읽기를 생략하고 싶어 합니다. 하지만 포인터가 단순한 정수라면, 누군가 <code>foo</code>를 다음과 같이 호출할 수 있습니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int a;
+foo(&amp;a, &amp;a);</code></pre>
+</div><p>이 경우 <code>*y = 7;</code>은 <code>*x</code>를 덮어쓰므로 <code>return 7;</code>이 되어야 합니다. 컴파일러는 앨리어싱 분석(Alias Analysis)을 통해 두 포인터가 겹치지 않는다는 확신이 들 때만 이 최적화를 수행합니다. 하지만 문제는 여기서 끝나지 않습니다.</p>
+<h2 id="초기화되지-않은-메모리-uninitialized-memory"><a href="#초기화되지-않은-메모리-uninitialized-memory" class="heading-anchor" aria-hidden="true">#</a> 초기화되지 않은 메모리 (Uninitialized Memory)</h2><p>메모리가 단순히 바이트(0~255)의 배열이라는 모델이 깨지는 첫 번째 이유는 <strong>초기화되지 않은 메모리(uninitialized memory)</strong> 때문입니다.</p>
+<p>많은 사람들은 초기화되지 않은 메모리를 읽으면 &quot;그냥 메모리에 우연히 남아있던 어떤 임의의 고정된 바이트 값&quot;을 얻게 된다고 생각합니다. 하지만 LLVM이나 C/C++ 표준, 그리고 Rust의 추상 기계(Abstract Machine)에서 초기화되지 않은 메모리는 특정 숫자 값이 아닙니다. LLVM에서는 이를 <code>undef</code>(또는 최근의 <code>poison</code>)라는 특수한 값으로 표현합니다.</p>
+<p>만약 초기화되지 않은 메모리가 단순히 &quot;어떤 임의의 비트 패턴&quot;이라면 다음과 같은 코드에서 문제가 발생합니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">// x는 초기화되지 않은 지역 변수
+int x;
+if (x == 0) {
+    do_something();
+} else {
+    do_something_else();
+}</code></pre>
+</div><p>컴파일러는 최적화 과정에서 <code>x</code>를 레지스터로 올리거나 여러 번 읽을 수 있습니다. 만약 <code>x</code>가 읽을 때마다 다른 값을 낼 수 있거나, 조건문 분기에서 결정되지 않은 값으로 취급된다면, 컴파일러는 두 분기 모두 실행되지 않거나 두 분기 모두 실행되는 형태의 기괴한 변환을 저지를 수 있습니다. 실제로 C/C++에서 초기화되지 않은 변수를 읽는 행위는 정의되지 않은 동작(Undefined Behavior, UB)입니다.</p>
+<p>따라서 추상 기계에서 &quot;하나의 바이트&quot;는 $0 \dots 255$ 범위의 정수뿐만 아니라 **&quot;초기화되지 않음(Uninit)&quot;**이라는 특별한 상태를 표현할 수 있어야 합니다.</p>
+<h2 id="포인터는-단순한-정수가-아니다-포인터-출처-pointer-provenance"><a href="#포인터는-단순한-정수가-아니다-포인터-출처-pointer-provenance" class="heading-anchor" aria-hidden="true">#</a> 포인터는 단순한 정수가 아니다: 포인터 출처 (Pointer Provenance)</h2><p>두 번째로 큰 문제는 포인터가 단순히 메모리 주소를 가리키는 정수가 아니라는 점입니다. 포인터에는 **출처(Provenance)**라는 개념이 붙어 있습니다.</p>
+<p>다음 예시를 살펴보겠습니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int test() {
+    int x = 0, y = 0;
+    uintptr_t x_addr = (uintptr_t)&amp;x;
+    uintptr_t y_addr = (uintptr_t)&amp;y;
+    
+    // x와 y가 메모리상에서 우연히 연속해서 배치되었다고 가정해 봅시다.
+    // x_addr + sizeof(int) == y_addr 인 상황입니다.
+    int *p = (int*)(x_addr + sizeof(int));
+    *p = 42; // 이것은 y를 합법적으로 수정한 것일까요?
+    return y;
+}</code></pre>
+</div><p>만약 포인터가 단순히 정수 주소라면, <code>p</code>가 가리키는 주소는 <code>&amp;y</code>의 실제 하드웨어 주소와 완벽히 일치하므로 <code>*p = 42;</code>는 <code>y</code>의 값을 <code>42</code>로 변경해야 하고, 함수는 <code>42</code>를 반환해야 합니다.</p>
+<p>하지만 C/C++ 및 Rust의 메모리 모델에서 이 코드는 **정의되지 않은 동작(UB)**입니다. 왜냐하면 <code>p</code>는 <code>x</code>의 주소로부터 파생되었기 때문에, <code>x</code>의 할당 영역(allocation)을 벗어난 접근 권한을 가지지 못하기 때문입니다. <code>p</code>의 &quot;출처(Provenance)&quot;는 <code>x</code>에 묶여 있으며, 비록 계산된 주소가 우연히 <code>y</code>의 시작 주소와 일치하더라도 <code>y</code>를 수정할 권한이 없습니다.</p>
+<p>만약 컴파일러가 이것을 UB로 취급하지 않는다면, 컴파일러는 <code>x</code>를 수정하는 행위가 <code>y</code>에 영향을 주지 않는다는 사실을 증명할 수 없게 되어 거의 모든 최적화(루프 불변 코드 이동, 공통 부분식 제거, 상수 전파 등)를 포기해야 합니다.</p>
+<h2 id="추상-기계에서-바이트란-무엇인가"><a href="#추상-기계에서-바이트란-무엇인가" class="heading-anchor" aria-hidden="true">#</a> 추상 기계에서 "바이트"란 무엇인가?</h2><p>이 모든 것을 종합하면, 우리가 생각하는 언어의 의미론적 추상 기계(Abstract Machine)에서 <strong>1바이트</strong>는 단순히 8비트 정수가 아닙니다. 추상 기계의 메모리 상에서 1바이트는 대략 다음과 같은 상태를 가질 수 있는 유니온(Sum Type) 형태여야 합니다:</p>
+<ol>
+<li><strong>초기화된 구체적 데이터 바이트</strong>: $0$부터 $255$ 사이의 구체적인 8비트 정수 값.</li>
+<li><strong>초기화되지 않은 바이트 (Uninit)</strong>: 아직 초기화되지 않았음을 나타내는 특수 마커.</li>
+<li><strong>포인터의 일부 조각</strong>: 포인터 값(포인터의 ID/할당 식별자 및 출처 + 오프셋)을 구성하는 바이트 조각.</li>
+</ol>
+<p>64비트 아키텍처에서 포인터는 8바이트 크기를 가집니다. 만약 포인터를 메모리에 저장하면, 8개의 연속된 바이트 각각은 &quot;어떤 할당(Allocation)을 가리키는 출처 정보와 오프셋을 담은 포인터의 $n$번째 바이트&quot;라는 정보를 유지해야 합니다. 그래야 나중에 그 8바이트를 다시 포인터로 읽어 들였을 때 올바른 출처(Provenance)를 복원할 수 있습니다.</p>
+<p>예를 들어 <code>memcpy</code>를 이용해 포인터가 저장된 메모리를 다른 곳으로 바이트 단위로 복사하더라도 포인터가 제 기능을 하는 이유는, 추상 기계가 각 바이트에 담긴 출처 정보를 함께 복사하기 때문입니다.</p>
+<h2 id="1편-결론"><a href="#1편-결론" class="heading-anchor" aria-hidden="true">#</a> 1편 결론</h2><p>하드웨어 수준에서는 모든 것이 0과 1의 비트이고 주소는 정수일 뿐이지만, <strong>프로그래밍 언어의 추상 기계 수준에서 포인터는 정수가 아니며, 바이트는 단순한 8비트 숫자가 아닙니다.</strong></p>
+<p>포인터는 <code>(할당 ID / 출처, 오프셋)</code>이라는 추가적인 정보를 담고 있으며, 바이트는 초기화되지 않은 상태나 포인터의 일부분이라는 추상적 정보를 품고 있어야만 현대 컴파일러가 안전하고 공격적인 최적화를 수행할 수 있습니다.</p>
+<hr>
+<h1 id="2편-포인터는-복잡합니다-ii-혹은-포인터-출처provenance란-무엇인가"><a href="#2편-포인터는-복잡합니다-ii-혹은-포인터-출처provenance란-무엇인가" class="heading-anchor" aria-hidden="true">#</a> 2편: 포인터는 복잡합니다 II, 혹은: 포인터 출처(Provenance)란 무엇인가?</h1><ul>
+<li><strong>작성일</strong>: 2020년 12월 14일</li>
+<li><strong>원문</strong>: <a href="https://www.ralfj.de/blog/2020/12/14/provenance.html">ralfj.de/blog/2020/12/14/provenance.html</a></li>
+</ul>
+<p>2년 전, 저는 1편을 통해 포인터가 단순히 정수 주소가 될 수 없는 이유와 메모리의 바이트가 단순히 $0 \dots 255$ 범위의 정수가 될 수 없는 이유를 다루었습니다. 이번 후속 글에서는 그 핵심 개념인 **포인터 출처(Pointer Provenance)**를 더 깊이 파고들고, 왜 C, C++, Rust와 같은 언어의 명세(Specification)에서 이를 명확히 정의하는 것이 그토록 어려운 문제인지 설명하고자 합니다.</p>
+<h2 id="기본-문제-앨리어싱과-최적화"><a href="#기본-문제-앨리어싱과-최적화" class="heading-anchor" aria-hidden="true">#</a> 기본 문제: 앨리어싱과 최적화</h2><p>컴파일러 최적화의 핵심 목표 중 하나는 불필요한 메모리 접근을 제거하는 것입니다. 예를 들어 다음과 같은 코드를 봅시다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int foo(int *p, int *q) {
+    *p = 1;
+    *q = 2;
+    return *p;
+}</code></pre>
+</div><p>컴파일러는 <code>*p</code>를 다시 읽지 않고 즉시 <code>1</code>을 반환하도록 최적화하고 싶어 합니다. 이를 정당화하기 위해 컴파일러는 <code>p</code>와 <code>q</code>가 같은 메모리 위치를 가리키지 않는다고(서로 앨리어싱되지 않는다고) 가정할 수 있어야 합니다.</p>
+<p>만약 두 포인터가 다음과 같이 서로 다른 변수에서 파생되었다면:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int x = 0;
+int y = 0;
+foo(&amp;x, &amp;y);</code></pre>
+</div><p>C와 Rust의 규칙에 따라 <code>&amp;x</code>와 <code>&amp;y</code>는 서로 다른 할당(allocation)에 속하므로 서로 앨리어싱될 수 없으며, 컴파일러의 최적화는 완전히 유효합니다.</p>
+<h2 id="주소-추측guessing-addresses과-출처의-필요성"><a href="#주소-추측guessing-addresses과-출처의-필요성" class="heading-anchor" aria-hidden="true">#</a> 주소 추측(Guessing Addresses)과 출처의 필요성</h2><p>하지만 포인터가 &quot;단순히 정수 주소일 뿐&quot;이라면 다음과 같은 일이 벌어질 수 있습니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int x = 0;
+int y = 0;
+
+// x와 y의 주소가 우연히 연속해 있다고 가정하고, 정수 연산을 통해 y의 주소를 계산합니다.
+uintptr_t addr_x = (uintptr_t)&amp;x;
+uintptr_t addr_y = (uintptr_t)&amp;y;
+
+// 만약 addr_x + sizeof(int) == addr_y 라면:
+int *q = (int*)(addr_x + sizeof(int));
+foo(&amp;x, q);</code></pre>
+</div><p>하드웨어 관점에서 <code>q</code>가 가진 비트 패턴은 <code>&amp;y</code>의 실제 주소와 완벽히 같습니다. 따라서 <code>foo</code> 내부의 <code>*q = 2;</code>는 물리적으로 <code>y</code>의 메모리 위치에 <code>2</code>를 쓰게 됩니다. 하지만 <code>foo(&amp;x, q)</code>에서 컴파일러가 <code>*p</code>와 <code>*q</code>가 앨리어싱되지 않는다고 판단하여 <code>foo</code>의 반환값을 <code>1</code>로 최적화해 버렸다면, 실제 실행 결과와 컴파일러의 최적화 사이에 모순이 발생합니다.</p>
+<p>이 모순을 해결하기 위해 프로그래밍 언어 추상 기계는 **출처(Provenance)**라는 개념을 도입합니다.</p>
+<blockquote>
+<p><strong>포인터의 정의:</strong> 추상 기계에서 포인터는 단순히 <code>0x12345678</code> 같은 정수 주소가 아니라, **<code>(태그/할당 ID, 주소)</code>**의 쌍입니다.</p>
+</blockquote>
+<p>포인터가 역참조(dereference)될 때, 추상 기계는 단순히 그 주소에 메모리가 존재하는지만 검사하는 것이 아니라, 해당 포인터의 **태그(출처)**가 그 주소의 메모리 할당(allocation)에 접근할 권한이 있는지를 함께 검사합니다.</p>
+<p>위 예시에서 <code>&amp;x</code>에서 계산되어 나온 <code>q</code>의 출처 태그는 여전히 <code>x</code>에 묶여 있습니다. 비록 <code>q</code>의 정수 주소는 <code>y</code>를 가리키고 있을지라도, <code>x</code>의 태그로는 <code>y</code>의 메모리 할당에 접근할 수 없습니다. 따라서 <code>*q = 2;</code>는 유효하지 않은 메모리 접근이며, **정의되지 않은 동작(Undefined Behavior)**이 됩니다. 이 덕분에 컴파일러는 안심하고 <code>foo</code>를 <code>return 1;</code>로 최적화할 수 있습니다.</p>
+<h2 id="진짜-난제-정수와-포인터-간의-형변환-int2ptr-ptr2int"><a href="#진짜-난제-정수와-포인터-간의-형변환-int2ptr-ptr2int" class="heading-anchor" aria-hidden="true">#</a> 진짜 난제: 정수와 포인터 간의 형변환 (int2ptr & ptr2int)</h2><p>포인터 출처 모델에서 가장 다루기 어렵고 논쟁적인 부분은 바로 정수와 포인터 사이의 상호 변환입니다.</p>
+<ol>
+<li><strong>포인터를 정수로 변환 (<code>ptr2int</code> / <code>(uintptr_t)p</code>)</strong>:<br>포인터를 정수로 캐스팅하면 출처 태그는 어떻게 될까요? 정수는 순수한 수학적 숫자이므로 출처 태그를 담을 공간이 없습니다. 따라서 정수로 변환되는 순간 출처 태그는 &quot;사라집니다&quot;.</li>
+<li><strong>정수를 포인터로 변환 (<code>int2ptr</code> / <code>(int*)i</code>)</strong>:<br>출처가 없는 순수한 정수를 다시 포인터로 캐스팅할 때, 그 포인터는 <strong>어떤 출처 태그를 가져야 할까요?</strong></li>
+</ol>
+<p>이 질문에 답하기 위해 C 표준 위원회(WG14)와 LLVM, Rust 커뮤니티에서는 여러 가지 메모리 모델을 제안하고 논의해 왔습니다.</p>
+<h3 id="1-pvi-provenance-via-integers"><a href="#1-pvi-provenance-via-integers" class="heading-anchor" aria-hidden="true">#</a> 1. PVI (Provenance Via Integers)</h3><p>정수 타입 자체에도 보이지 않는 출처 태그를 붙여서 정수 연산을 할 때도 출처가 전파되도록 하자는 모델입니다. 하지만 이 모델은 정수 최적화(예: <code>x - x = 0</code>, 비트 연산 최적화 등)를 심각하게 망가뜨립니다. 정수 산술 연산에 포인터 출처 추적 규칙을 적용하는 것은 컴파일러 구현상 비현실적입니다.</p>
+<h3 id="2-pnvi-provenance-not-via-integers"><a href="#2-pnvi-provenance-not-via-integers" class="heading-anchor" aria-hidden="true">#</a> 2. PNVI (Provenance Not Via Integers)</h3><p>정수는 순수한 숫자이며 어떠한 출처도 가지지 않는다는 모델입니다. 대신 <code>int2ptr</code>(정수에서 포인터로의 캐스트)가 일어나는 순간, 추상 기계가 &quot;적절한 출처를 추측하거나 복원&quot;합니다. 여기에는 세부적인 변형들이 있습니다:</p>
+<ul>
+<li><strong>PNVI-plain</strong>: <code>int2ptr</code> 변환 시, 해당 주소가 현재 살아있는(live) 유효한 할당 영역 내에 속해 있다면 그 할당의 출처를 자동으로 부여받습니다. 그러나 만약 두 개의 서로 다른 할당이 0바이트 크기로 맞닿아 있거나 경계에 걸쳐 있다면 어떤 할당의 출처를 주어야 할지 모호해지는 문제가 있습니다.</li>
+<li><strong>PNVI-ae (Address-Exposed)</strong>: 아무 정수나 포인터로 둔갑할 수 있는 것이 아니라, 이전에 <code>ptr2int</code> 캐스팅을 통해 <strong>주소가 노출된(exposed)</strong> 적이 있는 할당에 대해서만 <code>int2ptr</code>를 통해 출처를 복원할 수 있도록 제한하는 방식입니다.</li>
+<li><strong>PNVI-ae-udi (User-Disambiguation)</strong>: 주소 경계가 겹쳐서 모호할 때, 프로그래머가 나중에 해당 포인터를 실제로 어떻게 사용하는지를 보고 추상 기계가 사후적으로 출처를 결정(Disambiguation)하는 방식입니다. 하지만 이는 형식화하기가 대단히 복잡합니다.</li>
+</ul>
+<h3 id="3-엄격한-출처-모델-strict-provenance"><a href="#3-엄격한-출처-모델-strict-provenance" class="heading-anchor" aria-hidden="true">#</a> 3. 엄격한 출처 모델 (Strict Provenance)</h3><p>현재 Rust 커뮤니티(및 저와 여러 연구자들)가 적극적으로 추진하고 있는 대안은 <strong>엄격한 출처(Strict Provenance)</strong> 모델입니다.</p>
+<p>이 모델에서는 정수를 다시 포인터로 변환하는 마법 같은 <code>int2ptr</code> 캐스팅을 지양합니다. 대신 포인터의 주소를 조작할 때 기존 유효한 포인터의 출처를 명시적으로 유지하는 새로운 API를 제공합니다:</p>
+<ul>
+<li><code>ptr.addr() -&gt; usize</code>: 포인터에서 순수한 정수 주소만 읽어옵니다 (출처 노출 없음).</li>
+<li><code>ptr.with_addr(addr: usize) -&gt; *T</code>: <code>ptr</code>가 가지고 있던 기존 출처(Provenance) 태그를 그대로 유지하면서 주소 부분만 새로운 <code>addr</code>로 교체합니다.</li>
+<li><code>ptr.expose_addr()</code> 및 <code>from_exposed_addr(addr)</code>: 하위 호환성을 위해 전통적인 정수-포인터 캐스팅이 필요한 경우에만 제한적으로 명시적 노출을 사용합니다.</li>
+</ul>
+<p>엄격한 출처 모델을 사용하면 포인터와 정수의 경계가 명확해지며, 컴파일러는 모호한 추측 없이 공격적인 최적화를 수행할 수 있고, Miri와 같은 정적/동적 검증 도구가 정의되지 않은 동작을 정확하게 감지할 수 있습니다.</p>
+<h2 id="2편-요약-및-결론"><a href="#2편-요약-및-결론" class="heading-anchor" aria-hidden="true">#</a> 2편 요약 및 결론</h2><ol>
+<li><strong>포인터는 정수가 아닙니다</strong>: 포인터는 메모리 주소뿐만 아니라, 특정 메모리 할당에 접근할 수 있는 자격을 부여하는 **출처(Provenance)**를 담고 있습니다.</li>
+<li><strong>출처는 컴파일러 최적화의 필수 조건입니다</strong>: 출처 개념이 없다면 컴파일러는 포인터 간의 앨리어싱 여부를 신뢰할 수 없으며, 대부분의 핵심 최적화가 불가능해집니다.</li>
+<li><strong>정수와 포인터의 변환은 매우 까다롭습니다</strong>: 임의의 정수를 포인터로 변환하는 동작은 언어 명세상 가장 정의하기 어려운 부분 중 하나이며, 이를 깔끔하게 해결하기 위해 <strong>Strict Provenance</strong>와 같은 새로운 모델이 표준화되고 있습니다.</li>
+</ol>
+<p>우리가 안전하고 빠른 저수준 코드를 작성하기 위해서는, 하드웨어의 단순한 바이트 배열 너머에 존재하는 프로그래밍 언어의 엄밀한 메모리 모델과 포인터 출처의 규칙을 이해하는 것이 필수적입니다.</p>
+<hr>
+<blockquote>
+<p>원문 저작권: © Ralf Jung (CC BY 4.0). 원본 글은 <a href="https://www.ralfj.de">ralfj.de</a>에서 확인할 수 있습니다.</p>
+</blockquote>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

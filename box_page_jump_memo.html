@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>상자, 페이지, 점프, 메모지</title>
+  <meta name="description" content="메모리와 주소, 명령 실행 순서(PC), 루프와 점프, 그리고 포인터가 없던 초기 컴퓨터에서 자기수정 코드가 필연적이었던 이유를 어셈블리 기초부터 쉽게 풀어내는 강의록입니다.">
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 57px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: justify;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.6em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      max-width: 85vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 40px;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 8px;
+    }
+
+    .toc-drawer-body li.depth-2 { padding-left: 0; }
+    .toc-drawer-body li.depth-3 { padding-left: 14px; }
+    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.45;
+      display: block;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">상자, 페이지, 점프, 메모지</span>
+    </div>
+    
+    <div class="nav-right">
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Reading Progress Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-1"><a href="#상자-페이지-점프-메모지" class="toc-link">상자, 페이지, 점프, 메모지</a></li><li class="depth-3"><a href="#포인터가-없던-세계에서-자기수정-코드가-필요했던-이유" class="toc-link">포인터가 없던 세계에서 자기수정 코드가 필요했던 이유</a></li><li class="depth-2"><a href="#이-노트를-읽는-법" class="toc-link">이 노트를 읽는 법</a></li><li class="depth-2"><a href="#0-이-강의가-메우는-빈칸" class="toc-link">0. 이 강의가 메우는 빈칸</a></li><li class="depth-1"><a href="#1장-창고-번호와-내용" class="toc-link">1장. 창고: 번호와 내용</a></li><li class="depth-1"><a href="#2장-레시피도-같은-창고에-있다" class="toc-link">2장. 레시피도 같은 창고에 있다</a></li><li class="depth-1"><a href="#3장-실행-순서는-누가-정하는가" class="toc-link">3장. 실행 순서는 누가 정하는가</a></li><li class="depth-1"><a href="#4장-어셈블리를-처음부터" class="toc-link">4장. 어셈블리를 처음부터</a></li><li class="depth-2"><a href="#41-기계어와-어셈블리" class="toc-link">4.1 기계어와 어셈블리</a></li><li class="depth-2"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="toc-link">4.2 레지스터: CPU 안의 손바닥 상자</a></li><li class="depth-2"><a href="#43-대괄호-하나가-전부다" class="toc-link">4.3 대괄호 `[]` 하나가 전부다</a></li><li class="depth-2"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="toc-link">4.4 이 노트에서 쓰는 명령 여덟 개</a></li><li class="depth-3"><a href="#mov-옮겨-담기" class="toc-link">`mov` — 옮겨 담기</a></li><li class="depth-3"><a href="#add-더하기" class="toc-link">`add` — 더하기</a></li><li class="depth-3"><a href="#inc-1-증가" class="toc-link">`inc` — 1 증가</a></li><li class="depth-3"><a href="#cmp-비교만-하고-기억" class="toc-link">`cmp` — 비교만 하고 기억</a></li><li class="depth-3"><a href="#jmp-무조건-점프" class="toc-link">`jmp` — 무조건 점프</a></li><li class="depth-3"><a href="#jne-jl-jb-조건부-점프" class="toc-link">`jne` / `jl` / `jb` — 조건부 점프</a></li><li class="depth-3"><a href="#라벨-상자-번호-대신-붙이는-이름" class="toc-link">라벨 — 상자 번호 대신 붙이는 이름</a></li><li class="depth-3"><a href="#nop-아무것도-하지-않음" class="toc-link">`nop` — 아무것도 하지 않음</a></li><li class="depth-1"><a href="#5장-점프와-goto" class="toc-link">5장. 점프와 goto</a></li><li class="depth-1"><a href="#6장-루프는-점프의-응용이다" class="toc-link">6장. 루프는 점프의 응용이다</a></li><li class="depth-1"><a href="#7장-왜-자기수정이-나왔는가" class="toc-link">7장. 왜 자기수정이 나왔는가</a></li><li class="depth-1"><a href="#8장-슬로모션-숫자-두-개" class="toc-link">8장. 슬로모션 — 숫자 두 개</a></li><li class="depth-2"><a href="#81-자기수정-버전-가상-기계" class="toc-link">8.1 자기수정 버전 (가상 기계)</a></li><li class="depth-2"><a href="#82-포인터-버전-가상-기계" class="toc-link">8.2 포인터 버전 (가상 기계)</a></li><li class="depth-1"><a href="#9장-실제-x86으로-옮기기" class="toc-link">9장. 실제 x86으로 옮기기</a></li><li class="depth-2"><a href="#91-먼저-포인터-버전이-정석이다" class="toc-link">9.1 먼저, 포인터 버전이 정석이다</a></li><li class="depth-2"><a href="#92-자기수정-버전-명령의-주소-칸을-고친다" class="toc-link">9.2 자기수정 버전 — 명령의 주소 칸을 고친다</a></li><li class="depth-3"><a href="#6502-8비트에서-더-잘-보이는-형태" class="toc-link">6502 / 8비트에서 더 잘 보이는 형태</a></li><li class="depth-2"><a href="#93-두-버전의-기계어-차이-한-줄로" class="toc-link">9.3 두 버전의 기계어 차이, 한 줄로</a></li><li class="depth-1"><a href="#10장-자기수정이-악몽인-이유" class="toc-link">10장. 자기수정이 악몽인 이유</a></li><li class="depth-1"><a href="#11장-포인터와-레지스터" class="toc-link">11장. 포인터와 레지스터</a></li><li class="depth-2"><a href="#질문" class="toc-link">질문</a></li><li class="depth-2"><a href="#답" class="toc-link">답</a></li><li class="depth-1"><a href="#12장-역사" class="toc-link">12장. 역사</a></li><li class="depth-1"><a href="#13장-한-창고에-모두-올려놓기" class="toc-link">13장. 한 창고에 모두 올려놓기</a></li><li class="depth-1"><a href="#부록-a-어셈블리-치트시트-이-노트-범위" class="toc-link">부록 A. 어셈블리 치트시트 (이 노트 범위)</a></li><li class="depth-1"><a href="#부록-b-복습-사다리" class="toc-link">부록 B. 복습 사다리</a></li><li class="depth-1"><a href="#부록-c-더-읽을거리-층별" class="toc-link">부록 C. 더 읽을거리 (층별)</a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-03-01</span>
+          <span class="meta-badge">⏱️ 약 24분</span>
+          
+        </div>
+        <h1 class="article-title">상자, 페이지, 점프, 메모지</h1>
+        <p class="article-subtitle">포인터가 없던 세계에서 자기수정 코드가 필요했던 이유</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#어셈블리</span>
+          
+          <span class="tag-pill">#컴퓨터 구조</span>
+          
+          <span class="tag-pill">#메모리</span>
+          
+          <span class="tag-pill">#포인터</span>
+          
+          <span class="tag-pill">#자기수정 코드</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <h1 id="상자-페이지-점프-메모지"><a href="#상자-페이지-점프-메모지" class="heading-anchor" aria-hidden="true">#</a> 상자, 페이지, 점프, 메모지</h1><h3 id="포인터가-없던-세계에서-자기수정-코드가-필요했던-이유"><a href="#포인터가-없던-세계에서-자기수정-코드가-필요했던-이유" class="heading-anchor" aria-hidden="true">#</a> 포인터가 없던 세계에서 자기수정 코드가 필요했던 이유</h3><p>어셈블리 포함 · 기초부터 해설하는 강의록</p>
+<hr>
+<h2 id="이-노트를-읽는-법"><a href="#이-노트를-읽는-법" class="heading-anchor" aria-hidden="true">#</a> 이 노트를 읽는 법</h2><p>이 문서는 다음을 한 그림으로 연결한다.</p>
+<ul>
+<li>메모리(상자)와 주소(호수)</li>
+<li>명령 실행 순서(페이지 번호, PC)</li>
+<li>점프와 <code>goto</code></li>
+<li>루프</li>
+<li>자기수정 코드</li>
+<li>포인터와 레지스터</li>
+</ul>
+<p>대상은 <strong>어셈블리를 한 줄도 모른다고 가정한 독자</strong>다.<br>본문에 나오는 기계어·어셈블리는 모두 바로 아래에서 단어 단위로 푼다.</p>
+<p>권장 순서: 1장부터 차례로. 8장의 슬로모션 표는 그 앞을 읽은 뒤에야 의미가 있다.</p>
+<hr>
+<h2 id="0-이-강의가-메우는-빈칸"><a href="#0-이-강의가-메우는-빈칸" class="heading-anchor" aria-hidden="true">#</a> 0. 이 강의가 메우는 빈칸</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>층</th>
+<th>빈칸</th>
+<th>메운 뒤 보이는 것</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>기억</td>
+<td>주소와 내용의 차이</td>
+<td>“1000을 더하라”와 “1000호를 더하라”</td>
+</tr>
+<tr>
+<td>실행</td>
+<td>주소 번호가 곧 실행 순서?</td>
+<td>PC라는 한 칸이 순서를 정한다</td>
+</tr>
+<tr>
+<td>기호</td>
+<td>어셈블리 한 줄이 무엇인가</td>
+<td>상자 작업의 짧은 메모</td>
+</tr>
+<tr>
+<td>제어</td>
+<td>루프가 원시 기능인가</td>
+<td>루프 = 뒤로 점프 + 상태 변화</td>
+</tr>
+<tr>
+<td>언어</td>
+<td><code>goto</code>는 별종인가</td>
+<td>포장하지 않은 점프</td>
+</tr>
+<tr>
+<td>반복</td>
+<td>점프만 있으면 일이 되나</td>
+<td>착지는 같아도 세계 상태는 달라야 한다</td>
+</tr>
+<tr>
+<td>자기수정</td>
+<td>“코드를 고친다”의 구체성</td>
+<td>요리책 빈칸을 메모지 대신 쓴다</td>
+</tr>
+<tr>
+<td>포인터</td>
+<td>포인터 = 특수 레지스터?</td>
+<td>포인터는 규칙, 레지스터는 손</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h1 id="1장-창고-번호와-내용"><a href="#1장-창고-번호와-내용" class="heading-anchor" aria-hidden="true">#</a> 1장. 창고: 번호와 내용</h1><p>컴퓨터의 주기억장치(RAM)를 거대한 창고로 본다.</p>
+<ul>
+<li>상자마다 <strong>주소</strong>라는 번호가 있다. <code>0</code>, <code>1</code>, <code>20</code>, <code>0x1000</code> …</li>
+<li>각 상자 안에는 <strong>숫자 하나</strong>(또는 몇 바이트)가 들어 있다.</li>
+<li>CPU(일꾼)는 “몇 호를 열어라”, “그 숫자를 더하라” 같은 지시를 받는다.</li>
+</ul>
+<p>예시:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>주소(호수)</th>
+<th>상자 안 내용</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>20</td>
+<td>7</td>
+</tr>
+<tr>
+<td>21</td>
+<td>3</td>
+</tr>
+<tr>
+<td>22</td>
+<td>10</td>
+</tr>
+</tbody></table>
+</div><p>합계를 구하면 \(7 + 3 + 10 = 20\) 이다.</p>
+<p>구분:</p>
+<ul>
+<li><strong>주소</strong> = 상자의 위치</li>
+<li><strong>내용</strong> = 상자 안에 들어 있는 값</li>
+</ul>
+<p>“20을 더하라”와 “20호 상자 안을 더하라”는 다른 말이다.<br>이후 모든 오해는 이 한 줄이 흔들릴 때 생긴다.</p>
+<hr>
+<h1 id="2장-레시피도-같은-창고에-있다"><a href="#2장-레시피도-같은-창고에-있다" class="heading-anchor" aria-hidden="true">#</a> 2장. 레시피도 같은 창고에 있다</h1><p>요리사는 레시피를 보고 요리한다. 컴퓨터의 레시피가 <strong>프로그램</strong>이다.</p>
+<p>초창기 저장 프로그램 컴퓨터(폰 노이만 구조)는 레시피와 재료를 <strong>같은 창고</strong>에 넣는다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">낮은 번호 쪽  = 레시피(명령)
+높은 번호 쪽  = 재료(데이터)</code></pre>
+</div><p>약속일 뿐, 물리적으로는 둘 다 “상자 안의 숫자”다.<br>CPU는 PC가 가리키는 상자만 명령으로 해석한다.</p>
+<p>한 줄 명령의 전형적인 생김새(초기 기계):</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[할 일] + [어느 호수]
+예: [더하라] [20]</code></pre>
+</div><p>“무엇을”과 “어디를”이 <strong>한 장에 잉크로 붙어</strong> 있다.<br>같은 창고에 있으므로, 원리적으로는 그 잉크도 실행 중에 고칠 수 있다.<br>그 문이 나중에 자기수정이 된다.</p>
+<hr>
+<h1 id="3장-실행-순서는-누가-정하는가"><a href="#3장-실행-순서는-누가-정하는가" class="heading-anchor" aria-hidden="true">#</a> 3장. 실행 순서는 누가 정하는가</h1><p>주소 6, 7, 8에 명령을 나란히 두면 실행이 6→7→8처럼 보인다.<br>그러나 <strong>주소 숫자가 순서를 만드는 것이 아니다.</strong></p>
+<p>순서를 정하는 것은 CPU 안의 작은 칸 <strong>프로그램 카운터(PC)</strong> 다.<br>x86에서는 EIP/RIP라고도 부른다. 정체는 하나다.</p>
+<blockquote>
+<p>지금 펼쳐 볼 레시피 상자의 번호.</p>
+</blockquote>
+<p>매 박자 CPU가 하는 일:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">1. PC에 적힌 상자를 연다
+2. 그 안의 명령을 실행한다
+3. PC를 고친다</code></pre>
+</div><p><strong>기본 규칙:</strong> 방금 읽은 줄 바로 다음으로 PC를 민다.<br>한 명령이 상자 하나를 차지한다면 <code>PC ← PC + 1</code>.<br>실제 x86은 명령 길이가 제각각이라 “방금 명령이 차지한 바이트 수”만큼 민다. 생각은 같다.</p>
+<p>전원 직후 PC는 비어 있을 수 없다. 기계마다 약속된 시작 주소가 있거나, 안내 프로그램(부트로더·운영체제)이 “이 프로그램은 여기부터”라고 PC에 넣어 준다.</p>
+<p>데이터 상자에 PC가 들어가면 CPU는 그 숫자를 명령으로 오해한다.<br>레시피 구역과 재료 구역을 나누는 것은 프로그래머와 운영체제의 약속이다.</p>
+<p>명령을 6호와 50호에 흩어 두고 6 다음이 50이 되게 하려면, 6 근처에 <strong>“50으로 가라”</strong> 를 넣어야 한다.<br>보통은 실행하고 싶은 순서로 상자를 붙여 두므로, 초심자에게는 주소가 곧 순서처럼 보인다.</p>
+<hr>
+<h1 id="4장-어셈블리를-처음부터"><a href="#4장-어셈블리를-처음부터" class="heading-anchor" aria-hidden="true">#</a> 4장. 어셈블리를 처음부터</h1><h2 id="41-기계어와-어셈블리"><a href="#41-기계어와-어셈블리" class="heading-anchor" aria-hidden="true">#</a> 4.1 기계어와 어셈블리</h2><p>CPU가 실제로 읽는 것은 <code>89 34 24</code> 같은 <strong>기계어 바이트</strong>다.<br>사람은 그걸 못 읽으니, 짧은 영어 약어로 옮겨 적는다. 그것이 <strong>어셈블리</strong>.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">기계어:    01 06
+어셈블리:  add eax, [esi]
+뜻:        esi가 가리키는 상자 안을 eax에 더하라</code></pre>
+</div><p>어셈블러라는 프로그램이 왼쪽 글을 오른쪽 바이트로 바꾼다.<br>이 노트에서 어셈블리는 “상자 작업을 줄여 쓴 메모”일 뿐이다.</p>
+<h2 id="42-레지스터-cpu-안의-손바닥-상자"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="heading-anchor" aria-hidden="true">#</a> 4.2 레지스터: CPU 안의 손바닥 상자</h2><p>RAM 상자는 많고 상대적으로 느리다.<br>CPU 칩 안에는 이름 붙은 <strong>아주 빠른 상자</strong>가 몇 개 있다. 이것이 레지스터.</p>
+<p>이 노트에서 쓰는 x86-32 이름:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>이름</th>
+<th>이 노트에서의 역할</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>eax</code></td>
+<td>계산 결과, 합계를 쥐는 손</td>
+</tr>
+<tr>
+<td><code>esi</code></td>
+<td>“지금 열 호수”를 쥐는 손 (메모지를 손에 든 것)</td>
+</tr>
+<tr>
+<td><code>eip</code></td>
+<td>PC. 지금 읽을 명령의 주소. 보통 직접 안 건드린다</td>
+</tr>
+</tbody></table>
+</div><p>레지스터는 창고 호수가 아니라 <strong>CPU 안의 별도 칸</strong>이다.<br><code>eax</code>에 7이 있다는 것은 “합계 상자가 7”과 비슷하지만, 훨씬 빨리 읽고 쓴다.</p>
+<h2 id="43-대괄호-하나가-전부다"><a href="#43-대괄호-하나가-전부다" class="heading-anchor" aria-hidden="true">#</a> 4.3 대괄호 `[]` 하나가 전부다</h2><p>x86 어셈블리에서 가장 중요한 기호는 대괄호다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">eax          손바닥 칸 eax 안의 숫자 그 자체
+[eax]        eax에 적힌 숫자를 호수로 알고, 그 RAM 상자를 연다</code></pre>
+</div><p>일상어:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">eax     = 메모지에 적힌 호수
+[eax]   = 그 호수 문을 열고 본 내용</code></pre>
+</div><p>이 한 겹이 포인터의 기계어 형태다.</p>
+<h2 id="44-이-노트에서-쓰는-명령-여덟-개"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="heading-anchor" aria-hidden="true">#</a> 4.4 이 노트에서 쓰는 명령 여덟 개</h2><p>문법은 Intel 식(목적지가 왼쪽)이다.</p>
+<h3 id="mov-옮겨-담기"><a href="#mov-옮겨-담기" class="heading-anchor" aria-hidden="true">#</a> `mov` — 옮겨 담기</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">mov eax, 0          ; eax라는 손에 0을 쥐어라
+mov eax, esi        ; esi에 있는 숫자를 eax에 복사
+mov eax, [esi]      ; esi가 가리키는 RAM 상자 안을 eax에 복사
+mov [esi], eax      ; eax의 숫자를 esi가 가리키는 RAM 상자에 저장</code></pre>
+</div><p><code>;</code> 오른쪽은 주석이다. CPU는 읽지 않는다.</p>
+<h3 id="add-더하기"><a href="#add-더하기" class="heading-anchor" aria-hidden="true">#</a> `add` — 더하기</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">add eax, 1          ; eax ← eax + 1
+add eax, [esi]      ; eax ← eax + (esi가 가리키는 상자 안)
+add dword [label], 4 ; label 위치의 4바이트 숫자에 4를 더함</code></pre>
+</div><p><code>dword</code>는 “4바이트짜리 숫자로 취급하라”는 표시다.<br>지금은 “상자 한 칸이 정수 하나”라고만 기억하면 된다.</p>
+<h3 id="inc-1-증가"><a href="#inc-1-증가" class="heading-anchor" aria-hidden="true">#</a> `inc` — 1 증가</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">inc esi             ; esi ← esi + 1
+inc dword [box]     ; box 상자 안 ← 그 값 + 1</code></pre>
+</div><p><code>add esi, 1</code>과 같다. 짧은 표기다.</p>
+<h3 id="cmp-비교만-하고-기억"><a href="#cmp-비교만-하고-기억" class="heading-anchor" aria-hidden="true">#</a> `cmp` — 비교만 하고 기억</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">cmp esi, 22         ; esi와 22를 비교한다. esi 값은 안 바뀐다.</code></pre>
+</div><p>비교 결과는 CPU 안의 <strong>플래그</strong>(맞다/작다/같다 같은 작은 표시)에만 남는다.<br>바로 다음 점프 명령이 그 표시를 보고 뛸지 말지 정한다.</p>
+<h3 id="jmp-무조건-점프"><a href="#jmp-무조건-점프" class="heading-anchor" aria-hidden="true">#</a> `jmp` — 무조건 점프</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">jmp here            ; PC를 here라는 이름 위치로 덮어쓴다</code></pre>
+</div><h3 id="jne-jl-jb-조건부-점프"><a href="#jne-jl-jb-조건부-점프" class="heading-anchor" aria-hidden="true">#</a> `jne` / `jl` / `jb` — 조건부 점프</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">jne here            ; 방금 비교가 “같지 않음”이면 here로
+jl  here            ; 부호 있는 정수로 “더 작으면” here로
+jb  here            ; 주소처럼 “아래면” here로 (unsigned)</code></pre>
+</div><p><code>jne</code> = Jump if Not Equal.</p>
+<h3 id="라벨-상자-번호-대신-붙이는-이름"><a href="#라벨-상자-번호-대신-붙이는-이름" class="heading-anchor" aria-hidden="true">#</a> 라벨 — 상자 번호 대신 붙이는 이름</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">here:
+    add eax, [esi]
+    jmp here</code></pre>
+</div><p><code>here:</code>는 명령이 아니다.<br>“이 줄이 놓인 주소에 <code>here</code>라는 이름을 붙인다.”<br>어셈블러가 실제 숫자 주소로 바꾼다. 사람이 6호, 7호를 외우지 않아도 되게 한다.</p>
+<h3 id="nop-아무것도-하지-않음"><a href="#nop-아무것도-하지-않음" class="heading-anchor" aria-hidden="true">#</a> `nop` — 아무것도 하지 않음</h3><p>한 칸을 차지하고 PC만 다음으로 민다. 자리 메우기나 패치 지점에 쓴다.</p>
+<hr>
+<h1 id="5장-점프와-goto"><a href="#5장-점프와-goto" class="heading-anchor" aria-hidden="true">#</a> 5장. 점프와 goto</h1><p>점프는 PC를 덮어쓰는 일이다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">    jmp there       ; 무조건 there로
+there:
+    mov eax, 0</code></pre>
+</div><p>고급 언어의 <code>goto there;</code> 가 바로 <code>jmp there</code> 다.</p>
+<p>조건이 붙으면:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">    cmp esi, 22
+    jne there       ; esi ≠ 22 이면 there로, 아니면 다음 줄</code></pre>
+</div><p>기계의 제어는 거의 전부 이 점프다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>언어에 보이는 것</th>
+<th>기계가 하는 것</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>차례대로</td>
+<td>점프 없음, PC를 다음 줄로</td>
+</tr>
+<tr>
+<td><code>if</code></td>
+<td>앞으로 건너뛰는 조건부 점프</td>
+</tr>
+<tr>
+<td><code>while</code> / <code>for</code></td>
+<td>검사 + 뒤로 점프</td>
+</tr>
+<tr>
+<td><code>break</code></td>
+<td>루프 끝 라벨로 점프</td>
+</tr>
+<tr>
+<td><code>return</code></td>
+<td>돌아온 주소로 점프</td>
+</tr>
+<tr>
+<td><code>goto</code></td>
+<td>포장 없는 <code>jmp</code></td>
+</tr>
+</tbody></table>
+</div><p><code>goto</code>가 미움을 받는 이유는 점프가 존재해서가 아니라, <strong>아무 줄에나 착지</strong>해서 글의 모양과 실행 순서가 어긋나기 때문이다.<br><code>while</code>은 같은 점프를 “이 블록 안에서만” 쓰게 가둔다.<br>컴파일하면 결국 다시 <code>jmp</code>/<code>jne</code>가 된다. CPU의 점프가 사라지는 것은 아니다.</p>
+<hr>
+<h1 id="6장-루프는-점프의-응용이다"><a href="#6장-루프는-점프의-응용이다" class="heading-anchor" aria-hidden="true">#</a> 6장. 루프는 점프의 응용이다</h1><p>기계 바닥에 “반복하라”는 마법은 보통 없다. 루프는 패턴이다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">① 몸통
+② 계속할지 검사
+③ 계속이면 ①로 점프</code></pre>
+</div><p>가장 작은 무한 루프:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">spin:
+    jmp spin        ; PC를 자기 자신으로 덮어쓴다</code></pre>
+</div><p>합산이 되려면 점프 사이에 <strong>상태가 달라져야</strong> 한다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">; 잘못된 루프: 점프는 되지만 늘 같은 상자만 연다
+    mov eax, 0
+bad:
+    add eax, [20]   ; 언제나 20호만 더한다
+    jmp bad</code></pre>
+</div><p>점프는 성공한다. 목록 순회는 실패한다.</p>
+<p>일반 법칙:</p>
+<blockquote>
+<p>같은 레시피 줄로 돌아왔을 때 세계 상태가 달라져 있어야 이야기가 진행된다.</p>
+</blockquote>
+<p>상태가 달라지는 길:</p>
+<ol>
+<li>여는 주소가 달라진다 (20호 다음 21호) — 순회</li>
+<li>같은 주소의 내용이 달라진다 (외부 신호) — 대기</li>
+<li>횟수·합계 메모가 달라진다 — N번 반복</li>
+</ol>
+<p>아무것도 안 변하면 무한 반복이거나 버그다.</p>
+<p>두 층을 섞지 말 것:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">층 1. 레시피 위치 : 늘 loop 라벨로 점프   ← 뼈대
+층 2. 재료/상태   : 20호 다음 21호        ← 의미</code></pre>
+</div><p>“돌아올 때마다 다른 상자를 열어야 한다”는 말은 <strong>목록 순회</strong>를 겨냥한 것이다.<br>대기 루프는 같은 상자를 열어도 된다. 그 안의 미래가 바뀌기를 기다린다.</p>
+<hr>
+<h1 id="7장-왜-자기수정이-나왔는가"><a href="#7장-왜-자기수정이-나왔는가" class="heading-anchor" aria-hidden="true">#</a> 7장. 왜 자기수정이 나왔는가</h1><p>사람이 원하는 글:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">반복:
+    이번 상자를 더하라
+    다음 상자로 가라</code></pre>
+</div><p>“이번 상자 번호”를 적어 둘 메모지가 없던 기계가 있었다.<br>인덱스 레지스터도, <code>[레지스터]</code> 주소 방식도 없었다.<br>명령 쪽지에만 주소가 잉크로 박혀 있었다.</p>
+<p>선택지:</p>
+<ol>
+<li><code>add [20]</code>, <code>add [21]</code>, … 를 수천 줄 적는다</li>
+<li>한 줄만 두고, 실행 중에 그 줄의 주소 칸을 고친다</li>
+</ol>
+<p>2번이 <strong>자기수정 코드(Self-Modifying Code, SMC)</strong> 다.</p>
+<p>요리책 비유:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">【3쪽】 선반 ___ 호의 재료를 넣어라
+【4쪽】 3쪽 빈칸에 1을 더해 다시 적어라
+【5쪽】 끝이 아니면 3쪽으로 가라</code></pre>
+</div><p>같은 3쪽을 반복해 읽지만, 읽을 때마다 3쪽 글자가 다르다.</p>
+<p>1950년대 IBM 701, 초기 EDSAC 등이 배열을 이렇게 훑었다.<br>인덱스 레지스터(맨체스터 B레지스터, 1949)가 생기기 전의 표준 우회였다.</p>
+<hr>
+<h1 id="8장-슬로모션-숫자-두-개"><a href="#8장-슬로모션-숫자-두-개" class="heading-anchor" aria-hidden="true">#</a> 8장. 슬로모션 — 숫자 두 개</h1><p>재료:</p>
+<ul>
+<li>주소 20: <code>7</code></li>
+<li>주소 21: <code>3</code></li>
+<li>목표 합: \(7 + 3 = 10\)</li>
+<li>끝 표지 주소: <code>22</code></li>
+</ul>
+<p>아래는 <strong>한 명령이 메모리 한 칸</strong>이라고 단순화한 가상 기계다.<br>실제 x86은 한 명령이 여러 바이트를 먹는다. 생각은 같다.</p>
+<h2 id="81-자기수정-버전-가상-기계"><a href="#81-자기수정-버전-가상-기계" class="heading-anchor" aria-hidden="true">#</a> 8.1 자기수정 버전 (가상 기계)</h2><p>창고 배치:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">주소 4 : 합계 = 0
+주소 6 : add [20]          ← 이 줄의 20만 바뀐다
+주소 7 : 6호의 주소 칸에 +1
+주소 8 : 6호의 주소 칸이 22가 아니면 6으로 점프
+주소 9 : 끝
+주소 20: 7
+주소 21: 3</code></pre>
+</div><p>가상 어셈블리:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">    mov  [4], 0            ; 합계 = 0
+    mov  [6], template     ; 6호에 "add [20]" 을 심는다 (이미 심어 두었다고 보자)
+
+loop:
+    ; ----- 주소 6 : 매 바퀴 글자가 바뀌는 줄 -----
+    add  [4], [20]         ; 처음엔 [20], 다음에는 [21] ...
+patch_addr 만큼의 칸이 이 줄의 "20" 이다
+
+    inc  dword [loop+주소칸] ; 6호 명령의 주소 필드 +1
+
+    cmp  dword [loop+주소칸], 22
+    jne  loop
+    ; 끝</code></pre>
+</div><p>박자표:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>박자</th>
+<th>PC</th>
+<th>실행</th>
+<th>합계(4)</th>
+<th>6호 명령</th>
+<th>다음 PC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>6</td>
+<td>20호의 7을 더함</td>
+<td>0→<strong>7</strong></td>
+<td>add [20]</td>
+<td>7</td>
+</tr>
+<tr>
+<td>2</td>
+<td>7</td>
+<td>주소 칸 +1</td>
+<td>7</td>
+<td><strong>add [21]</strong></td>
+<td>8</td>
+</tr>
+<tr>
+<td>3</td>
+<td>8</td>
+<td>21≠22, 점프</td>
+<td>7</td>
+<td>add [21]</td>
+<td><strong>6</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>6</td>
+<td>21호의 3을 더함</td>
+<td>7→<strong>10</strong></td>
+<td>add [21]</td>
+<td>7</td>
+</tr>
+<tr>
+<td>5</td>
+<td>7</td>
+<td>주소 칸 +1</td>
+<td>10</td>
+<td><strong>add [22]</strong></td>
+<td>8</td>
+</tr>
+<tr>
+<td>6</td>
+<td>8</td>
+<td>22=22, 점프 안 함</td>
+<td>10</td>
+<td>add [22]</td>
+<td>9</td>
+</tr>
+</tbody></table>
+</div><p>끝난 뒤 6호는 <code>add [22]</code> 로 남는다. 레시피가 원본이 아니다.</p>
+<p>재료 20, 21은 한 번도 내용이 바뀌지 않는다. 읽히기만 한다.</p>
+<h2 id="82-포인터-버전-가상-기계"><a href="#82-포인터-버전-가상-기계" class="heading-anchor" aria-hidden="true">#</a> 8.2 포인터 버전 (가상 기계)</h2>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">주소 3 : 메모지 = 20
+주소 4 : 합계 = 0
+주소 6 : add [ 3호가 가리키는 곳 ]   ← 글자 고정
+주소 7 : 3호 +1
+주소 8 : 3호가 22가 아니면 6으로 점프</code></pre>
+</div>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">    mov  [3], 20
+    mov  [4], 0
+loop:
+    ; p = [3] 이라고 할 때
+    ; [4] += [[3]]     메모지가 가리키는 곳을 더함
+    inc  dword [3]
+    cmp  dword [3], 22
+    jne  loop</code></pre>
+</div><p>점프 경로 6→7→8→6→…→9 는 같다.<br>박자 2와 5에서 바뀌는 것이 6호가 아니라 3호 메모지다.<br>끝난 뒤 6호 글자는 원본 그대로다.</p>
+<hr>
+<h1 id="9장-실제-x86으로-옮기기"><a href="#9장-실제-x86으로-옮기기" class="heading-anchor" aria-hidden="true">#</a> 9장. 실제 x86으로 옮기기</h1><p>가상 기계를 떠나, 지금 PC에서 흔히 보는 32비트 x86 문법으로 같은 일을 적는다.<br>한 명령이 여러 바이트인 점만 추가하면 된다.</p>
+<h2 id="91-먼저-포인터-버전이-정석이다"><a href="#91-먼저-포인터-버전이-정석이다" class="heading-anchor" aria-hidden="true">#</a> 9.1 먼저, 포인터 버전이 정석이다</h2>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">; 데이터
+nums:   dd 7, 3            ; dd = 4바이트 정수 두 개. 주소가 연속
+                           ; nums     → 7
+                           ; nums+4   → 3
+endn:                      ; 끝 표지. 라벨만 있고 값은 없음
+                           ; 주소가 "3 다음 칸"
+
+; 코드
+    xor  eax, eax          ; eax = 0  (합계). xor 자기 자신은 0으로 만드는 관용구
+    mov  esi, nums         ; esi = 첫 원소의 주소. 손에 메모지를 쥔다
+
+loop1:
+    add  eax, [esi]        ; 합계 += *esi
+    add  esi, 4            ; 다음 정수로. 정수가 4바이트이므로 +4
+    cmp  esi, endn         ; 끝에 닿았나
+    jne  loop1             ; 아니면 몸통으로
+    ; 여기 오면 eax == 10</code></pre>
+</div><p>해설:</p>
+<ul>
+<li><code>nums:</code> 는 7이 놓인 주소의 이름이다.</li>
+<li><code>dd 7, 3</code> 은 그 자리에 4바이트 7, 그 옆에 4바이트 3을 배치하라는 뜻이다.</li>
+<li><code>esi</code>가 포인터다. “지금 열 호수”를 손에 쥐고 있다.</li>
+<li><code>[esi]</code>가 “그 호수를 열어라”다.</li>
+<li><code>add esi, 4</code>가 “다음 상자로 가라”다. 명령 글자는 안 변한다.</li>
+<li><code>jne loop1</code>이 루프의 뼈대(뒤로 점프)다.</li>
+</ul>
+<p>C로 쓰면 이것이다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">int nums[] = {7, 3};
+int *p = nums;
+int *end = nums + 2;
+int sum = 0;
+while (p &lt; end) {
+    sum += *p;
+    p++;
+}</code></pre>
+</div><p>C의 <code>p++</code>는 정수 포인터이므로 컴파일러가 <code>+4</code>로 바꾼다.</p>
+<h2 id="92-자기수정-버전-명령의-주소-칸을-고친다"><a href="#92-자기수정-버전-명령의-주소-칸을-고친다" class="heading-anchor" aria-hidden="true">#</a> 9.2 자기수정 버전 — 명령의 주소 칸을 고친다</h2><p>같은 합산을, 일부러 1950년대 방식으로 적는다.<br><strong>학습용이다. 현대 OS에서는 실행 코드를 쓰지 못하게 막거나, 캐시 때문에 기대한 대로 안 움직일 수 있다.</strong></p>
+<p>원리는 이것이다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">; 실행될 한 줄
+patch:
+    add  eax, [nums]       ; 처음엔 nums, 다음에는 nums+4 ...
+
+; 위 줄에서 "nums"가 적힌 바이트 위치를 찾아
+; 그 숫자에 4를 더한다</code></pre>
+</div><p>x86에서 <code>add eax, [변위]</code> 형태는 대략 이런 바이트열이다. (환경에 따라 접두어가 붙을 수 있다.)</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">03 05  xx xx xx xx
+│  │   └─ 32비트 절대 주소 (여기가 빈칸)
+│  └──── ModR/M
+└─────── opcode (add r32, r/m32)</code></pre>
+</div><p>고칠 곳은 뒤의 4바이트 주소다.</p>
+<p>개념 코드:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">    xor  eax, eax
+    mov  dword [addr_field], nums     ; 시작 주소로 빈칸 초기화
+
+loop2:
+patch:
+    add  eax, [nums]                  ; 이 줄의 주소 필드가 매 바퀴 바뀜
+addr_field equ patch + 2              ; "opcode+ModR/M 다음이 주소다"라는 약속
+                                      ; 실제 오프셋은 어셈블러/기계에 따라 확인해야 함
+
+    add  dword [addr_field], 4        ; 빈칸 += 4
+    cmp  dword [addr_field], endn
+    jne  loop2</code></pre>
+</div><p><code>equ</code>는 “이 이름은 저 숫자와 같다”는 조립 시점 별명이다.<br><code>patch + 2</code>는 “<code>patch</code> 라벨에서 2바이트 뒤”를 가리킨다.</p>
+<p>실행 중 메모리:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">처음  patch 줄:   add eax, [nums]
+한 바퀴 후:       add eax, [nums+4]
+그다음:           add eax, [endn]   → 종료 비교에 걸림</code></pre>
+</div><p>같은 <code>loop2</code>로 점프해 돌아오지만, <code>patch</code> 줄의 기계어 숫자가 달라져 있다.</p>
+<h3 id="6502-8비트에서-더-잘-보이는-형태"><a href="#6502-8비트에서-더-잘-보이는-형태" class="heading-anchor" aria-hidden="true">#</a> 6502 / 8비트에서 더 잘 보이는 형태</h3><p>주소가 명령 바로 뒤에 붙는 8비트 기계는 빈칸이 눈에 보인다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">; 6502 느낌. $2000 부터 $2001 까지 더한다고 가정 (8비트)
+    LDA #$00            ; A레지스터 = 0 (합계)
+LOOP:
+STO: ADC $2000          ; 처음엔 $2000, 다음엔 $2001
+    INC STO+1           ; ADC 명령의 하위 주소 바이트 +1
+    LDA STO+1
+    CMP #$02            ; $2002 가 되면 끝 (예)
+    BNE LOOP</code></pre>
+</div><p><code>STO+1</code>은 “<code>STO</code> 라벨 다음 1바이트”, 즉 <strong>명령의 주소 필드</strong>다.<br><code>INC</code>가 레시피 빈칸을 고친다.</p>
+<h2 id="93-두-버전의-기계어-차이-한-줄로"><a href="#93-두-버전의-기계어-차이-한-줄로" class="heading-anchor" aria-hidden="true">#</a> 9.3 두 버전의 기계어 차이, 한 줄로</h2>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">포인터:     add eax, [esi]     명령 바이트는 평생 동일. esi만 변함
+자기수정:   add eax, [????]    ???? 가 적힌 바이트가 변함</code></pre>
+</div><p>점프(<code>jne loop</code>)는 둘 다 같다.</p>
+<hr>
+<h1 id="10장-자기수정이-악몽인-이유"><a href="#10장-자기수정이-악몽인-이유" class="heading-anchor" aria-hidden="true">#</a> 10장. 자기수정이 악몽인 이유</h1><ol>
+<li><p><strong>제어와 데이터가 한 종이에 섞인다</strong><br>“지금 몇 호인가”가 명령 비트에 숨는다. 덤프를 봐도 상태가 안 보인다.</p>
+</li>
+<li><p><strong>다시 실행이 안 된다</strong><br>중간에서 끊기면 빈칸이 <code>nums+4</code>로 남는다. 처음부터 다시 돌리면 앞 원소를 건너뛴다.<br>루틴 끝에 빈칸을 원상복구하는 코드가 따로 필요하다.</p>
+</li>
+<li><p><strong>동시에 못 쓴다</strong><br>두 실행이 한 명령 줄을 같이 고치면 서로의 주소를 짓밟는다.</p>
+</li>
+<li><p><strong>ROM / 플래시에 못 올린다</strong><br>명령 영역을 쓸 수 있어야 한다. 읽기 전용 펌웨어와 충돌한다.</p>
+</li>
+<li><p><strong>버그가 책을 파괴한다</strong><br>주소 필드에 잘못된 값을 더하면 opcode까지 캐리가 넘어가 <code>add</code>가 <code>jmp</code>가 될 수 있다.</p>
+</li>
+<li><p><strong>현대 CPU는 명령을 미리 읽는다</strong><br>I-cache와 파이프라인에 옛 바이트가 남을 수 있다. x86은 같은 선형 주소로 고치면 어느 정도 맞춰 주지만, 파이프라인을 비우는 대가를 치른다. ARM 계열은 캐시 동기화를 직접 해야 한다.</p>
+</li>
+<li><p><strong>W^X / NX</strong><br>현대 OS는 “실행 가능한 페이지는 쓰지 말라”는 정책을 쓴다. JIT처럼 코드를 만들 때는 권한을 잠시 바꿨다가 실행 전용으로 되돌린다.</p>
+</li>
+</ol>
+<hr>
+<h1 id="11장-포인터와-레지스터"><a href="#11장-포인터와-레지스터" class="heading-anchor" aria-hidden="true">#</a> 11장. 포인터와 레지스터</h1><h2 id="질문"><a href="#질문" class="heading-anchor" aria-hidden="true">#</a> 질문</h2><p>포인터가 생겼다는 것은 전용 레지스터가 생겼다는 뜻인가?</p>
+<h2 id="답"><a href="#답" class="heading-anchor" aria-hidden="true">#</a> 답</h2><p>반만 맞다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th></th>
+<th>무엇인가</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>포인터</td>
+<td>상자 번호를 값처럼 저장·계산·전달한다는 <strong>규칙</strong></td>
+</tr>
+<tr>
+<td>레지스터</td>
+<td>그 숫자를 올려두는 CPU 안의 <strong>빠른 손</strong></td>
+</tr>
+</tbody></table>
+</div><p>같은 포인터 <code>p</code>가 사는 곳:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">① CPU 레지스터   esi에 들어 있음     ← 9.1절
+② RAM 상자       [3]에 들어 있음     ← 8.2절
+③ 계산 도중에만 존재</code></pre>
+</div><p>C의 <code>int *p</code>는 “주소가 담긴 변수”다. 컴파일러가 여유 있으면 ①, 없으면 ②.</p>
+<p>1949년 맨체스터 <strong>B레지스터(인덱스 레지스터)</strong> 가 한 일:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">실제 주소 = 명령에 적힌 기본 번호 + B칸의 숫자
+명령 글자는 불변</code></pre>
+</div><p>자기수정이 하던 “빈칸 고치기”를, 실행 순간의 덧셈으로 바꿨다.</p>
+<p>레지스터가 없어도 포인터는 흉내 낼 수 있다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">; 메모리 간접. p는 RAM의 3호에 있다
+    mov  eax, [3]        ; 3호에서 호수를 꺼낸다
+    add  ebx, [eax]      ; 그 호수를 연다
+    add  dword [3], 4    ; 메모지 +4</code></pre>
+</div><p>전용 포인터 레지스터는 없다. 느릴 뿐이다.</p>
+<p>현대 x86:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">아무 범용 레지스터나
+그 숫자가 [칸]에 쓰이면 그것이 포인터</code></pre>
+</div><p>손이 곧 책갈피는 아니다.<br>손이 생기면서 책갈피라는 생각이 <strong>싸게, 안전하게</strong> 쓰이게 된 것이다.</p>
+<hr>
+<h1 id="12장-역사"><a href="#12장-역사" class="heading-anchor" aria-hidden="true">#</a> 12장. 역사</h1><p>층마다 발명자가 다르다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>층</th>
+<th>시기</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>기계</td>
+<td>1949 맨체스터</td>
+<td>인덱스 레지스터. 명령 수정 없이 주소 계산</td>
+</tr>
+<tr>
+<td>어셈블리</td>
+<td>1950년대</td>
+<td>주소는 숫자. 더하고 그 번호로 연다</td>
+</tr>
+<tr>
+<td>서구 밖 언어</td>
+<td>1955 Kateryna Yushchenko, Address</td>
+<td>간접 주소, 주소의 주소</td>
+</tr>
+<tr>
+<td>고급 언어 변수</td>
+<td>1964–67 Harold Lawson, PL/I</td>
+<td>IEEE가 “포인터 변수”로 공인한 줄기</td>
+</tr>
+<tr>
+<td>참조</td>
+<td>1965 C. A. R. Hoare</td>
+<td>레코드 참조, 널</td>
+</tr>
+<tr>
+<td>단어=주소</td>
+<td>1966–67 Martin Richards, BCPL</td>
+<td>모든 값이 기계 단어</td>
+</tr>
+<tr>
+<td>대중적 형태</td>
+<td>1971–73 Dennis Ritchie, C</td>
+<td><code>*</code>, <code>&amp;</code>, <code>p++</code></td>
+</tr>
+</tbody></table>
+</div><p>“한 사람이 포인터를 발명했다”는 말은 층을 섞는다.<br>Lawson은 <strong>범용 고급 언어의 포인터 변수</strong>로 가장 많이 적힌 이름이다.</p>
+<p>하드웨어 변경이 언어 도입의 필수였나? <strong>논리적으로는 아니다.</strong></p>
+<p>컴파일러는 메모리 간접으로, 최악의 경우 자기수정을 몰래 생성해서 <code>*p</code>를 구현할 수 있다.<br>하드웨어가 한 일은 가능하게 만든 것이 아니라 <strong>싸게, 안전하게, 자기수정 없이</strong> 만든 것이다.<br>C의 <code>*p++</code>가 PDP-11 주소 방식과 잘 맞았던 것은 유혹이지 필수 조건이 아니다.</p>
+<hr>
+<h1 id="13장-한-창고에-모두-올려놓기"><a href="#13장-한-창고에-모두-올려놓기" class="heading-anchor" aria-hidden="true">#</a> 13장. 한 창고에 모두 올려놓기</h1><p>같은 합산 루프를 네 층으로 보면 역할이 갈린다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">goto / jmp      다음에 펼칠 레시피 줄 (PC)
+포인터          다음에 열 재료 호수 (값)
+레지스터        그 호수를 쥐는 손 (위치)
+자기수정        레시피 글자 자체를 고침 (최후의 수단)</code></pre>
+</div><p>포인터가 없던 세계의 재앙 한 가지는 이제 이렇게 읽힌다.</p>
+<blockquote>
+<p>점프는 있었다. 같은 줄로 돌아올 수 있었다.<br>없던 것은 “이번엔 몇 호인가”를 명령 밖에 둘 자리였다.<br>그래서 명령 빈칸을 고쳤다.<br>포인터는 그 빈칸을 레시피에서 꺼내 메모지로 만든 것이다.</p>
+</blockquote>
+<p>공식:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">실행 순서     = PC의 갱신
+점프 / goto   = PC 덮어쓰기
+루프          = 뒷점프 + 변하는 상태 + 멈출 조건
+자기수정      = 상태를 명령 문장 속에 둔다
+포인터        = 상태를 주소 값으로 꺼낸다
+레지스터      = 그 값을 빠르게 쥐는 손</code></pre>
+</div><hr>
+<h1 id="부록-a-어셈블리-치트시트-이-노트-범위"><a href="#부록-a-어셈블리-치트시트-이-노트-범위" class="heading-anchor" aria-hidden="true">#</a> 부록 A. 어셈블리 치트시트 (이 노트 범위)</h1>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">text</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">mov  A, B        A ← B
+add  A, B        A ← A + B
+inc  A           A ← A + 1
+xor  A, A        A ← 0
+cmp  A, B        A와 B 비교. A는 안 바뀜
+jmp  L           PC ← L
+jne  L           같지 않으면 PC ← L
+[A]              A를 호수로 알고 RAM을 연다
+label:           이 주소의 별명
+dd   n           여기에 4바이트 정수 n을 배치
+; 주석</code></pre>
+</div><p>읽기 연습:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">asm</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-asm">add eax, [esi]     eax에, esi가 가리키는 상자 안을 더하라
+add esi, 4         esi가 쥐고 있는 호수를 4 올려라
+jne loop           방금 비교가 불일치면 loop로 가라</code></pre>
+</div><hr>
+<h1 id="부록-b-복습-사다리"><a href="#부록-b-복습-사다리" class="heading-anchor" aria-hidden="true">#</a> 부록 B. 복습 사다리</h1><p>이 순서로 소리 내어 답할 수 있으면 빈칸은 메워진 것이다.</p>
+<ol>
+<li>주소와 내용은 어떻게 다른가?</li>
+<li><code>eax</code>와 <code>[eax]</code>는 어떻게 다른가?</li>
+<li>실행 순서를 정하는 칸의 이름은 무엇이고, 기본 규칙은 무엇인가?</li>
+<li><code>jmp</code>는 그 칸에 무엇을 하는가? <code>goto</code>와의 관계는?</li>
+<li>루프를 부품 세 개로 분해하면?</li>
+<li>같은 줄로 점프해 돌아왔는데 아무 것도 안 변하면 어떤 프로그램이 되는가?</li>
+<li>“다른 상자를 연다”가 반드시 필요한 경우와 아닌 경우는?</li>
+<li>자기수정 루프에서 매 박자 실제로 다시 쓰이는 상자는 어느 것인가?</li>
+<li><code>add eax, [esi]</code>와 <code>add eax, [nums]</code>를 고치는 방식의 차이는?</li>
+<li>끝난 뒤 자기수정 레시피와 포인터 레시피가 남기는 흔적의 차이는?</li>
+<li>포인터와 레지스터를 한 문장씩으로 구별하면?</li>
+<li>언어에 포인터를 넣는 데 새 CPU가 왜 필수가 아닌가?</li>
+<li><code>goto</code>, 포인터, 자기수정이 각각 건드리는 층은 무엇인가?</li>
+</ol>
+<hr>
+<h1 id="부록-c-더-읽을거리-층별"><a href="#부록-c-더-읽을거리-층별" class="heading-anchor" aria-hidden="true">#</a> 부록 C. 더 읽을거리 (층별)</h1><ul>
+<li>인덱스 레지스터 / EDSAC·맨체스터: 저장 프로그램 초기 역사</li>
+<li>Harold Lawson, <em>PL/I List Processing</em> (CACM, 1967)</li>
+<li>IEEE Computer Pioneer Award 설명문 (pointer variable)</li>
+<li>Dennis Ritchie, <em>The Development of the C Language</em></li>
+<li>Edsger Dijkstra, <em>Go To Statement Considered Harmful</em> (1968)</li>
+<li>Intel SDM의 Self-Modifying Code 절, ARM의 캐시 유지(<code>ic</code>, <code>dsb</code>, <code>isb</code>)</li>
+</ul>
+<hr>
+<p><em>이 노트는 “포인터가 없던 세상의 재앙 / 자기수정 코드 / 점프와 루프 / PC / 포인터와 레지스터 / goto / 역사” 대화를, 어셈블리 제로 베이스 해설을 붙여 한 강의로 재구성한 것이다.</em></p>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
