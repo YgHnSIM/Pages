@@ -364,10 +364,30 @@
       color: var(--text-muted);
     }
 
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
     .content p {
       margin-top: 0;
       margin-bottom: 1.4em;
-      text-align: justify;
+      text-align: start;
     }
 
     .content a {
@@ -453,6 +473,10 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
 
     .copy-btn {
       display: inline-flex;
@@ -470,6 +494,15 @@
 
     .copy-btn:hover {
       background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
     }
 
     .copy-btn.copied {
@@ -603,6 +636,7 @@
 
     .sim-btn-group {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 6px;
     }
@@ -620,6 +654,23 @@
       align-items: center;
       gap: 4px;
       transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
     }
 
     .sim-btn:hover:not(:disabled) {
@@ -800,6 +851,14 @@
       100% { transform: scale(1); }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
@@ -936,6 +995,44 @@
       font-weight: 600;
     }
 
+    @media (min-width: 1200px) {
+      .toc-drawer {
+        position: fixed;
+        top: 74px;
+        left: max(8px, calc((100vw - 820px) / 2 - 208px));
+        right: auto;
+        width: 196px;
+        max-width: calc((100vw - 852px) / 2);
+        height: calc(100vh - 74px);
+        max-height: calc(100vh - 74px);
+        box-shadow: none;
+        border-left: none;
+        border-right: 1px solid var(--border);
+        z-index: 25;
+        background: var(--bg-page);
+      }
+      .toc-drawer,
+      .toc-drawer.active {
+        right: auto;
+      }
+      .drawer-overlay,
+      .drawer-overlay.active,
+      .toc-close-btn,
+      #toc-toggle {
+        display: none !important;
+      }
+      .toc-drawer-header {
+        padding: 12px 14px 8px;
+        border-bottom: none;
+      }
+      .toc-drawer-body {
+        padding: 0 10px 32px 14px;
+      }
+      .toc-drawer-body li.depth-2 { padding-left: 0; }
+      .toc-drawer-body li.depth-3 { padding-left: 10px; }
+      .toc-drawer-body li.depth-4 { padding-left: 18px; }
+    }
+
     /* Floating Back to Top */
     #back-to-top {
       position: fixed;
@@ -997,7 +1094,7 @@
       <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
         <span id="theme-icon">🌓</span>
       </button>
-      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기">
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
         <span>목차</span>
       </button>
@@ -1125,21 +1222,31 @@
     const drawerOverlay = document.getElementById('drawer-overlay');
     const tocClose = document.getElementById('toc-close');
 
+    function isDesktopToc() {
+      return window.matchMedia('(min-width: 1200px)').matches;
+    }
+
     function openDrawer() {
+      if (isDesktopToc()) return;
       if (tocDrawer) tocDrawer.classList.add('active');
       if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     }
 
     function closeDrawer() {
       if (tocDrawer) tocDrawer.classList.remove('active');
       if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     }
 
     if (tocToggle) tocToggle.addEventListener('click', openDrawer);
     if (tocClose) tocClose.addEventListener('click', closeDrawer);
     if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
 
     document.querySelectorAll('.toc-link').forEach(link => {
       link.addEventListener('click', () => {
@@ -1173,6 +1280,13 @@
       if (!simContainer) return;
 
       const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
         {
           beat: 1, pc: 6, nextPc: 7,
           action: "20호 상자 안의 값(7)을 합계에 더함",
@@ -1218,6 +1332,13 @@
       ];
 
       const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
         {
           beat: 1, pc: 6, nextPc: 7,
           action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
@@ -1277,28 +1398,38 @@
       const elPc = document.getElementById('sim-val-pc');
       const elNextPc = document.getElementById('sim-val-nextpc');
       const elAction = document.getElementById('sim-val-action');
-      const elSum = document.getElementById('sim-val-sum');
-      const elMemo = document.getElementById('sim-val-memo');
-      const elCmd6 = document.getElementById('sim-val-cmd6');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
       const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
 
       function updateUI() {
         const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
         const data = steps[currentStep];
+        if (!data) return;
 
-        elBeat.textContent = `박자 ${data.beat} / ${steps.length}`;
-        elPc.textContent = `${data.pc}호`;
-        elNextPc.textContent = `${data.nextPc}호`;
-        elAction.textContent = data.action;
-        elSum.textContent = data.sum;
-        elMemo.textContent = data.memo;
-        elCmd6.textContent = data.cmd6;
-        elDesc.innerHTML = data.desc;
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
 
-        btnPrev.disabled = currentStep === 0;
-        btnNext.disabled = currentStep === steps.length - 1;
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
 
-        // Reset memory row highlight classes
         document.querySelectorAll('.sim-mem-row').forEach(row => {
           row.classList.remove('pc-target', 'modified', 'read-target');
         });
@@ -1316,13 +1447,10 @@
           if (r) r.classList.add('modified');
         }
 
-        // Dynamic memory row texts
         const row6Val = document.getElementById('sim-mem-6-val');
         if (row6Val) row6Val.textContent = data.cmd6;
-
         const row3Val = document.getElementById('sim-mem-3-val');
         if (row3Val) row3Val.textContent = data.memo;
-
         const row4Val = document.getElementById('sim-mem-4-val');
         if (row4Val) row4Val.textContent = data.sum;
       }
@@ -1348,15 +1476,25 @@
         }, 1600);
       }
 
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
       if (tabSmc) {
         tabSmc.addEventListener('click', () => {
           if (currentMode === 'smc') return;
           stopAutoPlay();
-          currentMode = 'smc';
-          tabSmc.classList.add('active');
-          tabPtr.classList.remove('active');
-          const memoRow = document.getElementById('mem-3');
-          if (memoRow) memoRow.style.opacity = '0.4';
+          applyModeChrome('smc');
           currentStep = 0;
           updateUI();
         });
@@ -1366,11 +1504,7 @@
         tabPtr.addEventListener('click', () => {
           if (currentMode === 'ptr') return;
           stopAutoPlay();
-          currentMode = 'ptr';
-          tabPtr.classList.add('active');
-          tabSmc.classList.remove('active');
-          const memoRow = document.getElementById('mem-3');
-          if (memoRow) memoRow.style.opacity = '1';
+          applyModeChrome('ptr');
           currentStep = 0;
           updateUI();
         });
@@ -1418,9 +1552,9 @@
         });
       }
 
-      // Initial state
-      const initialMemoRow = document.getElementById('mem-3');
-      if (initialMemoRow) initialMemoRow.style.opacity = '0.4';
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
       updateUI();
     }
 

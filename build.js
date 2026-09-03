@@ -84,9 +84,33 @@ function slugify(text) {
 /**
  * Custom Markdown to HTML Compiler with TOC extraction
  */
-function compileMarkdown(markdown) {
+function isCommandHeading(text) {
+  const t = String(text || '').replace(/`/g, '').replace(/<[^>]+>/g, '').trim();
+  return /^(mov|add|inc|cmp|jmp|jne(\s*\/.*)?|라벨|nop)\b/i.test(t);
+}
+
+function stripTocLabel(text) {
+  return String(text || '').replace(/<[^>]+>/g, '').replace(/`/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function isGenericLang(lang) {
+  const l = (lang || '').toLowerCase().trim();
+  return !l || l === 'text' || l === 'ascii' || l === 'txt' || l === 'plain' || l === 'code';
+}
+
+function isTrivialDiagram(text, lang) {
+  if (!isGenericLang(lang)) return false;
+  const lines = String(text || '').replace(/\s+$/, '').split(/\n/).filter(Boolean);
+  return lines.length <= 1;
+}
+
+function compileMarkdown(markdown, meta = {}) {
   const headings = [];
   const headingCounts = {};
+  const pageTitle = stripTocLabel(meta.title || '');
+  const pageSubtitle = stripTocLabel(meta.subtitle || '');
+  let skippedTitle = false;
+  let skippedSubtitle = false;
 
   // Protect Math blocks from markdown parsers
   const mathPlaceholders = [];
@@ -116,11 +140,24 @@ function compileMarkdown(markdown) {
 
   const renderer = new marked.Renderer();
 
-  // Custom Headings
+  // Custom Headings.
+  // Card already renders frontmatter title as the only h1. Skip a matching
+  // leading title/subtitle, then shift remaining markdown levels down one
+  // so "# 1장" / "# 부록" become h2 and "4.1" sections become h3.
   renderer.heading = function({ text, depth }) {
-    const cleanText = text.replace(/<[^>]+>/g, '');
+    const cleanText = stripTocLabel(text);
+    if (!skippedTitle && depth === 1 && pageTitle && cleanText === pageTitle) {
+      skippedTitle = true;
+      return '';
+    }
+    if (!skippedSubtitle && pageSubtitle && cleanText === pageSubtitle) {
+      skippedSubtitle = true;
+      return '';
+    }
+
+    const htmlDepth = depth === 1 ? 2 : depth;
     let slug = slugify(cleanText) || `section-${headings.length + 1}`;
-    
+
     if (headingCounts[slug]) {
       headingCounts[slug]++;
       slug = `${slug}-${headingCounts[slug]}`;
@@ -128,23 +165,33 @@ function compileMarkdown(markdown) {
       headingCounts[slug] = 1;
     }
 
-    if (depth >= 1 && depth <= 4) {
-      headings.push({ text: cleanText, depth, id: slug });
+    if (htmlDepth >= 2 && htmlDepth <= 3 && !isCommandHeading(cleanText)) {
+      headings.push({ text: cleanText, depth: htmlDepth, id: slug });
     }
 
-    return `<h${depth} id="${slug}"><a href="#${slug}" class="heading-anchor" aria-hidden="true">#</a> ${text}</h${depth}>`;
+    return `<h${htmlDepth} id="${slug}"><a href="#${slug}" class="heading-anchor" aria-hidden="true">#</a> ${text}</h${htmlDepth}>`;
   };
 
   // Custom Code blocks
   renderer.code = function({ text, lang }) {
-    const displayLang = lang || 'code';
-    return `
-<div class="code-block-wrapper">
+    const generic = isGenericLang(lang);
+    const displayLang = generic ? '평문' : lang;
+    const langClass = generic ? 'code-lang lang-generic' : 'code-lang';
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const copyBtn = isTrivialDiagram(text, lang)
+      ? ''
+      : '<button class="copy-btn" type="button" aria-label="코드 복사">복사</button>';
+    const header = generic && !copyBtn
+      ? ''
+      : `
   <div class="code-header">
-    <span class="code-lang">${displayLang}</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-${displayLang}">${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+    <span class="${langClass}">${displayLang}</span>
+    ${copyBtn}
+  </div>`;
+    const codeClass = generic ? 'language-text' : `language-${lang}`;
+    return `
+<div class="code-block-wrapper">${header}
+  <pre><code class="${codeClass}">${escaped}</code></pre>
 </div>`;
   };
 
@@ -180,7 +227,7 @@ function renderTOC(headings) {
 
   let html = '<ul class="toc-list">';
   headings.forEach(h => {
-    html += `<li class="depth-${h.depth}"><a href="#${h.id}" class="toc-link">${h.text}</a></li>`;
+    html += `<li class="depth-${h.depth}"><a href="#${h.id}" class="toc-link">${stripTocLabel(h.text)}</a></li>`;
   });
   html += '</ul>';
   return html;
@@ -254,7 +301,7 @@ async function build() {
     tags.forEach(t => allTagsSet.add(t));
 
     const readingTime = estimateReadingTime(content);
-    const { html: contentHtml, headings } = compileMarkdown(content);
+    const { html: contentHtml, headings } = compileMarkdown(content, { title, subtitle });
     const tocHtml = renderTOC(headings);
 
     const outFileName = `${slug}.html`;
