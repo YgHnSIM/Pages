@@ -995,44 +995,6 @@
       font-weight: 600;
     }
 
-    @media (min-width: 1200px) {
-      .toc-drawer {
-        position: fixed;
-        top: 74px;
-        left: max(8px, calc((100vw - 820px) / 2 - 208px));
-        right: auto;
-        width: 196px;
-        max-width: calc((100vw - 852px) / 2);
-        height: calc(100vh - 74px);
-        max-height: calc(100vh - 74px);
-        box-shadow: none;
-        border-left: none;
-        border-right: 1px solid var(--border);
-        z-index: 25;
-        background: var(--bg-page);
-      }
-      .toc-drawer,
-      .toc-drawer.active {
-        right: auto;
-      }
-      .drawer-overlay,
-      .drawer-overlay.active,
-      .toc-close-btn,
-      #toc-toggle {
-        display: none !important;
-      }
-      .toc-drawer-header {
-        padding: 12px 14px 8px;
-        border-bottom: none;
-      }
-      .toc-drawer-body {
-        padding: 0 10px 32px 14px;
-      }
-      .toc-drawer-body li.depth-2 { padding-left: 0; }
-      .toc-drawer-body li.depth-3 { padding-left: 10px; }
-      .toc-drawer-body li.depth-4 { padding-left: 18px; }
-    }
-
     /* Floating Back to Top */
     #back-to-top {
       position: fixed;
@@ -2318,12 +2280,7 @@ jne loop           방금 비교가 불일치면 loop로 가라</code></pre>
     const drawerOverlay = document.getElementById('drawer-overlay');
     const tocClose = document.getElementById('toc-close');
 
-    function isDesktopToc() {
-      return window.matchMedia('(min-width: 1200px)').matches;
-    }
-
     function openDrawer() {
-      if (isDesktopToc()) return;
       if (tocDrawer) tocDrawer.classList.add('active');
       if (drawerOverlay) drawerOverlay.classList.add('active');
       if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
