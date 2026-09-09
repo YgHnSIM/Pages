@@ -275,12 +275,36 @@ async function build() {
     return;
   }
 
-  const files = fs.readdirSync(SOURCES_DIR).filter(f => f.endsWith('.md'));
+  function collectMarkdownJobs() {
+    const jobs = [];
+    const rootFiles = fs.readdirSync(SOURCES_DIR).filter(f => f.endsWith('.md'));
+    for (const file of rootFiles) {
+      jobs.push({ file, relDir: '', preview: false });
+    }
+    const previewDir = path.join(SOURCES_DIR, 'preview');
+    if (fs.existsSync(previewDir) && fs.statSync(previewDir).isDirectory()) {
+      const previewFiles = fs.readdirSync(previewDir).filter(f => f.endsWith('.md'));
+      for (const file of previewFiles) {
+        jobs.push({ file, relDir: 'preview', preview: true });
+      }
+    }
+    return jobs;
+  }
+
+  function truthyFrontmatter(val) {
+    if (val === true) return true;
+    const s = String(val ?? '').trim().toLowerCase();
+    return s === 'true' || s === 'yes' || s === '1';
+  }
+
+  const jobs = collectMarkdownJobs();
   const articles = [];
   const allTagsSet = new Set();
 
-  for (const file of files) {
-    const filePath = path.join(SOURCES_DIR, file);
+  for (const job of jobs) {
+    const filePath = job.relDir
+      ? path.join(SOURCES_DIR, job.relDir, job.file)
+      : path.join(SOURCES_DIR, job.file);
     const raw = fs.readFileSync(filePath, 'utf-8');
     const { data, content } = parseFrontMatter(raw);
 
@@ -288,26 +312,37 @@ async function build() {
     const stats = fs.statSync(filePath);
     const fallbackDate = stats.mtime.toISOString().split('T')[0];
     const firstH1Match = content.match(/^#\s+(.+)$/m);
-    const defaultTitle = firstH1Match ? firstH1Match[1].trim() : path.basename(file, '.md');
+    const defaultTitle = firstH1Match ? firstH1Match[1].trim() : path.basename(job.file, '.md');
 
     const firstParagraphMatch = content.replace(/^#+.*$/gm, '').replace(/```[\s\S]*?```/g, '').trim().match(/^([^\n]+)/);
     const defaultSummary = firstParagraphMatch ? firstParagraphMatch[1].slice(0, 140) + '...' : '문서 내용 미리보기';
 
-    const slug = data.slug || path.basename(file, '.md').replace(/\s+/g, '_');
+    const slug = data.slug || path.basename(job.file, '.md').replace(/\s+/g, '_');
     const title = data.title || defaultTitle;
     const subtitle = data.subtitle || '';
     const date = data.date || fallbackDate;
     const author = data.author || '';
     const summary = data.summary || defaultSummary;
     const tags = Array.isArray(data.tags) ? data.tags : (data.tags ? [data.tags] : []);
-    tags.forEach(t => allTagsSet.add(t));
+    const unlisted = job.preview || truthyFrontmatter(data.unlisted) || truthyFrontmatter(data.draft);
+    const isPreview = job.preview;
 
     const readingTime = estimateReadingTime(content);
     const { html: contentHtml, headings } = compileMarkdown(content, { title, subtitle });
     const tocHtml = renderTOC(headings);
 
+    const outSubdir = isPreview ? 'preview' : '';
+    const outDir = outSubdir ? path.join(OUTPUT_DIR, outSubdir) : OUTPUT_DIR;
+    if (!fs.existsSync(outDir)) {
+      fs.mkdirSync(outDir, { recursive: true });
+    }
     const outFileName = `${slug}.html`;
-    const outFilePath = path.join(OUTPUT_DIR, outFileName);
+    const outFilePath = path.join(outDir, outFileName);
+    const publicUrl = outSubdir ? `${outSubdir}/${outFileName}` : outFileName;
+    const homeUrl = isPreview ? '../index.html' : 'index.html';
+    const robotsMeta = unlisted
+      ? '<meta name="robots" content="noindex, nofollow">'
+      : '';
 
     const articleHtml = interpolate(articleTemplate, {
       title,
@@ -318,23 +353,29 @@ async function build() {
       tags,
       reading_time: readingTime,
       toc_html: tocHtml,
-      content: contentHtml
+      content: contentHtml,
+      home_url: homeUrl,
+      robots_meta: robotsMeta
     });
 
     fs.writeFileSync(outFilePath, articleHtml, 'utf-8');
-    console.log(`  ✓ Rendered article: ${outFileName} (${title})`);
+    const label = unlisted ? (isPreview ? 'preview' : 'unlisted') : 'article';
+    console.log(`  ✓ Rendered ${label}: ${publicUrl} (${title})`);
 
-    articles.push({
-      title,
-      subtitle,
-      date,
-      summary,
-      tags,
-      tag_string: tags.join(' '),
-      reading_time: readingTime,
-      url: outFileName,
-      _timestamp: new Date(date).getTime() || 0
-    });
+    if (!unlisted) {
+      tags.forEach(t => allTagsSet.add(t));
+      articles.push({
+        title,
+        subtitle,
+        date,
+        summary,
+        tags,
+        tag_string: tags.join(' '),
+        reading_time: readingTime,
+        url: publicUrl,
+        _timestamp: new Date(date).getTime() || 0
+      });
+    }
   }
 
   // Include special rich legacy articles (e.g., cpu_dram_memory_interface.html)
