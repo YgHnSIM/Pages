@@ -1359,7 +1359,7 @@
 </tr>
 </tbody></table>
 </div><p>레지스터는 창고 호수가 아니라 <strong>CPU 안의 별도 칸</strong>이다.<br><code>eax</code>에 7이 있다는 것은 “합계 상자가 7”과 비슷하지만, 훨씬 빨리 읽고 쓴다.</p>
-<h2 id="43-대괄호-하나가-전부다"><a href="#43-대괄호-하나가-전부다" class="heading-anchor" aria-hidden="true">#</a> 4.3 대괄호 `[]` 하나가 전부다</h2><p>x86 어셈블리에서 가장 중요한 기호는 대괄호다.</p>
+<h2 id="43-대괄호-하나가-전부다"><a href="#43-대괄호-하나가-전부다" class="heading-anchor" aria-hidden="true">#</a> 4.3 대괄호 <code>[]</code> 하나가 전부다</h2><p>x86 어셈블리에서 가장 중요한 기호는 대괄호다.</p>
 
 <div class="code-block-wrapper">
   <div class="code-header">
@@ -1379,7 +1379,7 @@
 [eax]   = 그 호수 문을 열고 본 내용</code></pre>
 </div><p>이 한 겹이 포인터의 기계어 형태다.</p>
 <h2 id="44-이-노트에서-쓰는-명령-여덟-개"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="heading-anchor" aria-hidden="true">#</a> 4.4 이 노트에서 쓰는 명령 여덟 개</h2><p>문법은 Intel 식(목적지가 왼쪽)이다.</p>
-<h3 id="mov-옮겨-담기"><a href="#mov-옮겨-담기" class="heading-anchor" aria-hidden="true">#</a> `mov` — 옮겨 담기</h3>
+<h3 id="mov-옮겨-담기"><a href="#mov-옮겨-담기" class="heading-anchor" aria-hidden="true">#</a> <code>mov</code> — 옮겨 담기</h3>
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
@@ -1390,7 +1390,7 @@ mov eax, esi        ; esi에 있는 숫자를 eax에 복사
 mov eax, [esi]      ; esi가 가리키는 RAM 상자 안을 eax에 복사
 mov [esi], eax      ; eax의 숫자를 esi가 가리키는 RAM 상자에 저장</code></pre>
 </div><p><code>;</code> 오른쪽은 주석이다. CPU는 읽지 않는다.</p>
-<h3 id="add-더하기"><a href="#add-더하기" class="heading-anchor" aria-hidden="true">#</a> `add` — 더하기</h3>
+<h3 id="add-더하기"><a href="#add-더하기" class="heading-anchor" aria-hidden="true">#</a> <code>add</code> — 더하기</h3>
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
@@ -1400,7 +1400,7 @@ mov [esi], eax      ; eax의 숫자를 esi가 가리키는 RAM 상자에 저장<
 add eax, [esi]      ; eax ← eax + (esi가 가리키는 상자 안)
 add dword [label], 4 ; label 위치의 4바이트 숫자에 4를 더함</code></pre>
 </div><p><code>dword</code>는 “4바이트짜리 숫자로 취급하라”는 표시다.<br>지금은 “상자 한 칸이 정수 하나”라고만 기억하면 된다.</p>
-<h3 id="inc-1-증가"><a href="#inc-1-증가" class="heading-anchor" aria-hidden="true">#</a> `inc` — 1 증가</h3>
+<h3 id="inc-1-증가"><a href="#inc-1-증가" class="heading-anchor" aria-hidden="true">#</a> <code>inc</code> — 1 증가</h3>
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
@@ -1409,7 +1409,7 @@ add dword [label], 4 ; label 위치의 4바이트 숫자에 4를 더함</code></
   <pre><code class="language-asm">inc esi             ; esi ← esi + 1
 inc dword [box]     ; box 상자 안 ← 그 값 + 1</code></pre>
 </div><p><code>add esi, 1</code>과 같다. 짧은 표기다.</p>
-<h3 id="cmp-비교만-하고-기억"><a href="#cmp-비교만-하고-기억" class="heading-anchor" aria-hidden="true">#</a> `cmp` — 비교만 하고 기억</h3>
+<h3 id="cmp-비교만-하고-기억"><a href="#cmp-비교만-하고-기억" class="heading-anchor" aria-hidden="true">#</a> <code>cmp</code> — 비교만 하고 기억</h3>
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
@@ -1417,14 +1417,14 @@ inc dword [box]     ; box 상자 안 ← 그 값 + 1</code></pre>
   </div>
   <pre><code class="language-asm">cmp esi, 22         ; esi와 22를 비교한다. esi 값은 안 바뀐다.</code></pre>
 </div><p>비교 결과는 CPU 안의 <strong>플래그</strong>(맞다/작다/같다 같은 작은 표시)에만 남는다.<br>바로 다음 점프 명령이 그 표시를 보고 뛸지 말지 정한다.</p>
-<h3 id="jmp-무조건-점프"><a href="#jmp-무조건-점프" class="heading-anchor" aria-hidden="true">#</a> `jmp` — 무조건 점프</h3>
+<h3 id="jmp-무조건-점프"><a href="#jmp-무조건-점프" class="heading-anchor" aria-hidden="true">#</a> <code>jmp</code> — 무조건 점프</h3>
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-asm">jmp here            ; PC를 here라는 이름 위치로 덮어쓴다</code></pre>
-</div><h3 id="jne-jl-jb-조건부-점프"><a href="#jne-jl-jb-조건부-점프" class="heading-anchor" aria-hidden="true">#</a> `jne` / `jl` / `jb` — 조건부 점프</h3>
+</div><h3 id="jne-jl-jb-조건부-점프"><a href="#jne-jl-jb-조건부-점프" class="heading-anchor" aria-hidden="true">#</a> <code>jne</code> / <code>jl</code> / <code>jb</code> — 조건부 점프</h3>
 <div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">asm</span>
@@ -1444,7 +1444,7 @@ jb  here            ; 주소처럼 “아래면” here로 (unsigned)</code></pr
     add eax, [esi]
     jmp here</code></pre>
 </div><p><code>here:</code>는 명령이 아니다.<br>“이 줄이 놓인 주소에 <code>here</code>라는 이름을 붙인다.”<br>어셈블러가 실제 숫자 주소로 바꾼다. 사람이 6호, 7호를 외우지 않아도 되게 한다.</p>
-<h3 id="nop-아무것도-하지-않음"><a href="#nop-아무것도-하지-않음" class="heading-anchor" aria-hidden="true">#</a> `nop` — 아무것도 하지 않음</h3><p>한 칸을 차지하고 PC만 다음으로 민다. 자리 메우기나 패치 지점에 쓴다.</p>
+<h3 id="nop-아무것도-하지-않음"><a href="#nop-아무것도-하지-않음" class="heading-anchor" aria-hidden="true">#</a> <code>nop</code> — 아무것도 하지 않음</h3><p>한 칸을 차지하고 PC만 다음으로 민다. 자리 메우기나 패치 지점에 쓴다.</p>
 <hr>
 <h2 id="5장-점프와-goto"><a href="#5장-점프와-goto" class="heading-anchor" aria-hidden="true">#</a> 5장. 점프와 goto</h2><p>점프는 PC를 덮어쓰는 일이다.</p>
 

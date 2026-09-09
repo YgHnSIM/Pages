@@ -144,8 +144,10 @@ function compileMarkdown(markdown, meta = {}) {
   // Card already renders frontmatter title as the only h1. Skip a matching
   // leading title/subtitle, then shift remaining markdown levels down one
   // so "# 1장" / "# 부록" become h2 and "4.1" sections become h3.
-  renderer.heading = function({ text, depth }) {
-    const cleanText = stripTocLabel(text);
+  renderer.heading = function({ text, depth, tokens }) {
+    // Parse inline markdown (**bold**, etc.) so Clean Bold headings render as <strong>.
+    const inlineHtml = tokens ? this.parser.parseInline(tokens) : text;
+    const cleanText = stripTocLabel(inlineHtml);
     if (!skippedTitle && depth === 1 && pageTitle && cleanText === pageTitle) {
       skippedTitle = true;
       return '';
@@ -169,7 +171,7 @@ function compileMarkdown(markdown, meta = {}) {
       headings.push({ text: cleanText, depth: htmlDepth, id: slug });
     }
 
-    return `<h${htmlDepth} id="${slug}"><a href="#${slug}" class="heading-anchor" aria-hidden="true">#</a> ${text}</h${htmlDepth}>`;
+    return `<h${htmlDepth} id="${slug}"><a href="#${slug}" class="heading-anchor" aria-hidden="true">#</a> ${inlineHtml}</h${htmlDepth}>`;
   };
 
   // Custom Code blocks
