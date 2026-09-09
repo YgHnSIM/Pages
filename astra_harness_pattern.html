@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>AI 점수는 왜 같은 모델인데도 갈릴까</title>
-  <meta name="description" content="GPT-6 Astra의 ARC-AGI-3 두 점수(표준 하네스 vs Provider Adapter)를 출발점으로, 코딩을 모르는 사람도 ‘같은 엔진·다른 포장’이 왜 성적표를 바꾸는지, 기억(상태) 연속성과 번들·오픈 선택의 의미를 평문으로 정리한다.">
+  <meta name="description" content="GPT-6 Astra의 ARC-AGI-3 두 점수(표준 하네스 vs Provider Adapter)를 출발점으로, 같은 엔진이 다른 실행 환경에서 왜 다른 성적표를 내는지, 기억(상태) 연속성과 번들·오픈 선택의 의미를 평문으로 정리한다.">
   
   
   <!-- Pretendard Web Font -->
@@ -1156,7 +1156,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#코딩을-몰라도-이-이야기가-중요한-이유" class="toc-link">코딩을 몰라도 이 이야기가 중요한 이유</a></li><li class="depth-2"><a href="#기억할-한-장의-그림-같은-엔진-다른-포장-다른-점수" class="toc-link">기억할 한 장의 그림: 같은 엔진, 다른 포장 → 다른 점수</a></li><li class="depth-2"><a href="#astra에서-무슨-일이-있었나" class="toc-link">Astra에서 무슨 일이 있었나</a></li><li class="depth-2"><a href="#핵심-통찰-1-점수는-모델-이름만의-성적표가-아니다" class="toc-link">핵심 통찰 1: 점수는 모델 이름만의 성적표가 아니다</a></li><li class="depth-2"><a href="#핵심-통찰-2-갈리는-축은-오래-생각보다-기억-이어-주기" class="toc-link">핵심 통찰 2: 갈리는 축은 ‘오래 생각’보다 ‘기억 이어 주기’</a></li><li class="depth-2"><a href="#역사에서도-비슷한-리듬이-있었다" class="toc-link">역사에서도 비슷한 리듬이 있었다</a></li><li class="depth-3"><a href="#os-같은-칩-다른-운영체제" class="toc-link">OS: 같은 칩, 다른 운영체제</a></li><li class="depth-3"><a href="#앱-스토어런타임-같은-코드-다른-실행기" class="toc-link">앱 스토어·런타임: 같은 코드, 다른 실행기</a></li><li class="depth-3"><a href="#클라우드-같은-서버-다른-매니지드-서비스" class="toc-link">클라우드: 같은 서버, 다른 매니지드 서비스</a></li><li class="depth-3"><a href="#지금-모델-위-에이전트-하네스" class="toc-link">지금: 모델 위 에이전트 하네스</a></li><li class="depth-2"><a href="#번들-vs-오픈-쇼핑-선택으로-보면" class="toc-link">번들 vs 오픈: 쇼핑 선택으로 보면</a></li><li class="depth-2"><a href="#회사팀이-던져-볼-실무-질문" class="toc-link">회사·팀이 던져 볼 실무 질문</a></li><li class="depth-2"><a href="#한-줄-요약" class="toc-link">한 줄 요약</a></li><li class="depth-2"><a href="#더-읽어-보기" class="toc-link">더 읽어 보기</a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#같은-모델-갈린-점수" class="toc-link">같은 모델, 갈린 점수</a></li><li class="depth-2"><a href="#점수는-모델-환경-시험-규칙이다" class="toc-link">점수는 ‘모델 × 환경 × 시험 규칙’이다</a></li><li class="depth-2"><a href="#갈리는-축은-오래-생각보다-기억-이어-주기" class="toc-link">갈리는 축은 ‘오래 생각’보다 ‘기억 이어 주기’</a></li><li class="depth-2"><a href="#선택지는-번들-vs-오픈" class="toc-link">선택지는 번들 vs 오픈</a></li><li class="depth-2"><a href="#회의에서-물을-질문" class="toc-link">회의에서 물을 질문</a></li><li class="depth-2"><a href="#한-줄-요약" class="toc-link">한 줄 요약</a></li><li class="depth-2"><a href="#더-읽어-보기" class="toc-link">더 읽어 보기</a></li></ul>
     </div>
   </aside>
 
@@ -1166,7 +1166,7 @@
       <header class="article-header">
         <div class="article-meta">
           <span class="meta-badge">📅 2026-09-09</span>
-          <span class="meta-badge">⏱️ 약 18분</span>
+          <span class="meta-badge">⏱️ 약 14분</span>
           <span class="meta-badge">✍️ Pages 입문 해설</span>
         </div>
         <h1 class="article-title">AI 점수는 왜 같은 모델인데도 갈릴까</h1>
@@ -1191,13 +1191,11 @@
         <blockquote>
 <p>원글: <a href="https://turingpost.co.kr/p/openai-astra">OpenAI의 Astra가 진짜 팔고 있는 건 무엇인가</a> (Turing Post Korea, 2026-09-08)</p>
 </blockquote>
-<p><strong>모델 이름 한 줄이 곧 실제 성적표가 아니다.</strong> 같은 엔진이라도 어떻게 감싸서 돌리느냐에 따라 관측 성능이 크게 달라질 수 있습니다.</p>
+<p>뉴스에 나오는 “이 모델 ○○점”만 보고 예산과 벤더를 고르고 싶을 때, <strong>GPT-6 Astra</strong> 사례는 한 번 멈춰 서게 합니다. <strong>모델 이름 한 줄이 곧 실제 성적표가 아닙니다.</strong> 같은 엔진이라도 어떻게 감싸서 돌리느냐에 따라 관측 성능이 크게 달라질 수 있습니다.</p>
 <hr>
-<h2 id="코딩을-몰라도-이-이야기가-중요한-이유"><a href="#코딩을-몰라도-이-이야기가-중요한-이유" class="heading-anchor" aria-hidden="true">#</a> 코딩을 몰라도 이 이야기가 중요한 이유</h2><p>요즘 AI 뉴스에는 “이 모델이 ○○점에서 1등” 같은 숫자가 자주 나옵니다. 그 숫자를 보고 예산·벤더·도입 여부를 판단하고 싶은 마음은 자연스럽습니다. 그런데 2026년 Turing Post Korea가 다룬 <strong>GPT-6 Astra</strong> 사례는, 그 습관을 잠시 멈추게 합니다.</p>
-<p>같은 모델인데도 측정 환경이 바뀌자 점수가 크게 갈렸습니다. 기사와 ARC Prize 쪽 맥락을 함께 읽으면, 그 격차 전부를 “OpenAI만의 비밀 기술”로 단정할 수는 없습니다. 다만 방향은 분명합니다. AI를 고를 때는 <strong>엔진</strong>(모델)만 보지 말고, 그 엔진을 돌리는 <strong>실행 환경</strong>(하네스)—특히 <strong>기억을 어떻게 이어 주는지</strong>—까지 함께 봐야 합니다.</p>
-<hr>
-<h2 id="기억할-한-장의-그림-같은-엔진-다른-포장-다른-점수"><a href="#기억할-한-장의-그림-같은-엔진-다른-포장-다른-점수" class="heading-anchor" aria-hidden="true">#</a> 기억할 한 장의 그림: 같은 엔진, 다른 포장 → 다른 점수</h2><p>자동차에 비유하면 쉽습니다. <strong>엔진</strong>은 같고, <strong>운전석·계기판·내비게이션·자동 주차 보조</strong>만 다른 두 차를 생각해 보세요. 직선 코스에서는 엔진 스펙이 비슷해 보여도, 복잡한 도심·장거리·야간 주행에서는 “어떻게 감싸 주느냐”가 체감 성능을 바꿉니다.</p>
-<p>기사에서 말하는 “<strong>표준 하네스 62.7% vs. OpenAI Provider Adapter 99.9%</strong>”라는 두 점수는, <strong>모델 이름만의 IQ 테스트</strong>가 아니라 <strong>‘모델 + 실행 환경’의 성적표</strong>에 가깝습니다.</p>
+<h2 id="같은-모델-갈린-점수"><a href="#같은-모델-갈린-점수" class="heading-anchor" aria-hidden="true">#</a> 같은 모델, 갈린 점수</h2><p>ARC-AGI-3 같은 벤치마크는 AI가 여러 단계로 퍼즐·과제를 푸는 능력을 잽니다. “한 번에 정답 맞히기”보다 탐색·시도·수정이 이어지는 시험에 가깝습니다.</p>
+<p>2026년 Turing Post Korea 기사가 주목한 장면은 이렇습니다. <strong>같은 Astra</strong>를 두 실행 환경에서 돌렸더니 점수가 크게 갈렸습니다. 하나는 공정 비교를 위해 기능을 줄인 <strong>표준 하네스</strong>, 다른 하나는 OpenAI 쪽 <strong>Provider Adapter</strong>(제품형 실행 환경)입니다. 기사가 말하는 대비는 “<strong>표준 하네스 62.7% vs. OpenAI Provider Adapter 99.9%</strong>”입니다.</p>
+<p>자동차로 말하면 <strong>엔진</strong>은 같고, <strong>운전석·계기판·내비게이션·자동 주차 보조</strong>만 다른 두 차입니다. 직선 코스에서는 엔진 스펙이 비슷해 보여도, 복잡한 주행에서는 “어떻게 감싸 주느냐”가 체감을 바꿉니다. 그 두 점수도 <strong>모델 이름만의 IQ 테스트</strong>라기보다 <strong>‘모델 + 실행 환경’의 성적표</strong>에 가깝습니다.</p>
 <div class="table-wrapper" style="margin:1.25rem 0;">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-label="같은 모델이 두 실행 환경으로 나뉘어 다른 점수가 나오는 흐름">
   <defs>
@@ -1229,31 +1227,18 @@
 
 <div class="callout-box warning">
   <div class="callout-title">숫자 읽기 주의</div>
-  <p>표준 하네스는 “약한 제품”이 아니라, 공정 비교를 위해 <strong>기능을 줄인 기준선</strong>이다. Provider Adapter는 여러 기능을 묶은 <strong>제품형 환경</strong>이다. 따라서 62.7↔99.9 구간 전체를 “특정 회사만의 고유 마법”이라고 읽으면 안 된다. 기사가 강조하는 것은 보편적 기여율 계산이 아니라, <strong>모델 단독 점수만으로 실제 제품 성능을 단정하지 말라</strong>는 점이다.</p>
+  <p>표준 하네스는 “약한 제품”이 아니라 <strong>기능을 줄인 기준선</strong>이고, Provider Adapter는 여러 기능을 묶은 <strong>제품형 환경</strong>이다. 62.7↔99.9 구간 전체를 “특정 회사만의 고유 마법”으로 읽으면 안 된다. 기사가 강조하는 것은 기여율 계산이 아니라, <strong>모델 단독 점수만으로 실제 제품 성능을 단정하지 말라</strong>는 점이다.</p>
 </div>
 
+<p>기사는 이 격차를 <strong>하네스 프리미엄</strong>이라 부릅니다. 관측 성능의 상당 부분이 “모델 이름”이 아니라 “어떻게 감싸서 돌렸는가”에서 나온다는 메시지입니다. 기사와 ARC Prize 맥락을 함께 보면 그 격차 전부를 OpenAI만의 비밀 기술로 단정할 수는 없습니다. 그래도 방향은 분명합니다. AI를 고를 때는 <strong>엔진</strong>(모델)만 보지 말고, 그 엔진을 돌리는 <strong>실행 환경</strong>(하네스)까지 함께 봐야 합니다.</p>
 <hr>
-<h2 id="astra에서-무슨-일이-있었나"><a href="#astra에서-무슨-일이-있었나" class="heading-anchor" aria-hidden="true">#</a> Astra에서 무슨 일이 있었나</h2><ol>
-<li><strong>시험이 있다.</strong> ARC-AGI-3 같은 벤치마크는 AI가 여러 단계로 퍼즐·과제를 푸는 능력을 잰다. “한 번에 정답 맞히기”보다 탐색·시도·수정이 이어지는 쪽에 가깝다.</li>
-<li><strong>같은 모델</strong>(Astra)을 <strong>두 가지 방식</strong>으로 돌렸다. 하나는 기능을 최소화한 <strong>표준 하네스</strong>, 다른 하나는 OpenAI 쪽 <strong>Provider Adapter</strong>(제품형 실행 환경)다.</li>
-<li><strong>점수가 크게 갈렸다.</strong> 기사가 말하는 “<strong>표준 하네스 62.7% vs. OpenAI Provider Adapter 99.9%</strong>”라는 대비가 그것이다.</li>
-<li><strong>기사가 붙인 이름: 하네스 프리미엄.</strong> 관측 성능의 상당 부분이 “모델 이름”이 아니라 “어떻게 감싸서 돌렸는가”에서 나온다는 메시지다.</li>
-<li><strong>갈리는 축에 대한 해석.</strong> 원글에 따르면, 차이는 “얼마나 오래 생각하게 했는가”만으로 설명되지 않는다. Adapter 쪽은 추론(reasoning)을 끈 설정에서도 높은 점수를 보여 준 맥락이 있으며(기사 기준), <strong>기억을 어떻게 이어 주는지</strong>가 더 핵심에 가깝다.</li>
-<li><strong>산업 구도.</strong> OpenAI는 실행 환경을 제품에 <strong>번들</strong>하는 쪽에 가깝고, DeepSeek는 하네스를 열어 <strong>플러그인처럼</strong> 쓰게 하는 쪽을 보여 준다. 둘 다 “정답”이 아니라 <strong>쇼핑·운영 선택</strong>이다.</li>
-</ol>
-<hr>
-<h2 id="핵심-통찰-1-점수는-모델-이름만의-성적표가-아니다"><a href="#핵심-통찰-1-점수는-모델-이름만의-성적표가-아니다" class="heading-anchor" aria-hidden="true">#</a> 핵심 통찰 1: 점수는 모델 이름만의 성적표가 아니다</h2><p>많은 사람이 무의식적으로 이렇게 읽습니다.</p>
+<h2 id="점수는-모델-환경-시험-규칙이다"><a href="#점수는-모델-환경-시험-규칙이다" class="heading-anchor" aria-hidden="true">#</a> 점수는 ‘모델 × 환경 × 시험 규칙’이다</h2><p>많은 사람이 무의식적으로 이렇게 읽습니다.</p>
 <blockquote>
 <p>“A 모델 90점, B 모델 80점 → A가 더 똑똑하다.”</p>
 </blockquote>
-<p>Astra 사례가 깨뜨리는 가정이 바로 이것입니다. <strong>점수는 ‘모델 × 실행 환경 × 시험 규칙’의 결과</strong>에 가깝습니다. 시험에 계산기를 허용하는지, 노트 필기를 허용하는지, 이전 답안을 세션에 남기는지에 따라 사람 시험 점수도 달라지듯, AI도 마찬가지입니다.</p>
-<p>그래서 조달·도입 회의에서 “벤치마크 1등 모델”만 고르는 습관은 위험합니다. 더 안전한 질문은 이렇게 바뀝니다.</p>
-<ul>
-<li>그 점수는 <strong>어떤 하네스</strong>에서 나온 숫자인가?</li>
-<li>우리 업무에 쓸 환경은 그 하네스와 <strong>얼마나 비슷한가?</strong></li>
-<li>기준선(최소 환경)·제품 환경·대안 환경을 <strong>섞어 재 봤는가?</strong></li>
-</ul>
-<p>원글처럼, 숫자를 최소한 세 층으로 나누어 읽으면 오해가 줄어듭니다.</p>
+<p>Astra가 깨뜨리는 가정이 바로 이것입니다. 시험에 계산기를 허용하는지, 노트 필기를 허용하는지, 이전 답안을 세션에 남기는지에 따라 사람 점수도 달라지듯, AI 점수도 <strong>모델 × 실행 환경 × 시험 규칙</strong>의 결과에 가깝습니다.</p>
+<p>그래서 조달·도입 회의에서 “벤치마크 1등 모델”만 고르는 습관은 위험합니다. 더 안전한 질문은 “그 점수는 <strong>어떤 하네스</strong>에서 나왔는가”, “우리 업무 환경은 그와 <strong>얼마나 비슷한가</strong>”, “최소 환경·제품 환경·대안 환경을 <strong>섞어 재 봤는가</strong>”입니다.</p>
+<p>원글처럼 숫자를 세 층으로 나누면 오해가 줄어듭니다.</p>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
@@ -1274,34 +1259,51 @@
 <td>우리 팀의 실제 도구·메모리·보안 규칙에 가까운 환경에서 재는 값.</td>
 </tr>
 </tbody></table>
-</div><div class="callout-box warning">
-  <div class="callout-title">AVO 등 다른 비교를 볼 때도</div>
-  <p>NVIDIA AVO처럼 같은 모델을 다른 에이전트 구성으로 끌어올렸다는 <strong>방향성</strong> 사례는 참고할 만하다. 다만 측정 조건이 다르면, 점수 차를 “하네스의 순수 기여분”으로 단정할 수 없다. 원글도 이 점에 신중하다. 숫자 차 = 곧바로 특정 기술 기여율, 이라고 읽지 말자.</p>
-</div>
-
+</div><p>NVIDIA AVO처럼 같은 모델을 다른 에이전트 구성으로 끌어올렸다는 <strong>방향성</strong> 사례도 참고할 만합니다. 다만 측정 조건이 다르면, 점수 차를 “하네스의 순수 기여분”으로 단정할 수 없습니다.</p>
 <hr>
-<h2 id="핵심-통찰-2-갈리는-축은-오래-생각보다-기억-이어-주기"><a href="#핵심-통찰-2-갈리는-축은-오래-생각보다-기억-이어-주기" class="heading-anchor" aria-hidden="true">#</a> 핵심 통찰 2: 갈리는 축은 ‘오래 생각’보다 ‘기억 이어 주기’</h2><p>긴 과제를 푸는 AI를 사람 팀에 비유해 보겠습니다.</p>
+<h2 id="갈리는-축은-오래-생각보다-기억-이어-주기"><a href="#갈리는-축은-오래-생각보다-기억-이어-주기" class="heading-anchor" aria-hidden="true">#</a> 갈리는 축은 ‘오래 생각’보다 ‘기억 이어 주기’</h2><p>그렇다면 두 환경 사이에서 무엇이 갈렸을까요. 원글에 따르면 “얼마나 오래 생각하게 했는가”만으로는 설명이 부족합니다. Adapter 쪽은 추론(reasoning)을 끈 설정에서도 높은 점수를 보여 준 맥락이 있으며(기사 기준), 더 핵심에 가까운 축은 <strong>기억을 어떻게 이어 주는지</strong>입니다.</p>
+<p>긴 과제를 푸는 AI를 사람 팀에 비유하면 두 방식이 보입니다.</p>
 <ul>
-<li><strong>쪽지 방식</strong>(최소 하네스에 가깝다): 매 단계가 끝날 때마다 거의 새로 출근한다. 책상에는 지난번에 스스로 적어 둔 쪽지만 있다. 쪽지를 잘 쓰면 이어갈 수 있지만, 비용이 크고 빠뜨리기 쉽다.</li>
+<li><strong>쪽지 방식</strong>(최소 하네스에 가깝다): 매 단계가 끝날 때마다 거의 새로 출근한다. 책상에는 지난번에 적어 둔 쪽지만 있다. 이어갈 수는 있지만 비용이 크고 빠뜨리기 쉽다.</li>
 <li><strong>세션이 이어지는 방식</strong>(제품형 Adapter에 가깝다): 같은 사람이 책상·화이트보드·중간 메모를 유지한 채 다음 단계로 넘어간다. “불투명한 내부 상태”가 요청과 요청 사이에 보존·압축되는 쪽에 가깝다.</li>
 </ul>
-<p>Astra 이야기에서 표준 하네스는 환경 상태와 행동 목록 정도를 주고, 앞 단계의 발견을 남기려면 모델이 <strong>명시적 쪽지</strong>(노트)에 더 의존합니다. Provider Adapter는 요청 사이에 <strong>추론 상태를 이어 주는</strong> 쪽에 가깝습니다. 같은 가중치라도, <strong>매번 차가운 시작</strong>(cold start)에 가깝게 도는지 <strong>따뜻한 이어하기</strong>(warm continuation)로 도는지가 갈립니다.</p>
-<p>그래서 1차 설명은 “래퍼가 엔진을 이겼다”보다 다음이 정확합니다.</p>
+<p>표준 하네스는 환경 상태와 행동 목록 정도를 주고, 앞 단계의 발견을 남기려면 모델이 <strong>명시적 쪽지</strong>(노트)에 더 의존합니다. Provider Adapter는 요청 사이에 <strong>추론 상태를 이어 주는</strong> 쪽에 가깝습니다. 같은 가중치라도 <strong>매번 차가운 시작</strong>(cold start)에 가깝게 도는지, <strong>따뜻한 이어하기</strong>(warm continuation)로 도는지가 갈립니다.</p>
+<p>그래서 “래퍼가 엔진을 이겼다”보다 다음이 1차 설명으로 정확합니다.</p>
 <blockquote>
 <p><strong>관측 성능의 상당 부분은 ‘연속성을 누가·어디에 두느냐’에서 나온다.</strong></p>
 </blockquote>
-<p>팀 리더에게 실용적인 함의는 이렇습니다.</p>
-<ul>
-<li>짧게 끝나며 결과물만 파일로 남으면 되는 일 → 쪽지·문서 중심 설계로도 충분한 경우가 많다.</li>
-<li>여러 도구를 넘나들며 길게 탐색해야 하는 일 → <strong>상태 연속성</strong>이 곧 비용·품질·재현성의 병목이 되기 쉽다.</li>
-</ul>
+<p>실무로는 이렇게 갈라 보면 됩니다. 짧게 끝나며 결과물만 파일로 남으면 되는 일은 쪽지·문서 중심 설계로도 충분한 경우가 많습니다. 여러 도구를 넘나들며 길게 탐색해야 하는 일에서는 <strong>상태 연속성</strong>이 곧 비용·품질·재현성의 병목이 되기 쉽습니다.</p>
 <hr>
-<h2 id="역사에서도-비슷한-리듬이-있었다"><a href="#역사에서도-비슷한-리듬이-있었다" class="heading-anchor" aria-hidden="true">#</a> 역사에서도 비슷한 리듬이 있었다</h2><p>“엔진은 같고 포장이 점수를 가른다”는 감각은 AI만의 발명이 아닙니다. 다만 <strong>매번 같은 법칙</strong>도, <strong>래퍼가 항상 이긴다</strong>는 법칙도 아닙니다. 병목이 엔진에 있으면 포장만으로는 살리지 못하고, 병목이 연속성·오케스트레이션·생태계에 있으면 실행 환경이 체감 성능을 좌우합니다. Astra는 후자에 가깝게 읽히는 사례입니다.</p>
-<h3 id="os-같은-칩-다른-운영체제"><a href="#os-같은-칩-다른-운영체제" class="heading-anchor" aria-hidden="true">#</a> OS: 같은 칩, 다른 운영체제</h3><p>예전에 컴퓨터 칩(CPU)이 “엔진”이었다면, 그 위를 덮는 <strong>운영체제</strong>(OS)가 실행 환경이었습니다. 같은 하드웨어라도 어떤 OS 위에서 돌리느냐에 따라 응용 프로그램의 호환성·생태계·체감 성능이 달랐습니다. IBM이 하드웨어와 소프트웨어를 오래 함께 팔다가 소프트웨어를 분리해 팔기 시작한 역사(언번들링)도 자주 인용되지만, 그 동력에는 기술뿐 아니라 <strong>제도·계약·시장 압력</strong>이 섞여 있습니다. “그때도 오픈 하네스가 이겼다”로 단순화하면 과합니다. 교훈은 더 겸손합니다. <strong>엔진 위 계층이 독립적인 가치와 통제권을 가질 수 있다.</strong></p>
-<h3 id="앱-스토어런타임-같은-코드-다른-실행기"><a href="#앱-스토어런타임-같은-코드-다른-실행기" class="heading-anchor" aria-hidden="true">#</a> 앱 스토어·런타임: 같은 코드, 다른 실행기</h3><p>1990–2000년대에는 JVM, .NET, 브라우저 엔진처럼 <strong>런타임</strong>(프로그램을 실제로 돌리는 중간 계층) 경쟁이 있었습니다. 같은 알고리즘이라도 가비지 컬렉션·최적화·라이브러리 생태계에 따라 결과가 달라질 수 있었습니다. “한 번 짜서 어디서나”는 슬로건은, 실무에서 종종 “한 번 짜고 <strong>어디서나 튜닝</strong>”에 가까워지기도 했습니다. 이것도 ‘엔진 점수’와 ‘실행 환경 점수’를 섞어 읽으면 안 된다는 감각과 통합니다.</p>
-<h3 id="클라우드-같은-서버-다른-매니지드-서비스"><a href="#클라우드-같은-서버-다른-매니지드-서비스" class="heading-anchor" aria-hidden="true">#</a> 클라우드: 같은 서버, 다른 매니지드 서비스</h3><p>2010년대 클라우드는 가상 서버라는 엔진 위에, 데이터베이스·함수·배포 파이프라인 같은 <strong>매니지드 계층</strong>을 두껍게 쌓았습니다. 편해질수록 성능·운영 부담은 줄 수 있지만, <strong>다른 클라우드로 옮기는 비용</strong>도 커질 수 있습니다. 멀티클라우드 전략의 핵심은 “무조건 이탈”이 아니라, <strong>무엇을 이식 가능한 계층에 둘지</strong>를 고르는 일이었습니다.</p>
-<h3 id="지금-모델-위-에이전트-하네스"><a href="#지금-모델-위-에이전트-하네스" class="heading-anchor" aria-hidden="true">#</a> 지금: 모델 위 에이전트 하네스</h3><p>지금은 LLM이 엔진이고, 에이전트 하네스(컨텍스트 관리, 메모리 지속, 도구 호출, 실패 복구)가 실행 환경입니다. OpenAI 쪽 번들형 실행 환경과 DeepSeek가 공개한 플러그인형 하네스(<code>Agent = Model + Harness</code>)가 나란히 보이는 이유도, 과거 클라우드·런타임 선택과 닮아 있습니다.</p>
-<p>산업 구도를 한 장으로만 보면 <strong>모듈화–통합 진자</strong>(성능·연속성이 아직 부족하면 묶어 팔기 유리해 보이고, 관행이 범용화되면 분리·표준이 힘을 얻기 쉽다는 리듬)로 읽을 수 있습니다. 점수 격차의 1차 렌즈는 여전히 <strong>상태 연속성</strong>이고, 진자는 “시장이 왜 지금 통합 쪽으로 기울어 보이는가”를 설명하는 보조 렌즈입니다.</p>
+<h2 id="선택지는-번들-vs-오픈"><a href="#선택지는-번들-vs-오픈" class="heading-anchor" aria-hidden="true">#</a> 선택지는 번들 vs 오픈</h2><p>여기까지가 “점수가 왜 갈리는가”입니다. 다음은 “그래서 무엇을 살 것인가”입니다. 기사 맥락에서 OpenAI는 실행 환경을 제품에 <strong>번들</strong>하는 쪽에 가깝고, DeepSeek는 하네스를 열어 <strong>플러그인처럼</strong> 쓰게 하는 쪽을 보여 줍니다. 둘 다 정답이 아니라 <strong>쇼핑·운영 선택</strong>입니다.</p>
+<p>카메라를 산다고 비유해 봅시다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>선택</th>
+<th>비유</th>
+<th>AI에서의 대응 (기사 맥락)</th>
+<th>장점</th>
+<th>주의점</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>번들</strong></td>
+<td>본체+렌즈+보정 프로필이 잘 맞는 브랜드 키트</td>
+<td>OpenAI가 모델과 실행 환경(예: Responses API 쪽 제품형 환경)을 함께 최적화</td>
+<td>빠르게 높은 관측 성능·운영 편의</td>
+<td><strong>벤더 종속</strong>. 키트에 맞춰 짠 워크플로가 다른 곳에서 재현되지 않을 수 있음</td>
+</tr>
+<tr>
+<td><strong>오픈·조립</strong></td>
+<td>본체와 렌즈·손떨림 보정·저장 장치를 따로 고름</td>
+<td>DeepSeek식 <strong>오픈 하네스</strong>(플러그인형, 모델과 분리)</td>
+<td>교체·감사·자체 운영의 여지</td>
+<td>Adapter급 <strong>연속성</strong>을 스스로 재현·근접해야 함. 못 하면 “싸게 산 부품”만으로 끝나기 쉬움</td>
+</tr>
+</tbody></table>
+</div><p>“오픈이 도덕적으로 옳다 / 번들이 항상 이긴다”가 아닙니다. <strong>우리 업무가 쪽지로 충분한지, 내부 상태 보존이 필수인지</strong>에 따라 합리적 선택이 갈립니다. 오픈 하네스가 장기적으로 힘을 얻으려면 단순 공개만으로는 부족하고, <strong>제품형 연속성에 가까운 능력을 합법적·이식 가능한 형태로 얼마나 따라가느냐</strong>가 관건입니다.</p>
+<p>이 감각은 AI만의 발명도 아닙니다. 같은 칩 위의 <strong>운영체제</strong>(OS), 같은 코드 위의 <strong>런타임</strong>, 같은 서버 위의 매니지드 클라우드처럼, 엔진 위 계층이 체감 성능과 종속 비용을 좌우한 적은 여러 번 있었습니다. 병목이 엔진에 있으면 포장만으로는 살리지 못하고, 병목이 연속성·오케스트레이션·생태계에 있으면 실행 환경이 성적표를 바꿉니다. Astra는 후자에 가깝게 읽히는 사례입니다.</p>
+<p>시장 리듬만 한 장으로 보면 <strong>모듈화–통합 진자</strong>로도 읽을 수 있습니다. 성능·연속성이 아직 부족해 보이면 묶어 팔기가 유리해 보이고, 관행이 범용화되면 분리·표준에 여지가 생깁니다. 점수 격차의 1차 렌즈는 여전히 <strong>상태 연속성</strong>이고, 진자는 “왜 지금 통합 쪽이 강해 보이는가”를 설명하는 보조 렌즈입니다.</p>
 <div class="table-wrapper" style="margin:1.25rem 0;">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" role="img" aria-label="통합 번들과 오픈 하네스가 번갈아 유리해지는 순환">
   <defs>
@@ -1338,47 +1340,19 @@
 </div>
 
 <hr>
-<h2 id="번들-vs-오픈-쇼핑-선택으로-보면"><a href="#번들-vs-오픈-쇼핑-선택으로-보면" class="heading-anchor" aria-hidden="true">#</a> 번들 vs 오픈: 쇼핑 선택으로 보면</h2><p>비유를 하나 더 듭니다. 카메라를 산다고 합시다.</p>
-<div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>선택</th>
-<th>비유</th>
-<th>AI에서의 대응 (기사 맥락)</th>
-<th>장점</th>
-<th>주의점</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>번들</strong></td>
-<td>본체+렌즈+보정 프로필이 잘 맞는 브랜드 키트</td>
-<td>OpenAI가 모델과 실행 환경(예: Responses API 쪽 제품형 환경)을 함께 최적화</td>
-<td>빠르게 높은 관측 성능·운영 편의</td>
-<td><strong>벤더 종속</strong>. 키트에 맞춰 짠 워크플로가 다른 곳에서 재현되지 않을 수 있음</td>
-</tr>
-<tr>
-<td><strong>오픈·조립</strong></td>
-<td>본체와 렌즈·손떨림 보정·저장 장치를 따로 고름</td>
-<td>DeepSeek식 <strong>오픈 하네스</strong>(플러그인형, 모델과 분리)</td>
-<td>교체·감사·자체 운영의 여지</td>
-<td>Adapter급 <strong>연속성</strong>을 스스로 재현·근접해야 함. 못 하면 “싸게 산 부품”만으로 끝나기 쉬움</td>
-</tr>
-</tbody></table>
-</div><p>중요한 점은 “오픈이 도덕적으로 옳다 / 번들이 항상 이긴다”가 아니라는 것입니다. <strong>우리 업무가 쪽지로 충분한지, 내부 상태 보존이 필수인지</strong>에 따라 합리적 선택이 갈립니다. 오픈 하네스가 장기적으로 힘을 얻으려면, 단순 공개만으로는 부족하고 <strong>제품형 연속성에 가까운 능력을 합법적·이식 가능한 형태로 얼마나 따라가느냐</strong>가 관건입니다.</p>
-<hr>
-<h2 id="회사팀이-던져-볼-실무-질문"><a href="#회사팀이-던져-볼-실무-질문" class="heading-anchor" aria-hidden="true">#</a> 회사·팀이 던져 볼 실무 질문</h2><p>기술 세부 대신, 회의에서 바로 쓸 수 있는 질문만 고릅니다.</p>
+<h2 id="회의에서-물을-질문"><a href="#회의에서-물을-질문" class="heading-anchor" aria-hidden="true">#</a> 회의에서 물을 질문</h2><p>기술 세부 대신, 앞에서 쌓은 렌즈로 바로 물어볼 수 있는 것만 고릅니다.</p>
 <ol>
 <li><p><strong>우리는 무엇을 사는가?</strong><br>모델 이름인가, 아니면 ‘모델 + 하네스 + 지원·보안·감사’ 묶음인가? 견적서에 실행 환경이 빠져 있지 않은가?</p>
 </li>
 <li><p><strong>우리 일의 병목은 어디인가?</strong><br>짧은 질의응답인가, 여러 단계·여러 도구를 넘는 긴 과제인가? 후자라면 <strong>상태 연속성</strong> 요구를 명시했는가?</p>
 </li>
-<li><p><strong>숫자를 세 층으로 나누어 보았는가?</strong><br>기준값(최소 환경), 진단값(벤더 기능 on/off), 우리 환경 실측값을 섞지 않고 “1등 점수”만 보고 있지 않은가?</p>
+<li><p><strong>숫자를 세 층으로 나누어 보았는가?</strong><br>기준값·진단값·실무값을 섞지 않고 “1등 점수”만 보고 있지 않은가?</p>
 </li>
-<li><p><strong>전환 비용을 어디에 쌓고 있는가?</strong><br>특정 Adapter·API에만 있는 기억·도구 관행에 프로세스를 얼마나 묶었는가? 그 부분이 점수와 비용을 만든다면, 계약·아키텍처에 <strong>출구 조항·이식 계층</strong>이 있는가?</p>
+<li><p><strong>전환 비용을 어디에 쌓고 있는가?</strong><br>특정 Adapter·API에만 있는 기억·도구 관행에 프로세스를 얼마나 묶었는가? 계약·아키텍처에 <strong>출구 조항·이식 계층</strong>이 있는가?</p>
 </li>
-<li><p><strong>쪽지로 되는 일과 세션이 필수인 일을 갈랐는가?</strong><br>전자는 모듈형·문서 중심이 유리해질 여지가 크고, 후자는 당분간 번들 프리미엄이 남을 수 있다. 한 가지 정책으로 모든 업무를 덮지 않았는가?</p>
+<li><p><strong>쪽지로 되는 일과 세션이 필수인 일을 갈랐는가?</strong><br>한 가지 정책으로 모든 업무를 덮지 않았는가?</p>
 </li>
-<li><p><strong>벤더 종속 리스크를 누가 소유하는가?</strong><br>IT·보안·현업·구매 중 어디에 “실행 환경 변경 시 재측정” 책임이 있는가?</p>
+<li><p><strong>벤더 종속 리스크를 누가 소유하는가?</strong><br>“실행 환경 변경 시 재측정” 책임은 어디에 있는가?</p>
 </li>
 </ol>
 <hr>
