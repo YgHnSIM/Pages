@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제1강: 파이썬 멘탈 모델 뇌 이식 — 이름표, 메모리 광장, 그리고 점(.)의 비밀</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 680px) {
+      .concept-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="lesson-tag">LESSON 0001 // CPYTHON MENTAL MODEL</span>
+      <h1>파이썬 멘탈 모델 뇌 이식</h1>
+      <p class="subtitle">이름표 바인딩, C 구조체(PyObject) 해부, 그리고 점(.)에 의한 Bound Method의 실시간 탄생</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>프롤로그: 상자를 부수고 메모리 광장으로</h2>
+        <p>
+          C나 Java 같은 전통적인 정적 컴파일 언어를 먼저 접한 개발자들은 변수를 <strong>'값을 담는 상자(Bucket)'</strong>로 상상합니다.
+          하지만 파이썬의 세계에서 변수는 상자가 아닙니다. 파이썬의 모든 데이터는 컴퓨터의 힙(Heap) 메모리라는 거대한 광장에 서 있는
+          <strong>독립된 생명체(객체)</strong>이며, 변수는 그 객체의 손목에 묶어둔 <strong>'이름표(Label)'</strong>에 불과합니다.
+        </p>
+        <p>
+          이 근본적인 멘탈 모델 하나만 바뀌어도, 파이썬의 가변(Mutable) 객체 참조 버그, <code>self</code>의 정체, 그리고 객체 지향 메서드 호출의 비밀이 모두 하나의 시스템 논리로 통합됩니다.
+        </p>
+      </section>
+
+      <section>
+        <h2>1부: 10000이라는 정수를 CPython 수준에서 해부하다</h2>
+        <p>
+          파이썬에는 원시 타입(Primitive Type)이 존재하지 않습니다. 숫자 <code>10000</code>조차 메모리 힙에 할당된 
+          28바이트짜리 C 언어 구조체(<code>PyLongObject</code>)입니다.
+        </p>
+
+        <div class="diagram-card">
+          <div class="diagram-header">CPython 64-bit PyLongObject(10000) 메모리 레이아웃</div>
+          <pre><code>+-------------------------------------------------------------------------+
+|                PyObject_VAR_HEAD (메타데이터 헤더: 24 Bytes)              |
++-------------------------------------------------------------------------+
+|  ob_refcnt : 8 Bytes  (이 객체를 가리키는 이름표 개수 = 참조 카운트)         |
+|  *ob_type  : 8 Bytes  (객체의 행동 규격서: PyLong_Type의 메모리 주소)       |
+|  ob_size   : 8 Bytes  (가변 길이 정수 배열의 크기 단위)                    |
++-------------------------------------------------------------------------+
+|                Payload (실제 데이터 페이로드: 4 Bytes)                   |
++-------------------------------------------------------------------------+
+|  ob_digit  : 4 Bytes  (실제 정수 데이터 값: 10000)                       |
++-------------------------------------------------------------------------+
+  총 메모리 점유: 28 Bytes (C 언어 int가 4 Bytes인 것에 비해 7배의 풍부한 메타데이터)</code></pre>
+        </div>
+
+        <div class="callout insight">
+          <div class="callout-title">💡 C 표준 추상기계 vs 파이썬의 '객체' 차이</div>
+          <p>
+            C 언어 표준(ISO C)에서 객체는 단순히 <em>'값을 담을 수 있는 메모리 저장 공간(Region of data storage)'</em>입니다. 스택에 선언된 <code>int a;</code> 4바이트도 C 표준에서는 객체입니다.<br>
+            반면 파이썬의 객체는 <strong>'신분증(Header: RefCount + Type Pointer)을 목에 건 힙 메모리 엔티티'</strong>입니다. 파이썬 객체는 자신이 누구이고(Identity), 무슨 일을 할 수 있는지(Type)를 스스로 알고 있습니다.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>2부: 데이터와 로직의 이산가족 (인스턴스는 상태만, 클래스는 공구함)</h2>
+        <p>
+          파이썬은 메모리 낭비를 극도로 혐오합니다. 만약 강아지 1만 마리를 만든다고 해서, <code>bark()</code>라는 함수 코드가 메모리에 1만 개 복제된다면 메모리는 순식간에 고갈될 것입니다.
+          따라서 파이썬은 <strong>상태(데이터)</strong>와 <strong>행동(로직)</strong>을 철저히 분리합니다.
+        </p>
+
+        <div class="concept-grid">
+          <div class="diagram-card">
+            <div class="diagram-header">인스턴스 (my_dog) : 순수 데이터 창고</div>
+            <p style="font-size:0.9rem; color:var(--text-muted);">함수 바이트코드가 전혀 없습니다. 오직 자신의 상태(이름, 나이)만 딕셔너리에 쥐고 있습니다.</p>
+            <pre><code>my_dog = Dog('바둑이')
+my_dog.__dict__
+# 결과: {'name': '바둑이'}
+# (bark 함수는 여기에 없음!)</code></pre>
+          </div>
+          <div class="diagram-card">
+            <div class="diagram-header">클래스 (Dog) : 공용 로직 공구함</div>
+            <p style="font-size:0.9rem; color:var(--text-muted);">모든 인스턴스가 공유할 함수 객체들을 단 하나만 생성하여 보관합니다.</p>
+            <pre><code>Dog.__dict__
+# 결과: {
+#   'bark': &lt;function Dog.bark&gt;,
+#   'run': &lt;function Dog.run&gt;
+# }</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>3부: 점(.)을 찍는 순간 벌어지는 마법 — Bound Method의 런타임 탄생</h2>
+        <p>
+          인스턴스에 함수가 없다면, 우리는 어떻게 <code>my_dog.bark()</code>를 실행할 수 있을까요?<br>
+          비밀은 <strong>점(<code>.</code>) 연산자</strong>에 있습니다.
+        </p>
+        <p>
+          파이썬에서 <code>my_dog.bark</code>처럼 점을 찍어 인스턴스를 통해 클래스 함수에 접근하는 바로 그 순간,
+          파이썬 인터프리터의 <strong>디스크립터 프로토콜(Descriptor Protocol: <code>__get__</code>)</strong>이 발동합니다.
+          그리고 힙 메모리에 <strong>&lt;bound method&gt;</strong>라는 새로운 임시 래퍼 객체를 즉석에서 찍어냅니다!
+        </p>
+
+        <div class="diagram-card">
+          <div class="diagram-header">점(.)을 찍었을 때 힙에서 즉석 탄생하는 임시 래퍼 객체</div>
+          <pre><code>m = my_dog.bark  # 점(.)을 찍는 순간!
+
+[ 힙 메모리에 새로 생성된 Bound Method 래퍼 객체 ]
++-------------------------------------------------------+
+|  Type     : &lt;class 'method'&gt;                          |
+|  __func__ : 0x80a190 (Dog 클래스의 bark 원본 함수 포인터)   |
+|  __self__ : 0x80b200 (my_dog 인스턴스 자신의 메모리 포인터)  |
++-------------------------------------------------------+</code></pre>
+        </div>
+
+        <div class="callout correction">
+          <div class="callout-title">⚠️ 실제로 새 객체가 만들어진다는 결정적 증거</div>
+          <p>
+            메서드를 두 번 꺼내어 동일 객체(<code>is</code>)인지 비교해보면 명확해집니다:
+          </p>
+          <pre><code>m1 = my_dog.bark
+m2 = my_dog.bark
+
+print(m1 is m2)  # False! (서로 다른 힙 주소에 새로 생성된 독립 래퍼 객체)
+print(m1 == m2)  # True!  (안에 쥐고 있는 함수와 인스턴스가 같으므로 동등함)</code></pre>
+          <p>
+            이 래퍼 객체는 <em>"자동 실행되는 함수"</em>가 아니라,
+            <strong>"나중에 괄호 <code>()</code>를 붙여 부르면, 내가 쥐고 있는 <code>__self__</code>를 첫 번째 인자로 밀어 넣어서 <code>__func__</code>를 실행해주마"</strong> 하고 대기하는 예약 포장지입니다.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>4부: self 매개변수 화살표의 올바른 종착점</h2>
+        <p>
+          가장 많은 개발자들이 혼란을 겪는 지점입니다.
+        </p>
+        <blockquote style="border-left:3px solid var(--border-color); padding-left:1rem; margin:1rem 0; color:var(--text-muted);">
+          "인스턴스 입장에서 self는 클래스에 정의된 함수를 가리키는 화살표인가요?"
+        </blockquote>
+        <p>
+          <strong>정반대입니다!</strong><br>
+          <code>self</code>는 함수를 가리키는 것이 아니라, <strong>"함수가 실행될 때, 방금 그 함수를 부른 대상 인스턴스 본체"</strong>를 가리키는 매개변수 이름표입니다.
+        </p>
+
+        <div class="diagram-card">
+          <div class="diagram-header">실행 스택 프레임에서 self의 진짜 화살표 방향</div>
+          <pre><code>[ my_dog.bark() 실행 시 스택 프레임 ]
+  매개변수 self ────────(참조 포인터)────────▶ [ 힙의 my_dog 인스턴스 본체 ]
+                                                     │
+                                                     │ (ob_type 포인터)
+                                                     ▼
+                                            [ 힙의 Dog 클래스 객체 ]
+                                                     │
+                                                     └─ bark(&lt;function&gt;)</code></pre>
+        </div>
+
+        <p>
+          따라서 <code>my_dog.bark("멍멍")</code>은 내부적으로 아래 코드와 100% 동일한 기계적 변환을 거칩니다:
+        </p>
+        <pre><code># 개발자가 작성하는 표현식
+my_dog.bark("멍멍")
+
+# CPython이 실제로 실행하는 형태 (self 자리에 my_dog를 밀어 넣음)
+Dog.bark(my_dog, "멍멍")</code></pre>
+      </section>
+
+      <section>
+        <h2>5부: 인터랙티브 메모리 시뮬레이터 (직접 조작하기)</h2>
+        <p>아래 버튼들을 순서대로 클릭하며, 네임스페이스 이름표와 힙 메모리 객체들의 실시간 생성 및 참조 변화를 직접 관찰해 보세요.</p>
+        
+        <div id="memory-visualizer"></div>
+      </section>
+
+      <section>
+        <h2>6부: 뇌 이식 점검 퀴즈 (Retrieval Practice)</h2>
+        <p>방금 이식된 멘탈 모델을 인출 연습(Retrieval Practice)으로 두뇌의 장기 기억소(Storage Strength)에 각인시킵니다.</p>
+
+        <div id="quiz-1"></div>
+        <div id="quiz-2"></div>
+        <div id="quiz-3"></div>
+        <div id="quiz-4"></div>
+      </section>
+
+      <section>
+        <h2>추천 1차 사료 (Primary Source)</h2>
+        <ul>
+          <li>
+            <a href="https://github.com/python/cpython/blob/main/Include/object.h" target="_blank">CPython 소스 코드: Include/object.h</a>
+            — 파이썬 객체의 기본 헤더 <code>PyObject_HEAD</code>의 실제 C 구조체 선언부입니다.
+          </li>
+          <li>
+            <a href="https://docs.python.org/3/howto/descriptor.html" target="_blank">Raymond Hettinger의 Descriptor HowTo Guide</a>
+            — 점(<code>.</code>)을 찍었을 때 왜 바운드 메서드가 즉석 생성되는지 파이썬 코어 개발자가 작성한 결정판 가이드입니다.
+          </li>
+          <li>
+            <a href="https://nedbatchelder.com/text/names.html" target="_blank">Ned Batchelder: Facts and Myths about Python names and values</a>
+            — 변수는 상자가 아니라 이름표라는 진리를 설파한 고전 에세이입니다.
+          </li>
+        </ul>
+      </section>
+
+      <div class="callout insight">
+        <div class="callout-title">💬 학습 피드백 및 질문 안내</div>
+        <p>
+          강의 내용 중 이해가 모호한 부분이나 추가로 떠오르는 의문(예: 클로저의 변수 캡처, 가비지 컬렉터의 순환 참조 해소 방식 등)이 있다면 언제든지 담당 AI 교사(Antigravity)에게 질문해 주세요.
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <span><a href="../reference/01-python-mental-model-cheatsheet.html">👉 [레퍼런스 치트시트] 보러 가기</a></span>
+      <span>Teaching Workspace // Lesson 0001</span>
+    </footer>
+  </div>
+
+  <script src="../assets/quiz.js"></script>
+  <script src="../assets/visualizer.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initVisualizer('memory-visualizer');
+
+      initQuiz('quiz-1', {
+        question: 'Q1. 파이썬에서 x = 10000을 실행할 때 변수 x의 실체는 무엇인가?',
+        options: [
+          '힙 객체의 주소를 가리키는 이름표 참조 포인터',
+          '스택 공간의 주소를 보관하는 메모리 저장 상자',
+          '함수 목록의 주소를 보관하는 클래스 내부 객체',
+          '연산 처리의 주소를 보관하는 CPU 고유 단위'
+        ],
+        correct: 0,
+        explanation: '파이썬의 변수는 값을 담는 상자가 아니라, 힙 메모리에 독립적으로 할당된 PyObject(10000)를 가리키는 포인터 이름표입니다.'
+      });
+
+      initQuiz('quiz-2', {
+        question: 'Q2. my_dog = Dog() 인스턴스화 시 bark() 함수 코드의 메모리 보관 위치는?',
+        options: [
+          '클래스 객체의 네임스페이스 사전에만 영구히 보관된다',
+          '인스턴스 객체의 고유한 메모리마다 독립되게 복제된다',
+          '글로벌 모듈의 네임스페이스 사전에 독립되게 등록된다',
+          '실행식 인터프리터 런타임의 환경에서 실시간 생성된다'
+        ],
+        correct: 0,
+        explanation: '파이썬은 메모리를 절약하기 위해 데이터(인스턴스 속성)와 로직(클래스 함수)을 철저히 분리합니다. 함수 코드는 클래스 객체 안에 단 1개만 존재합니다.'
+      });
+
+      initQuiz('quiz-3', {
+        question: 'Q3. Dog.bark(self) 실행 시 self 매개변수 포인터가 가리키는 진짜 대상은?',
+        options: [
+          '함수를 호출한 해당 인스턴스 객체의 메모리 주소',
+          '클래스 네임스페이스 내부 원본 함수 객체의 주소',
+          '즉석에서 생성된 바운드 메서드 래퍼 객체의 주소',
+          '프로그램 런타임 환경에 등록된 전역 모듈의 주소'
+        ],
+        correct: 0,
+        explanation: 'self는 인스턴스가 함수를 가리키는 화살표가 아니라, 함수가 실행될 때 대상 인스턴스(자신)를 역으로 전달받는 매개변수 포인터입니다.'
+      });
+
+      initQuiz('quiz-4', {
+        question: 'Q4. m = my_dog.bark 처럼 점(.)으로 메서드에 접근할 때 힙에서 일어나는 일은?',
+        options: [
+          '함수와 인스턴스를 하나로 결합한 바운드 래퍼 객체',
+          '클래스 원본 함수를 직접 실행하여 도출된 반환결과',
+          '인스턴스 고유 네임스페이스 안에 복제된 대상 코드',
+          '클래스 원본 함수 객체의 고유한 참조카운터 포인터'
+        ],
+        correct: 0,
+        explanation: '점(.)으로 인스턴스 메서드를 조회하는 순간 디스크립터(__get__)가 동작하여 함수와 인스턴스를 묶은 새로운 <bound method> 래퍼 객체를 힙에 즉시 동적 생성합니다.'
+      });
+    });
+  </script>
+</body>
+</html>

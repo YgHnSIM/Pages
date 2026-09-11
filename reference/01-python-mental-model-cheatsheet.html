@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>파이썬 멘탈 모델 레퍼런스 치트시트 (CPython Memory & Object Architecture)</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .ref-table th, .ref-table td {
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    .ref-table th {
+      background-color: var(--code-bg);
+      font-weight: 700;
+    }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 680px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="lesson-tag">REFERENCE // CPYTHON OBJECT ARCHITECTURE</span>
+      <h1>파이썬 객체 & 메모리 모델 레퍼런스</h1>
+      <p class="subtitle">이름표 바인딩, C 구조체 레이아웃, 디스크립터 및 객체 그래프 요약</p>
+    </header>
+
+    <main>
+      <h2>1. 파이썬 객체 3대 요소와 CPython 매핑</h2>
+      <p>파이썬의 모든 데이터는 C 언어 구조체(<code>PyObject</code>)로 구현되어 힙(Heap) 메모리에 상주합니다.</p>
+
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>파이썬 개념</th>
+            <th>CPython C 구조체 필드</th>
+            <th>불변 여부</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Identity (식별자)</strong></td>
+            <td>메모리 주소 (<code>(uintptr_t)p</code>)</td>
+            <td>불변 (절대 불변)</td>
+            <td><code>id(obj)</code>로 확인. 객체가 소멸할 때까지 유일함.</td>
+          </tr>
+          <tr>
+            <td><strong>Type (타입)</strong></td>
+            <td><code>PyTypeObject *ob_type</code></td>
+            <td>불변 (기본 불변)</td>
+            <td>연산 프로토콜(슬롯) 및 메서드 사전(<code>tp_dict</code>) 포인터.</td>
+          </tr>
+          <tr>
+            <td><strong>Value (값)</strong></td>
+            <td>타입별 확장 페이로드 영역</td>
+            <td>타입에 따라 결정</td>
+            <td>불변 객체는 변경 불가, 가변 객체는 내부 포인터 배열 수정.</td>
+          </tr>
+          <tr>
+            <td><strong>Ref Count (수명)</strong></td>
+            <td><code>Py_ssize_t ob_refcnt</code></td>
+            <td>가변 (실시간 변동)</td>
+            <td>참조 이름표 개수. 0이 되면 즉시 메모리 해제(GC).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="diagram-card">
+        <div class="diagram-header">CPython PyObject 기본 메모리 레이아웃 (64-bit 기준)</div>
+        <pre><code>+-------------------------------------------------------------------------+
+|                  PyObject_HEAD (메타데이터 영역: 16 Bytes)               |
++-------------------------------------------------------------------------+
+|  ob_refcnt (8 Bytes) : 참조 횟수 카운터 (0 도달 시 메모리 즉시 해제)      |
+|  *ob_type  (8 Bytes) : 타입 명세서(PyTypeObject)를 가리키는 C 포인터    |
++-------------------------------------------------------------------------+
+|                  Payload (타입별 실제 데이터 저장 영역)                  |
++-------------------------------------------------------------------------+
+|  예: 정수(PyLongObject)는 ob_size(8B) + ob_digit(4B) = 총 28 Bytes      |
++-------------------------------------------------------------------------+</code></pre>
+      </div>
+
+      <h2>2. 이름표 바인딩 vs 상자 모델</h2>
+      <div class="grid-2col">
+        <div class="diagram-card">
+          <div class="diagram-header">오개념: 상자(Bucket) 모델</div>
+          <p style="font-size:0.9rem; color:var(--text-muted);">C/전통적 언어의 모델: 변수가 메모리 상자 자체이며 값이 그 안에 직접 들어감.</p>
+          <pre><code>[ 변수 x (상자) ]
++---------------+
+|      10       |
++---------------+
+x = 20 -> 상자 내용물 덮어씀</code></pre>
+        </div>
+        <div class="diagram-card">
+          <div class="diagram-header">진실: 이름표(Label) 모델</div>
+          <p style="font-size:0.9rem; color:var(--text-muted);">파이썬의 실제 모델: 힙에 독립된 객체가 먼저 뜨고 변수 이름표를 끈으로 묶음.</p>
+          <pre><code>[ 이름표 x ] ──(끈)──▶ [ 10 (객체) ]
+x = 20
+[ 이름표 x ] ──(끈)──▶ [ 20 (새 객체) ]
+(기존 10 객체의 refcnt 감소)</code></pre>
+        </div>
+      </div>
+
+      <h2>3. 가변(Mutable) vs 불변(Immutable) 동작 매트릭스</h2>
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>해당 타입</th>
+            <th>값 변경 시 동작</th>
+            <th>객체 ID 및 메모리 주소</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>불변 (Immutable)</strong></td>
+            <td><code>int, float, str, tuple, bytes, frozenset</code></td>
+            <td>기존 객체 수정 불가.<br>새 객체 생성 후 이름표 재바인딩.</td>
+            <td><code>id()</code>가 완전히 새로운 값으로 바뀜</td>
+          </tr>
+          <tr>
+            <td><strong>가변 (Mutable)</strong></td>
+            <td><code>list, dict, set, bytearray, 사용자 인스턴스</code></td>
+            <td>기존 메모리 공간에서 내부 포인터 배열 수정(In-place).</td>
+            <td><code>id()</code>가 변함없이 동일하게 유지됨</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>4. 데이터와 로직의 분리 & Bound Method</h2>
+      <p>파이썬은 메모리 낭비를 막기 위해 <strong>데이터(인스턴스)</strong>와 <strong>로직(클래스 함수)</strong>을 완전히 격리합니다.</p>
+      
+      <div class="diagram-card">
+        <div class="diagram-header">점(.) 연산자와 디스크립터 메커니즘 도식</div>
+        <pre><code>[ 클래스 Dog ] (공구함)
+  └─ __dict__: { 'bark': &lt;function Dog.bark at 0x900&gt; } (단 1개만 존재!)
+       ▲
+       │ ob_type
+[ 인스턴스 my_dog ] (순수 데이터)
+  └─ __dict__: { 'name': '바둑이' } (함수 코드 없음!)
+
+==================== 점(.)을 찍는 순간 ====================
+my_dog.bark 실행 시:
+  Dog.__dict__['bark'].__get__(my_dog, Dog) 디스크립터 호출!
+       │
+       ▼
+&lt;bound method Dog.bark of &lt;Dog object at 0x800&gt;&gt; (힙에 임시 래퍼 객체 즉석 생성!)
+  ├─ __func__ : 0x900 (Dog.bark)
+  └─ __self__ : 0x800 (my_dog)
+
+==================== 괄호 ()를 붙여 호출 ====================
+my_dog.bark() 호출 시:
+  임시 래퍼가 Dog.bark(self=my_dog) 형태로 첫 번째 인자에 인스턴스를 주입!
+  [함수 내부 매개변수 self] ──────────▶ [my_dog 인스턴스 본체]</code></pre>
+      </div>
+
+      <div class="callout insight">
+        <div class="callout-title">핵심 레퍼런스 증명 공식</div>
+        <p>파이썬의 메서드 호출 문법은 아래 코드와 100% 동일한 실행 흐름을 갖습니다:</p>
+        <pre><code># 문법적 표현 (단축 표기)
+my_dog.bark("월월")
+
+# 시스템 내부 실제 실행 메커니즘
+Dog.bark(my_dog, "월월")</code></pre>
+      </div>
+
+      <h2>5. 네임스페이스 탐색 순서 (LEGB 규칙)</h2>
+      <ol>
+        <li><strong>L (Local)</strong>: 함수 또는 람다 내부의 지역 변수 이름표</li>
+        <li><strong>E (Enclosing)</strong>: 클로저 또는 외부 중첩 함수의 이름표</li>
+        <li><strong>G (Global)</strong>: 현재 모듈 최상단에 선언된 이름표</li>
+        <li><strong>B (Built-in)</strong>: 파이썬 내장 네임스페이스 (<code>len, print, range</code> 등)</li>
+      </ol>
+    </main>
+
+    <footer>
+      <span><a href="../lessons/0001-python-mental-model-transplant.html">← 제1강 강의로 돌아가기</a></span>
+      <span>Teaching Workspace Reference Archive</span>
+    </footer>
+  </div>
+</body>
+</html>

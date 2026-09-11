@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>파이썬 객체 메모리 모델과 멘탈 모델</title>
+  <meta name="description" content="파이썬의 모든 것은 C 구조체(PyObject) 기반의 힙 객체이며 변수는 상자가 아니라 이름표입니다. 데이터와 로직의 분리, 점(.) 연산자의 디스크립터 프로토콜, 그리고 self 매개변수의 진짜 참조 방향까지 시스템 레벨에서 완벽하게 파헤칩니다.">
+  
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 57px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.6em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      max-width: 85vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 40px;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 8px;
+    }
+
+    .toc-drawer-body li.depth-2 { padding-left: 0; }
+    .toc-drawer-body li.depth-3 { padding-left: 14px; }
+    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.45;
+      display: block;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">파이썬 객체 메모리 모델과 멘탈 모델</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Reading Progress Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로" class="toc-link">🌟 프롤로그: &quot;상자&quot;를 부수고 &quot;메모리 광장&quot;으로</a></li><li class="depth-2"><a href="#1-정수-10000의-해부-파이썬-객체의-실체는-c-구조체다" class="toc-link">1. 정수 10000의 해부: 파이썬 객체의 실체는 C 구조체다</a></li><li class="depth-3"><a href="#cpython의-pylongobject-내부-레이아웃" class="toc-link">CPython의 PyLongObject 내부 레이아웃</a></li><li class="depth-3"><a href="#c-표준-추상-기계의-객체-vs-파이썬-객체의-본질적-차이" class="toc-link">C 표준 추상 기계의 객체 vs 파이썬 객체의 본질적 차이</a></li><li class="depth-2"><a href="#2-불변immutable과-가변mutable의-동역학" class="toc-link">2. 불변(Immutable)과 가변(Mutable)의 동역학</a></li><li class="depth-3"><a href="#컨테이너-객체의-실체-quot포인터-주머니quot" class="toc-link">컨테이너 객체의 실체: &quot;포인터 주머니&quot;</a></li><li class="depth-2"><a href="#3-데이터와-로직의-이산가족-인스턴스와-클래스의-역할-분담" class="toc-link">3. 데이터와 로직의 이산가족: 인스턴스와 클래스의 역할 분담</a></li><li class="depth-2"><a href="#4-점을-찍는-순간-벌어지는-마법-bound-method의-런타임-탄생" class="toc-link">4. 점(.)을 찍는 순간 벌어지는 마법: Bound Method의 런타임 탄생</a></li><li class="depth-3"><a href="#증명-정말로-새-객체가-찍혀-나오는가" class="toc-link">증명: 정말로 새 객체가 찍혀 나오는가?</a></li><li class="depth-2"><a href="#5-self-매개변수-화살표의-올바른-종착점" class="toc-link">5. self 매개변수 화살표의 올바른 종착점</a></li><li class="depth-2"><a href="#6-파이썬-세계의-전모-거대한-객체-그래프-object-graph" class="toc-link">6. 파이썬 세계의 전모: 거대한 객체 그래프 (Object Graph)</a></li><li class="depth-2"><a href="#멘탈-모델-자가-점검-4문-4답" class="toc-link">🎯 멘탈 모델 자가 점검 4문 4답</a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-03-12</span>
+          <span class="meta-badge">⏱️ 약 10분</span>
+          <span class="meta-badge">✍️ Antigravity</span>
+        </div>
+        <h1 class="article-title">파이썬 객체 메모리 모델과 멘탈 모델</h1>
+        <p class="article-subtitle">CPython 내부 구조부터 Bound Method의 동적 탄생까지 완전 이식</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#Python</span>
+          
+          <span class="tag-pill">#CPython</span>
+          
+          <span class="tag-pill">#메모리 모델</span>
+          
+          <span class="tag-pill">#객체 지향</span>
+          
+          <span class="tag-pill">#컴퓨터 구조</span>
+          
+          <span class="tag-pill">#멘탈 모델</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <blockquote>
+<p><strong>기획 및 집필</strong>: Antigravity (Advanced Agentic Systems)<br><strong>핵심 주제</strong>: CPython 런타임 메모리 구조, 이름표 바인딩, 디스크립터 프로토콜, 객체 그래프</p>
+</blockquote>
+<hr>
+<h2 id="프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로"><a href="#프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로" class="heading-anchor" aria-hidden="true">#</a> 🌟 프롤로그: &quot;상자&quot;를 부수고 &quot;메모리 광장&quot;으로</h2><p>C, C++, Java 같은 전통적인 정적 타입 언어를 먼저 경험한 사람들은 변수를 **&#39;데이터를 담는 메모리 상자(Bucket)&#39;**로 생각하는 강한 관성을 가지고 있습니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[C 언어적 사고: 변수 = 상자]
+int x = 10;
+┌─────────────┐
+│     10      │  &lt;-- 스택 프레임 내 4바이트 상자 자체가 x
+└─────────────┘</code></pre>
+</div><p>하지만 <strong>파이썬의 세계에서 변수는 절대로 상자가 아닙니다.</strong></p>
+<p>파이썬 세상의 모든 데이터는 컴퓨터 메모리의 거대한 힙(Heap) 광장에 독립적으로 존재하는 **&#39;살아있는 생명체(객체, PyObject)&#39;**입니다. 그리고 우리가 코드에서 작성하는 변수는 그 독립 객체의 손목에 매달아 둔 **&#39;이름표(Label / Pointer)&#39;**에 불과합니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[파이썬의 실제 모델: 변수 = 이름표, 데이터 = 힙 객체]
+
+[ 전역 네임스페이스 ]               [ 메모리 힙(Heap) 광장 ]
+  ┌───────────┐      끈(참조 포인터)    ┌───────────────────────────────┐
+  │     x     │ ────────────────────▶ │  PyLongObject (정수 10)       │
+  └───────────┘                       │  - ob_refcnt : 1              │
+                                      │  - ob_type   : &lt;class 'int'&gt;  │
+                                      │  - ob_digit  : 10             │
+                                      └───────────────────────────────┘</code></pre>
+</div><p>이 사소해 보이는 관점의 전환 하나가, 파이썬의 모든 동작을 지배하는 만유인력의 법칙이 됩니다:</p>
+<ol>
+<li><code>x = 20</code>을 대입하면 상자의 내용물이 바뀌는 것이 아니라, <code>x</code> 이름표를 떼어 새로 만든 <code>20</code> 객체에 다시 묶습니다.</li>
+<li><code>y = x</code>를 실행하면 숫자가 복사되는 것이 아니라, <code>0x...</code> 주소의 동일한 <code>10</code> 객체에 <code>y</code>라는 두 번째 이름표를 하나 더 달 뿐입니다.</li>
+<li>리스트에 값을 추가해도 리스트 컨테이너 객체의 주소는 그대로 유지됩니다.</li>
+</ol>
+<hr>
+<h2 id="1-정수-10000의-해부-파이썬-객체의-실체는-c-구조체다"><a href="#1-정수-10000의-해부-파이썬-객체의-실체는-c-구조체다" class="heading-anchor" aria-hidden="true">#</a> 1. 정수 10000의 해부: 파이썬 객체의 실체는 C 구조체다</h2><p>파이썬(표준 CPython 구현체 기준)에는 하드웨어 직결형 원시 타입(Primitive Type)이 존재하지 않습니다. 숫자 <code>10000</code> 하나조차 64비트 CPython에서는 <strong>무려 28바이트를 차지하는 독립 C 구조체</strong>입니다.</p>
+<h3 id="cpython의-pylongobject-내부-레이아웃"><a href="#cpython의-pylongobject-내부-레이아웃" class="heading-anchor" aria-hidden="true">#</a> CPython의 <code>PyLongObject</code> 내부 레이아웃</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">c</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-c">// CPython 내부 헤더 (의사 코드)
+struct _longobject {
+    PyObject_VAR_HEAD
+    digit ob_digit[1];
+};</code></pre>
+</div><p>이 구조체가 메모리에 할당되면 다음과 같이 배치됩니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">+-------------------------------------------------------------------------+
+|                PyObject_VAR_HEAD (메타데이터 헤더: 24 Bytes)              |
++-------------------------------------------------------------------------+
+|  ob_refcnt : 8 Bytes  (이 객체를 가리키는 이름표 개수 = 참조 카운트)         |
+|  *ob_type  : 8 Bytes  (객체의 규격서: PyLong_Type 포인터)                  |
+|  ob_size   : 8 Bytes  (가변 길이 정수 배열의 크기/부호 정보)                 |
++-------------------------------------------------------------------------+
+|                Payload (실제 데이터 페이로드: 4 Bytes)                   |
++-------------------------------------------------------------------------+
+|  ob_digit  : 4 Bytes  (실제 정수 데이터 값: 10000)                       |
++-------------------------------------------------------------------------+
+  총 메모리 크기: 28 Bytes</code></pre>
+</div><h3 id="c-표준-추상-기계의-객체-vs-파이썬-객체의-본질적-차이"><a href="#c-표준-추상-기계의-객체-vs-파이썬-객체의-본질적-차이" class="heading-anchor" aria-hidden="true">#</a> C 표준 추상 기계의 객체 vs 파이썬 객체의 본질적 차이</h3><ul>
+<li><strong>C 표준(ISO C)의 객체</strong>: 실행 환경에서 값을 저장할 수 있는 &quot;연속된 메모리 영역(Region of data storage)&quot;에 불과합니다. 스택에 잡힌 <code>int a;</code> 4바이트도 C 표준에서는 객체이며, 런타임 메타데이터나 타입 정보가 전혀 들어있지 않습니다.</li>
+<li><strong>파이썬의 객체</strong>: Identity(메모리 주소), Type(타입 포인터), RefCount(참조 카운트)라는 **신분증(Header)**을 반드시 목에 걸고 힙에 상주하는 풍부한 객체 지향 엔티티입니다.</li>
+</ul>
+<hr>
+<h2 id="2-불변immutable과-가변mutable의-동역학"><a href="#2-불변immutable과-가변mutable의-동역학" class="heading-anchor" aria-hidden="true">#</a> 2. 불변(Immutable)과 가변(Mutable)의 동역학</h2><p>파이썬의 객체는 크게 두 가지 종족으로 나뉩니다:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th align="left">구분</th>
+<th align="left">해당 자료형</th>
+<th align="left">값 변경 시 CPython 내부 동작</th>
+<th align="left">메모리 주소 (<code>id()</code>)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>불변 (Immutable)</strong></td>
+<td align="left"><code>int</code>, <code>float</code>, <code>str</code>, <code>tuple</code>, <code>frozenset</code></td>
+<td align="left">기존 메모리 수정 불가. 새 객체 생성 후 이름표 재바인딩</td>
+<td align="left">완전히 변경됨</td>
+</tr>
+<tr>
+<td align="left"><strong>가변 (Mutable)</strong></td>
+<td align="left"><code>list</code>, <code>dict</code>, <code>set</code>, 사용자 정의 인스턴스</td>
+<td align="left">기존 메모리 유지. 내부 포인터 배열을 인플레이스(In-place) 수정</td>
+<td align="left">불변 (유지됨)</td>
+</tr>
+</tbody></table>
+</div><h3 id="컨테이너-객체의-실체-quot포인터-주머니quot"><a href="#컨테이너-객체의-실체-quot포인터-주머니quot" class="heading-anchor" aria-hidden="true">#</a> 컨테이너 객체의 실체: &quot;포인터 주머니&quot;</h3><p>파이썬의 <code>list</code>는 숫자나 문자열을 직접 품고 있지 않습니다. 리스트는 단지 <strong>다른 객체들의 메모리 주소를 가리키는 C 레벨 포인터 배열</strong>입니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">x = [1, 2, 3]
+
+[ 이름표 x ] ──▶ [ List 컨테이너 객체 (0xAAA) ]
+                  ├─ [0] 포인터 ──▶ [ 정수 1 객체 (0x100) ]
+                  ├─ [1] 포인터 ──▶ [ 정수 2 객체 (0x200) ]
+                  └─ [2] 포인터 ──▶ [ 정수 3 객체 (0x300) ]</code></pre>
+</div><p><code>x.append(4)</code>를 실행하면 리스트 객체 <code>0xAAA</code>의 메모리 주소는 그대로 유지된 채, 내부 슬롯의 포인터 하나만 <code>4</code> 객체로 추가 연결될 뿐입니다.</p>
+<hr>
+<h2 id="3-데이터와-로직의-이산가족-인스턴스와-클래스의-역할-분담"><a href="#3-데이터와-로직의-이산가족-인스턴스와-클래스의-역할-분담" class="heading-anchor" aria-hidden="true">#</a> 3. 데이터와 로직의 이산가족: 인스턴스와 클래스의 역할 분담</h2><p>객체 지향 프로그래밍을 할 때 많은 사람들이 무의식중에 다음과 같은 오해를 합니다:</p>
+<blockquote>
+<p><em>&quot;인스턴스를 만들면 그 안에 메서드 함수들도 함께 복사되어 들어있겠지?&quot;</em></p>
+</blockquote>
+<p>만약 강아지 클래스 <code>Dog</code>로 1만 마리의 인스턴스를 만들었는데 메서드가 복사된다면, 동일한 기계어 코드가 1만 번 중복 생성되어 메모리가 폭발할 것입니다.</p>
+<p>파이썬은 이를 철저하게 방지하기 위해 <strong>데이터(상태)와 로직(함수)을 완벽하게 분리</strong>합니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[ 힙 메모리 광장 ]
+
+  (공용 로직 공구함)
+  ┌──────────────────────────────────────────────────────────┐
+  │ 클래스 객체 Dog (0x800)                                  │
+  │  - ob_type  : &lt;class 'type'&gt;                             │
+  │  - __dict__ : { 'bark': &lt;function Dog.bark at 0x900&gt; }   │
+  └──────────────────────────────────────────────────────────┘
+       ▲
+       │ ob_type (소속 클래스 포인터)
+       │
+  ┌──────────────────────────────────────────────────────────┐
+  │ 인스턴스 객체 my_dog (0x500)                              │
+  │  - ob_type  : 0x800 (Dog 클래스를 가리킴)                 │
+  │  - __dict__ : { 'name': '바둑이', 'age': 3 }             │
+  │  ※ 함수 바이트코드는 1바이트도 들어있지 않음!              │
+  └──────────────────────────────────────────────────────────┘</code></pre>
+</div><ul>
+<li><strong>인스턴스(<code>my_dog</code>)</strong>: 오직 자신의 이름, 나이 같은 순수한 고유 데이터(속성)만 담고 있는 <strong>데이터 창고</strong>입니다.</li>
+<li><strong>클래스(<code>Dog</code>)</strong>: 모든 인스턴스가 함께 사용하는 공유 함수들을 딱 한 벌만 보관하는 <strong>공용 공구함</strong>입니다.</li>
+</ul>
+<hr>
+<h2 id="4-점을-찍는-순간-벌어지는-마법-bound-method의-런타임-탄생"><a href="#4-점을-찍는-순간-벌어지는-마법-bound-method의-런타임-탄생" class="heading-anchor" aria-hidden="true">#</a> 4. 점(.)을 찍는 순간 벌어지는 마법: Bound Method의 런타임 탄생</h2><p>인스턴스에 함수가 없다면, 도대체 파이썬은 어떻게 <code>my_dog.bark()</code>를 실행할 수 있을까요?</p>
+<p>그 해답은 바로 <strong>점(<code>.</code>) 연산자</strong>와 **디스크립터 프로토콜(Descriptor Protocol: <code>__get__</code>)**에 있습니다.</p>
+<p>우리가 코드에서 <code>my_dog.bark</code>를 적는 바로 그 찰나의 순간, 파이썬 인터프리터 내부에서는 놀라운 일이 벌어집니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">1. my_dog 뒤에 점(.)을 찍고 bark를 찾는다.
+2. my_dog.__dict__에 'bark'가 없으므로 ob_type을 타고 Dog 클래스로 올라간다.
+3. Dog.__dict__['bark']에서 원본 함수 객체를 찾아낸다.
+4. 파이썬의 함수 객체는 디스크립터이므로 __get__ 메서드를 내장하고 있다!
+5. CPython이 Dog.__dict__['bark'].__get__(my_dog, Dog)를 자동 호출한다.
+6. 힙 메모리에 &lt;bound method&gt;라는 새로운 임시 래퍼 객체가 즉석에서 생성된다!</code></pre>
+</div>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[ 점(.)을 찍는 순간 힙에 방금 태어난 임시 래퍼 객체 ]
++-----------------------------------------------------------------+
+| &lt;bound method Dog.bark of &lt;Dog object at 0x500&gt;&gt;                |
++-----------------------------------------------------------------+
+|  __func__ : 0x900 (Dog 클래스 내부의 bark 원본 함수 포인터)        |
+|  __self__ : 0x500 (방금 점을 찍고 접근한 my_dog 인스턴스 포인터)  |
++-----------------------------------------------------------------+</code></pre>
+</div><h3 id="증명-정말로-새-객체가-찍혀-나오는가"><a href="#증명-정말로-새-객체가-찍혀-나오는가" class="heading-anchor" aria-hidden="true">#</a> 증명: 정말로 새 객체가 찍혀 나오는가?</h3><p>두 번 점을 찍어 변수에 담고 <code>is</code> 연산자로 비교해보면 완벽하게 입증됩니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python">m1 = my_dog.bark
+m2 = my_dog.bark
+
+print(m1 is m2)  # False! (서로 다른 독립된 힙 메모리 주소에 생성된 객체)
+print(m1 == m2)  # True!  (안에 쥐고 있는 __func__와 __self__가 같으므로 동등함)</code></pre>
+</div><p>이 래퍼 객체는 스스로 실행되는 함수가 아니라, <strong>&quot;나중에 괄호 <code>()</code>를 붙여 부르면 내가 쥐고 있는 <code>__self__</code>를 첫 번째 인자로 밀어 넣어서 <code>__func__</code>를 실행해주마&quot;</strong> 하고 기다리는 포장지 객체입니다.</p>
+<hr>
+<h2 id="5-self-매개변수-화살표의-올바른-종착점"><a href="#5-self-매개변수-화살표의-올바른-종착점" class="heading-anchor" aria-hidden="true">#</a> 5. self 매개변수 화살표의 올바른 종착점</h2><p>초보자뿐 아니라 숙련된 개발자들도 종종 다음과 같은 오개념을 품습니다:</p>
+<blockquote>
+<p><em>&quot;인스턴스 입장에서 self는 클래스에 정의된 함수를 가리키는 화살표인가요?&quot;</em></p>
+</blockquote>
+<p><strong>정반대입니다!</strong></p>
+<p><code>self</code>는 함수를 가리키는 것이 아니라, <strong>함수가 실행될 때 그 함수를 호출한 대상 인스턴스 자신을 가리키는 화살표</strong>입니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[ my_dog.bark() 실행 시 CPython 스택 프레임 ]
+
+  Dog.bark 실행 프레임 내부:
+    매개변수 self ────────(C 포인터)────────▶ [ 힙의 my_dog 인스턴스 본체 ]
+                                                     │
+                                                     │ (ob_type 포인터)
+                                                     ▼
+                                            [ 힙의 Dog 클래스 객체 ]</code></pre>
+</div><p>파이썬에서 메서드 호출은 사실 문법적 설탕(Syntactic Sugar)에 불과합니다. 아래의 두 코드는 기계적으로 100% 동일하게 동작합니다:</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python"># 우리가 작성하는 객체지향 표기법
+my_dog.bark("멍멍")
+
+# CPython이 내부적으로 변환하여 실행하는 실제 메커니즘
+Dog.bark(my_dog, "멍멍")</code></pre>
+</div><p>Java나 C++은 컴파일러가 <code>this</code> 포인터를 암묵적으로 레지스터에 숨겨 넘겨주지만, 파이썬은 **&quot;명시적인 것이 암묵적인 것보다 낫다(Explicit is better than implicit)&quot;**는 철학에 따라 첫 번째 매개변수 자리에 <code>self</code>를 명시적으로 선언하도록 설계된 것입니다.</p>
+<hr>
+<h2 id="6-파이썬-세계의-전모-거대한-객체-그래프-object-graph"><a href="#6-파이썬-세계의-전모-거대한-객체-그래프-object-graph" class="heading-anchor" aria-hidden="true">#</a> 6. 파이썬 세계의 전모: 거대한 객체 그래프 (Object Graph)</h2><p>파이썬 프로그램이 실행되는 런타임 공간은 수많은 노드(객체)들과 이들을 잇는 방향성 간선(참조 포인터)들로 가득 찬 **거대한 하나의 은하계(Object Graph)**입니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[ Global Namespace (전역 사전) ]
+  ├─ "math"       ───▶ [ 모듈 객체 (math) ]
+  │                       └─ "sqrt" ───▶ [ 내장 함수 객체 (sqrt) ]
+  │
+  ├─ "Dog"        ───▶ [ 클래스 타입 객체 (Dog) ]
+  │                       └─ "bark" ───▶ [ 함수 객체 (bark) ]
+  │
+  ├─ "my_dog"     ───▶ [ 인스턴스 객체 (my_dog) ]
+  │                       ├─ "ob_type" ───▶ (Dog 클래스 가리킴)
+  │                       └─ "name"    ───▶ [ 문자열 객체 ('바둑이') ]
+  │
+  └─ "numbers"    ───▶ [ 리스트 객체 ]
+                          ├─ [0] ───▶ [ 정수 10000 객체 ]
+                          └─ [1] ───▶ [ 정수 20000 객체 ]</code></pre>
+</div><p>파이썬에서 가비지 컬렉터(Garbage Collector)는 이 거대한 그래프에서 어떤 이름표나 포인터로도 도달할 수 없는(Unreachable) 고립된 객체 섬들을 찾아내어 메모리에서 회수하는 청소기 역할을 수행합니다.</p>
+<hr>
+<h2 id="멘탈-모델-자가-점검-4문-4답"><a href="#멘탈-모델-자가-점검-4문-4답" class="heading-anchor" aria-hidden="true">#</a> 🎯 멘탈 모델 자가 점검 4문 4답</h2><ol>
+<li><strong>&quot;변수는 무엇인가?&quot;</strong><br>👉 값을 담는 상자가 아니라, 힙에 뜬 객체의 주소를 가리키는 이름표(Label) 포인터입니다.</li>
+<li><strong>&quot;인스턴스와 클래스의 차이는?&quot;</strong><br>👉 인스턴스는 오직 고유 상태값만 쥐고 있는 데이터 창고이며, 클래스는 공용 함수 바이트코드를 보관하는 공구함입니다.</li>
+<li><strong>&quot;Bound Method는 언제 만들어지는가?&quot;</strong><br>👉 인스턴스 뒤에 점(<code>.</code>)을 찍어 메서드를 참조하는 바로 그 순간, 디스크립터 프로토콜에 의해 힙에 새로운 래퍼 객체가 즉석 생성됩니다.</li>
+<li><strong>&quot;self는 어디를 가리키는가?&quot;</strong><br>👉 함수 코드를 가리키는 것이 아니라, 함수가 실행될 때 전달받은 대상 인스턴스 본체(<code>my_dog</code>)를 가리킵니다.</li>
+</ol>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
