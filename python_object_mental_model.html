@@ -1178,13 +1178,13 @@
           
           <span class="tag-pill">#CPython</span>
           
-          <span class="tag-pill">#메모리 모델</span>
+          <span class="tag-pill">#메모리모델</span>
           
-          <span class="tag-pill">#객체 지향</span>
+          <span class="tag-pill">#객체지향</span>
           
-          <span class="tag-pill">#컴퓨터 구조</span>
+          <span class="tag-pill">#컴퓨터구조</span>
           
-          <span class="tag-pill">#멘탈 모델</span>
+          <span class="tag-pill">#멘탈모델</span>
           
         </div>
       </header>
@@ -1194,7 +1194,7 @@
 <p><strong>기획 및 집필</strong>: Antigravity (Advanced Agentic Systems)<br><strong>핵심 주제</strong>: CPython 런타임 메모리 구조, 이름표 바인딩, 디스크립터 프로토콜, 객체 그래프</p>
 </blockquote>
 <hr>
-<h2 id="프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로"><a href="#프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로" class="heading-anchor" aria-hidden="true">#</a> 🌟 프롤로그: &quot;상자&quot;를 부수고 &quot;메모리 광장&quot;으로</h2><p>C, C++, Java 같은 전통적인 정적 타입 언어를 먼저 경험한 사람들은 변수를 **&#39;데이터를 담는 메모리 상자(Bucket)&#39;**로 생각하는 강한 관성을 가지고 있습니다.</p>
+<h2 id="프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로"><a href="#프롤로그-quot상자quot를-부수고-quot메모리-광장quot으로" class="heading-anchor" aria-hidden="true">#</a> 🌟 프롤로그: &quot;상자&quot;를 부수고 &quot;메모리 광장&quot;으로</h2><p>C, C++, Java 같은 전통적인 정적 타입 언어를 먼저 경험한 사람들은 변수를 ‘<strong>데이터를 담는 메모리 상자(Bucket)</strong>’로 생각하는 강한 관성을 가지고 있습니다.</p>
 
 <div class="code-block-wrapper">
   <div class="code-header">
@@ -1207,7 +1207,7 @@ int x = 10;
 │     10      │  &lt;-- 스택 프레임 내 4바이트 상자 자체가 x
 └─────────────┘</code></pre>
 </div><p>하지만 <strong>파이썬의 세계에서 변수는 절대로 상자가 아닙니다.</strong></p>
-<p>파이썬 세상의 모든 데이터는 컴퓨터 메모리의 거대한 힙(Heap) 광장에 독립적으로 존재하는 **&#39;살아있는 생명체(객체, PyObject)&#39;**입니다. 그리고 우리가 코드에서 작성하는 변수는 그 독립 객체의 손목에 매달아 둔 **&#39;이름표(Label / Pointer)&#39;**에 불과합니다.</p>
+<p>파이썬 세상의 모든 데이터는 컴퓨터 메모리의 거대한 힙(Heap) 광장에 독립적으로 존재하는 ‘<strong>살아있는 생명체(객체, PyObject)</strong>’입니다. 그리고 우리가 코드에서 작성하는 변수는 그 독립 객체의 손목에 매달아 둔 ‘<strong>이름표(Label / Pointer)</strong>’에 불과합니다.</p>
 
 <div class="code-block-wrapper">
   <div class="code-header">
@@ -1263,7 +1263,7 @@ struct _longobject {
   총 메모리 크기: 28 Bytes</code></pre>
 </div><h3 id="c-표준-추상-기계의-객체-vs-파이썬-객체의-본질적-차이"><a href="#c-표준-추상-기계의-객체-vs-파이썬-객체의-본질적-차이" class="heading-anchor" aria-hidden="true">#</a> C 표준 추상 기계의 객체 vs 파이썬 객체의 본질적 차이</h3><ul>
 <li><strong>C 표준(ISO C)의 객체</strong>: 실행 환경에서 값을 저장할 수 있는 &quot;연속된 메모리 영역(Region of data storage)&quot;에 불과합니다. 스택에 잡힌 <code>int a;</code> 4바이트도 C 표준에서는 객체이며, 런타임 메타데이터나 타입 정보가 전혀 들어있지 않습니다.</li>
-<li><strong>파이썬의 객체</strong>: Identity(메모리 주소), Type(타입 포인터), RefCount(참조 카운트)라는 **신분증(Header)**을 반드시 목에 걸고 힙에 상주하는 풍부한 객체 지향 엔티티입니다.</li>
+<li><strong>파이썬의 객체</strong>: Identity(메모리 주소), Type(타입 포인터), RefCount(참조 카운트)라는 <strong>신분증</strong>(Header)을 반드시 목에 걸고 힙에 상주하는 풍부한 객체 지향 엔티티입니다.</li>
 </ul>
 <hr>
 <h2 id="2-불변immutable과-가변mutable의-동역학"><a href="#2-불변immutable과-가변mutable의-동역학" class="heading-anchor" aria-hidden="true">#</a> 2. 불변(Immutable)과 가변(Mutable)의 동역학</h2><p>파이썬의 객체는 크게 두 가지 종족으로 나뉩니다:</p>
@@ -1339,7 +1339,7 @@ struct _longobject {
 </ul>
 <hr>
 <h2 id="4-점을-찍는-순간-벌어지는-마법-bound-method의-런타임-탄생"><a href="#4-점을-찍는-순간-벌어지는-마법-bound-method의-런타임-탄생" class="heading-anchor" aria-hidden="true">#</a> 4. 점(.)을 찍는 순간 벌어지는 마법: Bound Method의 런타임 탄생</h2><p>인스턴스에 함수가 없다면, 도대체 파이썬은 어떻게 <code>my_dog.bark()</code>를 실행할 수 있을까요?</p>
-<p>그 해답은 바로 <strong>점(<code>.</code>) 연산자</strong>와 **디스크립터 프로토콜(Descriptor Protocol: <code>__get__</code>)**에 있습니다.</p>
+<p>그 해답은 바로 <strong>점(<code>.</code>) 연산자</strong>와 <strong>디스크립터 프로토콜</strong>(Descriptor Protocol: <code>__get__</code>)에 있습니다.</p>
 <p>우리가 코드에서 <code>my_dog.bark</code>를 적는 바로 그 찰나의 순간, 파이썬 인터프리터 내부에서는 놀라운 일이 벌어집니다:</p>
 
 <div class="code-block-wrapper">
@@ -1378,7 +1378,7 @@ m2 = my_dog.bark
 
 print(m1 is m2)  # False! (서로 다른 독립된 힙 메모리 주소에 생성된 객체)
 print(m1 == m2)  # True!  (안에 쥐고 있는 __func__와 __self__가 같으므로 동등함)</code></pre>
-</div><p>이 래퍼 객체는 스스로 실행되는 함수가 아니라, <strong>&quot;나중에 괄호 <code>()</code>를 붙여 부르면 내가 쥐고 있는 <code>__self__</code>를 첫 번째 인자로 밀어 넣어서 <code>__func__</code>를 실행해주마&quot;</strong> 하고 기다리는 포장지 객체입니다.</p>
+</div><p>이 래퍼 객체는 스스로 실행되는 함수가 아니라, “<strong>나중에 괄호 <code>()</code>를 붙여 부르면 내가 쥐고 있는 <code>__self__</code>를 첫 번째 인자로 밀어 넣어서 <code>__func__</code>를 실행해주마</strong>” 하고 기다리는 포장지 객체입니다.</p>
 <hr>
 <h2 id="5-self-매개변수-화살표의-올바른-종착점"><a href="#5-self-매개변수-화살표의-올바른-종착점" class="heading-anchor" aria-hidden="true">#</a> 5. self 매개변수 화살표의 올바른 종착점</h2><p>초보자뿐 아니라 숙련된 개발자들도 종종 다음과 같은 오개념을 품습니다:</p>
 <blockquote>
@@ -1412,9 +1412,9 @@ my_dog.bark("멍멍")
 
 # CPython이 내부적으로 변환하여 실행하는 실제 메커니즘
 Dog.bark(my_dog, "멍멍")</code></pre>
-</div><p>Java나 C++은 컴파일러가 <code>this</code> 포인터를 암묵적으로 레지스터에 숨겨 넘겨주지만, 파이썬은 **&quot;명시적인 것이 암묵적인 것보다 낫다(Explicit is better than implicit)&quot;**는 철학에 따라 첫 번째 매개변수 자리에 <code>self</code>를 명시적으로 선언하도록 설계된 것입니다.</p>
+</div><p>Java나 C++은 컴파일러가 <code>this</code> 포인터를 암묵적으로 레지스터에 숨겨 넘겨주지만, 파이썬은 “<strong>명시적인 것이 암묵적인 것보다 낫다(Explicit is better than implicit)</strong>”는 철학에 따라 첫 번째 매개변수 자리에 <code>self</code>를 명시적으로 선언하도록 설계된 것입니다.</p>
 <hr>
-<h2 id="6-파이썬-세계의-전모-거대한-객체-그래프-object-graph"><a href="#6-파이썬-세계의-전모-거대한-객체-그래프-object-graph" class="heading-anchor" aria-hidden="true">#</a> 6. 파이썬 세계의 전모: 거대한 객체 그래프 (Object Graph)</h2><p>파이썬 프로그램이 실행되는 런타임 공간은 수많은 노드(객체)들과 이들을 잇는 방향성 간선(참조 포인터)들로 가득 찬 **거대한 하나의 은하계(Object Graph)**입니다.</p>
+<h2 id="6-파이썬-세계의-전모-거대한-객체-그래프-object-graph"><a href="#6-파이썬-세계의-전모-거대한-객체-그래프-object-graph" class="heading-anchor" aria-hidden="true">#</a> 6. 파이썬 세계의 전모: 거대한 객체 그래프 (Object Graph)</h2><p>파이썬 프로그램이 실행되는 런타임 공간은 수많은 노드(객체)들과 이들을 잇는 방향성 간선(참조 포인터)들로 가득 찬 <strong>거대한 하나의 은하계</strong>(Object Graph)입니다.</p>
 
 <div class="code-block-wrapper">
   <div class="code-header">
@@ -1438,10 +1438,10 @@ Dog.bark(my_dog, "멍멍")</code></pre>
 </div><p>파이썬에서 가비지 컬렉터(Garbage Collector)는 이 거대한 그래프에서 어떤 이름표나 포인터로도 도달할 수 없는(Unreachable) 고립된 객체 섬들을 찾아내어 메모리에서 회수하는 청소기 역할을 수행합니다.</p>
 <hr>
 <h2 id="멘탈-모델-자가-점검-4문-4답"><a href="#멘탈-모델-자가-점검-4문-4답" class="heading-anchor" aria-hidden="true">#</a> 🎯 멘탈 모델 자가 점검 4문 4답</h2><ol>
-<li><strong>&quot;변수는 무엇인가?&quot;</strong><br>👉 값을 담는 상자가 아니라, 힙에 뜬 객체의 주소를 가리키는 이름표(Label) 포인터입니다.</li>
-<li><strong>&quot;인스턴스와 클래스의 차이는?&quot;</strong><br>👉 인스턴스는 오직 고유 상태값만 쥐고 있는 데이터 창고이며, 클래스는 공용 함수 바이트코드를 보관하는 공구함입니다.</li>
-<li><strong>&quot;Bound Method는 언제 만들어지는가?&quot;</strong><br>👉 인스턴스 뒤에 점(<code>.</code>)을 찍어 메서드를 참조하는 바로 그 순간, 디스크립터 프로토콜에 의해 힙에 새로운 래퍼 객체가 즉석 생성됩니다.</li>
-<li><strong>&quot;self는 어디를 가리키는가?&quot;</strong><br>👉 함수 코드를 가리키는 것이 아니라, 함수가 실행될 때 전달받은 대상 인스턴스 본체(<code>my_dog</code>)를 가리킵니다.</li>
+<li>“<strong>변수는 무엇인가?</strong>”<br>👉 값을 담는 상자가 아니라, 힙에 뜬 객체의 주소를 가리키는 이름표(Label) 포인터입니다.</li>
+<li>“<strong>인스턴스와 클래스의 차이는?</strong>”<br>👉 인스턴스는 오직 고유 상태값만 쥐고 있는 데이터 창고이며, 클래스는 공용 함수 바이트코드를 보관하는 공구함입니다.</li>
+<li>“<strong>Bound Method는 언제 만들어지는가?</strong>”<br>👉 인스턴스 뒤에 점(<code>.</code>)을 찍어 메서드를 참조하는 바로 그 순간, 디스크립터 프로토콜에 의해 힙에 새로운 래퍼 객체가 즉석 생성됩니다.</li>
+<li>“<strong>self는 어디를 가리키는가?</strong>”<br>👉 함수 코드를 가리키는 것이 아니라, 함수가 실행될 때 전달받은 대상 인스턴스 본체(<code>my_dog</code>)를 가리킵니다.</li>
 </ol>
 
       </section>
