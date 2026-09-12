@@ -383,13 +383,13 @@ async function build() {
     {
       title: "CPU와 메모리 인터페이스 — 구조와 구현",
       subtitle: "Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름",
-      date: "2026-03-01",
+      date: "2026-09-01",
       summary: "CPU와 DDR DRAM 사이의 Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름을 대화형 도식과 다이어그램으로 완벽 정리한 문서입니다.",
       tags: ["컴퓨터 구조", "DRAM", "Memory Controller", "PHY", "다이어그램"],
       tag_string: "컴퓨터 구조 DRAM Memory Controller PHY 다이어그램",
       reading_time: 15,
       url: "cpu_dram_memory_interface.html",
-      _timestamp: new Date("2026-03-01").getTime()
+      _timestamp: new Date("2026-09-01").getTime()
     }
   ];
 
