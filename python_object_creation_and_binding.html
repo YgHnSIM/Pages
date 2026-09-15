@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>파이썬 객체 생성과 바인딩의 기계적 실체: CPython 힙 메모리와 디스크립터 프로토콜</title>
+  <meta name="description" content="클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 시스템 아키텍처 관점에서 파이썬의 기계적 동작 원리를 완전 해부합니다.">
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  
+  <!-- Early Preference Initialization -->
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+        var t = localStorage.getItem("pages_theme");
+        if (t === "dark" || t === "light") {
+          document.documentElement.setAttribute("data-theme", t);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Mathematical & System Formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.92);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.92);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.92);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.92);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 72px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.82;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.22s ease, color 0.22s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Scroll Progress Bar */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3.5px;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+      z-index: 100;
+      transition: width 0.06s ease-out;
+    }
+
+    /* Sticky Navigation Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 45;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .nav-btn.nav-part2-btn {
+      background: var(--primary-light);
+      border-color: rgba(59, 130, 246, 0.25);
+      color: var(--primary);
+    }
+
+    .nav-btn.nav-part2-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .nav-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      margin-left: 6px;
+    }
+
+    @media (min-width: 680px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 20px 14px 70px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 36px 20px 90px;
+      }
+    }
+
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 16px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 46px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 30px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    .meta-badge.badge-series {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .article-title {
+      font-size: clamp(23px, 5.2vw, 33px);
+      font-weight: 850;
+      line-height: 1.32;
+      letter-spacing: -0.035em;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(15.5px, 3.6vw, 18px);
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Content Elements */
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      font-weight: 800;
+      line-height: 1.36;
+      letter-spacing: -0.025em;
+      margin-top: 2.3em;
+      margin-bottom: 0.85em;
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+      color: var(--text-main);
+      scroll-margin-top: 75px;
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19px);
+      font-weight: 750;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+      margin-top: 1.8em;
+      margin-bottom: 0.7em;
+      color: var(--text-main);
+      scroll-margin-top: 75px;
+    }
+
+    .content h4 {
+      font-size: 15.5px;
+      font-weight: 700;
+      margin-top: 1.4em;
+      margin-bottom: 0.5em;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.35em;
+      text-align: start;
+    }
+
+    .content strong, .content b {
+      font-weight: 750;
+      color: var(--text-main);
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.35em;
+      padding-left: 1.35em;
+    }
+
+    .content li {
+      margin-bottom: 0.45em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.4em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.18em 0.42em;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.5em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #e2e8f0;
+      font-size: 11px;
+      padding: 2.5px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      font-family: var(--font-sans);
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 15px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.62;
+      color: var(--code-text);
+      display: block;
+      padding: 0;
+    }
+
+    /* Accordion Details for Heavy C Code & Structs */
+    details.code-accordion {
+      margin: 1.4em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      overflow: hidden;
+      transition: border-color 0.16s ease;
+    }
+
+    details.code-accordion[open] {
+      border-color: var(--primary);
+    }
+
+    summary.accordion-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--text-main);
+      user-select: none;
+      list-style: none;
+    }
+
+    summary.accordion-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .accordion-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .accordion-chevron {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    details[open] .accordion-chevron {
+      transform: rotate(90deg);
+      stroke: var(--primary);
+    }
+
+    .accordion-body {
+      padding: 0 12px 12px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .accordion-body .code-block-wrapper {
+      margin: 10px 0 0;
+    }
+
+    /* Callouts & Key Insight Boxes */
+    .callout {
+      margin: 1.5em 0;
+      padding: 15px 17px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout.danger {
+      border-left-color: #ef4444;
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 750;
+      font-size: 14.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+    }
+
+    /* Responsive Memory Diagram Cards */
+    .mem-diagram-card {
+      margin: 1.6em 0;
+      padding: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mem-diagram-title {
+      font-size: 13.5px;
+      font-weight: 750;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mem-grid-duo {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .mem-grid-duo {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .mem-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      position: relative;
+    }
+
+    .mem-box.highlight {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-light);
+    }
+
+    .mem-box-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .tag-stack { background: #dbeafe; color: #1e40af; }
+    .tag-heap { background: #d1fae5; color: #065f46; }
+    .tag-ephemeral { background: #fef3c7; color: #92400e; }
+    .tag-frame { background: #ede9fe; color: #5b21b6; }
+
+    :root[data-theme="dark"] .tag-stack { background: rgba(59, 130, 246, 0.22); color: #93c5fd; }
+    :root[data-theme="dark"] .tag-heap { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; }
+    :root[data-theme="dark"] .tag-ephemeral { background: rgba(245, 158, 11, 0.22); color: #fde68a; }
+    :root[data-theme="dark"] .tag-frame { background: rgba(139, 92, 246, 0.22); color: #c4b5fd; }
+
+    .mem-box-name {
+      font-size: 14.5px;
+      font-weight: 750;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .mem-box-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Comparison Table (Responsive) */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.5em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: var(--bg-surface);
+      font-weight: 750;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: top;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.data-table tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2.2em 0;
+      padding: 18px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 16.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 600px) {
+      .sim-tabs {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .sim-tab-btn {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 14px;
+      background: var(--bg-card);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 5px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-step-badge {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+    }
+
+    /* Simulator Active Code Preview */
+    .sim-code-preview {
+      background: var(--code-bg);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .sim-code-line {
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .sim-code-line.active-line {
+      background: rgba(59, 130, 246, 0.28);
+      color: #38bdf8;
+      font-weight: 700;
+      border-left: 3px solid #38bdf8;
+      padding-left: 8px;
+    }
+
+    /* Simulator Visual Memory Layout */
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 660px) {
+      .sim-layout {
+        grid-template-columns: 1fr 1.3fr;
+      }
+    }
+
+    .sim-column {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .sim-col-title {
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-node-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sim-node {
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 12.5px;
+      transition: all 0.2s ease;
+    }
+
+    .sim-node.active-node {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .sim-node.dying-node {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      animation: pulse-red 1s infinite alternate;
+    }
+
+    .sim-node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .sim-node-title {
+      font-weight: 750;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .sim-node-badge {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
+    .sim-node-detail {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Console Log Box */
+    .sim-console {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.55;
+      color: #94a3b8;
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    .sim-console-header {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .sim-log-text {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    /* Explanation Box */
+    .sim-explanation {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    @keyframes pulse-red {
+      from { opacity: 0.8; }
+      to { opacity: 1; }
+    }
+
+    /* Interactive Quiz Widget */
+    .quiz-card {
+      margin: 1.6em 0;
+      padding: 16px 16px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .quiz-q-title {
+      font-size: 15px;
+      font-weight: 750;
+      margin-bottom: 12px;
+      color: var(--text-main);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-btn {
+      text-align: left;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 13.5px;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .quiz-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--primary);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.14);
+      border-color: #10b981;
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    :root[data-theme="dark"] .quiz-btn.correct {
+      color: #6ee7b7;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    :root[data-theme="dark"] .quiz-btn.wrong {
+      color: #fca5a5;
+    }
+
+    .quiz-feedback {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      line-height: 1.55;
+      display: none;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .quiz-feedback.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--text-main);
+    }
+
+    .quiz-feedback.failure {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: var(--text-main);
+    }
+
+    /* TOC Drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.52);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.22s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -310px;
+      width: 290px;
+      max-width: 85vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px 40px;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body a {
+      display: block;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      padding: 5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.4;
+      transition: all 0.15s ease;
+    }
+
+    .toc-drawer-body a:hover,
+    .toc-drawer-body a.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    /* Series Navigation Footer Cards */
+    .series-nav-box {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .series-nav-box {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .nav-card {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: all 0.16s ease;
+    }
+
+    .nav-card:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .nav-card-sub {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .nav-card-title {
+      font-size: 14.5px;
+      font-weight: 750;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+
+    .nav-card.next {
+      border-color: rgba(59, 130, 246, 0.4);
+      background: var(--primary-light);
+    }
+
+    .nav-card.next .nav-card-title {
+      color: var(--primary);
+    }
+
+    /* Site Footer */
+    .site-footer {
+      text-align: center;
+      padding: 22px 14px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Scroll Progress -->
+  <div id="scroll-progress"></div>
+
+  <!-- Sticky Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" aria-label="홈으로">
+        <span>📚</span>
+        <span class="btn-text">홈</span>
+      </a>
+      <span class="nav-title" id="nav-title">파이썬 객체 생성과 바인딩의 기계적 실체</span>
+    </div>
+    <div class="nav-right">
+      <a href="python_callable_and_execution_engine.html" class="nav-btn nav-part2-btn" title="연작 제2부로 이동">
+        <span>2부: 실행 엔진</span>
+        <span class="nav-arrow">➡️</span>
+      </a>
+      <button class="nav-btn" id="font-toggle-btn" aria-label="폰트 전환" title="Pretendard / D2Coding 폰트 토글">
+        <span>🔤</span>
+      </button>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드">
+        <span>🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 열기">
+        <span>📑</span>
+        <span class="btn-text">목차</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Slide-in Table of Contents Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <nav class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 문서 목차</span>
+      <button class="toc-close-btn" id="toc-close-btn" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul>
+        <li><a href="#prologue">프롤로그: 4줄의 코드와 4가지 질문</a></li>
+        <li><a href="#act-0">제0막: 소스에서 불변 PyCodeObject로</a></li>
+        <li><a href="#act-1">제1막: class Dog의 실행과 공간 분리</a></li>
+        <li><a href="#act-2">제2막: my_dog = Dog() 인스턴스 할당</a></li>
+        <li><a href="#act-3">제3막: 점(.) 접근과 Bound Method 탄생</a></li>
+        <li><a href="#act-4">제4막: 호출 실행과 self 역방향 주입</a></li>
+        <li><a href="#act-5">제5막: CPython의 7가지 은밀한 임시 객체</a></li>
+        <li><a href="#act-6">제6막: 기계의 눈으로 본 바인딩의 실체</a></li>
+        <li><a href="#interactive-simulator">제7막: 인터랙티브 메모리 힙 상태도</a></li>
+        <li><a href="#quiz-section">제8막: 멘탈 모델 자가 진단 퀴즈</a></li>
+        <li><a href="#epilogue">에필로그 및 요약 치트시트</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Article Body -->
+  <main class="article-container">
+    <article class="article-card">
+      
+      <!-- Article Header -->
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge badge-series">CPython 심층 해부 · 제1부</span>
+          <span class="meta-badge">📅 2026-09-15</span>
+          <span class="meta-badge">⏱️ 약 18분 완독</span>
+          <span class="meta-badge">⚙️ CPython 3.12+ 기준</span>
+        </div>
+        <h1 class="article-title">파이썬 객체 생성과 바인딩의 기계적 실체</h1>
+        <p class="article-subtitle">
+          단 4줄의 코드 뒤에서 일어나는 CPython 메모리 공간 분리, Bound Method(PyMethodObject)의 동적 생성(<code>m1 is m2 → False</code>), 그리고 남몰래 소멸하는 7가지 임시 객체들
+        </p>
+        <div class="tag-list">
+          <span class="tag-pill">#Python</span>
+          <span class="tag-pill">#CPython</span>
+          <span class="tag-pill">#메모리모델</span>
+          <span class="tag-pill">#BoundMethod</span>
+          <span class="tag-pill">#디스크립터</span>
+          <span class="tag-pill">#시스템프로그래밍</span>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- Core Mental Model Callout -->
+        <div class="callout tip">
+          <div class="callout-title">🧠 CPython 엔지니어의 핵심 멘탈 모델 5원칙</div>
+          <p>
+            1. <strong>변수는 상자(Bucket)가 아니라 객체에 붙는 포인터 이름표(Label)</strong>다.<br>
+            2. <strong>데이터(인스턴스 상태)와 로직(클래스 함수)은 메모리상에서 완벽히 분리</strong>되어 있다.<br>
+            3. <code>my_dog.bark</code> 접근 시 디스크립터 프로토콜에 의해 힙에 동적으로 생성되는 얇은 래퍼 객체인 <strong>Bound Method(<code>PyMethodObject</code>)</strong>가 찰나의 순간 탄생한다.<br>
+            4. <strong>바인딩(Binding)은 언어적 환상이 아니다.</strong> C 레벨에서 <code>self</code>에 인스턴스 주소를 제1인자로 주입하는 정교한 기계적 래퍼 메커니즘이다.<br>
+            5. CPython 인터프리터는 한 줄의 메서드 호출을 처리하기 위해 <strong>7가지 은밀한 임시 객체</strong>를 힙과 스택에 생성했다가 즉시 증발시킨다.
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2 id="prologue">프롤로그: 직관을 뒤엎는 4줄의 파이썬 코드</h2>
+        <p>
+          파이썬을 배울 때 누구나 처음 마주하는 전형적인 객체 지향 코드입니다.
+        </p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">Python</span>
+            <button class="copy-btn" aria-label="코드 복사">복사</button>
+          </div>
+          <pre><code>class Dog:
+    def bark(self):
+        print("woof")
+
+my_dog = Dog()
+
+print(my_dog.bark)
+print(my_dog.bark())</code></pre>
+        </div>
+
+        <p>
+          터미널에 이 스크립트를 던지면 다음과 같은 결과가 출력됩니다.
+        </p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">Output</span>
+            <button class="copy-btn" aria-label="코드 복사">복사</button>
+          </div>
+          <pre><code>&lt;bound method Dog.bark of &lt;__main__.Dog object at 0x7f9a1024b310&gt;&gt;
+woof
+None</code></pre>
+        </div>
+
+        <p>
+          단 4줄의 지극히 평범한 코드이지만, 시스템 프로그래머의 시선으로 런타임 메모리를 들여다보면 무수히 많은 질문이 쏟아져 나옵니다:
+        </p>
+
+        <ul>
+          <li><strong>질문 1:</strong> <code>my_dog.bark</code>와 <code>my_dog.bark()</code>의 본질적 차이는 무엇인가? 왜 괄호가 없을 때는 호출되지 않고 <code>&lt;bound method&gt;</code>라는 기묘한 문자열이 출력되는가?</li>
+          <li><strong>질문 2:</strong> <code>my_dog</code> 인스턴스를 생성했을 때, 그 인스턴스 메모리 공간 안에 <code>bark</code> 함수의 바이트코드가 복사되어 들어가는가?</li>
+          <li><strong>질문 3:</strong> <code>m1 = my_dog.bark</code>와 <code>m2 = my_dog.bark</code>를 차례로 꺼내어 <code>m1 is m2</code>를 검사하면 왜 <strong>False</strong>가 나오는가? 메서드는 이미 인스턴스에 붙어있는 것이 아니었단 말인가?</li>
+          <li><strong>질문 4:</strong> <code>def bark(self):</code>에서 <code>self</code>는 도대체 언제, 누구에 의해, 어떤 주소값으로 전달되는가?</li>
+        </ul>
+
+        <p>
+          이 질문들에 시스템 레벨의 명쾌한 답을 내놓지 못한다면, 우리는 파이썬을 다루는 것이 아니라 파이썬이 보여주는 표면적 환상에 속고 있는 것입니다. 
+          이제 CPython C 소스코드와 메모리 힙 레이아웃을 통해 이 4줄의 기계적 실체를 한 겹씩 벗겨보겠습니다.
+        </p>
+
+        <!-- Section 2 -->
+        <h2 id="act-0">제0막: 실행 전야 — 소스 코드에서 불변 PyCodeObject로</h2>
+        <p>
+          CPython 인터프리터는 텍스트 소스 코드를 그 자리에서 곧바로 기계어처럼 실행하지 않습니다. 파이썬 스크립트가 실행되는 순간, 인터프리터는 소스 코드를 파싱하여 AST(추상 구문 트리)를 구축하고 이를 불변(Immutable)의 <strong>Code Object(<code>PyCodeObject</code>)</strong>들로 컴파일합니다.
+        </p>
+
+        <div class="mem-diagram-card">
+          <div class="mem-diagram-title">
+            <span>CPython 정적 컴파일 파이프라인</span>
+            <span class="accordion-badge">불변 구조체 계층</span>
+          </div>
+          <div class="mem-grid-duo">
+            <div class="mem-box">
+              <span class="mem-box-tag tag-stack">모듈 레벨</span>
+              <div class="mem-box-name">&lt;module&gt; PyCodeObject</div>
+              <div class="mem-box-desc">
+                • <code>co_consts</code>: <code>(&lt;code Dog&gt;, None)</code><br>
+                • <code>co_names</code>: <code>('Dog', 'my_dog', 'print')</code><br>
+                • 전역 실행용 바이트코드 컨테이너
+              </div>
+            </div>
+            <div class="mem-box">
+              <span class="mem-box-tag tag-heap">함수 레벨</span>
+              <div class="mem-box-name">bark PyCodeObject</div>
+              <div class="mem-box-desc">
+                • <code>co_name</code>: <code>'bark'</code><br>
+                • <code>co_varnames</code>: <code>('self',)</code><br>
+                • <code>co_consts</code>: <code>(None, 'woof')</code><br>
+                • <code>co_code</code>: <code>LOAD_GLOBAL, LOAD_CONST, CALL...</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          여기서 가장 핵심적인 사실은 <strong>Code Object는 단지 '실행 명세서'일 뿐, 파이썬의 '함수(Function)'가 아니라는 점</strong>입니다. 
+          Code Object는 환경(Scope), 전역 변수 사전(<code>__globals__</code>), 기본값(Default values)에 대해 일절 알지 못합니다. 
+          오직 순수한 바이트코드 열과 상수 풀, 변수 이름 튜플만을 담고 있는 불변 C 구조체입니다.
+        </p>
+
+        <details class="code-accordion">
+          <summary class="accordion-summary">
+            <div class="accordion-summary-left">
+              <span>CPython 내부 C 구조체: PyCodeObject</span>
+              <span class="accordion-badge">Include/cpython/code.h</span>
+            </div>
+            <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </summary>
+          <div class="accordion-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">C Struct</span>
+                <button class="copy-btn" aria-label="코드 복사">복사</button>
+              </div>
+              <pre><code>struct PyCodeObject {
+    PyObject_HEAD
+    int co_flags;               /* 최적화 및 제너레이터 플래그 */
+    int co_argcount;            /* 위치 인자 개수 (bark의 경우 1: self) */
+    int co_posonlyargcount;
+    int co_kwonlyargcount;
+    int co_stacksize;           /* 평가 스택 최대 깊이 */
+    PyObject *co_code;          /* 순수 바이트코드 바이트 열 (PyBytesObject) */
+    PyObject *co_consts;        /* 상수 튜플: ("woof", None 등) */
+    PyObject *co_names;         /* 전역/내장 이름 튜플: ("print",) */
+    PyObject *co_varnames;      /* 지역 변수 이름 튜플: ("self",) */
+    PyObject *co_filename;      /* 소스 파일 경로 */
+    PyObject *co_name;          /* 함수/모듈 이름 ("bark") */
+    /* ... CPython 3.12+ 내부 최적화 슬롯들 ... */
+};</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <!-- Section 3 -->
+        <h2 id="act-1">제1막: class Dog의 실행과 공간 분리 — 로직의 영구 거처</h2>
+        <p>
+          이제 인터프리터가 첫 번째 구문인 <code>class Dog:</code>를 실행합니다.
+          초보자들은 흔히 "클래스를 선언하면 틀(붕어빵 틀)이 선언되는 것이고 객체는 나중에 만들어진다"고 배웁니다. 
+          하지만 CPython에서 <strong>클래스 선언문은 그 자체로 실행 가능한 코드</strong>이며, 실행이 끝나는 순간 힙에 <strong>클래스 객체(<code>PyTypeObject</code>)</strong>라는 거대한 힙 노드가 생성됩니다.
+        </p>
+
+        <div class="callout tip">
+          <div class="callout-title">⚙️ 클래스 정의 시 CPython 내부 동작 순서</div>
+          <p>
+            1. <strong>네임스페이스 딕셔너리 생성 (임시 객체 ①)</strong>: 클래스 본문 내부에서 선언될 속성들을 담을 임시 <code>dict</code>를 만듭니다.<br>
+            2. <strong>클래스 바디 바이트코드 실행</strong>: 내부의 <code>def bark(self):</code>를 실행합니다.<br>
+            3. <strong>PyFunctionObject 힙 할당</strong>: <code>bark</code>의 Code Object와 현재 모듈의 <code>globals()</code>를 엮어 새로운 <strong>함수 객체</strong>를 만듭니다.<br>
+            4. <strong>type 메타클래스 호출</strong>: <code>type.__new__(type, "Dog", (), namespace)</code>를 실행하여 최종적으로 <strong>Dog 클래스 객체</strong>를 완성합니다.
+          </p>
+        </div>
+
+        <p>
+          이 과정이 끝난 후 메모리의 형상을 살펴보면, 데이터와 로직의 엄격한 분리가 이미 시작되었음을 확인할 수 있습니다.
+        </p>
+
+        <!-- HTML/SVG Hybrid Diagram: Class Definition -->
+        <div class="mem-diagram-card">
+          <div class="mem-diagram-title">
+            <span>클래스 생성 완료 시점의 힙 메모리 구조</span>
+            <span class="accordion-badge">공간적 분리 완성</span>
+          </div>
+          <svg viewBox="0 0 760 260" style="width:100%; height:auto; display:block; font-family:var(--font-mono);" role="img" aria-label="클래스 및 함수 객체 메모리 다이어그램">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--primary)" />
+              </marker>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981" />
+              </marker>
+            </defs>
+
+            <!-- Global Name Label -->
+            <rect x="20" y="30" width="130" height="50" rx="8" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1.8" />
+            <text x="85" y="52" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-family="var(--font-sans)">전역 스코프 이름표</text>
+            <text x="85" y="69" text-anchor="middle" font-size="14" font-weight="bold" fill="var(--primary)">Dog</text>
+
+            <!-- Arrow Label -> Class Object -->
+            <path d="M 150 55 L 215 55" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow)" />
+
+            <!-- Dog Class Object (PyTypeObject) -->
+            <rect x="220" y="20" width="240" height="190" rx="10" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2" />
+            <rect x="220" y="20" width="240" height="32" rx="10" fill="var(--primary-light)" />
+            <text x="340" y="41" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--primary)">Dog (PyTypeObject)</text>
+            
+            <text x="235" y="75" font-size="11.5" fill="var(--text-muted)">ob_refcnt: 1</text>
+            <text x="235" y="95" font-size="11.5" fill="var(--text-muted)">ob_type: &lt;class 'type'&gt;</text>
+            <text x="235" y="115" font-size="11.5" fill="var(--text-muted)">tp_name: "Dog"</text>
+            <line x1="230" y1="128" x2="450" y2="128" stroke="var(--border)" stroke-width="1" />
+            <text x="235" y="148" font-size="12" font-weight="bold" fill="var(--text-main)">tp_dict (__dict__):</text>
+            <text x="250" y="172" font-size="12" fill="var(--primary)">"bark" ────────►</text>
+
+            <!-- Arrow from tp_dict to PyFunctionObject -->
+            <path d="M 370 168 L 515 125" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow)" />
+
+            <!-- PyFunctionObject -->
+            <rect x="520" y="25" width="220" height="175" rx="10" fill="var(--bg-card)" stroke="#10b981" stroke-width="2" />
+            <rect x="520" y="25" width="220" height="32" rx="10" fill="rgba(16, 185, 129, 0.15)" />
+            <text x="630" y="46" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">bark (PyFunctionObject)</text>
+            <text x="535" y="80" font-size="11.5" fill="var(--text-muted)">func_name: "bark"</text>
+            <text x="535" y="102" font-size="11.5" fill="var(--text-muted)">func_qualname: "Dog.bark"</text>
+            <text x="535" y="124" font-size="11.5" fill="var(--text-muted)">func_globals: &lt;dict globals&gt;</text>
+            <line x1="530" y1="138" x2="730" y2="138" stroke="var(--border)" stroke-width="1" />
+            <text x="535" y="158" font-size="11.5" font-weight="bold" fill="var(--text-main)">func_code ──► &lt;code bark&gt;</text>
+            <text x="535" y="180" font-size="10.5" fill="var(--text-muted)">(인스턴스 바인딩 없음)</text>
+          </svg>
+        </div>
+
+        <p>
+          이 다이어그램이 증명하는 결정적 통찰은 다음과 같습니다:
+        </p>
+        <blockquote>
+          <strong>"함수 로직(bark)은 오직 Dog 클래스의 딕셔너리에만 등록되어 존재한다."</strong><br>
+          파이썬은 클래스를 선언할 때 함수 코드를 어딘가에 복제해두지 않습니다. 단 하나의 <code>PyFunctionObject</code>가 힙에 만들어지고, 클래스 객체가 자신의 속성 사전(<code>tp_dict</code>)에 그 포인터를 쥐고 있을 뿐입니다.
+        </blockquote>
+
+        <details class="code-accordion">
+          <summary class="accordion-summary">
+            <div class="accordion-summary-left">
+              <span>CPython 내부 C 구조체: PyFunctionObject</span>
+              <span class="accordion-badge">Include/cpython/funcobject.h</span>
+            </div>
+            <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </summary>
+          <div class="accordion-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">C Struct</span>
+                <button class="copy-btn" aria-label="코드 복사">복사</button>
+              </div>
+              <pre><code>typedef struct {
+    PyObject_HEAD
+    PyObject *func_globals;     /* 함수가 정의된 모듈의 전역 사전 */
+    PyObject *func_builtins;    /* __builtins__ 사전 포인터 */
+    PyObject *func_name;        /* __name__ 문자열 ("bark") */
+    PyObject *func_qualname;    /* __qualname__ 문자열 ("Dog.bark") */
+    PyObject *func_code;        /* 실제 실행 바이트코드가 담긴 PyCodeObject */
+    PyObject *func_defaults;    /* 기본 인자 튜플 (없으면 NULL) */
+    PyObject *func_kwdefaults;  /* 키워드 기본 인자 사전 */
+    PyObject *func_closure;     /* 클로저 자유 변수 튜플 */
+    PyObject *func_doc;         /* __doc__ 독스트링 */
+    PyObject *func_dict;        /* 임의 속성 부착용 함수 사전 */
+    vectorcallfunc vectorcall;  /* 고속 호출 C 함수 포인터 */
+} PyFunctionObject;</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <!-- Section 4 -->
+        <h2 id="act-2">제2막: my_dog = Dog() — 인스턴스 할당(tp_new)과 초기화(tp_init)</h2>
+        <p>
+          이제 두 번째 구문인 <code>my_dog = Dog()</code>가 실행됩니다.
+          이 한 줄이 실행될 때 CPython 내부에서는 C 함수 포인터 체인이 정밀한 톱니바퀴처럼 맞물려 돌아갑니다:
+        </p>
+
+        <ol>
+          <li><code>Dog</code>는 메타클래스 <code>type</code>의 인스턴스이므로, <code>Dog()</code> 호출은 C 레벨에서 <code>type_call()</code>을 트리거합니다.</li>
+          <li><code>type_call()</code>은 먼저 <code>Dog-&gt;tp_new</code>를 호출합니다. 우리는 <code>__new__</code>를 오버라이딩하지 않았으므로 기본 <code>object_new()</code>가 호출됩니다.</li>
+          <li><code>_PyObject_New()</code>가 시스템 힙(PyObject Arena)에서 메모리 청크를 쪼개어 할당하고, 헤더의 <code>ob_refcnt = 1</code>, <code>ob_type = &amp;Dog_Type</code>으로 설정합니다.</li>
+          <li>이어서 <code>Dog-&gt;tp_init</code>을 호출합니다. 정의된 <code>__init__</code>이 없으므로 빈 껍데기 인스턴스가 그대로 반환됩니다.</li>
+          <li>전역 스코프에 <code>my_dog</code>라는 이름표(Label)가 생성되어 방금 힙에 할당된 인스턴스 주소를 가리킵니다.</li>
+        </ol>
+
+        <div class="callout warning">
+          <div class="callout-title">⚠️ 충격적인 진실: 인스턴스에는 bark가 없다!</div>
+          <p>
+            생성 직후 파이썬 REPL에서 <code>my_dog.__dict__</code>를 확인해 보면 결과는 놀랍게도 <strong>완전히 비어 있는 빈 사전(<code>{}</code>)</strong>입니다.
+          </p>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">Python REPL</span>
+            <button class="copy-btn" aria-label="코드 복사">복사</button>
+          </div>
+          <pre><code>>>> my_dog = Dog()
+>>> my_dog.__dict__
+{}
+>>> 'bark' in my_dog.__dict__
+False</code></pre>
+        </div>
+
+        <p>
+          인스턴스 <code>my_dog</code>는 <code>bark</code>라는 함수 코드나 바이트코드를 <strong>단 1비트도 소유하고 있지 않습니다.</strong> 
+          인스턴스가 가진 것은 오직:
+        </p>
+        <ul>
+          <li>자신의 참조 횟수 (<code>ob_refcnt</code>)</li>
+          <li>자신이 어떤 클래스 소속인지를 알려주는 타입 포인터 (<code>ob_type → Dog</code>)</li>
+          <li>자신만의 고유한 인스턴스 속성을 담을 빈 딕셔너리 포인터 (<code>__dict__</code>)</li>
+        </ul>
+        <p>
+          이 3가지가 전부입니다. 즉, 인스턴스는 <strong>오직 상태(State)만을 담기 위한 순수한 힙 노드</strong>일 뿐, 로직(Logic)은 철저히 클래스에만 존재합니다.
+        </p>
+
+        <!-- Section 5 -->
+        <h2 id="act-3">제3막: print(my_dog.bark) — 디스크립터 프로토콜과 Bound Method의 탄생</h2>
+        <p>
+          이제 세 번째 줄이자, 이 글의 가장 극적인 하이라이트인 <code>print(my_dog.bark)</code>가 실행됩니다.
+          여기서 <code>bark</code> 뒤에는 괄호 <code>()</code>가 없습니다. 즉, <strong>함수를 호출하는 것이 아니라 속성을 조회(Attribute Lookup)</strong>하고 있습니다.
+        </p>
+
+        <h3>속성 탐색 알고리즘 (PyObject_GenericGetAttr)의 5단계</h3>
+        <p>
+          파이썬 인터프리터가 <code>obj.name</code>을 만났을 때 실행하는 CPython 내부 함수 <code>PyObject_GenericGetAttr</code>의 탐색 흐름은 매우 엄격합니다:
+        </p>
+
+        <ol>
+          <li><strong>클래스 MRO 탐색:</strong> <code>Dog</code> 클래스 및 상위 클래스의 <code>tp_dict</code>에서 <code>"bark"</code>를 찾습니다. → <strong>PyFunctionObject 발견!</strong></li>
+          <li><strong>데이터 디스크립터 검사:</strong> 발견된 객체에 <code>__set__</code> 슬롯이 있는지 봅니다. 일반 함수는 <code>__set__</code>이 없으므로 데이터 디스크립터가 아닙니다.</li>
+          <li><strong>인스턴스 사전 검사:</strong> <code>my_dog.__dict__</code>에 <code>"bark"</code>가 있는지 찾습니다. → <strong>없음! ({})</strong></li>
+          <li><strong>비-데이터 디스크립터 검사:</strong> 클래스에서 찾은 <code>PyFunctionObject</code>의 타입(<code>PyFunction_Type</code>)을 확인합니다. <strong>함수 타입은 <code>tp_descr_get</code> (즉, <code>__get__</code> 메서드)을 구현하고 있습니다!</strong></li>
+          <li><strong>디스크립터 프로토콜 발동:</strong> CPython은 함수 객체를 그냥 반환하지 않고, <code>func-&gt;tp_descr_get(func, my_dog, Dog)</code>를 실행합니다.</li>
+        </ol>
+
+        <p>
+          이 <code>__get__</code> 호출의 결과로 힙 공간에 <strong>완전히 새로운 제3의 객체</strong>가 벼락처럼 할당됩니다. 
+          그것이 바로 <strong>바운드 메서드(Bound Method, <code>PyMethodObject</code>)</strong>입니다!
+        </p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">Python 내부 동작 의사코드</span>
+            <button class="copy-btn" aria-label="코드 복사">복사</button>
+          </div>
+          <pre><code># my_dog.bark 접근 시 내부적으로 실행되는 디스크립터 프로토콜
+bound_method = Dog.__dict__['bark'].__get__(my_dog, Dog)
+
+# CPython C 레벨 함수 매핑:
+# PyMethod_New(PyObject *func, PyObject *self) -> PyMethodObject 생성!</code></pre>
+        </div>
+
+        <details class="code-accordion" open>
+          <summary class="accordion-summary">
+            <div class="accordion-summary-left">
+              <span>CPython 내부 C 구조체: PyMethodObject (Bound Method)</span>
+              <span class="accordion-badge">Include/cpython/classobject.h</span>
+            </div>
+            <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </summary>
+          <div class="accordion-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">C Struct</span>
+                <button class="copy-btn" aria-label="코드 복사">복사</button>
+              </div>
+              <pre><code>typedef struct {
+    PyObject_HEAD
+    PyObject *im_func;          /* 원본 함수 객체 (Dog.bark) 포인터 */
+    PyObject *im_self;          /* 바인딩된 인스턴스 (my_dog) 메모리 주소 포인터 */
+    vectorcallfunc vectorcall;  /* 고속 호출 벡터 콜 함수 포인터 */
+} PyMethodObject;</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <div class="mem-diagram-card">
+          <div class="mem-diagram-title">
+            <span>Bound Method의 힙 메모리 결합 구조</span>
+            <span class="accordion-badge">얇은 연결 래퍼</span>
+          </div>
+          <svg viewBox="0 0 740 220" style="width:100%; height:auto; display:block; font-family:var(--font-mono);" role="img" aria-label="바운드 메서드 힙 메모리 구조">
+            <!-- Bound Method Object -->
+            <rect x="250" y="30" width="240" height="150" rx="10" fill="var(--bg-card)" stroke="#f59e0b" stroke-width="2" />
+            <rect x="250" y="30" width="240" height="32" rx="10" fill="rgba(245, 158, 11, 0.15)" />
+            <text x="370" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="#b45309">PyMethodObject (동적 래퍼)</text>
+            
+            <text x="265" y="85" font-size="12" fill="var(--text-muted)">ob_type: &lt;class 'method'&gt;</text>
+            <text x="265" y="112" font-size="12" font-weight="bold" fill="var(--text-main)">im_self ────────┐</text>
+            <text x="265" y="145" font-size="12" font-weight="bold" fill="var(--text-main)">im_func ────────────────┐</text>
+
+            <!-- Left: my_dog instance -->
+            <rect x="20" y="70" width="180" height="100" rx="8" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="1.8" />
+            <text x="110" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--primary)">my_dog (인스턴스)</text>
+            <text x="35" y="125" font-size="11.5" fill="var(--text-muted)">ob_type: Dog</text>
+            <text x="35" y="145" font-size="11.5" fill="var(--text-muted)">__dict__: {}</text>
+
+            <!-- Right: Dog.bark function -->
+            <rect x="540" y="70" width="180" height="100" rx="8" fill="var(--bg-card)" stroke="#10b981" stroke-width="1.8" />
+            <text x="630" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">Dog.bark (함수)</text>
+            <text x="555" y="125" font-size="11.5" fill="var(--text-muted)">__qualname__: "Dog.bark"</text>
+            <text x="555" y="145" font-size="11.5" fill="var(--text-muted)">__code__: &lt;code bark&gt;</text>
+
+            <!-- Pointers -->
+            <path d="M 265 108 L 205 108" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow)" />
+            <path d="M 445 142 L 535 142" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+          </svg>
+        </div>
+
+        <h3>실체 증명: 왜 m1 is m2는 항상 False인가?</h3>
+        <p>
+          메서드가 인스턴스에 고정된 정적 엔티티가 아니라는 가장 확실한 증거가 바로 <code>is</code> 연산자입니다.
+        </p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">Python 실험 검증</span>
+            <button class="copy-btn" aria-label="코드 복사">복사</button>
+          </div>
+          <pre><code>my_dog = Dog()
+
+m1 = my_dog.bark
+m2 = my_dog.bark
+
+print(m1 is m2)          # False!
+print(id(m1) == id(m2))  # False!
+print(hex(id(m1)), hex(id(m2))) # 서로 다른 힙 메모리 주소!
+
+print(m1.__func__ is m2.__func__) # True (둘 다 Dog.bark 함수를 가리킴)
+print(m1.__self__ is m2.__self__) # True (둘 다 my_dog 인스턴스를 가리킴)</code></pre>
+        </div>
+
+        <p>
+          우리가 <code>my_dog.bark</code>라고 <strong>점(.)을 찍어 속성을 조회할 때마다, CPython은 힙 메모리에 <code>PyMethodObject</code>라는 새로운 래퍼 객체를 동적으로 찍어냅니다.</strong>
+          따라서 <code>m1</code>과 <code>m2</code>는 속을 채운 포인터(<code>__func__</code>와 <code>__self__</code>)는 같지만, 래퍼 자체는 힙의 서로 다른 주소에 생성된 독립 객체이므로 <code>is</code> 비교 시 반드시 <code>False</code>가 반환됩니다.
+        </p>
+
+        <div class="callout tip">
+          <div class="callout-title">💡 Dog.bark vs my_dog.bark 본질 비교</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>비교 항목</th>
+                <th>Dog.bark (클래스 접근)</th>
+                <th>my_dog.bark (인스턴스 접근)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>객체 타입</strong></td>
+                <td><code>&lt;class 'function'&gt;</code></td>
+                <td><code>&lt;class 'method'&gt;</code> (Bound Method)</td>
+              </tr>
+              <tr>
+                <td><strong>C 구조체</strong></td>
+                <td><code>PyFunctionObject</code></td>
+                <td><code>PyMethodObject</code></td>
+              </tr>
+              <tr>
+                <td><strong>바인딩 상태</strong></td>
+                <td>비어 있음 (Unbound)</td>
+                <td><code>im_self</code>가 <code>my_dog</code>를 가리킴</td>
+              </tr>
+              <tr>
+                <td><strong>호출 방식</strong></td>
+                <td><code>Dog.bark(my_dog)</code> (수동 주입)</td>
+                <td><code>my_dog.bark()</code> (자동 주입)</td>
+              </tr>
+              <tr>
+                <td><strong>생명 주기</strong></td>
+                <td>프로그램 종료 시까지 영구 생존</td>
+                <td>점 접근 시 힙 할당 → 호출 후 즉시 소멸 가능</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Section 6 -->
+        <h2 id="act-4">제4막: print(my_dog.bark()) — 호출 실행과 self 역방향 주입</h2>
+        <p>
+          이제 네 번째 구문인 <code>print(my_dog.bark())</code>입니다. 
+          파이썬 인터프리터는 바깥의 <code>print()</code>를 호출하기 전에 내부 인자인 <code>my_dog.bark()</code>를 먼저 평가합니다.
+        </p>
+
+        <h3>호출 괄호 ()의 기계적 실체</h3>
+        <p>
+          앞서 생성된 <code>PyMethodObject</code>에 호출 괄호 <code>()</code>가 붙으면, CPython은 바운드 메서드의 호출 프로토콜인 <code>method_vectorcall</code>을 구동합니다:
+        </p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">C (CPython methodobject.c) 의사코드</span>
+            <button class="copy-btn" aria-label="코드 복사">복사</button>
+          </div>
+          <pre><code>static PyObject *
+method_vectorcall(PyObject *method, PyObject *const *args, size_t nargsf, PyObject *kwnames)
+{
+    PyMethodObject *m = (PyMethodObject *)method;
+    PyObject *func = m->im_func;   /* 원본 Dog.bark 함수 */
+    PyObject *self = m->im_self;   /* 바인딩된 my_dog 인스턴스 */
+
+    /* CPython 내부 스택의 인자 배열 0번째 자리에 self(my_dog)를 끼워 넣음! */
+    /* 그리고 func(self, *args) 형태로 원본 함수를 호출! */
+    return PyVectorcall_Call(func, self, args, nargsf, kwnames);
+}</code></pre>
+        </div>
+
+        <p>
+          이 C 코드가 말해주는 진실은 너무나 명확합니다:
+        </p>
+        <blockquote>
+          <strong><code>my_dog.bark()</code>는 단 한 치의 오차도 없이 <code>Dog.bark(my_dog)</code>와 기계적으로 동일하다.</strong><br>
+          바인딩이란 대단한 마법이 아닙니다. C 레벨에서 <code>PyMethodObject</code>가 쥐고 있던 <code>im_self</code> 포인터를 함수의 첫 번째 매개변수 슬롯에 슬그머니 밀어 넣어 호출해 주는 <strong>호출 래퍼(Call Wrapper) 메커니즘</strong>일 뿐입니다.
+        </blockquote>
+
+        <h3>self의 참조 방향: 인스턴스가 함수를 가리키는 것이 아니다</h3>
+        <p>
+          많은 개발자가 <code>self</code>라는 키워드를 "인스턴스가 자기 안의 함수를 참조하는 것"으로 잘못 기억합니다. 
+          하지만 실제 메모리 화살표는 <strong>완벽한 역방향</strong>입니다:
+        </p>
+
+        <div class="callout warning">
+          <div class="callout-title">🎯 역방향 화살표: 함수 실행 프레임 → 인스턴스</div>
+          <p>
+            <code>bark</code> 함수가 호출되는 순간, 실행 스택에 <strong>프레임(<code>_PyInterpreterFrame</code>)</strong>이 생성됩니다.<br>
+            이 프레임의 지역 변수 배열 <code>fastlocals[0]</code>에 <code>"self"</code>라는 이름표가 붙고, 그 이름표가 힙에 홀로 떠 있는 <code>my_dog</code> 인스턴스를 가리킵니다.<br>
+            따라서 함수 내부에서 <code>self is my_dog</code>는 <strong>100% True</strong>입니다. 새로운 개체가 복제된 것이 아니라 기존 <code>my_dog</code>의 메모리 주소가 그대로 전달된 것입니다.
+          </p>
+        </div>
+
+        <h3>실행 후의 소멸 과정: 프레임과 바운드 메서드의 죽음</h3>
+        <ol>
+          <li><code>print("woof")</code>가 실행되어 터미널에 <code>woof</code>가 출력됩니다.</li>
+          <li><code>bark</code> 함수에는 명시적 <code>return</code>이 없습니다. CPython은 함수 끝에 도달하면 암묵적으로 <strong>싱글턴 객체 <code>Py_None</code></strong>의 주소를 반환합니다.</li>
+          <li>함수가 종료되면서 방금 생성되었던 <code>bark</code>의 실행 프레임이 스택에서 팝(Pop)되어 해제됩니다.</li>
+          <li>인라인으로 임시 생성되었던 <code>PyMethodObject</code> 역시 호출이 끝나는 순간 참조 횟수(<code>ob_refcnt</code>)가 0이 되어 <strong>힙 메모리에서 즉시 deallocate</strong>됩니다.</li>
+          <li>최종적으로 반환된 <code>None</code>이 바깥쪽 <code>print()</code>에 전달되어 터미널에 <code>None</code>이 찍힙니다.</li>
+        </ol>
+
+        <!-- Section 7 -->
+        <h2 id="act-5">제5막: CPython이 무대 뒤에서 만들고 소멸시키는 7가지 은밀한 객체</h2>
+        <p>
+          사용자는 단 4줄의 코드를 작성했을 뿐이지만, CPython VM은 보이지 않는 무대 뒤에서 수많은 임시 객체들을 만들어 분주히 조작하고 파괴했습니다. 
+          이를 추적할 수 있어야 CPython 시스템 아키텍처를 진정으로 장악했다고 할 수 있습니다.
+        </p>
+
+        <div class="mem-diagram-card">
+          <div class="mem-diagram-title">
+            <span>CPython 7대 은밀한 내부/임시 객체 생명주기</span>
+            <span class="accordion-badge">System Lifetime Audit</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="mem-box">
+              <span class="mem-box-tag tag-ephemeral">임시 객체 ①</span>
+              <div class="mem-box-name">클래스 네임스페이스 딕셔너리 (Class Namespace Dict)</div>
+              <div class="mem-box-desc">
+                <code>class Dog:</code> 본문을 컴파일하고 실행할 때 로컬 스코프 역할을 하기 위해 임시로 생성되는 <code>dict</code>. <code>type.__new__</code>가 클래스를 빌드한 후 정리되거나 읽기 전용 <code>mappingproxy</code>로 포장됩니다.
+              </div>
+            </div>
+
+            <div class="mem-box">
+              <span class="mem-box-tag tag-stack">내부 객체 ②</span>
+              <div class="mem-box-name">3단계 계층형 PyCodeObject 트리</div>
+              <div class="mem-box-desc">
+                모듈 레벨 코드 객체, <code>class Dog</code> 바디 코드 객체, <code>bark</code> 함수 코드 객체라는 3개의 불변 실행 명세서가 모듈 로드 시 생성되어 코드 캐시에 상주합니다.
+              </div>
+            </div>
+
+            <div class="mem-box">
+              <span class="mem-box-tag tag-ephemeral">임시 객체 ③</span>
+              <div class="mem-box-name">인자 전달용 튜플 / Vectorcall 스택 청크</div>
+              <div class="mem-box-desc">
+                함수나 생성자 호출 시 전달되는 위치 인자(<code>*args</code>) 튜플. 최신 CPython에서는 vectorcall 최적화를 통해 스택 배열로 처리되어 힙 할당이 생략되기도 합니다.
+              </div>
+            </div>
+
+            <div class="mem-box highlight">
+              <span class="mem-box-tag tag-ephemeral" style="background:#f59e0b; color:white;">임시 객체 ④ [핵심!]</span>
+              <div class="mem-box-name">바운드 메서드 래퍼 (PyMethodObject)</div>
+              <div class="mem-box-desc">
+                <code>my_dog.bark</code> 접근 시 디스크립터 프로토콜에 의해 힙에 동적으로 생성되는 얇은 래퍼. <code>print(my_dog.bark)</code>에서 한 번, <code>my_dog.bark()</code>에서 또 한 번 새로 생성되며, 호출 직후 <code>ob_refcnt == 0</code>이 되어 힙에서 즉각 소멸합니다.
+              </div>
+            </div>
+
+            <div class="mem-box">
+              <span class="mem-box-tag tag-frame">임시 객체 ⑤</span>
+              <div class="mem-box-name">함수 실행 프레임 (_PyInterpreterFrame / PyFrameObject)</div>
+              <div class="mem-box-desc">
+                <code>bark()</code> 함수가 진입할 때 C 스택/힙 공간에 할당되어 지역 변수 <code>self</code>와 평가 스택을 관리하고, 함수가 리턴하는 순간 즉시 폐기되는 휘발성 실행 컨텍스트입니다.
+              </div>
+            </div>
+
+            <div class="mem-box">
+              <span class="mem-box-tag tag-heap">상수/표현 객체 ⑥</span>
+              <div class="mem-box-name">유니코드 문자열 객체 풀 (PyUnicodeObject)</div>
+              <div class="mem-box-desc">
+                식별자 <code>"Dog"</code>, <code>"bark"</code>, <code>"self"</code> 및 리터럴 <code>"woof"</code> 문자열. 추가로 <code>print(my_dog.bark)</code> 실행 시 <code>&lt;bound method...&gt;</code> 문자열 표현 객체가 임시로 빌드되었다가 출력 후 증발합니다.
+              </div>
+            </div>
+
+            <div class="mem-box">
+              <span class="mem-box-tag tag-stack">싱글턴 객체 ⑦</span>
+              <div class="mem-box-name">반환값 싱글턴 (Py_None)</div>
+              <div class="mem-box-desc">
+                <code>return</code>이 없는 <code>bark()</code> 함수가 끝날 때 CPython 런타임이 조용히 반환해 주는 힙 싱글턴 포인터. 바깥쪽 <code>print()</code>에 전달되어 터미널에 <code>None</code>으로 출력됩니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 8 -->
+        <h2 id="act-6">제6막: 기계의 눈으로 본 바인딩 — "어차피 포인터인데 왜 바인딩이란 개념을 둘까?"</h2>
+        <p>
+          C/C++이나 시스템 프로그래밍에 익숙한 엔지니어는 종종 다음과 같은 날카로운 의문을 제기합니다:
+        </p>
+        <blockquote>
+          <em>"기계 입장에서야 인스턴스에 바인딩이 되든 말든, 결국 CPU가 실행하는 건 특정 함수 코드 주소에 인스턴스 메모리 주소(포인터)를 레지스터로 넘겨서 CALL하는 것 아닌가? 바인딩이라는 건 사람이 구분하려고 지어낸 허구의 개념 아닌가?"</em>
+        </blockquote>
+
+        <p>
+          이 질문에 대한 가장 정밀한 시스템 엔지니어의 대답은 다음과 같습니다:
+        </p>
+
+        <div class="callout tip">
+          <div class="callout-title">💡 통찰: 바인딩은 개념이지만, 그에 대응하는 '실제 런타임 객체'가 존재한다</div>
+          <p>
+            C 언어에서 <code>dog-&gt;bark(dog);</code>를 호출할 때는 컴파일 시점에 이미 호출 규약과 인자 레지스터 배치가 기계어로 고정됩니다. 중간에 '바운드 메서드'라는 객체가 끼어들 여지가 없습니다.<br><br>
+            하지만 파이썬은 <strong>메서드가 일급 객체(First-Class Citizen)</strong>인 동적 객체지향 언어입니다. 파이썬에서는 메서드를 변수에 담거나(<code>f = my_dog.bark</code>), 이벤트 콜백으로 전달하거나(<code>button.on_click = my_dog.bark</code>), 다른 스레드로 보낼 수 있어야 합니다.<br><br>
+            이때 함수 코드 포인터와 인스턴스 주소 포인터를 하나로 묶어 들고 다닐 수 있는 <strong>'독립적인 힙 객체(PyMethodObject)'</strong>가 반드시 존재해야만 합니다. 따라서 바인딩은 추상적 관념에 그치지 않고, <strong>CPython 런타임이 실제로 힙에 생성하는 물리적 구조체</strong>입니다.
+          </p>
+        </div>
+
+        <p>
+          이를 계층별로 정리하면 완벽한 퍼즐이 완성됩니다:
+        </p>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>계층 (Level)</th>
+                <th>처리 주체</th>
+                <th>메서드 호출 시 일어나는 일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. 인간 / 언어 레벨</strong></td>
+                <td>파이썬 프로그래머</td>
+                <td><code>my_dog.bark()</code>를 실행하여 개가 짖게 만든다.</td>
+              </tr>
+              <tr>
+                <td><strong>2. 객체 모델 레벨</strong></td>
+                <td>디스크립터 프로토콜</td>
+                <td>점(.) 접근 시 <code>__get__</code>을 통해 함수와 인스턴스를 묶은 바운드 메서드 객체를 합성한다.</td>
+              </tr>
+              <tr>
+                <td><strong>3. CPython 가상머신</strong></td>
+                <td>C 구조체 & 바이트코드</td>
+                <td><code>PyMethodObject</code>의 <code>im_self</code>를 제1인자로 채워 <code>func_code</code>의 실행 프레임을 띄운다. (3.11+에서는 <code>LOAD_METHOD</code> 최적화로 인라인 바이패스 가능)</td>
+              </tr>
+              <tr>
+                <td><strong>4. CPU / 하드웨어</strong></td>
+                <td>CPU 레지스터 & 스택</td>
+                <td>인스턴스 힙 주소를 <code>RDI</code>(x86-64 제1인자 레지스터)에 싣고 함수 기계어 주소로 <code>CALL</code> 명령을 내린다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Section 9: Interactive Simulator Component -->
+        <h2 id="interactive-simulator">제7막: 인터랙티브 메모리 힙 상태도 — 4단계 시뮬레이터</h2>
+        <p>
+          지금까지 학습한 4단계 흐름을 인터랙티브 위젯으로 직접 제어하며 메모리 힙과 스택의 상태 변화를 실시간으로 확인해 보십시오.
+        </p>
+
+        <div class="sim-container" id="sim-widget">
+          <div class="sim-header">
+            <div class="sim-title">
+              <span>🔬</span>
+              <span>CPython 힙 메모리 라이프사이클 시뮬레이터</span>
+            </div>
+            <span class="sim-step-badge" id="sim-step-indicator">Step 1 / 4</span>
+          </div>
+
+          <!-- Step Tabs -->
+          <div class="sim-tabs" role="tablist">
+            <button class="sim-tab-btn active" data-step="0" role="tab">1. 클래스 정의<br><code>class Dog:</code></button>
+            <button class="sim-tab-btn" data-step="1" role="tab">2. 인스턴스 할당<br><code>my_dog = Dog()</code></button>
+            <button class="sim-tab-btn" data-step="2" role="tab">3. 점(.) 접근<br><code>my_dog.bark</code></button>
+            <button class="sim-tab-btn" data-step="3" role="tab">4. 호출 및 소멸<br><code>my_dog.bark()</code></button>
+          </div>
+
+          <!-- Controls -->
+          <div class="sim-controls">
+            <div class="sim-btn-group">
+              <button class="sim-btn" id="sim-prev-btn" disabled>◀ 이전 단계</button>
+              <button class="sim-btn" id="sim-next-btn">다음 단계 ▶</button>
+            </div>
+            <button class="sim-btn" id="sim-reset-btn">🔄 처음부터</button>
+          </div>
+
+          <!-- Code preview with highlight -->
+          <div class="sim-code-preview">
+            <div class="sim-code-line" id="code-line-1">class Dog:</div>
+            <div class="sim-code-line" id="code-line-2">&nbsp;&nbsp;&nbsp;&nbsp;def bark(self):</div>
+            <div class="sim-code-line" id="code-line-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("woof")</div>
+            <div class="sim-code-line" id="code-line-4">my_dog = Dog()</div>
+            <div class="sim-code-line" id="code-line-5">print(my_dog.bark)</div>
+            <div class="sim-code-line" id="code-line-6">print(my_dog.bark())</div>
+          </div>
+
+          <!-- Visual Memory Layout Grid -->
+          <div class="sim-layout">
+            <!-- Call Stack & Variable Labels -->
+            <div class="sim-column">
+              <div class="sim-col-title">
+                <span>📌 스택 & 전역 이름표 (Labels)</span>
+                <span class="sim-node-badge tag-stack" id="sim-stack-badge">Module Scope</span>
+              </div>
+              <div class="sim-node-list" id="sim-stack-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- CPython Heap Memory Space -->
+            <div class="sim-column">
+              <div class="sim-col-title">
+                <span>🧠 힙 메모리 (PyObject Nodes)</span>
+                <span class="sim-node-badge tag-heap">Heap Space</span>
+              </div>
+              <div class="sim-node-list" id="sim-heap-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- CPython VM Console Trace -->
+          <div class="sim-console">
+            <div class="sim-console-header">CPython VM Trace Log</div>
+            <div id="sim-log-content" class="sim-log-text">
+              &gt; [VM INIT] Code compiled into PyCodeObjects. Ready.
+            </div>
+          </div>
+
+          <!-- Step Deep Explanation -->
+          <div class="sim-explanation" id="sim-explanation-text">
+            <strong>1단계 해설:</strong> 클래스 본문이 실행되면서 <code>PyFunctionObject(bark)</code>와 <code>PyTypeObject(Dog)</code>가 힙에 생성되었습니다. 함수는 클래스 사전에만 등록되어 있으며 인스턴스는 아직 존재하지 않습니다.
+          </div>
+        </div>
+
+        <!-- Section 10: Tufte Style Self-Diagnostic Quiz -->
+        <h2 id="quiz-section">제8막: 멘탈 모델 자가 진단 퀴즈</h2>
+        <p>
+          머릿속에 이식된 CPython 멘탈 모델을 4가지 정밀 퀴즈로 시험해 보십시오. 선택지를 누르면 즉각적인 해설이 표시됩니다.
+        </p>
+
+        <!-- Quiz 1 -->
+        <div class="quiz-card" data-quiz="1">
+          <div class="quiz-q-title">
+            <span>Q1.</span>
+            <span><code>my_dog = Dog()</code>를 실행한 직후, <code>my_dog</code> 인스턴스의 내부 힙 상태로 옳은 설명은?</span>
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" data-correct="false">A. 클래스에 정의된 <code>bark</code> 함수의 바이트코드 전체가 인스턴스 메모리로 복사되어 들어간다.</button>
+            <button class="quiz-btn" data-correct="true">B. 인스턴스의 <code>__dict__</code>는 완전히 비어 있으며({}), <code>bark</code>에 관한 코드는 일절 들어있지 않다.</button>
+            <button class="quiz-btn" data-correct="false">C. <code>bark</code> 메서드를 가리키는 바운드 메서드 객체가 인스턴스 생성과 동시에 힙에 미리 생성되어 고정된다.</button>
+            <button class="quiz-btn" data-correct="false">D. 인스턴스는 클래스 객체와 별개의 메모리 청크이므로, 클래스가 삭제되어도 메서드를 단독 실행할 수 있다.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Quiz 2 -->
+        <div class="quiz-card" data-quiz="2">
+          <div class="quiz-q-title">
+            <span>Q2.</span>
+            <span><code>m1 = my_dog.bark; m2 = my_dog.bark; print(m1 is m2)</code>의 실행 결과와 그 원인으로 정확한 것은?</span>
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" data-correct="false">A. <code>True</code> — <code>my_dog.bark</code>는 인스턴스에 고정된 싱글턴 메서드 객체이므로 메모리 주소가 동일하다.</button>
+            <button class="quiz-btn" data-correct="true">B. <code>False</code> — 점(.)으로 접근할 때마다 디스크립터 프로토콜에 의해 새로운 <code>PyMethodObject</code> 래퍼가 힙에 생성되기 때문이다.</button>
+            <button class="quiz-btn" data-correct="false">C. <code>False</code> — <code>m1</code>과 <code>m2</code>가 참조하는 원본 함수(<code>Dog.bark</code>)의 주소 자체가 달라지기 때문이다.</button>
+            <button class="quiz-btn" data-correct="false">D. <code>True</code> — CPython의 문자열 및 바이트 인터닝 최적화가 메서드 객체에도 동일하게 적용되기 때문이다.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Quiz 3 -->
+        <div class="quiz-card" data-quiz="3">
+          <div class="quiz-q-title">
+            <span>Q3.</span>
+            <span><code>def bark(self):</code>에서 매개변수 <code>self</code>의 기계적 실체에 대한 설명으로 옳은 것은?</span>
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" data-correct="false">A. 파이썬 언어가 자동으로 생성해 주는 인스턴스의 깊은 복사본(Deep Copy) 객체다.</button>
+            <button class="quiz-btn" data-correct="false">B. 인스턴스 메모리 블록 내부에서 메서드 코드를 가리키는 정방향 함수 포인터다.</button>
+            <button class="quiz-btn" data-correct="true">C. 바운드 메서드가 호출될 때 C 레벨에서 제1인자로 전달해 준 기존 <code>my_dog</code> 인스턴스의 메모리 주소(포인터)다.</button>
+            <button class="quiz-btn" data-correct="false">D. CPython 문법상 반드시 예약어(Keyword)로 지정되어 있어 다른 이름으로 변경할 수 없는 식별자다.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Quiz 4 -->
+        <div class="quiz-card" data-quiz="4">
+          <div class="quiz-q-title">
+            <span>Q4.</span>
+            <span><code>print(my_dog.bark())</code> 한 줄이 실행되는 동안 CPython 내부에서 생성되었다가 소멸하는 임시 객체에 해당하지 않는 것은?</span>
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" data-correct="false">A. 점(.) 접근 시 생성되었다가 호출 완료 후 참조 카운트가 0이 되어 해제되는 <code>PyMethodObject</code></button>
+            <button class="quiz-btn" data-correct="false">B. <code>bark</code> 함수 실행을 위해 스택에 적재되었다가 리턴 시 파기되는 <code>_PyInterpreterFrame</code></button>
+            <button class="quiz-btn" data-correct="false">C. <code>print()</code>에 인자를 전달하기 위해 필요 시 임시 할당되는 Argument Tuple/Vectorcall 청크</button>
+            <button class="quiz-btn" data-correct="true">D. <code>bark</code> 함수의 바이트코드와 매개변수 정보를 담고 있는 <code>PyCodeObject</code></button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Section 11: Epilogue & Cheat Sheet -->
+        <h2 id="epilogue">에필로그 및 요약 치트시트</h2>
+        <p>
+          파이썬은 표면상 지극히 우아하고 단순한 문법을 제공하지만, 그 아래에는 C 언어로 정교하게 깎아 만든 강력한 동적 객체 모델과 디스크립터 프로토콜이 작동하고 있습니다. 
+          앞으로 여러분이 파이썬 코드를 작성하거나 디버깅할 때 다음 5가지 시각적 이미지를 항상 떠올리십시오:
+        </p>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>파이썬 코드</th>
+                <th>메모리 힙에서 실제로 일어나는 일</th>
+                <th>핵심 주의 사항</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>class Dog:</code></td>
+                <td><code>Dog</code> 클래스 객체와 <code>bark</code> 함수 객체가 힙에 독립 할당됨</td>
+                <td>함수는 오직 클래스 사전에만 등록됨</td>
+              </tr>
+              <tr>
+                <td><code>my_dog = Dog()</code></td>
+                <td><code>__dict__</code>가 비어있는 인스턴스 힙 메모리 할당 (<code>ob_type → Dog</code>)</td>
+                <td>인스턴스 안에 함수 코드가 복제되지 않음</td>
+              </tr>
+              <tr>
+                <td><code>my_dog.bark</code></td>
+                <td>디스크립터(<code>__get__</code>)가 호출되어 <strong>새로운 <code>PyMethodObject</code> 래퍼가 힙에 생성됨</strong></td>
+                <td><code>m1 is m2 → False</code> (임시 객체)</td>
+              </tr>
+              <tr>
+                <td><code>my_dog.bark()</code></td>
+                <td><code>PyMethodObject</code>가 <code>self</code>에 <code>my_dog</code> 주소를 주입하여 <code>Dog.bark(my_dog)</code> 실행</td>
+                <td>호출 완료 시 실행 프레임과 임시 메서드 객체 소멸</td>
+              </tr>
+              <tr>
+                <td><code>return None</code></td>
+                <td>명시적 반환값이 없으면 CPython 싱글턴 <code>Py_None</code> 주소 반환</td>
+                <td><code>bark() is None → True</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Series Navigation Footer Cards -->
+        <div class="series-nav-box">
+          <a href="python_object_mental_model.html" class="nav-card">
+            <span class="nav-card-sub">⬅️ 기초 편 다시보기</span>
+            <span class="nav-card-title">파이썬 객체 메모리 모델과 멘탈 모델</span>
+          </a>
+          <a href="python_callable_and_execution_engine.html" class="nav-card next">
+            <span class="nav-card-sub">다음 편 이어보기 ➡️</span>
+            <span class="nav-card-title">[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진</span>
+          </a>
+        </div>
+
+      </div>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Pages Hub — CPython Systems Architecture &amp; Mental Model Series</p>
+  </footer>
+
+  <!-- Scripts: Theme, Font, TOC, Copy, Simulator, Quiz -->
+  <script>
+    // 1. Scroll Progress Bar & Sticky Header Title Fade
+    window.addEventListener('scroll', function() {
+      const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      const progBar = document.getElementById('scroll-progress');
+      if (progBar) progBar.style.width = scrolled + '%';
+
+      const navTitle = document.getElementById('nav-title');
+      if (navTitle) {
+        if (winScroll > 180) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+    });
+
+    // 2. Theme Toggle (Dark / Light)
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', function() {
+        const root = document.documentElement;
+        const currentTheme = root.getAttribute('data-theme');
+        let newTheme = 'light';
+        if (!currentTheme) {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          newTheme = prefersDark ? 'light' : 'dark';
+        } else if (currentTheme === 'dark') {
+          newTheme = 'light';
+        } else {
+          newTheme = 'dark';
+        }
+        root.setAttribute('data-theme', newTheme);
+        try { localStorage.setItem('pages_theme', newTheme); } catch(e) {}
+      });
+    }
+
+    // 3. Font Toggle (Pretendard <-> D2Coding)
+    const fontBtn = document.getElementById('font-toggle-btn');
+    if (fontBtn) {
+      fontBtn.addEventListener('click', function() {
+        const root = document.documentElement;
+        const currentFont = root.getAttribute('data-font');
+        const nextFont = (currentFont === 'd2coding') ? 'pretendard' : 'd2coding';
+        root.setAttribute('data-font', nextFont);
+        try { localStorage.setItem('pages_font', nextFont); } catch(e) {}
+      });
+    }
+
+    // 4. Mobile TOC Drawer Toggle & Close
+    const tocBtn = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocCloseBtn = document.getElementById('toc-close-btn');
+
+    function openToc() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeToc() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    if (tocBtn) tocBtn.addEventListener('click', openToc);
+    if (tocCloseBtn) tocCloseBtn.addEventListener('click', closeToc);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeToc);
+
+    // Close TOC on clicking internal links
+    const tocLinks = document.querySelectorAll('.toc-drawer-body a');
+    tocLinks.forEach(link => {
+      link.addEventListener('click', function() {
+        closeToc();
+      });
+    });
+
+    // 5. Code Block Clipboard Copy
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const pre = this.closest('.code-block-wrapper').querySelector('pre code');
+        if (!pre) return;
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          const original = this.innerText;
+          this.innerText = '복사됨!';
+          this.classList.add('copied');
+          setTimeout(() => {
+            this.innerText = original;
+            this.classList.remove('copied');
+          }, 1800);
+        }).catch(() => {
+          this.innerText = '실패';
+          setTimeout(() => { this.innerText = '복사'; }, 1500);
+        });
+      });
+    });
+
+    // 6. Interactive Memory Heap Simulator Engine
+    const simSteps = [
+      {
+        stepIndex: 0,
+        name: "1. 클래스 정의 (class Dog:)",
+        codeLines: [1, 2, 3],
+        stackBadge: "Module Scope",
+        stackNodes: [
+          { name: "Dog", type: "Name Label", desc: "힙의 Dog 클래스 객체(&Dog_Type)를 가리킴", active: true }
+        ],
+        heapNodes: [
+          { title: "Dog (PyTypeObject)", tag: "Class Object", tagClass: "tag-heap", detail: "tp_name: 'Dog'<br>tp_dict: {'bark': &lt;PyFunction bark&gt;}", active: true },
+          { title: "Dog.bark (PyFunctionObject)", tag: "Function", tagClass: "tag-stack", detail: "func_qualname: 'Dog.bark'<br>func_code: &lt;code bark&gt;", active: true }
+        ],
+        log: "> [COMPILATION] class Dog: namespace dict prepared.\n> [ALLOC] PyFunctionObject 'bark' created on heap.\n> [TYPE_NEW] PyTypeObject 'Dog' created with tp_dict['bark'].\n> [BINDING] Dog label points to <class Dog>.",
+        exp: "<strong>Step 1 (클래스 정의):</strong> <code>class Dog:</code> 구문이 실행되면서 힙에 <code>Dog (PyTypeObject)</code>와 <code>bark (PyFunctionObject)</code>가 생성되었습니다. 함수는 클래스의 <code>tp_dict</code>에만 소속되어 있으며, 아직 인스턴스는 존재하지 않습니다."
+      },
+      {
+        stepIndex: 1,
+        name: "2. 인스턴스 할당 (my_dog = Dog())",
+        codeLines: [4],
+        stackBadge: "Module Scope",
+        stackNodes: [
+          { name: "Dog", type: "Name Label", desc: "Dog 클래스 객체 가리킴", active: false },
+          { name: "my_dog", type: "Name Label", desc: "방금 할당된 Dog 인스턴스(0x7f9a1024b310) 가리킴", active: true }
+        ],
+        heapNodes: [
+          { title: "Dog (PyTypeObject)", tag: "Class Object", tagClass: "tag-heap", detail: "tp_dict: {'bark': &lt;func bark&gt;}", active: false },
+          { title: "Dog.bark (PyFunctionObject)", tag: "Function", tagClass: "tag-stack", detail: "func_code: &lt;code bark&gt;", active: false },
+          { title: "my_dog (Dog Instance)", tag: "Instance", tagClass: "tag-heap", detail: "ob_type: &amp;Dog<br>__dict__: {} (완전히 비어있음!)", active: true }
+        ],
+        log: "> [CALL] Dog() invokes type.__call__ -> tp_new\n> [ALLOC] _PyObject_New allocates Dog instance at 0x7f9a1024b310.\n> [INIT] tp_init executed. my_dog.__dict__ is empty {}.\n> [NOTE] bark is NOT copied into my_dog!",
+        exp: "<strong>Step 2 (인스턴스 생성):</strong> <code>my_dog = Dog()</code>가 실행되어 힙에 독립된 인스턴스 노드가 할당되었습니다. <code>my_dog.__dict__</code>는 완전히 빈 사전(<code>{}</code>)이며, <code>bark</code> 함수는 0바이트도 복사되지 않았습니다!"
+      },
+      {
+        stepIndex: 2,
+        name: "3. 점(.) 접근 (print(my_dog.bark))",
+        codeLines: [5],
+        stackBadge: "Module Scope",
+        stackNodes: [
+          { name: "Dog", type: "Name Label", desc: "Dog 클래스 객체 가리킴", active: false },
+          { name: "my_dog", type: "Name Label", desc: "Dog 인스턴스 가리킴", active: true }
+        ],
+        heapNodes: [
+          { title: "Dog (PyTypeObject)", tag: "Class Object", tagClass: "tag-heap", detail: "tp_dict: {'bark': &lt;func bark&gt;}", active: false },
+          { title: "Dog.bark (PyFunctionObject)", tag: "Function", tagClass: "tag-stack", detail: "func_code: &lt;code bark&gt;", active: false },
+          { title: "my_dog (Dog Instance)", tag: "Instance", tagClass: "tag-heap", detail: "ob_type: &amp;Dog", active: false },
+          { title: "PyMethodObject [임시 래퍼]", tag: "Bound Method", tagClass: "tag-ephemeral", detail: "im_self ──► my_dog<br>im_func ──► Dog.bark<br><strong>(동적 힙 할당됨! m1 is m2 -> False)</strong>", active: true }
+        ],
+        log: "> [LOOKUP] my_dog.bark requested.\n> [DESCRIPTOR] PyObject_GenericGetAttr triggers func->tp_descr_get(my_dog, Dog).\n> [MALLOC] PyMethod_New allocated NEW Bound Method wrapper at 0x7f9a1024f080!\n> [PRINT] <bound method Dog.bark of <Dog at 0x7f9...>> printed to stdout.",
+        exp: "<strong>Step 3 (점 접근과 바운드 메서드):</strong> <code>my_dog.bark</code>를 평가하는 찰나, 디스크립터 프로토콜이 발동하여 힙에 <strong>PyMethodObject</strong>라는 얇은 래퍼 객체가 새로 만들어졌습니다! 매번 새로 할당되므로 <code>m1 is m2</code>는 항상 <code>False</code>입니다."
+      },
+      {
+        stepIndex: 3,
+        name: "4. 호출 실행 및 소멸 (print(my_dog.bark()))",
+        codeLines: [6],
+        stackBadge: "Call Stack (bark Frame)",
+        stackNodes: [
+          { name: "bark Frame", type: "Active Stack Frame", desc: "locals['self'] ──► my_dog (역방향 참조)", active: true },
+          { name: "my_dog", type: "Global Label", desc: "Dog 인스턴스 가리킴", active: false }
+        ],
+        heapNodes: [
+          { title: "my_dog (Dog Instance)", tag: "Instance", tagClass: "tag-heap", detail: "self 매개변수에 주소 주입됨", active: true },
+          { title: "Dog.bark (PyFunctionObject)", tag: "Function", tagClass: "tag-stack", detail: "print('woof') 실행 완료", active: false },
+          { title: "PyMethodObject", tag: "소멸 예정", tagClass: "tag-ephemeral", detail: "호출 종료로 refcnt == 0 (힙 반환됨)", dying: true },
+          { title: "Py_None", tag: "Singleton", tagClass: "tag-stack", detail: "bark()의 암묵적 반환값 (stdout으로 출력됨)", active: true }
+        ],
+        log: "> [CALL] my_dog.bark() executes PyMethod_Call -> Dog.bark(my_dog).\n> [FRAME] _PyInterpreterFrame created. self = my_dog.\n> [STDOUT] 'woof' printed.\n> [RETURN] Implicit return Py_None.\n> [DEALLOC] Frame popped. PyMethodObject refcnt reached 0 -> freed!\n> [PRINT] None printed to stdout.",
+        exp: "<strong>Step 4 (호출 및 소멸):</strong> 호출 괄호 <code>()</code>에 의해 C 레벨에서 <code>im_self(my_dog)</code>가 첫 번째 인자로 주입되어 실행되었습니다. <code>'woof'</code>가 출력되고 암묵적 반환값 <code>None</code>이 반환된 후, 임시 바운드 메서드와 프레임은 즉시 메모리에서 증발했습니다!"
+      }
+    ];
+
+    let currentStep = 0;
+
+    function renderSimStep(idx) {
+      currentStep = idx;
+      const data = simSteps[idx];
+
+      // Update indicator & buttons
+      document.getElementById('sim-step-indicator').innerText = `Step ${idx + 1} / 4`;
+      document.getElementById('sim-prev-btn').disabled = (idx === 0);
+      document.getElementById('sim-next-btn').disabled = (idx === simSteps.length - 1);
+
+      // Update Tabs
+      document.querySelectorAll('.sim-tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+      });
+
+      // Update Code Preview Lines
+      for (let l = 1; l <= 6; l++) {
+        const el = document.getElementById(`code-line-${l}`);
+        if (el) {
+          el.classList.toggle('active-line', data.codeLines.includes(l));
+        }
+      }
+
+      // Update Stack Column
+      document.getElementById('sim-stack-badge').innerText = data.stackBadge;
+      const stackList = document.getElementById('sim-stack-list');
+      stackList.innerHTML = data.stackNodes.map(n => `
+        <div class="sim-node ${n.active ? 'active-node' : ''}">
+          <div class="sim-node-header">
+            <span class="sim-node-title">${n.name}</span>
+            <span class="sim-node-badge tag-stack">${n.type}</span>
+          </div>
+          <div class="sim-node-detail">${n.desc}</div>
+        </div>
+      `).join('');
+
+      // Update Heap Column
+      const heapList = document.getElementById('sim-heap-list');
+      heapList.innerHTML = data.heapNodes.map(n => `
+        <div class="sim-node ${n.active ? 'active-node' : ''} ${n.dying ? 'dying-node' : ''}">
+          <div class="sim-node-header">
+            <span class="sim-node-title">${n.title}</span>
+            <span class="sim-node-badge ${n.tagClass}">${n.tag}</span>
+          </div>
+          <div class="sim-node-detail">${n.detail}</div>
+        </div>
+      `).join('');
+
+      // Update Console Log & Explanation
+      document.getElementById('sim-log-content').innerText = data.log;
+      document.getElementById('sim-explanation-text').innerHTML = data.exp;
+    }
+
+    // Bind Simulator Event Handlers
+    document.querySelectorAll('.sim-tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const step = parseInt(this.getAttribute('data-step'), 10);
+        renderSimStep(step);
+      });
+    });
+
+    document.getElementById('sim-prev-btn').addEventListener('click', () => {
+      if (currentStep > 0) renderSimStep(currentStep - 1);
+    });
+
+    document.getElementById('sim-next-btn').addEventListener('click', () => {
+      if (currentStep < simSteps.length - 1) renderSimStep(currentStep + 1);
+    });
+
+    document.getElementById('sim-reset-btn').addEventListener('click', () => {
+      renderSimStep(0);
+    });
+
+    // Initialize Simulator at Step 0
+    renderSimStep(0);
+
+    // 7. Interactive Diagnostic Quiz Engine
+    const quizFeedbackData = {
+      1: {
+        correctText: "<strong>정답입니다! (B)</strong> 인스턴스 <code>my_dog</code>는 오직 자신의 타입 포인터와 개별 상태를 담을 빈 딕셔너리(<code>{}</code>)만을 소유합니다. <code>bark</code> 함수 바이트코드는 오직 <code>Dog</code> 클래스 사전에만 존재하며 결코 복제되지 않습니다.",
+        wrongText: "<strong>오답입니다.</strong> 파이썬은 인스턴스 생성 시 함수 코드를 복제하지 않습니다. <code>my_dog.__dict__</code>는 완전히 비어 있는 사전(<code>{}</code>)이며, 메서드는 필요할 때 클래스에서 동적으로 탐색됩니다."
+      },
+      2: {
+        correctText: "<strong>정답입니다! (B)</strong> <code>my_dog.bark</code>라고 점(.)을 찍어 접근하는 매 순간 디스크립터 프로토콜이 발동하여 힙 공간에 새로운 <code>PyMethodObject</code> 래퍼를 할당합니다. <code>m1</code>과 <code>m2</code>는 서로 다른 힙 주소에 존재하는 독립 객체이므로 <code>is</code> 연산 결과는 <code>False</code>입니다.",
+        wrongText: "<strong>오답입니다.</strong> 파이썬의 바운드 메서드는 싱글턴이 아니며 인스턴스에 고정되어 있지도 않습니다. 점 접근 시마다 새로운 래퍼 객체가 힙에 생성되므로 <code>m1 is m2</code>는 반드시 <code>False</code>입니다."
+      },
+      3: {
+        correctText: "<strong>정답입니다! (C)</strong> <code>self</code>는 특별한 언어 예약어가 아니라 관례적인 매개변수 이름입니다. 바운드 메서드가 호출될 때 <code>PyMethodObject</code>의 <code>im_self</code> 포인터가 제1인자로 전달되므로, 함수 내부의 <code>self</code>는 기존 <code>my_dog</code> 인스턴스를 정확히 가리킵니다.",
+        wrongText: "<strong>오답입니다.</strong> <code>self</code>는 복사본이 아니며, 인스턴스 내부의 함수 포인터도 아닙니다. 함수 호출 시 제1인자로 주입된 인스턴스 자신의 힙 메모리 주소(포인터)입니다."
+      },
+      4: {
+        correctText: "<strong>정답입니다! (D)</strong> <code>PyCodeObject</code>는 파이썬 소스 코드가 컴파일될 때(모듈 로드 시) 단 한 번 생성되는 영구적 불변 명세서입니다. 메서드 호출 시마다 만들어졌다 사라지는 임시 객체가 아닙니다.",
+        wrongText: "<strong>오답입니다.</strong> 바운드 메서드, 인터프리터 프레임, 인자 전달 튜플은 모두 호출 시 생성되었다가 완료 후 즉각 파기되는 임시 객체입니다. 반면 <code>PyCodeObject</code>는 모듈 컴파일 시 한 번만 생성되어 코드 캐시에 영구 상주합니다."
+      }
+    };
+
+    document.querySelectorAll('.quiz-card').forEach(card => {
+      const qId = card.getAttribute('data-quiz');
+      const buttons = card.querySelectorAll('.quiz-btn');
+      const feedback = card.querySelector('.quiz-feedback');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const isCorrect = this.getAttribute('data-correct') === 'true';
+
+          // Reset styles
+          buttons.forEach(b => {
+            b.classList.remove('correct', 'wrong');
+            b.disabled = true;
+          });
+
+          if (isCorrect) {
+            this.classList.add('correct');
+            feedback.className = 'quiz-feedback show success';
+            feedback.innerHTML = quizFeedbackData[qId].correctText;
+          } else {
+            this.classList.add('wrong');
+            // Highlight correct one
+            buttons.forEach(b => {
+              if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+            });
+            feedback.className = 'quiz-feedback show failure';
+            feedback.innerHTML = quizFeedbackData[qId].wrongText;
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

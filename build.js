@@ -378,8 +378,30 @@ async function build() {
     }
   }
 
-  // Include special rich legacy articles (e.g., cpu_dram_memory_interface.html)
+  // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
+    {
+      title: "[1부] 파이썬 객체 생성과 바인딩의 기계적 실체",
+      subtitle: "클래스 정의부터 tp_new, Bound Method 동적 생성, 7가지 임시 객체까지",
+      date: "2026-09-15",
+      summary: "클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다.",
+      tags: ["Python", "CPython", "메모리모델", "BoundMethod", "디스크립터", "시스템프로그래밍"],
+      tag_string: "Python CPython 메모리모델 BoundMethod 디스크립터 시스템프로그래밍",
+      reading_time: 18,
+      url: "python_object_creation_and_binding.html",
+      _timestamp: new Date("2026-09-15T12:00:00Z").getTime()
+    },
+    {
+      title: "[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진",
+      subtitle: "obj(1, 2) 바이트코드 CALL부터 tp_call, vectorcall, 그리고 순환 메모리 구조까지",
+      date: "2026-09-15",
+      summary: "obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다.",
+      tags: ["Python", "CPython", "vectorcall", "callable", "바이트코드", "인터프리터"],
+      tag_string: "Python CPython vectorcall callable 바이트코드 인터프리터",
+      reading_time: 22,
+      url: "python_callable_and_execution_engine.html",
+      _timestamp: new Date("2026-09-15T12:01:00Z").getTime()
+    },
     {
       title: "CPU와 메모리 인터페이스 — 구조와 구현",
       subtitle: "Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름",
@@ -392,6 +414,7 @@ async function build() {
       _timestamp: new Date("2026-09-01").getTime()
     }
   ];
+
 
   legacyArticles.forEach(item => {
     item.tags.forEach(t => allTagsSet.add(t));

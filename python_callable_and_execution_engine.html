@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진</title>
+  <meta name="description" content="obj(1, 2) 바이트코드 CALL부터 tp_call, vectorcall, 그리고 PyObject와 PyTypeObject의 순환 메모리 구조까지 — CPython 실행 엔진의 심장을 시스템 레벨에서 해부합니다.">
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  
+  <!-- Theme & Font Initialization (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem("pages_theme");
+        if (theme === "dark" || theme === "light") {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --bg-surface-elevated: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-glow: rgba(37, 99, 235, 0.15);
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #8b5cf6;
+      
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #1e293b;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.92);
+      --drawer-bg: #ffffff;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --bg-surface-elevated: #243049;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --primary-glow: rgba(56, 189, 248, 0.25);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.92);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --bg-surface-elevated: #243049;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.92);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --bg-surface-elevated: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-glow: rgba(37, 99, 235, 0.15);
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #1e293b;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.92);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.82;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Scroll Progress Bar */
+    #scroll-progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3.5px;
+      background: transparent;
+      z-index: 100;
+    }
+
+    #scroll-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+      transition: width 0.05s ease-out;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 38px;
+      min-width: 38px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .nav-btn:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .nav-btn-icon-only {
+      padding: 0;
+      width: 38px;
+    }
+
+    .nav-center-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 210px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    @media (min-width: 640px) {
+      .nav-center-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-center-title.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 16px 14px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 32px 24px 100px;
+      }
+    }
+
+    /* Article Card */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 44px 44px;
+      }
+    }
+
+    /* Series Nav Card (Top & Bottom) */
+    .series-nav-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 26px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .series-nav-card:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .series-nav-sub {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    .series-nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .series-nav-arrow {
+      font-size: 18px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 34px;
+      padding-bottom: 26px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .meta-badge.series-badge {
+      background: var(--primary-light);
+      border-color: rgba(37, 99, 235, 0.25);
+      color: var(--primary);
+    }
+
+    .article-title {
+      font-size: clamp(23px, 5.2vw, 34px);
+      font-weight: 850;
+      line-height: 1.32;
+      letter-spacing: -0.035em;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(15px, 3.6vw, 18.5px);
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Content Typography */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+      margin-top: 2.3em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.6vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(18.5px, 4.0vw, 22.5px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(16.5px, 3.4vw, 19px);
+    }
+
+    .content h4 {
+      font-size: 15.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--primary);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.45em;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 750;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.45em;
+      padding-left: 1.35em;
+    }
+
+    .content li {
+      margin-bottom: 0.55em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.6em 0;
+    }
+
+    .content blockquote {
+      margin: 1.6em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.18em 0.42em;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* Code Block with Header & Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.7em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #38bdf8;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11px;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.62;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Accordion Code Blocks for Massive C Structs */
+    .code-accordion {
+      margin: 1.6em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-accordion summary {
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+
+    .code-accordion summary:hover {
+      background: var(--bg-surface-elevated);
+    }
+
+    .code-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .accordion-pill {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    .accordion-icon {
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .code-accordion[open] .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .code-accordion .code-block-wrapper {
+      margin: 0;
+      border: none;
+      border-radius: 0;
+    }
+
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.7em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-box.danger {
+      border-left-color: #ef4444;
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 750;
+      font-size: 14.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+    }
+
+    /* Responsive Comparison Table */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.7em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: top;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* Diagram Containers (SVG / HTML Hybrid) */
+    .diagram-card {
+      margin: 1.8em 0;
+      padding: 20px 16px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+
+    .diagram-title {
+      font-size: 13.5px;
+      font-weight: 750;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .diagram-svg-wrap {
+      width: 100%;
+      min-width: 290px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .diagram-svg-wrap svg {
+      width: 100%;
+      height: auto;
+      max-width: 650px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2.2em 0;
+      padding: 18px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+    }
+
+    @media (min-width: 640px) {
+      .sim-container {
+        padding: 24px;
+      }
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      background: var(--primary);
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sim-title {
+      font-size: 16.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-mode-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-card);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      width: 100%;
+    }
+
+    @media (min-width: 520px) {
+      .sim-mode-tabs {
+        width: auto;
+      }
+    }
+
+    .sim-mode-btn {
+      flex: 1;
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .sim-mode-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Stepper Bar */
+    .sim-stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .step-node {
+      padding: 8px 6px;
+      text-align: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+
+    .step-node.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .step-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-light);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .step-node.active .step-num {
+      color: var(--primary);
+    }
+
+    .step-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Simulator Stage Visualizer */
+    .sim-stage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stage-title {
+      font-size: 13px;
+      font-weight: 750;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .stage-view-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .stage-view-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .stage-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .panel-header {
+      font-size: 11.5px;
+      font-weight: 750;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Stack Visualization */
+    .stack-visual {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 6px;
+      min-height: 120px;
+    }
+
+    .stack-slot {
+      padding: 6px 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .stack-slot.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+      box-shadow: 0 0 6px var(--primary-glow);
+    }
+
+    .stack-slot-idx {
+      font-size: 10px;
+      color: var(--text-light);
+    }
+
+    .stack-slot-val {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* State Visualizer Cards */
+    .dispatch-route-box {
+      padding: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .dispatch-arrow {
+      color: var(--primary);
+      font-weight: bold;
+      margin: 4px 0;
+      text-align: center;
+    }
+
+    /* Description Box */
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step-title {
+      font-weight: 800;
+      font-size: 14.5px;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sim Controls */
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .sim-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    @media (min-width: 480px) {
+      .sim-btn-group {
+        width: auto;
+      }
+    }
+
+    .sim-btn {
+      flex: 1;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 480px) {
+      .sim-btn {
+        flex: 0 0 auto;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    /* TOC Drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -330px;
+      width: 310px;
+      max-width: 86vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-xl);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .toc-close-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-surface);
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px 40px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-1 { padding-left: 0; }
+    .toc-drawer-body li.depth-2 { padding-left: 12px; }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: block;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: all 0.22s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    #back-to-top:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Footer */
+    .article-footer {
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    /* Pulse Animations */
+    @keyframes pulse-node {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="scroll-progress-container">
+    <div id="scroll-progress"></div>
+  </div>
+
+  <!-- Sticky Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn nav-btn-icon-only" title="홈으로 이동" aria-label="홈으로">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </a>
+      <a href="python_object_creation_and_binding.html" class="nav-btn" title="연작 1부: 객체 생성과 메서드 바인딩">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span>1부 복습</span>
+      </a>
+    </div>
+
+    <div class="nav-center-title" id="nav-title">
+      [2부] 파이썬 호출 가능 객체와 CPython 실행 엔진
+    </div>
+
+    <div class="nav-right">
+      <!-- Theme Toggle -->
+      <button class="nav-btn nav-btn-icon-only" id="theme-toggle" title="다크/라이트 테마 전환" aria-label="테마 전환">
+        <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <!-- Font Toggle -->
+      <button class="nav-btn nav-btn-icon-only" id="font-toggle" title="Pretendard / D2Coding 폰트 토글" aria-label="폰트 전환">
+        <span id="font-toggle-label" style="font-weight:800; font-size:13px;">D2</span>
+      </button>
+
+      <!-- TOC Drawer Button -->
+      <button class="nav-btn nav-btn-icon-only" id="toc-btn" title="목차 열기" aria-label="목차 열기">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Table of Contents Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="목차">
+    <div class="toc-drawer-header">
+      <div class="toc-drawer-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <span>문서 목차</span>
+      </div>
+      <button class="toc-close-btn" id="toc-close-btn" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul>
+        <li class="depth-1"><a href="#prologue" class="toc-link">프롤로그: 파이썬의 ()와 호출 프로토콜</a></li>
+        <li class="depth-1"><a href="#ch1" class="toc-link">1장: obj(1, 2)와 바이트코드 CALL</a></li>
+        <li class="depth-2"><a href="#ch1-stack" class="toc-link">· Evaluation Stack과 PUSH_NULL 최적화</a></li>
+        <li class="depth-1"><a href="#ch2" class="toc-link">2장: 두 갈래 길 — tp_call vs vectorcall</a></li>
+        <li class="depth-2"><a href="#ch2-tpcall" class="toc-link">· 고전 tp_call과 튜플 언패킹 병목</a></li>
+        <li class="depth-2"><a href="#ch2-vectorcall" class="toc-link">· PEP 590 vectorcall과 zero-copy 프리펜딩</a></li>
+        <li class="depth-1"><a href="#ch3" class="toc-link">3장: PyFunctionObject와 스택 프레임 평가</a></li>
+        <li class="depth-2"><a href="#ch3-code" class="toc-link">· 함수 객체 vs 코드 객체</a></li>
+        <li class="depth-2"><a href="#ch3-frame" class="toc-link">· _PyInterpreterFrame 연속 스택 청크</a></li>
+        <li class="depth-1"><a href="#ch4" class="toc-link">4장: 일반 인스턴스와 __call__ 이중 디스패치</a></li>
+        <li class="depth-2"><a href="#ch4-instance" class="toc-link">· 왜 obj.__dict__를 건너뛰는가?</a></li>
+        <li class="depth-2"><a href="#ch4-classcall" class="toc-link">· Dog() 클래스 호출과 type_call 대칭성</a></li>
+        <li class="depth-1"><a href="#ch5" class="toc-link">5장: PyObject와 PyTypeObject의 순환 메모리</a></li>
+        <li class="depth-2"><a href="#ch5-header" class="toc-link">· PyObject_HEAD 공통 헤더의 마법</a></li>
+        <li class="depth-2"><a href="#ch5-loop" class="toc-link">· type과 object의 뫼비우스 순환 부트스트랩</a></li>
+        <li class="depth-1"><a href="#simulator" class="toc-link">인터랙티브 CPython 엔진 시뮬레이터</a></li>
+        <li class="depth-1"><a href="#epilogue" class="toc-link">에필로그: 기계적 관점에서 본 파이썬</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Body -->
+  <main class="article-container">
+    <article class="article-card">
+
+      <!-- Series Previous Part Navigation Card (Top) -->
+      <a href="python_object_creation_and_binding.html" class="series-nav-card" title="1부로 이동하기">
+        <div>
+          <div class="series-nav-sub">CPython Architecture Series • Part 1</div>
+          <div class="series-nav-title">
+            <span>⬅️ [1부] 파이썬 객체 생성과 메서드 바인딩의 기계적 실체</span>
+          </div>
+        </div>
+        <div class="series-nav-arrow">&rarr;</div>
+      </a>
+
+      <!-- Article Header -->
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge series-badge">CPython Architecture Deep Dive • Part 2</span>
+          <span class="meta-badge">⏱ 읽는 시간 25분</span>
+          <span class="meta-badge">🛠 Python 3.11+ ~ 3.13</span>
+        </div>
+        <h1 class="article-title">[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진</h1>
+        <p class="article-subtitle">
+          <code>obj(1, 2)</code> 바이트코드 <code>CALL</code>부터 <code>tp_call</code>, <code>vectorcall</code>, 그리고 <code>PyObject</code>와 <code>PyTypeObject</code>의 순환 메모리 구조까지
+        </p>
+        <div class="tag-list">
+          <span class="tag-pill">#CPython</span>
+          <span class="tag-pill">#CallableProtocol</span>
+          <span class="tag-pill">#vectorcall</span>
+          <span class="tag-pill">#PyObject_HEAD</span>
+          <span class="tag-pill">#PyTypeObject</span>
+          <span class="tag-pill">#EvaluationStack</span>
+          <span class="tag-pill">#PyFrameObject</span>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content">
+
+        <!-- Prologue -->
+        <section id="prologue">
+          <h2>
+            <a href="#prologue" class="heading-anchor">#</a>
+            프롤로그: 파이썬의 <code>()</code>는 문법이 아닌 객체 호출 프로토콜(Call Protocol)의 발동이다
+          </h2>
+          <p>
+            우리가 파이썬 코드에서 가장 흔하게 마주하는 기호 중 하나는 단연 소괄호 <code>()</code>입니다. 개발자는 일상적으로 <code>add(1, 2)</code>를 보며 <em>"add라는 이름의 함수를 인자 1, 2와 함께 실행한다"</em>라고 직관적으로 받아들입니다.
+          </p>
+          <p>
+            그러나 CPython 가상 머신의 관점에서 소괄호 <code>()</code>는 단순한 구문 규칙(Syntax)이 아닙니다. 인터프리터에게 소괄호는 다음의 엄격한 <strong>객체 호출 프로토콜(Call Protocol)</strong>을 가동하라는 하드웨어 수준의 지령입니다:
+          </p>
+          <blockquote>
+            <strong>"스택 위에 놓인 <code>obj</code>는 호출 가능한 객체(Callable)인가? 그렇다면 그 객체의 C 구조체 슬롯에 정의된 호출 함수 포인터를 찾아 인자들을 넘겨 평가하라."</strong>
+          </blockquote>
+          <p>
+            이 놀라운 사실 때문에 파이썬에서는 이름 뒤에 <code>()</code>를 붙여 실행할 수 있는 대상이 결코 <strong>함수</strong>에 국한되지 않습니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">python</span>
+              <button class="copy-btn" data-target="code-prologue-1">복사</button>
+            </div>
+            <pre><code id="code-prologue-1"># 1. 고전적인 함수 객체
+def normal_func(a, b):
+    return a + b
+
+# 2. 클래스 객체 자체 (인스턴스 생성자 호출)
+class Adder:
+    def __init__(self, base):
+        self.base = base
+    def __call__(self, a, b):
+        return self.base + a + b
+
+# 3. __call__이 정의된 일반 인스턴스 객체
+adder_instance = Adder(base=100)
+
+# 모두 완전히 동일한 소괄호 () 연산자로 발동된다!
+print(normal_func(1, 2))      # 3
+print(Adder(base=10))         # &lt;Adder object at 0x...&gt;
+print(adder_instance(1, 2))   # 103</code></pre>
+          </div>
+
+          <p>
+            위 코드의 세 대상(<code>normal_func</code>, <code>Adder</code>, <code>adder_instance</code>)은 메모리 상에서 서로 완전히 다른 C 구조체입니다. 그럼에도 모두 <code>(1, 2)</code>라는 단일한 문법으로 호출될 수 있습니다.
+          </p>
+          <p>
+            내장 함수 <code>callable(x)</code>가 진정으로 검사하는 것도 "이것이 함수인가?"가 아니라 <strong>"이 객체의 C 타입 구조체에 호출 프로토콜 진입점(<code>tp_call</code> 또는 <code>vectorcall</code>)이 열려 있는가?"</strong>입니다.
+          </p>
+
+          <div class="callout-box info">
+            <div class="callout-title">💡 핵심 멘탈 모델: 괄호 ()의 추상 연산화</div>
+            <p>
+              파이썬에서 <code>obj</code>를 단독으로 쓰면 객체의 레퍼런스를 가져오는 메모리 로드 연산이지만, <code>obj(1, 2)</code>는 객체의 <code>Py_TYPE(obj)</code>를 역참조하여 그 객체의 행동표(타입 슬롯)에 등록된 실행 함수를 찾아가는 <strong>동적 디스패치(Dynamic Dispatch)</strong> 연산입니다.
+            </p>
+          </div>
+
+          <!-- Conceptual Architecture Diagram -->
+          <div class="diagram-card">
+            <div class="diagram-title">🎨 [개념도] CPython 객체 호출 프로토콜의 거대한 갈래</div>
+            <div class="diagram-svg-wrap">
+              <svg viewBox="0 0 650 330" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="220" y="10" width="210" height="42" rx="8" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2"/>
+                <text x="325" y="36" text-anchor="middle" font-family="var(--font-mono)" font-size="14" font-weight="bold" fill="var(--text-main)">obj(1, 2) [CALL]</text>
+                
+                <path d="M325 52V85" stroke="var(--border-focus)" stroke-width="2" marker-end="url(#arrow)"/>
+                
+                <rect x="185" y="85" width="280" height="44" rx="8" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+                <text x="325" y="112" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="bold" fill="var(--text-main)">Py_TYPE(obj) 및 vectorcall 슬롯 검사</text>
+                
+                <path d="M250 129L140 170" stroke="var(--accent-cyan)" stroke-width="2"/>
+                <path d="M400 129L510 170" stroke="var(--accent-purple)" stroke-width="2"/>
+                
+                <!-- Left branch: Function -->
+                <rect x="40" y="170" width="200" height="54" rx="8" fill="var(--bg-card)" stroke="var(--accent-cyan)" stroke-width="1.5"/>
+                <text x="140" y="193" text-anchor="middle" font-family="var(--font-mono)" font-size="12" font-weight="bold" fill="var(--accent-cyan)">PyFunctionObject</text>
+                <text x="140" y="211" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--text-muted)">_PyFunction_Vectorcall</text>
+                
+                <!-- Right branch: Instance -->
+                <rect x="410" y="170" width="200" height="54" rx="8" fill="var(--bg-card)" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                <text x="510" y="193" text-anchor="middle" font-family="var(--font-mono)" font-size="12" font-weight="bold" fill="var(--accent-purple)">Instance with __call__</text>
+                <text x="510" y="211" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--text-muted)">type(obj)->tp_call / slot</text>
+
+                <path d="M140 224V255" stroke="var(--accent-cyan)" stroke-width="2"/>
+                <path d="M510 224V255" stroke="var(--accent-purple)" stroke-width="2"/>
+
+                <rect x="40" y="255" width="200" height="50" rx="8" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+                <text x="140" y="278" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="bold" fill="var(--text-main)">_PyInterpreterFrame 생성</text>
+                <text x="140" y="294" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--text-light)">_PyEval_EvalFrameDefault</text>
+
+                <rect x="410" y="255" width="200" height="50" rx="8" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+                <text x="510" y="278" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="bold" fill="var(--text-main)">__call__(obj, 1, 2) 바인딩</text>
+                <text x="510" y="294" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--text-light)">self = obj 인자 슬라이스 프리펜딩</text>
+                
+                <defs>
+                  <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--border-focus)"/>
+                  </marker>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chapter 1 -->
+        <section id="ch1">
+          <h2>
+            <a href="#ch1" class="heading-anchor">#</a>
+            1장: <code>obj(1, 2)</code>를 만난 인터프리터의 첫 걸음 — <code>CALL</code> 바이트코드와 스택 상태
+          </h2>
+          <p>
+            파이썬 소스코드가 인터프리터에서 파싱되면 추상 구문 트리(AST)를 거쳐 컴파일러에 의해 바이트코드로 변환됩니다. <code>obj(1, 2)</code>를 <code>dis</code> 모듈로 역어셈블해보면 현대 파이썬(3.11+)의 진보된 내부 아키텍처가 적나라하게 드러납니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">python bytecode</span>
+              <button class="copy-btn" data-target="code-ch1-dis">복사</button>
+            </div>
+            <pre><code id="code-ch1-dis">import dis
+
+def test():
+    return obj(1, 2)
+
+dis.dis(test)
+# ----------------------------------------------------
+# Python 3.11+ 실제 역어셈블 결과:
+# ----------------------------------------------------
+#  2   0 RESUME                   0
+#      2 LOAD_GLOBAL              1 (NULL + obj)
+#     14 LOAD_CONST               1 (1)
+#     16 LOAD_CONST               2 (2)
+#     18 PRECALL                  2
+#     22 CALL                     2
+#     32 RETURN_VALUE</code></pre>
+          </div>
+
+          <h3 id="ch1-stack">Evaluation Stack과 <code>PUSH_NULL</code> 혁신</h3>
+          <p>
+            과거 Python 3.10 이전에는 <code>LOAD_GLOBAL obj</code> 이후 인자를 쌓고 <code>CALL_FUNCTION 2</code>를 호출했습니다. 하지만 Python 3.11부터는 <strong><code>PUSH_NULL</code></strong> 메커니즘이 도입되었습니다.
+          </p>
+          <p>
+            왜 <code>NULL</code>을 스택에 밀어 넣을까요? 이것이 바로 <strong>일반 함수 호출과 메서드 호출(<code>instance.method(arg)</code>)의 스택 모양을 완벽하게 통일하기 위한 CPython의 기발한 승부수</strong>입니다.
+          </p>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>구분</th>
+                  <th>스택 슬롯 0</th>
+                  <th>스택 슬롯 1</th>
+                  <th>인자 슬롯 (2, 3)</th>
+                  <th>CALL 바이트코드 처리</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>일반 함수 호출</strong><br><code>func(1, 2)</code></td>
+                  <td><code>NULL</code></td>
+                  <td><code>callable (func)</code></td>
+                  <td><code>arg1(1), arg2(2)</code></td>
+                  <td>스택 0이 <code>NULL</code>이므로 슬롯 1의 함수를 인자 2개로 직행 호출</td>
+                </tr>
+                <tr>
+                  <td><strong>메서드 호출</strong><br><code>obj.method(1, 2)</code></td>
+                  <td><code>method</code></td>
+                  <td><code>self (obj)</code></td>
+                  <td><code>arg1(1), arg2(2)</code></td>
+                  <td>스택 0이 <code>NULL</code>이 아니므로 슬롯 1(self)을 첫 번째 인자로 결합하여 총 3개 인자로 실행</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            덕분에 인터프리터는 <em>"이것이 바인드된 메서드인가, 일반 함수인가?"</em>를 확인하기 위해 매번 힙에 임시 <code>PyMethodObject</code>(바운드 메서드 래퍼)를 동적 할당할 필요가 없어졌습니다. 단일 <code>CALL</code> 명령어가 스택 상태만을 보고 제로-할당(Zero-allocation)으로 양쪽을 초고속 분기 처리합니다.
+          </p>
+
+          <!-- Accordion for CPython ceval.c CALL opcode -->
+          <details class="code-accordion">
+            <summary>
+              <div class="accordion-summary-left">
+                <span class="accordion-pill">C source</span>
+                <span>CPython <code>ceval.c</code> 내부의 TARGET(CALL) 디스패치 루프</span>
+              </div>
+              <span class="accordion-icon">▼</span>
+            </summary>
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">c (cpython/Python/ceval.c)</span>
+                <button class="copy-btn" data-target="code-ceval-call">복사</button>
+              </div>
+              <pre><code id="code-ceval-call">/* CPython 3.12 Python/bytecodes.c & ceval.c 발췌 */
+TARGET(CALL) {
+    PyObject **args = &stack_pointer[-oparg];
+    PyObject *callable = stack_pointer[-1 - oparg];
+    PyObject *self_or_null = stack_pointer[-2 - oparg];
+
+    /* self_or_null이 NULL이 아니면(메서드 호출), self를 인자 목록 앞자리로 간주 */
+    PyObject *res;
+    if (self_or_null != NULL) {
+        args--;
+        oparg++;
+    }
+    
+    /* 최적화된 vectorcall 또는 일반 호출 엔진으로 진입 */
+    res = PyObject_Vectorcall(callable, args, oparg, NULL);
+    ...
+    STACK_SHRINK(oparg + 2);
+    PUSH(res);
+    DISPATCH();
+}</code></pre>
+            </div>
+          </details>
+        </section>
+
+        <!-- Chapter 2 -->
+        <section id="ch2">
+          <h2>
+            <a href="#ch2" class="heading-anchor">#</a>
+            2장: CPython 호출 엔진의 두 갈래 길 — <code>tp_call</code> vs 현대 <code>vectorcall</code> 프로토콜
+          </h2>
+          <p>
+            바이트코드 실행기가 <code>CALL</code>을 수행하면 CPython의 호출 서브시스템으로 진입합니다. 여기서 CPython의 역사를 관통하는 가장 위대한 성능 혁신인 <strong>고전적 <code>tp_call</code></strong>과 <strong>현대적 <code>vectorcall</code>(PEP 590)</strong>의 분기가 나타납니다.
+          </p>
+
+          <h3 id="ch2-tpcall">고전적 <code>tp_call</code>의 비극: 불필요한 튜플 팩/언팩</h3>
+          <p>
+            과거 Python C API의 표준 호출 방식은 <code>PyObject_Call(callable, args, kwargs)</code>였습니다. 이 함수의 시그니처는 다음과 같은 C 함수 포인터(<code>ternaryfunc</code>)를 전제로 했습니다.
+          </p>
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">c</span>
+              <button class="copy-btn" data-target="code-tp-call-sig">복사</button>
+            </div>
+            <pre><code id="code-tp-call-sig">/* PyTypeObject에 정의된 전통적인 호출 슬롯 */
+typedef PyObject *(*ternaryfunc)(PyObject *self, PyObject *args, PyObject *kwargs);</code></pre>
+          </div>
+          <p>
+            이 구조에는 치명적인 병목이 도사리고 있었습니다:
+          </p>
+          <ul>
+            <li><code>func(1, 2)</code>를 호출하기 위해 스택에 있는 숫자 <code>1</code>과 <code>2</code>를 꺼내 <strong>새로운 CPython 튜플 객체 <code>(1, 2)</code>를 힙 메모리에 <code>PyTuple_New(2)</code>로 무조건 할당</strong>해야 했습니다.</li>
+            <li>키워드 인자가 있다면 빈 딕셔너리 객체(<code>{}</code>) 역시 할당되었습니다.</li>
+            <li>함수 바디 내부로 진입하면, 방금 만든 튜플에서 인자들을 다시 하나씩 풀어서(Unpack) 로컬 변수 슬롯에 대입했습니다.</li>
+            <li>함수 호출이 끝나면 방금 쓰고 버려진 임시 튜플 객체를 메모리에서 해제해야 했습니다.</li>
+          </ul>
+          <p>
+            초당 수억 번씩 실행되는 파이썬 함수 호출에서 매번 힙 할당과 해제가 일어난다는 것은 엄청난 CPU 사이클 낭비이자 캐시 미스의 주범이었습니다.
+          </p>
+
+          <h3 id="ch2-vectorcall">구원투수: PEP 590 <code>vectorcall</code> 프로토콜</h3>
+          <p>
+            CPython 3.8에서 실험 도입되어 3.9+부터 코어 전체를 지배하게 된 <strong>vectorcall</strong>은 이 튜플 포장 비용을 완전히 0으로 만들었습니다.
+          </p>
+
+          <details class="code-accordion" open>
+            <summary>
+              <div class="accordion-summary-left">
+                <span class="accordion-pill">C struct</span>
+                <span>vectorcallfunc 함수 포인터 정의 (PEP 590)</span>
+              </div>
+              <span class="accordion-icon">▼</span>
+            </summary>
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">c</span>
+                <button class="copy-btn" data-target="code-vectorcall-sig">복사</button>
+              </div>
+              <pre><code id="code-vectorcall-sig">typedef PyObject *(*vectorcallfunc)(
+    PyObject *callable,               /* 호출 대상 객체 */
+    PyObject *const *args,             /* 스택 상의 인자 C 포인터 연속 배열 (슬라이스) */
+    size_t nargsf,                     /* 인자 개수 + 플래그 비트마스크 */
+    PyObject *kwnames                  /* 키워드 인자 이름들이 담긴 튜플 (없으면 NULL) */
+);</code></pre>
+            </div>
+          </details>
+
+          <p>
+            vectorcall의 핵심 비결은 세 가지입니다:
+          </p>
+          <ol>
+            <li>
+              <strong>튜플 제로-할당:</strong> 스택에 이미 차례대로 쌓여 있는 포인터 메모리 주소(<code>&stack[0]</code>)를 C 언어의 연속 포인터 배열 <code>PyObject *const *args</code>로 함수에 <em>그대로</em> 넘겨줍니다. 튜플을 새로 만들지 않습니다!
+            </li>
+            <li>
+              <strong>비트마스크 트릭 (<code>nargsf</code>):</strong> 인자의 개수 <code>nargs</code>에 최상위 비트 <code>PY_VECTORCALL_ARGUMENTS_OFFSET</code> 플래그를 결합합니다. 이를 통해 호출자가 전달한 <code>args</code> 배열 바로 앞자리(<code>args[-1]</code>)를 임시로 덮어써도 안전한지를 수 피코초 단위 비트 연산으로 판별합니다.
+            </li>
+            <li>
+              <strong>self 프리펜딩(Prepending) 제로-카피:</strong> 메서드 호출 시 <code>self</code>를 인자 맨 앞에 끼워 넣어야 할 때, 메모리 복사나 재할당 없이 스택 상의 <code>args[-1]</code>(앞서 1장에서 본 <code>PUSH_NULL</code> 자리!)에 <code>self</code>를 꽂아 넣고 <code>args--</code>하여 포인터만 한 칸 앞으로 이동시킵니다.
+            </li>
+          </ol>
+
+          <div class="callout-box tip">
+            <div class="callout-title">⚡ 시스템 엔지니어의 통찰: PUSH_NULL과 vectorcall의 환상적 결합</div>
+            <p>
+              1장에서 보았던 <code>PUSH_NULL</code> 바이트코드가 스택에 슬롯 하나를 미리 비워두는 진짜 이유가 바로 여기에 있습니다. 만약 이것이 메서드 호출로 전환될 경우, <code>vectorcall</code> 엔진이 인자들을 복사해 옮길 필요 없이 빈 슬롯에 <code>self</code>를 즉시 채워 넣어 <strong>완벽한 0-비용(Zero-overhead) 인자 리프레시</strong>를 달성하기 위함입니다.
+            </p>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>고전 tp_call</th>
+                  <th>현대 vectorcall</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>인자 전달 방식</strong></td>
+                  <td><code>PyTupleObject</code> (힙 할당) + <code>PyDictObject</code></td>
+                  <td><code>PyObject *const *args</code> (C 포인터 연속 슬라이스)</td>
+                </tr>
+                <tr>
+                  <td><strong>메모리 할당(malloc)</strong></td>
+                  <td>호출마다 최소 1~2회 힙 할당 발생</td>
+                  <td><strong>0회 (평가 스택 연속 메모리 재사용)</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>self 바인딩</strong></td>
+                  <td>새 튜플에 self를 포함하여 다시 복사</td>
+                  <td><code>args[-1]</code> 슬롯에 self 배치 후 포인터만 조정</td>
+                </tr>
+                <tr>
+                  <td><strong>CPython 적용 대상</strong></td>
+                  <td>레거시 C 확장 모듈 및 하위 호환 슬롯</td>
+                  <td>모든 파이썬 함수, 내장 메서드, 클래스 생성자</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Chapter 3 -->
+        <section id="ch3">
+          <h2>
+            <a href="#ch3" class="heading-anchor">#</a>
+            3장: 함수 객체(<code>PyFunctionObject</code>)의 호출 경로 — <code>_PyEval_EvalFrameDefault</code>, 스택 프레임(<code>PyFrameObject</code>)의 동적 생성과 해제
+          </h2>
+          <p>
+            이제 호출 대상이 순수한 파이썬 함수 <code>def f(): ...</code>인 경우, CPython 인터프리터 내부에서 어떤 기계적 절차가 일어나는지 들여다봅시다.
+          </p>
+
+          <h3 id="ch3-code">Function Object vs Code Object의 엄격한 분리</h3>
+          <p>
+            많은 파이썬 프로그래머들이 함수와 코드를 같은 것으로 혼동합니다. 하지만 CPython의 멘탈 모델에서 둘은 완벽히 분리된 서로 다른 계층의 객체입니다:
+          </p>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>구분</th>
+                  <th>PyCodeObject (코드 객체)</th>
+                  <th>PyFunctionObject (함수 객체)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>역할</strong></td>
+                  <td>순수한 실행 청사진 (불변의 레시피)</td>
+                  <td>런타임 바인딩 실행 환경 (살아있는 조리사)</td>
+                </tr>
+                <tr>
+                  <td><strong>포함 내용</strong></td>
+                  <td>바이트코드(<code>co_code</code>), 상수표(<code>co_consts</code>), 변수명(<code>co_varnames</code>)</td>
+                  <td>전역 네임스페이스(<code>func_globals</code>), 기본값(<code>func_defaults</code>), 클로저(<code>func_closure</code>)</td>
+                </tr>
+                <tr>
+                  <td><strong>가변성</strong></td>
+                  <td>완전 불변(Immutable) — 컴파일 시점에 한 번 생성되어 공유됨</td>
+                  <td>가변(Mutable) — <code>def</code> 문이 실행될 때마다 새롭게 생성 가능</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <details class="code-accordion">
+            <summary>
+              <div class="accordion-summary-left">
+                <span class="accordion-pill">C struct</span>
+                <span>PyFunctionObject 구조체 정의 (cpython/Include/cpython/funcobject.h)</span>
+              </div>
+              <span class="accordion-icon">▼</span>
+            </summary>
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">c</span>
+                <button class="copy-btn" data-target="code-func-struct">복사</button>
+              </div>
+              <pre><code id="code-func-struct">typedef struct {
+    PyObject_HEAD
+    PyObject *func_globals;       /* 함수가 참조할 글로벌 __dict__ */
+    PyObject *func_builtins;      /* __builtins__ */
+    PyObject *func_name;          /* __name__ */
+    PyObject *func_qualname;      /* __qualname__ */
+    PyObject *func_code;          /* PyCodeObject 포인터 (핵심 청사진) */
+    PyObject *func_defaults;      /* 튜플 형태의 기본 위치 인자 */
+    PyObject *func_kwdefaults;    /* 딕셔너리 형태의 기본 키워드 인자 */
+    PyObject *func_closure;       /* 자유 변수 클로저 셀 튜플 */
+    PyObject *func_doc;           /* __doc__ */
+    PyObject *func_dict;          /* 함수 객체 임의 속성용 __dict__ */
+    vectorcallfunc vectorcall;    /* 초고속 실행 포인터 (_PyFunction_Vectorcall) */
+    /* ... 버전별 모듈 필드 ... */
+} PyFunctionObject;</code></pre>
+            </div>
+          </details>
+
+          <h3 id="ch3-frame"><code>_PyInterpreterFrame</code>과 실행 프레임 스택의 동적 라이프사이클</h3>
+          <p>
+            <code>PyFunctionObject</code>가 호출되면 CPython은 이 함수의 독자적인 실행 영역인 <strong>스택 프레임(Frame)</strong>을 할당해야 합니다.
+          </p>
+          <p>
+            Python 3.10 이전에는 매 함수 호출마다 OS의 C 힙(malloc)에서 <code>PyFrameObject</code> 구조체를 할당했습니다. 이 때문에 깊은 재귀 호출이나 수많은 작은 함수를 호출할 때 엄청난 메모리 할당 오버헤드가 발생했습니다.
+          </p>
+          <p>
+            <strong>Python 3.11+의 대혁신: Frame Chunks (연속 메모리 청크 할당)</strong><br>
+            현대 CPython은 스레드 상태(<code>PyThreadState</code>) 내에 미리 거대한 메모리 청크(연속 버퍼)를 마련해 두고, 함수가 호출되면 마치 CPU의 하드웨어 콜 스택처럼 포인터(<code>datastack_top</code>)만 쓱 올려서 <code>_PyInterpreterFrame</code>을 할당합니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">text</span>
+              <button class="copy-btn" data-target="code-frame-layout">복사</button>
+            </div>
+            <pre><code id="code-frame-layout">┌────────────────────────────────────────────────────────┐
+│ _PyInterpreterFrame (연속 메모리 청크 레이아웃)         │
+├────────────────────────────────────────────────────────┤
+│ f_code        ──► 실행할 PyCodeObject 포인터            │
+│ f_globals     ──► 전역 변수 딕셔너리                    │
+│ f_locals      ──► 지역 변수 딕셔너리 (필요시 지연 생성)│
+│ prev_instr    ──► 현재 실행 중인 바이트코드 오프셋      │
+│ previous      ──► 호출자(Caller)의 프레임 포인터       │
+├────────────────────────────────────────────────────────┤
+│ localsplus[0] ──► 전달된 인자 1 (a = 1)                 │
+│ localsplus[1] ──► 전달된 인자 2 (b = 2)                 │
+│ localsplus[2] ──► 내부 로컬 변수 (c = a + b)           │
+│ localsplus[3] ──► 함수 전용 Evaluation Stack 바닥     │
+│ ...           ──► (스택 푸시/팝 공간)                  │
+└────────────────────────────────────────────────────────┘</code></pre>
+          </div>
+
+          <p>
+            프레임이 준비되면 CPython의 심장이자 거대한 스위치문 루프인 <strong><code>_PyEval_EvalFrameDefault()</code></strong>가 가동됩니다. 프레임의 바이트코드를 한 단계씩 읽어 지역 변수를 연산하고, <code>RETURN_VALUE</code>를 만나면 결과를 호출자 스택에 푸시한 뒤 프레임 포인터를 이전 프레임(<code>frame->previous</code>)으로 복원하며 즉각 해제됩니다.
+          </p>
+        </section>
+
+        <!-- Chapter 4 -->
+        <section id="ch4">
+          <h2>
+            <a href="#ch4" class="heading-anchor">#</a>
+            4장: 일반 인스턴스 객체의 호출 경로 — <code>type(obj).__call__(obj, 1, 2)</code> 탐색 및 이중 디스패치
+          </h2>
+          <p>
+            많은 파이썬 입문자들이 함수가 아닌 일반 클래스의 인스턴스를 호출할 때 <code>obj(1, 2)</code>가 <code>obj.__call__(1, 2)</code>와 완전히 같다고 배웁니다. 하지만 CPython C-API 레벨에서 이 둘은 <strong>중대한 차이점</strong>을 갖습니다.
+          </p>
+
+          <h3 id="ch4-instance">왜 <code>obj.__dict__</code>를 건너뛰고 <code>type(obj)</code>에서 직접 찾는가?</h3>
+          <p>
+            인터프리터가 <code>obj(1, 2)</code>를 실행할 때, 인터프리터는 <strong>인스턴스 <code>obj</code>의 네임스페이스(<code>obj.__dict__</code>)를 전혀 보지 않습니다.</strong> 대신 오직 <code>obj</code>의 타입인 <code>Py_TYPE(obj)</code>의 타입 슬롯만을 즉시 조회합니다.
+          </p>
+          <p>
+            개념적으로 이것은 다음과 같이 표현됩니다:
+          </p>
+          $$\text{obj}(1, 2) \implies \text{type}(\text{obj}).\_\_\text{call}\_\_(\text{obj}, 1, 2)$$
+
+          <p>
+            이 메커니즘을 증명하는 결정적 실험을 살펴봅시다:
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">python</span>
+              <button class="copy-btn" data-target="code-ch4-override">복사</button>
+            </div>
+            <pre><code id="code-ch4-override">class A:
+    def __call__(self, x, y):
+        return f"클래스 __call__: {x + y}"
+
+obj = A()
+
+# 1. 일반적인 호출 -> 클래스의 __call__이 정상 발동
+print(obj(10, 20)) # "클래스 __call__: 30"
+
+# 2. 인스턴스 객체의 속성에 직접 __call__을 덮어써 본다!
+obj.__call__ = lambda x, y: f"인스턴스 람다: {x * y}"
+
+# 3. 명시적으로 점(.)을 찍고 속성 호출을 하면 인스턴스 람다가 실행된다
+print(obj.__call__(10, 20)) # "인스턴스 람다: 200"
+
+# 4. 하지만 원래 문법인 obj(...)로 호출하면?
+print(obj(10, 20)) # 여전히 "클래스 __call__: 30"이 출력된다!</code></pre>
+          </div>
+
+          <div class="callout-box warning">
+            <div class="callout-title">⚠️ 파이썬 스페셜 메서드(Dunder Method)의 철칙</div>
+            <p>
+              <code>__call__</code>, <code>__getitem__</code>, <code>__add__</code> 등 모든 파이썬 스페셜 메서드는 CPython에서 속도 최적화와 메타순환 일관성을 위해 <strong>인스턴스 딕셔너리를 철저히 무시하고 타입 구조체(<code>PyTypeObject</code>)의 슬롯에서만 직접 탐색</strong>합니다. 인스턴스에 동적으로 꽂아 넣은 스페셜 메서드는 절대 연산자 구문으로 발동되지 않습니다.
+            </p>
+          </div>
+
+          <h3 id="ch4-classcall">클래스 자체의 호출(<code>Dog()</code>)과 <code>type_call</code>의 대칭성</h3>
+          <p>
+            그렇다면 <code>Dog()</code>처럼 클래스 이름을 호출하여 새로운 인스턴스를 만들 때는 무엇이 실행될까요?
+          </p>
+          <p>
+            파이썬의 가장 아름다운 점은 <strong>"클래스도 객체"</strong>라는 사실입니다. <code>Dog</code>의 타입은 <code>type</code>입니다. 따라서 <code>Dog()</code> 호출 역시 일반 인스턴스 호출과 완벽하게 동일한 공식이 적용됩니다:
+          </p>
+          $$\text{Dog}() \implies \text{type}(\text{Dog}).\_\_\text{call}\_\_(\text{Dog}) \implies \text{type}.\_\_\text{call}\_\_(\text{Dog})$$
+
+          <p>
+            CPython 내부에서 <code>type</code>의 <code>tp_call</code> 슬롯에는 <strong><code>type_call()</code></strong>이라는 C 함수가 연결되어 있습니다. 이 함수가 수행하는 일은 우리가 익히 아는 객체 생성 2단계입니다:
+          </p>
+          <ol>
+            <li><code>Dog.__new__(Dog, *args, **kwargs)</code>를 호출하여 힙에 빈 메모리 인스턴스를 생성.</li>
+            <li>생성된 인스턴스가 <code>Dog</code>의 인스턴스라면, <code>Dog.__init__(instance, *args, **kwargs)</code>를 호출하여 속성 초기화.</li>
+            <li>완성된 인스턴스를 반환.</li>
+          </ol>
+          <p>
+            결국 <strong>함수 실행, 인스턴스 실행, 클래스 인스턴스화가 모조리 <code>Py_TYPE(x)->tp_call</code>이라는 단 하나의 통일된 기계적 메커니즘</strong>으로 수렴하는 것입니다.
+          </p>
+        </section>
+
+        <!-- Chapter 5 -->
+        <section id="ch5">
+          <h2>
+            <a href="#ch5" class="heading-anchor">#</a>
+            5장: <code>PyObject</code>와 <code>PyTypeObject</code>의 거대한 순환 메모리 구조 — 모든 객체의 <code>ob_type</code> 포인터, <code>type</code>과 <code>object</code>의 기묘한 뫼비우스의 띠
+          </h2>
+          <p>
+            호출 프로토콜의 모든 경로는 결국 하나의 근원적인 질문으로 이어집니다: <strong>"CPython은 도대체 객체의 타입을 메모리에서 어떻게 표현하고 있는가?"</strong>
+          </p>
+
+          <h3 id="ch5-header"><code>PyObject_HEAD</code>: 모든 파이썬 객체의 최소 공통 헤더</h3>
+          <p>
+            CPython이 <code>int</code>, <code>str</code>, <code>list</code>, <code>dict</code>, <code>function</code> 등 수없이 다양한 자료형을 단일한 C 함수 포인터 <code>PyObject*</code>로 자유자재로 다룰 수 있는 마법의 열쇠는 바로 <strong>공통 헤더</strong>입니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">c (cpython/Include/object.h)</span>
+              <button class="copy-btn" data-target="code-pyobject-head">복사</button>
+            </div>
+            <pre><code id="code-pyobject-head">/* 파이썬의 모든 객체가 메모리 맨 첫머리에 지니는 공통 헤더 */
+#define _PyObject_HEAD_EXTRA
+#define PyObject_HEAD          \
+    _PyObject_HEAD_EXTRA       \
+    Py_ssize_t ob_refcnt;      /* 메모리 참조 카운트 (GC용) */ \
+    PyTypeObject *ob_type;     /* 객체의 타입을 가리키는 C 포인터! */
+
+struct _object {
+    PyObject_HEAD
+};</code></pre>
+          </div>
+
+          <p>
+            어떤 메모리 덩어리가 파이썬 객체라면, 그 주소를 <code>(PyObject*)</code>로 캐스팅했을 때 오프셋 0에는 반드시 <code>ob_refcnt</code>가 있고, 그 바로 다음 오프셋에는 <strong>자신의 타입 정보가 담긴 <code>PyTypeObject</code>의 메모리 주소(<code>ob_type</code>)</strong>가 존재합니다.
+          </p>
+
+          <h3 id="ch5-loop"><code>type</code>과 <code>object</code>의 뫼비우스의 띠: 기묘한 자기참조 순환</h3>
+          <p>
+            여기서 파이썬 객체 모델의 가장 심오하고 매혹적인 영역이 등장합니다. 클래스를 정의하는 <code>PyTypeObject</code> 역시 CPython 힙에 존재하는 <strong>객체(Object)</strong>입니다! 즉 <code>PyTypeObject</code>의 메모리 첫머리에도 <code>ob_type</code>이 존재합니다.
+          </p>
+          <p>
+            그렇다면 타입 객체의 타입은 무엇일까요?
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <span class="code-lang">python</span>
+              <button class="copy-btn" data-target="code-mobius-check">복사</button>
+            </div>
+            <pre><code id="code-mobius-check">d = 123
+print(type(d))        # &lt;class 'int'&gt;
+print(type(int))      # &lt;class 'type'&gt;
+print(type(type))     # &lt;class 'type'&gt;  <-- 자기 자신을 가리킨다!
+
+print(isinstance(object, type))   # True  (object는 type의 인스턴스)
+print(issubclass(type, object))   # True  (type은 object를 상속)
+print(isinstance(type, object))   # True  (type도 결국 object)</code></pre>
+          </div>
+
+          <p>
+            이 관계를 시각화하면 <strong>뫼비우스의 띠와 같은 완벽한 3계층 순환 참조</strong>가 드러납니다:
+          </p>
+
+          <!-- SVG Memory Loop Diagram -->
+          <div class="diagram-card">
+            <div class="diagram-title">🌀 [메모리 순환도] ob_type 포인터 체인과 type-object 뫼비우스 고리</div>
+            <div class="diagram-svg-wrap">
+              <svg viewBox="0 0 660 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Instance Level -->
+                <rect x="30" y="280" width="180" height="75" rx="8" fill="var(--bg-card)" stroke="var(--accent-emerald)" stroke-width="2"/>
+                <text x="120" y="303" text-anchor="middle" font-family="var(--font-mono)" font-size="13" font-weight="bold" fill="var(--accent-emerald)">d = Dog()</text>
+                <text x="120" y="322" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)">ob_refcnt: 1</text>
+                <text x="120" y="340" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--primary)">ob_type ────────►</text>
+
+                <!-- Class Level -->
+                <rect x="250" y="160" width="200" height="90" rx="8" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2"/>
+                <text x="350" y="185" text-anchor="middle" font-family="var(--font-mono)" font-size="13" font-weight="bold" fill="var(--primary)">Dog (PyTypeObject)</text>
+                <text x="350" y="204" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)">tp_name = "Dog"</text>
+                <text x="350" y="222" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)">tp_call = type_call</text>
+                <text x="350" y="240" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--accent-purple)">ob_type ────────►</text>
+
+                <!-- Arrow from d to Dog -->
+                <path d="M210 320C230 320 235 240 250 220" stroke="var(--accent-emerald)" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow-emerald)"/>
+
+                <!-- Metaclass Level: type -->
+                <rect x="440" y="30" width="190" height="95" rx="8" fill="var(--bg-card)" stroke="var(--accent-purple)" stroke-width="2.5"/>
+                <text x="535" y="55" text-anchor="middle" font-family="var(--font-mono)" font-size="14" font-weight="bold" fill="var(--accent-purple)">type (PyType_Type)</text>
+                <text x="535" y="75" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)">메타클래스 실체</text>
+                <text x="535" y="93" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)">tp_call = type_call</text>
+                <text x="535" y="112" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--accent-purple)">ob_type ──┐ (자기자신)</text>
+
+                <!-- Arrow from Dog to type -->
+                <path d="M410 160C430 140 450 130 460 125" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow-primary)"/>
+
+                <!-- Self Loop on type -->
+                <path d="M590 30C630 10 650 60 630 85" stroke="var(--accent-purple)" stroke-width="2.5" marker-end="url(#arrow-purple)"/>
+
+                <!-- Base Object Level -->
+                <rect x="40" y="30" width="190" height="85" rx="8" fill="var(--bg-card)" stroke="var(--accent-cyan)" stroke-width="2"/>
+                <text x="135" y="55" text-anchor="middle" font-family="var(--font-mono)" font-size="13" font-weight="bold" fill="var(--accent-cyan)">object (PyBaseObject)</text>
+                <text x="135" y="74" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)">모든 상속의 루트</text>
+                <text x="135" y="93" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--accent-purple)">ob_type ──────► type</text>
+
+                <!-- Arrow from object to type (isinstance) -->
+                <path d="M230 65H430" stroke="var(--accent-purple)" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#arrow-purple)"/>
+                <text x="335" y="55" text-anchor="middle" font-family="var(--font-sans)" font-size="10.5" font-weight="bold" fill="var(--text-muted)">isinstance (ob_type)</text>
+
+                <!-- Arrow from type to object (inheritance tp_base) -->
+                <path d="M440 100C350 120 280 120 230 100" stroke="var(--accent-cyan)" stroke-width="2" marker-end="url(#arrow-cyan)"/>
+                <text x="335" y="125" text-anchor="middle" font-family="var(--font-sans)" font-size="10.5" font-weight="bold" fill="var(--accent-cyan)">tp_base 상속 (issubclass)</text>
+
+                <defs>
+                  <marker id="arrow-emerald" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-emerald)"/>
+                  </marker>
+                  <marker id="arrow-primary" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
+                  </marker>
+                  <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-purple)"/>
+                  </marker>
+                  <marker id="arrow-cyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-cyan)"/>
+                  </marker>
+                </defs>
+              </svg>
+            </div>
+          </div>
+
+          <h3 id="ch5-bootstrap">C 소스코드의 마법: 닭과 달걀의 부트스트랩</h3>
+          <p>
+            <em>"type의 타입이 type이라면, 도대체 최초의 type 객체는 누가 만드는가?"</em>라는 철학적 딜레마가 생깁니다.
+          </p>
+          <p>
+            CPython 개발자들은 이 문제를 C 언어의 <strong>정적 메모리 선언(Static Struct Initialization)</strong>을 통해 우아하게 해결했습니다.
+          </p>
+
+          <details class="code-accordion">
+            <summary>
+              <div class="accordion-summary-left">
+                <span class="accordion-pill">C source</span>
+                <span>typeobject.c 내부의 PyType_Type 정적 순환 초기화</span>
+              </div>
+              <span class="accordion-icon">▼</span>
+            </summary>
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <span class="code-lang">c (cpython/Objects/typeobject.c)</span>
+                <button class="copy-btn" data-target="code-type-init">복사</button>
+              </div>
+              <pre><code id="code-type-init">/* CPython 소스코드에서 type의 정적 정의 */
+PyTypeObject PyType_Type = {
+    PyVarObject_HEAD_INIT(&PyType_Type, 0) /* ob_type에 자기 자신의 주소(&PyType_Type)를 즉시 대입! */
+    "type",                                 /* tp_name */
+    sizeof(PyHeapTypeObject),               /* tp_basicsize */
+    0,                                      /* tp_itemsize */
+    (destructor)type_dealloc,               /* tp_dealloc */
+    0,                                      /* tp_vectorcall_offset */
+    0,                                      /* tp_getattr */
+    0,                                      /* tp_setattr */
+    0,                                      /* tp_as_async */
+    (reprfunc)type_repr,                    /* tp_repr */
+    0,                                      /* tp_as_number */
+    0,                                      /* tp_as_sequence */
+    0,                                      /* tp_as_mapping */
+    0,                                      /* tp_hash */
+    (ternaryfunc)type_call,                 /* tp_call (클래스를 호출했을 때 실행되는 함수!) */
+    ...
+};</code></pre>
+            </div>
+          </details>
+
+          <p>
+            런타임에 동적으로 생성하려면 닭이 먼저냐 달걀이 먼저냐 싸워야 하지만, C 컴파일러 빌드 시점에 C 구조체 포인터 <code>ob_type</code>에 <strong>자기 자신의 메모리 주소 <code>&PyType_Type</code></strong>을 하드코딩해 둠으로써 무한 루프의 기저점을 단숨에 완성해 버린 것입니다.
+          </p>
+        </section>
+
+        <!-- Interactive Simulator Section -->
+        <section id="simulator">
+          <h2>
+            <a href="#simulator" class="heading-anchor">#</a>
+            인터랙티브 CPython 실행 엔진 시뮬레이터
+          </h2>
+          <p>
+            지금까지 배운 4대 핵심 축이 실제 인터프리터 런타임에서 어떻게 유기적으로 맞물려 돌아가는지 단계를 밟아가며 확인해 보세요.
+          </p>
+
+          <div class="sim-container">
+            <div class="sim-header">
+              <div class="sim-title">
+                <span class="sim-badge">실행 엔진 SIM</span>
+                <span id="sim-main-title">호출 라이프사이클 파이프라인</span>
+              </div>
+              <div class="sim-mode-tabs">
+                <button class="sim-mode-btn active" id="mode-func" data-mode="func">일반 함수 f(1, 2)</button>
+                <button class="sim-mode-btn" id="mode-inst" data-mode="inst">인스턴스 obj(1, 2)</button>
+              </div>
+            </div>
+
+            <!-- Stepper Indicators -->
+            <div class="sim-stepper">
+              <div class="step-node active" id="step-node-0" data-step="0">
+                <span class="step-num">STEP 1</span>
+                <span class="step-label">CALL 바이트코드</span>
+              </div>
+              <div class="step-node" id="step-node-1" data-step="1">
+                <span class="step-num">STEP 2</span>
+                <span class="step-label">엔진 분기 검사</span>
+              </div>
+              <div class="step-node" id="step-node-2" data-step="2">
+                <span class="step-num">STEP 3</span>
+                <span class="step-label">디스패치/바인딩</span>
+              </div>
+              <div class="step-node" id="step-node-3" data-step="3">
+                <span class="step-num">STEP 4</span>
+                <span class="step-label">프레임 평가 및 리턴</span>
+              </div>
+            </div>
+
+            <!-- Stage Visualizer -->
+            <div class="sim-stage-card">
+              <div class="stage-title">
+                <span id="stage-status-text">진행 상태: STEP 1 / 4</span>
+                <span class="accordion-pill" id="stage-protocol-tag">PROTOCOL: PUSH_NULL + CALL</span>
+              </div>
+
+              <div class="stage-view-grid">
+                <!-- Left Panel: Evaluation Stack -->
+                <div class="stage-panel">
+                  <div class="panel-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>
+                    <span>Evaluation Stack (스택 탑: 위쪽)</span>
+                  </div>
+                  <div class="stack-visual" id="sim-stack-view">
+                    <!-- Populated dynamically by JS -->
+                  </div>
+                </div>
+
+                <!-- Right Panel: C Engine Dispatch Route -->
+                <div class="stage-panel">
+                  <div class="panel-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                    <span>CPython C-API 디스패치 경로</span>
+                  </div>
+                  <div class="dispatch-route-box" id="sim-dispatch-view">
+                    <!-- Populated dynamically by JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description Box -->
+            <div class="sim-desc-box">
+              <div class="sim-desc-step-title" id="sim-desc-title">1단계: CALL 바이트코드 진입과 스택 정렬</div>
+              <div id="sim-desc-body">설명 텍스트 로딩 중...</div>
+            </div>
+
+            <!-- Controls -->
+            <div class="sim-controls">
+              <div class="sim-btn-group">
+                <button class="sim-btn" id="sim-btn-prev" disabled>⬅️ 이전 단계</button>
+                <button class="sim-btn sim-btn-primary" id="sim-btn-next">다음 단계 ➡️</button>
+              </div>
+              <div class="sim-btn-group">
+                <button class="sim-btn" id="sim-btn-play">▶ 자동 재생</button>
+                <button class="sim-btn" id="sim-btn-reset">🔄 처음으로</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Epilogue -->
+        <section id="epilogue">
+          <h2>
+            <a href="#epilogue" class="heading-anchor">#</a>
+            에필로그: 기계적 관점에서 본 파이썬 — 동적성의 진짜 실체
+          </h2>
+          <p>
+            많은 사람들이 파이썬을 "느리고 규칙 없는 동적 언어"라고 오해합니다. 하지만 그 껍질을 한 겹 벗겨 CPython의 엔진 내부로 들어가 보면, 상상 이상으로 정교하고 규율 잡힌 <strong>C 구조체와 함수 포인터들의 기계적 교향곡</strong>이 울려 퍼지고 있음을 알게 됩니다.
+          </p>
+          <p>
+            파이썬의 동적성은 무질서가 아닙니다:
+          </p>
+          <ul>
+            <li>모든 객체는 한 치의 오차도 없이 첫머리에 <code>ob_type</code> 포인터를 품고 있습니다.</li>
+            <li>소괄호 <code>()</code>는 문법이 아닌 <code>PyTypeObject</code>의 타입 슬롯을 격발하는 정밀한 프로토콜입니다.</li>
+            <li>현대의 <code>vectorcall</code>과 <code>PUSH_NULL</code> 최적화는 동적 호출의 유연성을 100% 지키면서도 C 수준의 메모리 슬라이스 전달을 실현해 냈습니다.</li>
+            <li><code>type</code>과 <code>object</code>의 순환 구조는 정적 C 구조체 선언이라는 묘수를 통해 무한 재귀를 딛고 언어 전체를 스스로 지탱합니다.</li>
+          </ul>
+          <p>
+            이 시스템 수준의 멘탈 모델을 장착한 개발자는 더 이상 파이썬 코드의 겉모습에 휘둘리지 않습니다. 코드가 왜 그렇게 동작하고, 어디서 병목이 발생하며, 어떻게 작성해야 인터프리터와 호흡을 맞출 수 있는지 꿰뚫어 보게 됩니다.
+          </p>
+        </section>
+
+      </div>
+
+      <!-- Series Previous Part Navigation Card (Bottom) -->
+      <a href="python_object_creation_and_binding.html" class="series-nav-card" style="margin-top: 40px;" title="1부로 이동하기">
+        <div>
+          <div class="series-nav-sub">CPython Architecture Series • Part 1</div>
+          <div class="series-nav-title">
+            <span>⬅️ 이전 편 [1부] 파이썬 객체 생성과 메서드 바인딩의 기계적 실체</span>
+          </div>
+        </div>
+        <div class="series-nav-arrow">&rarr;</div>
+      </a>
+
+      <!-- Article Footer -->
+      <footer class="article-footer">
+        <div class="footer-links">
+          <a href="index.html" class="footer-link">홈 (Reading Hub)</a>
+          <span>•</span>
+          <a href="python_object_creation_and_binding.html" class="footer-link">연작 1부: 객체 생성과 바인딩</a>
+          <span>•</span>
+          <a href="#prologue" class="footer-link">맨 위로 이동</a>
+        </div>
+        <p>© 2026 CPython Architecture Series. Built for high-performance reading & deep understanding.</p>
+      </footer>
+
+    </article>
+  </main>
+
+  <!-- Floating Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 이동" title="맨 위로">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  </button>
+
+  <!-- Application Logic Scripts -->
+  <script>
+    (function () {
+      // --- 1. Theme Management ---
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const iconSun = document.getElementById('theme-icon-sun');
+      const iconMoon = document.getElementById('theme-icon-moon');
+
+      function updateThemeIcons(isDark) {
+        if (iconSun && iconMoon) {
+          iconSun.style.display = isDark ? 'block' : 'none';
+          iconMoon.style.display = isDark ? 'none' : 'block';
+        }
+      }
+
+      function getInitialTheme() {
+        const stored = localStorage.getItem('pages_theme');
+        if (stored === 'dark' || stored === 'light') return stored;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      let currentTheme = getInitialTheme();
+      updateThemeIcons(currentTheme === 'dark');
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', currentTheme);
+          localStorage.setItem('pages_theme', currentTheme);
+          updateThemeIcons(currentTheme === 'dark');
+        });
+      }
+
+      // --- 2. Font Management ---
+      const fontToggleBtn = document.getElementById('font-toggle');
+      const fontToggleLabel = document.getElementById('font-toggle-label');
+
+      function getInitialFont() {
+        return localStorage.getItem('pages_font') || 'pretendard';
+      }
+
+      let currentFont = getInitialFont();
+      if (fontToggleLabel) {
+        fontToggleLabel.textContent = currentFont === 'd2coding' ? 'PR' : 'D2';
+      }
+
+      if (fontToggleBtn) {
+        fontToggleBtn.addEventListener('click', () => {
+          currentFont = currentFont === 'd2coding' ? 'pretendard' : 'd2coding';
+          document.documentElement.setAttribute('data-font', currentFont);
+          localStorage.setItem('pages_font', currentFont);
+          if (fontToggleLabel) {
+            fontToggleLabel.textContent = currentFont === 'd2coding' ? 'PR' : 'D2';
+          }
+        });
+      }
+
+      // --- 3. Scroll Progress & Header Title Indicator ---
+      const progressBar = document.getElementById('scroll-progress');
+      const navTitle = document.getElementById('nav-title');
+      const backToTopBtn = document.getElementById('back-to-top');
+
+      window.addEventListener('scroll', () => {
+        const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+        if (progressBar) progressBar.style.width = scrolled + '%';
+
+        if (navTitle) {
+          if (winScroll > 260) {
+            navTitle.classList.add('visible');
+          } else {
+            navTitle.classList.remove('visible');
+          }
+        }
+
+        if (backToTopBtn) {
+          if (winScroll > 400) {
+            backToTopBtn.classList.add('visible');
+          } else {
+            backToTopBtn.classList.remove('visible');
+          }
+        }
+      }, { passive: true });
+
+      if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // --- 4. TOC Drawer Management ---
+      const tocBtn = document.getElementById('toc-btn');
+      const tocCloseBtn = document.getElementById('toc-close-btn');
+      const tocDrawer = document.getElementById('toc-drawer');
+      const drawerOverlay = document.getElementById('drawer-overlay');
+      const tocLinks = document.querySelectorAll('.toc-link');
+
+      function openDrawer() {
+        if (tocDrawer) tocDrawer.classList.add('active');
+        if (drawerOverlay) drawerOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        if (tocDrawer) tocDrawer.classList.remove('active');
+        if (drawerOverlay) drawerOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      if (tocBtn) tocBtn.addEventListener('click', openDrawer);
+      if (tocCloseBtn) tocCloseBtn.addEventListener('click', closeDrawer);
+      if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+      tocLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          closeDrawer();
+        });
+      });
+
+      // --- 5. Clipboard Copy Handler ---
+      const copyButtons = document.querySelectorAll('.copy-btn');
+      copyButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const targetId = btn.getAttribute('data-target');
+          const codeEl = document.getElementById(targetId);
+          if (!codeEl) return;
+          const text = codeEl.textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+            const originalText = btn.textContent;
+            btn.textContent = '복사됨!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = originalText;
+              btn.classList.remove('copied');
+            }, 1800);
+          } catch (err) {
+            btn.textContent = '실패';
+            setTimeout(() => { btn.textContent = '복사'; }, 1500);
+          }
+        });
+      });
+
+      // --- 6. CPython Execution Engine Interactive Simulator ---
+      const simData = {
+        func: [
+          {
+            step: 0,
+            status: "STEP 1 / 4",
+            protocol: "PUSH_NULL + CALL 2",
+            stack: [
+              { idx: "sp[-3]", label: "NULL", desc: "(일반 함수 PUSH_NULL)", active: true },
+              { idx: "sp[-2]", label: "PyFunctionObject (f)", desc: "호출 대상", active: true },
+              { idx: "sp[-1]", label: "PyLongObject(1)", desc: "인자 1", active: false },
+              { idx: "sp[ 0]", label: "PyLongObject(2)", desc: "인자 2 (Stack Top)", active: false }
+            ],
+            dispatch: `
+              <strong>[바이트코드 평가]</strong><br>
+              • <code>oparg = 2</code> (전달 인자 수: 2)<br>
+              • <code>stack_pointer[-4]</code>의 <code>NULL</code> 감지<br>
+              • 메서드 바인딩 불필요 판별 ➔ 함수 직행 경로 선택
+            `,
+            title: "1단계: CALL 2 바이트코드와 PUSH_NULL 스택 정렬",
+            body: "Python 3.11+ 인터프리터가 <code>CALL 2</code>를 만납니다. 스택 바닥에 <code>NULL</code>이 깔려 있어 메서드 호출(self 존재)이 아닌 <strong>순수 함수 호출</strong>임이 단 1회의 포인터 비교로 확인됩니다. 인자들을 튜플로 묶지 않고 스택 포인터 주소(<code>&args[0]</code>)를 그대로 유지합니다."
+          },
+          {
+            step: 1,
+            status: "STEP 2 / 4",
+            protocol: "VECTORCALL FUNCTION CHECK",
+            stack: [
+              { idx: "C Ptr", label: "args = &sp[-1]", desc: "연속 포인터 배열 슬라이스", active: true },
+              { idx: "nargsf", label: "2 | OFFSET_FLAG", desc: "인자 개수 비트마스크", active: true },
+              { idx: "kwnames", label: "NULL", desc: "키워드 인자 없음", active: false }
+            ],
+            dispatch: `
+              <strong>[vectorcall 진입점 확인]</strong><br>
+              • <code>Py_TYPE(f)->tp_flags & _Py_TPFLAGS_HAVE_VECTORCALL</code><br>
+              • <code>vectorcallfunc func = f->vectorcall;</code><br>
+              • 함수 포인터: <code>_PyFunction_Vectorcall</code> 획득
+            `,
+            title: "2단계: vectorcall 슬롯 검사 — 튜플 팩/언팩 완전 제거",
+            body: "인터프리터는 <code>PyFunctionObject</code> 내부의 <code>vectorcall</code> 함수 포인터를 확인합니다. 고전적인 <code>tp_call</code>과 달리 <strong>튜플을 힙에 새로 할당(malloc)하지 않고</strong>, 스택의 C 포인터 연속 배열 <code>args</code>와 인자 개수 <code>nargsf=2</code>를 직접 넘겨 CPU 캐시 적중률을 극대화합니다."
+          },
+          {
+            step: 2,
+            status: "STEP 3 / 4",
+            protocol: "_PyFunction_Vectorcall",
+            stack: [
+              { idx: "func_code", label: "PyCodeObject*", desc: "f의 바이트코드 청사진", active: true },
+              { idx: "func_globals", label: "globals dict*", desc: "전역 네임스페이스", active: true },
+              { idx: "func_defaults", label: "NULL", desc: "기본값 튜플 없음", active: false }
+            ],
+            dispatch: `
+              <strong>[실행 프레임 동적 할당]</strong><br>
+              • Thread State의 연속 메모리 청크에서 <code>_PyInterpreterFrame</code> 할당<br>
+              • <code>localsplus[0] = 1</code> (a에 대입)<br>
+              • <code>localsplus[1] = 2</code> (b에 대입)<br>
+              • <code>_PyEval_EvalFrameDefault()</code> 진입 준비
+            `,
+            title: "3단계: Function Object 실행 — 초고속 프레임 청크 할당",
+            body: "<code>_PyFunction_Vectorcall</code>은 <code>f</code>의 <code>func_code</code>와 <code>func_globals</code>를 가져와 스레드 상태의 전용 메모리 청크에 <code>_PyInterpreterFrame</code>을 할당합니다. 힙 할당 없이 포인터 증가만으로 로컬 변수 슬롯에 <code>a=1, b=2</code>를 고속 바인딩합니다."
+          },
+          {
+            step: 3,
+            status: "STEP 4 / 4",
+            protocol: "EVAL & RETURN_VALUE",
+            stack: [
+              { idx: "sp[ 0]", label: "PyLongObject(3)", desc: "함수 반환값 (Result)", active: true }
+            ],
+            dispatch: `
+              <strong>[프레임 평가 및 언롤링]</strong><br>
+              • <code>BINARY_OP (ADD)</code> ➔ <code>1 + 2 = 3</code> 생성<br>
+              • <code>RETURN_VALUE</code> 발동<br>
+              • <code>_PyInterpreterFrame</code> 즉시 해제 (포인터 롤백)<br>
+              • 호출자 스택에 결과값 <code>3</code> 푸시 완료
+            `,
+            title: "4단계: 바이트코드 평가 루프 완료 및 스택 정리",
+            body: "<code>_PyEval_EvalFrameDefault</code> 내에서 덧셈 연산이 완료되어 결과 <code>3</code>이 생성됩니다. <code>RETURN_VALUE</code> 명령어에 의해 프레임이 해제되고, 호출자의 스택에는 소괄호 <code>()</code> 호출의 최종 결과인 <code>PyLongObject(3)</code>만이 남습니다."
+          }
+        ],
+        inst: [
+          {
+            step: 0,
+            status: "STEP 1 / 4",
+            protocol: "PUSH_NULL + CALL 2",
+            stack: [
+              { idx: "sp[-3]", label: "NULL", desc: "(인스턴스 호출)", active: true },
+              { idx: "sp[-2]", label: "Instance (obj)", desc: "Adder 인스턴스", active: true },
+              { idx: "sp[-1]", label: "PyLongObject(1)", desc: "인자 1", active: false },
+              { idx: "sp[ 0]", label: "PyLongObject(2)", desc: "인자 2 (Stack Top)", active: false }
+            ],
+            dispatch: `
+              <strong>[바이트코드 평가]</strong><br>
+              • <code>callable = obj</code> (일반 인스턴스 객체)<br>
+              • <code>obj</code>는 C 구조체 관점에서 단순 <code>PyObject</code><br>
+              • <code>Py_TYPE(obj)->tp_call</code> 확인 필요
+            `,
+            title: "1단계: 일반 인스턴스 obj(1, 2) 호출 바이트코드",
+            body: "인터프리터는 스택에서 호출 대상 <code>obj</code>를 꺼냅니다. <code>obj</code>는 함수가 아닌 사용자 정의 클래스(<code>Adder</code>)의 인스턴스입니다. CPython은 <code>obj</code>의 타입 슬롯을 확인하기 위해 <code>Py_TYPE(obj)</code>로 조회를 시작합니다."
+          },
+          {
+            step: 1,
+            status: "STEP 2 / 4",
+            protocol: "TYPE SLOT & DUNDER CHECK",
+            stack: [
+              { idx: "Py_TYPE", label: "PyTypeObject (Adder)", desc: "obj의 클래스", active: true },
+              { idx: "tp_call", label: "wrap_call / slot_tp_call", desc: "타입 슬롯 래퍼", active: true },
+              { idx: "dict check", label: "obj.__dict__ 건너뜀!", desc: "인스턴스 속성 무시", active: false }
+            ],
+            dispatch: `
+              <strong>[이중 디스패치 검사]</strong><br>
+              • <code>obj.__dict__</code>는 완전히 무시됨<br>
+              • <code>Py_TYPE(obj)->tp_call</code> 확인: 유효함!<br>
+              • <code>Adder.__call__</code> 디스크립터 조회
+            `,
+            title: "2단계: 인스턴스 __dict__를 무시하고 타입 슬롯으로 직행",
+            body: "인터프리터는 <code>obj.__dict__</code>를 거치지 않고 오직 <code>Py_TYPE(obj)</code>(즉, <code>Adder</code> 클래스)의 <code>tp_call</code> 슬롯만을 봅니다. 여기서 <code>Adder.__call__</code> 메서드가 등록되어 있음을 확인하고 이중 디스패치를 준비합니다."
+          },
+          {
+            step: 2,
+            status: "STEP 3 / 4",
+            protocol: "SELF PREPENDING & BINDING",
+            stack: [
+              { idx: "sp[-3]", label: "self = obj", desc: "args[-1] 자리에 self 주입!", active: true },
+              { idx: "sp[-2]", label: "PyLongObject(1)", desc: "인자 a", active: true },
+              { idx: "sp[-1]", label: "PyLongObject(2)", desc: "인자 b", active: true }
+            ],
+            dispatch: `
+              <strong>[self 프리펜딩 제로-카피 트릭]</strong><br>
+              • <code>PUSH_NULL</code>이 비워둔 <code>sp[-3]</code> 슬롯 활용<br>
+              • <code>args[-1] = obj; args--; nargsf++;</code><br>
+              • <code>Adder.__call__(obj, 1, 2)</code>로 완벽 변환!
+            `,
+            title: "3단계: self 프리펜딩 — 1장의 PUSH_NULL 슬롯의 진가",
+            body: "<code>__call__</code> 메서드에는 첫 번째 인자로 <code>self(obj)</code>가 들어가야 합니다. CPython은 새 배열을 만들지 않고, 1단계에서 <code>PUSH_NULL</code>이 비워둔 바로 그 자리에 <code>obj</code>를 대입하고 포인터를 <code>args--</code>하여 <strong>배열 복사 0회로 <code>Adder.__call__(obj, 1, 2)</code> 형태를 완성</strong>합니다."
+          },
+          {
+            step: 3,
+            status: "STEP 4 / 4",
+            protocol: "EXECUTE __call__ BODY",
+            stack: [
+              { idx: "sp[ 0]", label: "PyLongObject(103)", desc: "base(100) + 1 + 2", active: true }
+            ],
+            dispatch: `
+              <strong>[메서드 바디 실행 및 반환]</strong><br>
+              • <code>self.base(100) + a(1) + b(2)</code> 평가<br>
+              • 결과 <code>103</code> 반환 및 프레임 정리<br>
+              • 일반 인스턴스가 완벽한 Callable로 귀결됨
+            `,
+            title: "4단계: __call__ 프레임 평가 완료 및 결과 반환",
+            body: "클래스에 정의된 <code>__call__</code> 바디가 프레임에서 실행되어 <code>100 + 1 + 2 = 103</code>이 계산됩니다. 일반 인스턴스 역시 <code>type(obj)->tp_call</code>이라는 단일한 C-API 호출 규약 아래에서 아무런 예외 없이 완벽하게 실행되었습니다."
+          }
+        ]
+      };
+
+      let currentMode = 'func'; // 'func' | 'inst'
+      let currentStep = 0;
+      let simTimer = null;
+
+      const btnFunc = document.getElementById('mode-func');
+      const btnInst = document.getElementById('mode-inst');
+      const btnPrev = document.getElementById('sim-btn-prev');
+      const btnNext = document.getElementById('sim-btn-next');
+      const btnPlay = document.getElementById('sim-btn-play');
+      const btnReset = document.getElementById('sim-btn-reset');
+
+      const elStatusText = document.getElementById('stage-status-text');
+      const elProtocolTag = document.getElementById('stage-protocol-tag');
+      const elStackView = document.getElementById('sim-stack-view');
+      const elDispatchView = document.getElementById('sim-dispatch-view');
+      const elDescTitle = document.getElementById('sim-desc-title');
+      const elDescBody = document.getElementById('sim-desc-body');
+      const stepNodes = [0, 1, 2, 3].map(i => document.getElementById(`step-node-${i}`));
+
+      function renderSim() {
+        const list = simData[currentMode];
+        const cur = list[currentStep];
+        if (!cur) return;
+
+        if (elStatusText) elStatusText.textContent = `진행 상태: ${cur.status}`;
+        if (elProtocolTag) elProtocolTag.textContent = `PROTOCOL: ${cur.protocol}`;
+
+        // Render Stack View
+        if (elStackView) {
+          elStackView.innerHTML = cur.stack.map(s => `
+            <div class="stack-slot ${s.active ? 'active' : ''}">
+              <span class="stack-slot-idx">${s.idx}</span>
+              <span class="stack-slot-val">${s.label}</span>
+              <span style="font-size:10.5px; color:var(--text-muted);">${s.desc}</span>
+            </div>
+          `).join('');
+        }
+
+        // Render Dispatch View
+        if (elDispatchView) {
+          elDispatchView.innerHTML = cur.dispatch;
+        }
+
+        // Render Description
+        if (elDescTitle) elDescTitle.textContent = cur.title;
+        if (elDescBody) elDescBody.innerHTML = cur.body;
+
+        // Stepper Nodes
+        stepNodes.forEach((node, idx) => {
+          if (node) {
+            node.classList.toggle('active', idx === currentStep);
+          }
+        });
+
+        // Button states
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === list.length - 1;
+      }
+
+      function stopAutoPlay() {
+        if (simTimer) {
+          clearInterval(simTimer);
+          simTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        simTimer = setInterval(() => {
+          const list = simData[currentMode];
+          if (currentStep < list.length - 1) {
+            currentStep++;
+            renderSim();
+          } else {
+            stopAutoPlay();
+          }
+        }, 2200);
+      }
+
+      if (btnFunc) {
+        btnFunc.addEventListener('click', () => {
+          if (currentMode === 'func') return;
+          stopAutoPlay();
+          currentMode = 'func';
+          btnFunc.classList.add('active');
+          if (btnInst) btnInst.classList.remove('active');
+          currentStep = 0;
+          renderSim();
+        });
+      }
+
+      if (btnInst) {
+        btnInst.addEventListener('click', () => {
+          if (currentMode === 'inst') return;
+          stopAutoPlay();
+          currentMode = 'inst';
+          btnInst.classList.add('active');
+          if (btnFunc) btnFunc.classList.remove('active');
+          currentStep = 0;
+          renderSim();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            renderSim();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const list = simData[currentMode];
+          if (currentStep < list.length - 1) {
+            currentStep++;
+            renderSim();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          renderSim();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (simTimer) {
+            stopAutoPlay();
+          } else {
+            const list = simData[currentMode];
+            if (currentStep >= list.length - 1) currentStep = 0;
+            renderSim();
+            startAutoPlay();
+          }
+        });
+      }
+
+      stepNodes.forEach((node, idx) => {
+        if (node) {
+          node.addEventListener('click', () => {
+            stopAutoPlay();
+            currentStep = idx;
+            renderSim();
+          });
+        }
+      });
+
+      // Initial Render
+      renderSim();
+    })();
+  </script>
+</body>
+</html>

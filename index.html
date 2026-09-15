@@ -508,6 +508,20 @@
         
         <button class="tag-filter-btn" data-tag="입문자 해설">#입문자 해설</button>
         
+        <button class="tag-filter-btn" data-tag="BoundMethod">#BoundMethod</button>
+        
+        <button class="tag-filter-btn" data-tag="디스크립터">#디스크립터</button>
+        
+        <button class="tag-filter-btn" data-tag="시스템프로그래밍">#시스템프로그래밍</button>
+        
+        <button class="tag-filter-btn" data-tag="vectorcall">#vectorcall</button>
+        
+        <button class="tag-filter-btn" data-tag="callable">#callable</button>
+        
+        <button class="tag-filter-btn" data-tag="바이트코드">#바이트코드</button>
+        
+        <button class="tag-filter-btn" data-tag="인터프리터">#인터프리터</button>
+        
         <button class="tag-filter-btn" data-tag="DRAM">#DRAM</button>
         
         <button class="tag-filter-btn" data-tag="Memory Controller">#Memory Controller</button>
@@ -521,10 +535,68 @@
 
     <div class="list-stats">
       <span>아티클 목록</span>
-      <span id="article-count">총 6편</span>
+      <span id="article-count">총 8편</span>
     </div>
 
     <div class="feed-list" id="feed-list">
+      
+      <a href="python_callable_and_execution_engine.html" class="article-item" data-title="[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진" data-summary="obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다." data-tags="Python CPython vectorcall callable 바이트코드 인터프리터">
+        <div class="item-top-row">
+          <div class="item-badges">
+            <span class="item-date">📅 2026-09-15</span>
+            <span class="item-reading-time">⏱️ 약 22분</span>
+          </div>
+          <span class="item-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </div>
+        <h2 class="item-title">[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진</h2>
+        <p class="item-summary">obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다.</p>
+        <div class="item-tags">
+          
+          <span class="item-tag">#Python</span>
+          
+          <span class="item-tag">#CPython</span>
+          
+          <span class="item-tag">#vectorcall</span>
+          
+          <span class="item-tag">#callable</span>
+          
+          <span class="item-tag">#바이트코드</span>
+          
+          <span class="item-tag">#인터프리터</span>
+          
+        </div>
+      </a>
+      
+      <a href="python_object_creation_and_binding.html" class="article-item" data-title="[1부] 파이썬 객체 생성과 바인딩의 기계적 실체" data-summary="클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다." data-tags="Python CPython 메모리모델 BoundMethod 디스크립터 시스템프로그래밍">
+        <div class="item-top-row">
+          <div class="item-badges">
+            <span class="item-date">📅 2026-09-15</span>
+            <span class="item-reading-time">⏱️ 약 18분</span>
+          </div>
+          <span class="item-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </div>
+        <h2 class="item-title">[1부] 파이썬 객체 생성과 바인딩의 기계적 실체</h2>
+        <p class="item-summary">클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다.</p>
+        <div class="item-tags">
+          
+          <span class="item-tag">#Python</span>
+          
+          <span class="item-tag">#CPython</span>
+          
+          <span class="item-tag">#메모리모델</span>
+          
+          <span class="item-tag">#BoundMethod</span>
+          
+          <span class="item-tag">#디스크립터</span>
+          
+          <span class="item-tag">#시스템프로그래밍</span>
+          
+        </div>
+      </a>
       
       <a href="python_object_mental_model.html" class="article-item" data-title="파이썬 객체 메모리 모델과 멘탈 모델" data-summary="파이썬의 모든 것은 C 구조체(PyObject) 기반의 힙 객체이며 변수는 상자가 아니라 이름표입니다. 데이터와 로직의 분리, 점(.) 연산자의 디스크립터 프로토콜, 그리고 self 매개변수의 진짜 참조 방향까지 시스템 레벨에서 완벽하게 파헤칩니다." data-tags="Python CPython 메모리모델 객체지향 컴퓨터구조 멘탈모델">
         <div class="item-top-row">
