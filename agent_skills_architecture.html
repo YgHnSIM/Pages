@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>LLM 에이전트 스킬 아키텍처와 실전 엔지니어링</title>
+  <meta name="description" content="앤드류 응의 2026년 비전과 오픈 표준 에이전트 스킬을 바탕으로, 왜 단일 프롬프트가 끝나고 온디맨드 스킬 폴더가 표준이 되었는지, 도구 중립적 하네스 아키텍처와 실제 SKILL.md 작성·운영·가지치기 전략을 심층 해설합니다.">
+  
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 57px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.6em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      max-width: 85vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 40px;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 8px;
+    }
+
+    .toc-drawer-body li.depth-2 { padding-left: 0; }
+    .toc-drawer-body li.depth-3 { padding-left: 14px; }
+    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.45;
+      display: block;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">LLM 에이전트 스킬 아키텍처와 실전 엔지니어링</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Reading Progress Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-진화의-궤적-패턴에서-운영-스택으로" class="toc-link">1. 진화의 궤적: 패턴에서 운영 스택으로</a></li><li class="depth-2"><a href="#2-두-가지-quot스킬quot의-엄밀한-분리" class="toc-link">2. 두 가지 &quot;스킬&quot;의 엄밀한 분리</a></li><li class="depth-2"><a href="#3-핵심-아키텍처-멘탈-모델-visual-diagrams" class="toc-link">3. 핵심 아키텍처 멘탈 모델 (Visual Diagrams)</a></li><li class="depth-3"><a href="#다이어그램-1-프롬프트-비대화-vs-온디맨드-점진적-로딩" class="toc-link">다이어그램 1: 프롬프트 비대화 vs 온디맨드 점진적 로딩</a></li><li class="depth-3"><a href="#다이어그램-2-현대-에이전트-하네스-삼위일체-스택" class="toc-link">다이어그램 2: 현대 에이전트 하네스 삼위일체 스택</a></li><li class="depth-3"><a href="#다이어그램-3-지식-라이프사이클과-가지치기-pruning-loop" class="toc-link">다이어그램 3: 지식 라이프사이클과 가지치기 (Pruning Loop)</a></li><li class="depth-2"><a href="#4-도구-중립적-하네스harness-실행-메커니즘" class="toc-link">4. 도구 중립적 하네스(Harness) 실행 메커니즘</a></li><li class="depth-3"><a href="#파이프라인-4단계" class="toc-link">파이프라인 4단계</a></li><li class="depth-2"><a href="#5-실전-skillmd-표준-규격과-보일러플레이트" class="toc-link">5. 실전 SKILL.md 표준 규격과 보일러플레이트</a></li><li class="depth-3"><a href="#권장-디렉터리-구조" class="toc-link">권장 디렉터리 구조</a></li><li class="depth-3"><a href="#범용-skillmd-보일러플레이트" class="toc-link">범용 SKILL.md 보일러플레이트</a></li><li class="depth-2"><a href="#6-앤드류-응의-2대-대표-실전-사례-해부" class="toc-link">6. 앤드류 응의 2대 대표 실전 사례 해부</a></li><li class="depth-3"><a href="#사례-a-context-hub-chub-api-최신화-스킬" class="toc-link">사례 A: Context Hub (chub) API 최신화 스킬</a></li><li class="depth-2"><a href="#rules" class="toc-link">Rules</a></li><li class="depth-2"><a href="#7-스킬-운영의-백미-과감한-가지치기-pruning" class="toc-link">7. 스킬 운영의 백미: 과감한 가지치기 (Pruning)</a></li><li class="depth-3"><a href="#스킬-수명-주기-관리-수칙" class="toc-link">스킬 수명 주기 관리 수칙</a></li><li class="depth-2"><a href="#8-요약-마스터를-위한-6가지-핵심-테제" class="toc-link">8. 요약: 마스터를 위한 6가지 핵심 테제</a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-09-16</span>
+          <span class="meta-badge">⏱️ 약 22분</span>
+          <span class="meta-badge">✍️ Pages 기술 해설</span>
+        </div>
+        <h1 class="article-title">LLM 에이전트 스킬 아키텍처와 실전 엔지니어링</h1>
+        <p class="article-subtitle">긴 프롬프트의 한계를 넘어 온디맨드 지식 패키징과 운영 하네스로</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#에이전트</span>
+          
+          <span class="tag-pill">#LLM</span>
+          
+          <span class="tag-pill">#스킬</span>
+          
+          <span class="tag-pill">#아키텍처</span>
+          
+          <span class="tag-pill">#하네스</span>
+          
+          <span class="tag-pill">#소프트웨어공학</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <p>2024년이 에이전트의 <strong>행동 패턴</strong>(반추, 도구 사용, 기획, 멀티 에이전트)을 탐색하던 해였고, 2025년이 이들을 정량적으로 측정하는 **평가(Evals)**의 해였다면, 2026년은 <strong>에이전트 스킬(Agent Skills)이 소프트웨어 엔지니어링의 표준 운영 스택으로 안착한 해</strong>입니다.</p>
+<p>앤드류 응(Andrew Ng) 교수는 2026년에 들어서며 일관되게 한 가지 명제를 강조해 왔습니다. </p>
+<blockquote>
+<p><strong>“에이전트 스킬은 수천 줄짜리 시스템 프롬프트가 아니다. 필요할 때만 호출되는 온디맨드(On-demand) 지식과 워크플로를 담은 이식 가능한 지시사항 폴더다.”</strong></p>
+</blockquote>
+<p>본 글에서는 바이브 코딩(Vibe Coding)의 혼돈과 컨텍스트 비대화(Context Bloat)를 극복하기 위해 등장한 <strong>에이전트 스킬 아키텍처</strong>의 본질을 파헤칩니다. 앤드류 응의 2026년 연표부터 도구 중립적 하네스(Harness) 실행 메커니즘, 3대 핵심 시각화 모델, 실전 <code>SKILL.md</code> 보일러플레이트, 그리고 모델 진화에 따른 ‘스킬 가지치기(Pruning)’ 철학까지 한 편에 정리합니다.</p>
+<hr>
+<h2 id="1-진화의-궤적-패턴에서-운영-스택으로"><a href="#1-진화의-궤적-패턴에서-운영-스택으로" class="heading-anchor" aria-hidden="true">#</a> 1. 진화의 궤적: 패턴에서 운영 스택으로</h2><p>AI 에이전트를 다루는 개발자의 패러다임은 지난 3년간 급격히 성숙했습니다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>시기</th>
+<th>중심 패러다임</th>
+<th>핵심 질문과 병목</th>
+<th>도달한 결론</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>2024년</strong></td>
+<td><strong>Agentic Patterns</strong></td>
+<td>&quot;LLM이 스스로 생각하고 도구를 쓰게 하려면?&quot;</td>
+<td>4대 기본 패턴 (Reflection, Tool Use, Planning, Multi-Agent) 정립</td>
+</tr>
+<tr>
+<td><strong>2025년</strong></td>
+<td><strong>Evals &amp; Harness</strong></td>
+<td>&quot;에이전트가 내놓은 코드를 어떻게 신뢰하고 측정할 것인가?&quot;</td>
+<td>벤치마크, 단위 테스트 하네스, 지속적 성능 평가 체계</td>
+</tr>
+<tr>
+<td><strong>2026년 상반기</strong></td>
+<td><strong>Portable Skills</strong></td>
+<td>&quot;거대해진 지시사항을 어떻게 컨텍스트 손실 없이 재사용할 것인가?&quot;</td>
+<td>오픈 표준 폴더 규격(<code>SKILL.md</code>), Context Hub(<code>chub</code>), 스펙 주도 개발</td>
+</tr>
+<tr>
+<td><strong>2026년 하반기</strong></td>
+<td><strong>Operational Stack</strong></td>
+<td>&quot;수많은 스킬과 도구를 어떻게 관리하고 정리할 것인가?&quot;</td>
+<td>상주 운영 레이어 편입(Skills + MCP + Subagents), 정기적 가지치기(Pruning)</td>
+</tr>
+</tbody></table>
+</div><p>과거에는 에이전트가 똑똑해지길 바라며 모든 프로젝트 규칙, 코딩 컨벤션, API 문서, 도메인 지식을 <code>system prompt</code>나 거대한 단일 지침 파일(<code>CLAUDE.md</code>, <code>AGENTS.md</code>)에 몰아넣었습니다. 그러나 컨텍스트 윈도우가 아무리 1M, 2M 토큰으로 늘어나더라도, <strong>모든 정보를 항상 주입하는 방식은 세 가지 치명적인 결함</strong>을 낳았습니다.</p>
+<ol>
+<li><strong>주의력 분산 (Attention Dilution / &quot;Lost in the Middle&quot;)</strong>: 불필요한 규칙이 섞여 있을 때 모델이 당장 수행해야 할 작업의 핵심 제약을 놓침.</li>
+<li><strong>토큰 비용 및 지연 시간 폭증</strong>: 단순한 파일 수정 작업 하나에도 매 턴 수만 토큰의 정적 지침이 왕복함.</li>
+<li><strong>지식의 부패(Staleness)</strong>: API 버전이 올라가거나 컨벤션이 바뀔 때 단일 프롬프트를 유지보수하기가 불가능에 가까워짐.</li>
+</ol>
+<p>이를 해결하기 위해 탄생한 개념이 바로 **점진적 컨텍스트 주입(Progressive Context Loading)**에 기반한 **에이전트 스킬(Agent Skills)**입니다.</p>
+<hr>
+<h2 id="2-두-가지-quot스킬quot의-엄밀한-분리"><a href="#2-두-가지-quot스킬quot의-엄밀한-분리" class="heading-anchor" aria-hidden="true">#</a> 2. 두 가지 &quot;스킬&quot;의 엄밀한 분리</h2><p>앤드류 응의 2026년 발표와 The Batch 기고문을 읽을 때 가장 먼저 짚어야 할 지점은 **‘스킬’이라는 단어가 전혀 다른 두 개의 층위(Layer)**에서 사용된다는 점입니다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0;">
+<table>
+  <thead>
+    <tr>
+      <th>구분</th>
+      <th>1. 에이전트 스킬 (Agent Skills)</th>
+      <th>2. AI 엔지니어링 스킬맵 (Human Skills Map)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>주체</strong></td>
+      <td><strong>기계(AI 에이전트)</strong>가 장착하는 실행 패키지</td>
+      <td><strong>사람(소프트웨어 엔지니어)</strong>이 학습해야 할 역량</td>
+    </tr>
+    <tr>
+      <td><strong>형태</strong></td>
+      <td>규격화된 파일 및 폴더 구조 (<code>SKILL.md</code>, 스크립트, 레퍼런스)</td>
+      <td>엔지니어링 전문성 및 인지적 사고 프레임워크</td>
+    </tr>
+    <tr>
+      <td><strong>역할</strong></td>
+      <td>특정 작업(예: API 조회, 스펙 검증, PR 리뷰) 수행 지침 제공</td>
+      <td>에이전트 오케스트레이션, 코드 리뷰, 아키텍처 판단</td>
+    </tr>
+    <tr>
+      <td><strong>상관관계</strong></td>
+      <td colspan="2">
+        사람의 4대 AI 엔지니어링 스킬 중 하나가 바로 <strong>"에이전트 스킬을 제작, 조합, 운영, 폐기하는 능력"</strong>입니다.
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>앤드류 응은 2026년 8~9월 연재한 <em>AI Engineering Skills Map</em>을 통해 개발자의 핵심 역량을 4개 축으로 정리했습니다:</p>
+<ol>
+<li><strong>AI 애플리케이션 구축 및 배포 (Building &amp; Deploying)</strong>: LLM 기초, 그라운딩, 파이프라인.</li>
+<li><strong>소프트웨어 공학 기초 (Software Fundamentals)</strong>: 아키텍처 트레이드오프, 모듈 분리, 테스트.</li>
+<li><strong>코딩 에이전트 운영 (Using Coding Agents)</strong>: 워크플로 조율, 자율성 통제, <strong>스킬·플러그인·MCP 커스터마이징</strong>.</li>
+<li><strong>빌드 형상화 (Shaping the Build)</strong>: 만들 것과 차용할 것을 선별하는 제품 엔지니어링 시각.</li>
+</ol>
+<p>즉, 에이전트 스킬을 잘 다루는 것은 더 이상 보조 도구 사용법이 아니라, 현대 소프트웨어 엔지니어가 갖춰야 할 본질적 역량의 한 축입니다.</p>
+<hr>
+<h2 id="3-핵심-아키텍처-멘탈-모델-visual-diagrams"><a href="#3-핵심-아키텍처-멘탈-모델-visual-diagrams" class="heading-anchor" aria-hidden="true">#</a> 3. 핵심 아키텍처 멘탈 모델 (Visual Diagrams)</h2><h3 id="다이어그램-1-프롬프트-비대화-vs-온디맨드-점진적-로딩"><a href="#다이어그램-1-프롬프트-비대화-vs-온디맨드-점진적-로딩" class="heading-anchor" aria-hidden="true">#</a> 다이어그램 1: 프롬프트 비대화 vs 온디맨드 점진적 로딩</h3><p>기존 방식과 2026년 스킬 표준의 차이는 **&quot;지식을 언제, 얼마나 모델의 작업 메모리(Context)에 올리는가&quot;**에 있습니다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" role="img" aria-label="프롬프트 비대화와 점진적 스킬 로딩의 아키텍처 비교">
+  <defs>
+    <marker id="arrow-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <!-- Left: One-shot Prompt Bloat -->
+  <g transform="translate(10, 10)">
+    <rect x="0" y="0" width="350" height="300" rx="14" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="175" y="32" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#9f1239">기존: 일괄 주입 (Prompt Bloat)</text>
+    <text x="175" y="52" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#e11d48">모든 지침을 상시 컨텍스트에 포함</text>
+
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">&lt;!-- Fat Prompt Box --&gt;
+&lt;rect x="25" y="75" width="300" height="150" rx="10" fill="#ffffff" stroke="#fda4af" stroke-width="1.5"/&gt;
+&lt;rect x="35" y="87" width="280" height="24" rx="4" fill="#ffe4e6"/&gt;
+&lt;text x="175" y="103" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#881337"&gt;시스템 기본 규칙 (2,000 토큰)&lt;/text&gt;
+&lt;rect x="35" y="117" width="280" height="24" rx="4" fill="#ffe4e6"/&gt;
+&lt;text x="175" y="133" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#881337"&gt;전체 API 레퍼런스 및 예제 (35,000 토큰)&lt;/text&gt;
+&lt;rect x="35" y="147" width="280" height="24" rx="4" fill="#ffe4e6"/&gt;
+&lt;text x="175" y="163" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#881337"&gt;도메인 특화 비즈니스 로직 (20,000 토큰)&lt;/text&gt;
+&lt;rect x="35" y="177" width="280" height="36" rx="4" fill="#f43f5e"/&gt;
+&lt;text x="175" y="199" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff"&gt;실제 사용자 요청: "버그 하나 수정해줘"&lt;/text&gt;
+
+&lt;text x="175" y="255" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="600" fill="#be123c"&gt;⚠️ 부작용: 주의력 분산, 비용 급증, 환각 발생&lt;/text&gt;
+&lt;text x="175" y="275" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569"&gt;매 턴 수만 토큰 왕복 (무거운 지연 시간)&lt;/text&gt;</code></pre>
+</div>  </g>
+
+  <!-- Right: Progressive Loading -->
+  <g transform="translate(390, 10)">
+    <rect x="0" y="0" width="360" height="300" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="180" y="32" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#14532d">2026 표준: 점진적 로딩 (Skills)</text>
+    <text x="180" y="52" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#15803d">하네스가 필요할 때만 계층별 주입</text>
+
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">&lt;!-- Stage 1: Index --&gt;
+&lt;rect x="25" y="75" width="310" height="42" rx="8" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/&gt;
+&lt;text x="35" y="93" font-size="11" font-family="Pretendard, sans-serif" font-weight="700" fill="#166534"&gt;1단계: 메타데이터 상시 인덱싱&lt;/text&gt;
+&lt;text x="35" y="108" font-size="10" font-family="Pretendard, sans-serif" fill="#475569"&gt;스킬 이름 + 한 줄 요약만 유지 (~150 토큰)&lt;/text&gt;
+
+&lt;!-- Arrow --&gt;
+&lt;line x1="180" y1="117" x2="180" y2="137" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/&gt;
+
+&lt;!-- Stage 2: Main SKILL.md --&gt;
+&lt;rect x="25" y="140" width="310" height="46" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/&gt;
+&lt;text x="35" y="158" font-size="11" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e40af"&gt;2단계: 조건 일치 시 SKILL.md 본문 로드&lt;/text&gt;
+&lt;text x="35" y="174" font-size="10" font-family="Pretendard, sans-serif" fill="#475569"&gt;관련 워크플로 지침 및 절차만 컨텍스트에 주입&lt;/text&gt;
+
+&lt;!-- Arrow --&gt;
+&lt;line x1="180" y1="186" x2="180" y2="206" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/&gt;
+
+&lt;!-- Stage 3: On-demand Resources --&gt;
+&lt;rect x="25" y="209" width="310" height="46" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/&gt;
+&lt;text x="35" y="227" font-size="11" font-family="Pretendard, sans-serif" font-weight="700" fill="#0369a1"&gt;3단계: 온디맨드 도구/스크립트/문서 참조&lt;/text&gt;
+&lt;text x="35" y="243" font-size="10" font-family="Pretendard, sans-serif" fill="#475569"&gt;스크립트 실행(`scripts/`) 및 상세 스펙 파일만 동적 조회&lt;/text&gt;
+
+&lt;text x="180" y="280" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#15803d"&gt;✅ 최적화: 정밀한 주의력 집중, 초저비용, 최고 속도&lt;/text&gt;</code></pre>
+</div>  </g>
+</svg>
+</div>
+
+<hr>
+<h3 id="다이어그램-2-현대-에이전트-하네스-삼위일체-스택"><a href="#다이어그램-2-현대-에이전트-하네스-삼위일체-스택" class="heading-anchor" aria-hidden="true">#</a> 다이어그램 2: 현대 에이전트 하네스 삼위일체 스택</h3><p>에이전트가 단독으로 모든 일을 처리하지 않습니다. 2026년의 프로덕션 에이전트 하네스는 **지식(Skill), 도구(MCP), 격리 실행(Subagent)**의 3대 축으로 유기적으로 구성됩니다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" role="img" aria-label="현대 에이전트 운영 스택의 삼위일체 아키텍처">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Foundation Model -->
+  <rect x="230" y="15" width="300" height="55" rx="10" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+  <text x="380" y="38" text-anchor="middle" font-size="14" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">기반 추론 모델 (LLM Engine)</text>
+  <text x="380" y="56" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#94a3b8">Claude 3.7 / GPT-5 / Gemini 2.5</text>
+
+  <!-- Bi-directional Link -->
+  <line x1="380" y1="70" x2="380" y2="105" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="380" y1="105" x2="380" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Harness Orchestrator -->
+  <rect x="180" y="105" width="400" height="65" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="380" y="130" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">에이전트 하네스 오케스트레이터 (Harness Orchestrator)</text>
+  <text x="380" y="152" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#3b82f6">루프 제어 · 컨텍스트 주입 조율 · 권한 감시 · 상주 규칙 유지</text>
+
+  <!-- Branching Lines -->
+  <path d="M250,170 L130,215" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  <line x1="380" y1="170" x2="380" y2="215" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M510,170 L630,215" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- Pillar 1: Skills -->
+  <rect x="30" y="220" width="200" height="100" rx="10" fill="#f8fafc" stroke="#0ea5e9" stroke-width="2"/>
+  <text x="130" y="244" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0369a1">1. Agent Skills</text>
+  <text x="130" y="264" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" font-weight="600" fill="#0f172a">지식 및 절차 (HOW)</text>
+  <text x="130" y="284" text-anchor="middle" font-size="10" font-family="Pretendard, sans-serif" fill="#64748b">`SKILL.md` 오픈 규격</text>
+  <text x="130" y="300" text-anchor="middle" font-size="10" font-family="Pretendard, sans-serif" fill="#64748b">도메인 멘탈모델 · 워크플로</text>
+
+  <!-- Pillar 2: MCP -->
+  <rect x="280" y="220" width="200" height="100" rx="10" fill="#f8fafc" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="380" y="244" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#6d28d9">2. MCP Servers</text>
+  <text x="380" y="264" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" font-weight="600" fill="#0f172a">도구 및 데이터 (TOOL)</text>
+  <text x="380" y="284" text-anchor="middle" font-size="10" font-family="Pretendard, sans-serif" fill="#64748b">표준화된 프로토콜 (JSON-RPC)</text>
+  <text x="380" y="300" text-anchor="middle" font-size="10" font-family="Pretendard, sans-serif" fill="#64748b">DB · GitHub · 터미널 연동</text>
+
+  <!-- Pillar 3: Subagents -->
+  <rect x="530" y="220" width="200" height="100" rx="10" fill="#f8fafc" stroke="#10b981" stroke-width="2"/>
+  <text x="630" y="244" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#047857">3. Subagents</text>
+  <text x="630" y="264" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" font-weight="600" fill="#0f172a">격리 병렬 실행 (WHO)</text>
+  <text x="630" y="284" text-anchor="middle" font-size="10" font-family="Pretendard, sans-serif" fill="#64748b">독립 컨텍스트 분기 (Worktree)</text>
+  <text x="630" y="300" text-anchor="middle" font-size="10" font-family="Pretendard, sans-serif" fill="#64748b">탐색/검증 태스크 위임</text>
+</svg>
+</div>
+
+<ul>
+<li><strong>Skill</strong>은 에이전트에게 *&quot;이 작업을 어떤 표준 절차와 규칙으로 풀 것인가(How)&quot;*를 가르칩니다.</li>
+<li><strong>MCP</strong>는 에이전트가 외부 세계와 통신할 수 있는 *&quot;손과 발(Tools &amp; Resources)&quot;*을 제공합니다.</li>
+<li><strong>Subagent</strong>는 복잡한 탐색이나 코드 리팩토링 시 메인 대화창의 컨텍스트를 오염시키지 않도록 *&quot;작업을 격리해 수행하는 분신(Delegated Execution)&quot;*입니다.</li>
+</ul>
+<hr>
+<h3 id="다이어그램-3-지식-라이프사이클과-가지치기-pruning-loop"><a href="#다이어그램-3-지식-라이프사이클과-가지치기-pruning-loop" class="heading-anchor" aria-hidden="true">#</a> 다이어그램 3: 지식 라이프사이클과 가지치기 (Pruning Loop)</h3><p>스킬은 한 번 만들고 영원히 방치하는 고정 자산이 아닙니다. 앤드류 응이 2026년 9월 강조한 가장 중요한 운영 원칙은 **&quot;모델이 영리해지면 옛 스킬을 과감히 가지치기(Prune)하라&quot;**는 순환 생명주기입니다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 250" role="img" aria-label="에이전트 스킬의 습득, 주석, 그리고 가지치기 라이프사이클">
+  <defs>
+    <marker id="cycle-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Step 1 -->
+  <rect x="20" y="30" width="150" height="95" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <circle cx="45" cy="55" r="14" fill="#3b82f6"/>
+  <text x="45" y="60" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">1</text>
+  <text x="95" y="58" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">지식 포착</text>
+  <text x="95" y="80" font-size="10" font-family="Pretendard, sans-serif" fill="#475569">최신 API 문서화</text>
+  <text x="95" y="96" font-size="10" font-family="Pretendard, sans-serif" fill="#475569">(chub 등 큐레이션)</text>
+
+  <!-- Arrow 1 -> 2 -->
+  <line x1="170" y1="77" x2="205" y2="77" stroke="#475569" stroke-width="2" marker-end="url(#cycle-arrow)"/>
+
+  <!-- Step 2 -->
+  <rect x="210" y="30" width="150" height="95" rx="10" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <circle cx="235" cy="55" r="14" fill="#64748b"/>
+  <text x="235" y="60" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">2</text>
+  <text x="285" y="58" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">스킬 패키징</text>
+  <text x="285" y="80" font-size="10" font-family="Pretendard, sans-serif" fill="#475569">`SKILL.md` 규격화</text>
+  <text x="285" y="96" font-size="10" font-family="Pretendard, sans-serif" fill="#475569">테스트 루프 내장</text>
+
+  <!-- Arrow 2 -> 3 -->
+  <line x1="360" y1="77" x2="395" y2="77" stroke="#475569" stroke-width="2" marker-end="url(#cycle-arrow)"/>
+
+  <!-- Step 3 -->
+  <rect x="400" y="30" width="150" height="95" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+  <circle cx="425" cy="55" r="14" fill="#10b981"/>
+  <text x="425" y="60" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">3</text>
+  <text x="475" y="58" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#065f46">주석 &amp; 축적</text>
+  <text x="475" y="80" font-size="10" font-family="Pretendard, sans-serif" fill="#475569">실제 실행 피드백</text>
+  <text x="475" y="96" font-size="10" font-family="Pretendard, sans-serif" fill="#475569">워크어라운드 기록</text>
+
+  <!-- Arrow 3 -> 4 -->
+  <line x1="550" y1="77" x2="585" y2="77" stroke="#475569" stroke-width="2" marker-end="url(#cycle-arrow)"/>
+
+  <!-- Step 4 -->
+  <rect x="590" y="30" width="150" height="95" rx="10" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+  <circle cx="615" cy="55" r="14" fill="#f43f5e"/>
+  <text x="615" y="60" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">4</text>
+  <text x="665" y="58" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#9f1239">정기 가지치기</text>
+  <text x="665" y="80" font-size="10" font-family="Pretendard, sans-serif" fill="#e11d48">모델 기본 탑재 시</text>
+  <text x="665" y="96" font-size="10" font-family="Pretendard, sans-serif" fill="#e11d48">과감히 스킬 삭제</text>
+
+  <!-- Bottom Return Loop -->
+  <path d="M665,125 L665,190 L95,190 L95,130" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#cycle-arrow)"/>
+  <text x="380" y="215" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">차세대 모델 배포 시 오래된 워크어라운드 제거 및 신규 스펙으로 갱신</text>
+</svg>
+</div>
+
+<hr>
+<h2 id="4-도구-중립적-하네스harness-실행-메커니즘"><a href="#4-도구-중립적-하네스harness-실행-메커니즘" class="heading-anchor" aria-hidden="true">#</a> 4. 도구 중립적 하네스(Harness) 실행 메커니즘</h2><p>어떤 CLI나 에이전트 런타임을 사용하든(Claude Code, OpenAI Codex, Antigravity 등), 오픈 표준 에이전트 스킬을 처리하는 하네스 엔진의 내부 동작 파이프라인은 일관된 원리를 따릅니다.</p>
+<h3 id="파이프라인-4단계"><a href="#파이프라인-4단계" class="heading-anchor" aria-hidden="true">#</a> 파이프라인 4단계</h3><ol>
+<li><strong>디렉터리 스캔 (Discovery Phase)</strong>:<ul>
+<li>하네스가 시작될 때 글로벌 디렉터리(<code>~/.config/.../skills</code>) 및 프로젝트 로컬 디렉터리(<code>.agents/skills/</code>, <code>.skills/</code>)를 탐색합니다.</li>
+<li>각 스킬 디렉터리의 루트에 있는 <code>SKILL.md</code>의 <strong>YAML Frontmatter</strong>만 파싱합니다.</li>
+<li>이때 본문 전체를 읽지 않고 오직 <code>name</code>, <code>description</code> 메타데이터만 메모리 색인(In-memory Index)에 등록합니다.</li>
+</ul>
+</li>
+<li><strong>트리거 매칭 (Intent Evaluation Phase)</strong>:<ul>
+<li>사용자의 프롬프트가 들어오면, 에이전트는 색인된 스킬 요약 목록과 사용자 의도를 비교합니다.</li>
+<li>정규식이나 키워드뿐 아니라 시맨틱 라우팅을 통해 가장 적합한 스킬을 식별합니다.</li>
+</ul>
+</li>
+<li><strong>온디맨드 인젝션 (Dynamic Context Injection)</strong>:<ul>
+<li>해당 스킬이 필요하다고 판단된 순간에만 <code>SKILL.md</code> 본문 지침을 모델의 프롬프트 윈도우에 주입합니다.</li>
+<li>보조 자료(상세 매뉴얼, 리소스 템플릿)가 필요한 경우, <code>references/</code> 디렉터리의 개별 파일을 읽도록 에이전트에게 도구 호출 경로를 안내합니다.</li>
+</ul>
+</li>
+<li><strong>결정론적 실행 및 격리 (Deterministic Execution)</strong>:<ul>
+<li>복잡한 수치 계산이나 반복 검증은 LLM의 자연어 생성에 의존하지 않고, 스킬 폴더 내 <code>scripts/</code>에 포함된 검증 스크립트를 하네스 셸에서 직접 구동합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="5-실전-skillmd-표준-규격과-보일러플레이트"><a href="#5-실전-skillmd-표준-규격과-보일러플레이트" class="heading-anchor" aria-hidden="true">#</a> 5. 실전 <code>SKILL.md</code> 표준 규격과 보일러플레이트</h2><p>오픈 표준 스킬은 단순한 메모장이 아닙니다. 메타데이터와 명확한 제약 조건, 행동 양식이 구조화되어 있어야 합니다.</p>
+<h3 id="권장-디렉터리-구조"><a href="#권장-디렉터리-구조" class="heading-anchor" aria-hidden="true">#</a> 권장 디렉터리 구조</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">my-awesome-skill/
+├── SKILL.md              # [필수] 메인 진입점 및 행동 지침
+├── scripts/              # [선택] 결정론적 검증 및 실행용 스크립트 (Python, Node 등)
+│   └── verify.py
+├── references/           # [선택] 필요할 때만 열람하는 도메인 심층 문서
+│   └── architecture.md
+└── templates/            # [선택] 보일러플레이트 코드 또는 출력 서식
+    └── report.md</code></pre>
+</div><h3 id="범용-skillmd-보일러플레이트"><a href="#범용-skillmd-보일러플레이트" class="heading-anchor" aria-hidden="true">#</a> 범용 <code>SKILL.md</code> 보일러플레이트</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-markdown">---
+name: my-awesome-skill
+description: "스킬의 명확한 역할과 실행 트리거 조건을 한두 문장으로 기술합니다. (하네스가 색인할 때 읽는 핵심 요약문)"
+version: 1.0.0
+---
+
+# 역할 및 목적 (Role &amp; Goal)
+이 스킬이 해결하고자 하는 구체적인 문제와 최종 도달해야 할 상태를 3줄 이내로 명시합니다.
+
+## 트리거 조건 (When to use)
+- 사용자가 "○○ 작업을 해줘", "△△를 검증해줘"라고 요청할 때
+- 특정 파일 확장자나 패턴이 감지되었을 때
+
+## 핵심 작업 절차 (Workflow)
+1. **사전 점검**: 현재 워크스페이스의 상태를 확인하고 필요한 파일을 읽는다.
+2. **실행 단계**:
+   - `scripts/verify.py`를 실행하여 정량적 데이터를 수집한다.
+   - 수집된 데이터에 기반해 코드를 최소 단위로 수정한다.
+3. **결과 검증**: 회귀 테스트를 구동하여 기존 기능의 무결성을 증명한다.
+
+## 금지 사항 및 제약 (Guardrails)
+- ❌ 추측에 기반하여 존재하지 않는 API 파라미터를 사용하지 말 것.
+- ❌ 사용자의 명시적 동의 없이 데이터베이스 마이그레이션을 실행하지 말 것.
+- ❌ 250줄을 초과하는 모놀리식 파일을 생성하지 말 것.
+
+## 참조 자료
+- 세부 에러 규격: `references/error-codes.md` 참조</code></pre>
+</div><hr>
+<h2 id="6-앤드류-응의-2대-대표-실전-사례-해부"><a href="#6-앤드류-응의-2대-대표-실전-사례-해부" class="heading-anchor" aria-hidden="true">#</a> 6. 앤드류 응의 2대 대표 실전 사례 해부</h2><h3 id="사례-a-context-hub-chub-api-최신화-스킬"><a href="#사례-a-context-hub-chub-api-최신화-스킬" class="heading-anchor" aria-hidden="true">#</a> 사례 A: Context Hub (<code>chub</code>) API 최신화 스킬</h3><p>앤드류 응은 2026년 3월, 모델의 학습 데이터 단절로 인한 구식 API 호출 및 파라미터 환각 문제를 원천 차단하기 위해 **Context Hub (<code>chub</code>)**를 공개했습니다.</p>
+<p>예컨대 에이전트가 최신 AI 라이브러리를 작성할 때, 이미 폐기된 1년 전의 <code>chat.completions</code> API를 부르거나 바뀐 옵션을 틀리게 적는 일이 빈번합니다. Context Hub 스킬은 에이전트가 코드를 작성하기 전에 최신 공식 API 레퍼런스를 CLI로 가져오도록 강제합니다.</p>
+<h4 id="get-api-docsskillmd-실무-구현"><a href="#get-api-docsskillmd-실무-구현" class="heading-anchor" aria-hidden="true">#</a> <code>get-api-docs/SKILL.md</code> 실무 구현</h4>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-markdown">---
+name: get-api-docs
+description: "최신 라이브러리 및 API 호출 전 Context Hub(chub)를 통해 검증된 공식 문서를 검색하고 환각을 방지하는 스킬"
+---
+
+# 최신 API 레퍼런스 온디맨드 조회
+
+## Why
+모델 내부 학습 데이터의 컷오프로 인해 변경된 SDK 메서드 시그니처나 폐기된 파라미터를 작성하는 오류를 방지한다.
+
+## Workflow
+1. **API 호출 감지**: 코드 작성 중 외부 서비스(예: OpenAI, Anthropic, Supabase 등)의 SDK 호출이 필요할 때 즉시 발동한다.
+2. **chub 검색 실행**:
+   ```bash
+   chub search "&lt;library-name&gt; &lt;feature-name&gt;"
+   chub get "&lt;doc-id&gt;"</code></pre>
+</div><ol start="3">
+<li><strong>인자 교차 검증</strong>: 검색된 최신 마크다운 명세의 파라미터 목록과 작성할 코드의 인자를 1:1로 매핑하여 일치 여부를 확인한다.</li>
+<li><strong>어노테이션 기록</strong>:<ul>
+<li>만약 문서와 실제 동작 간 괴리가 발견되거나 우회책(Workaround)이 필요했던 경우, 다음 명령어로 피드백을 기록해 팀 내 에이전트끼리 지식을 공유한다:</li>
+</ul>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-bash">chub annotate &lt;doc-id&gt; --note "v2.4부터는 authHeader 대신 bearerToken 키를 사용해야 함"</code></pre>
+</div></li>
+</ol>
+<h2 id="rules"><a href="#rules" class="heading-anchor" aria-hidden="true">#</a> Rules</h2><ul>
+<li>공식 레퍼런스 없이 상상으로 SDK 옵션 객체를 조합하지 않는다.</li>
+</ul>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">
+---
+
+### 사례 B: 스펙 주도 개발 (Spec-Driven Development) 스킬
+
+2026년 4월 앤드류 응이 JetBrains와 함께 발표한 *Spec-Driven Development* 코스는 이른바 '바이브 코딩(Vibe Coding)'의 한계를 정면으로 다룹니다.
+
+&gt; "자연어로 대충 지시하고 코드를 마구잡이로 찍어내는 방식은 초기 프로토타입에는 빠르지만, 프로젝트가 커지면 컨텍스트 불일치와 미묘한 아키텍처 붕괴를 초래한다."
+
+스펙 주도 개발 스킬은 **"스펙 작성 $\rightarrow$ 계획 수립 $\rightarrow$ 사용자 검토 $\rightarrow$ 코드 작성 $\rightarrow$ 테스트 검증"**의 파이프라인을 에이전트의 불변 규칙으로 강제합니다.
+
+#### `spec-driven-dev/SKILL.md` 실무 구현
+
+```markdown
+---
+name: spec-driven-dev
+description: "즉흥적 코드 수정을 금지하고 명시적 사양서(Spec)와 회귀 테스트를 거쳐 구현하도록 통제하는 엔지니어링 스킬"
+---
+
+# 스펙 주도 개발 (SDD) 파이프라인
+
+## Phase 1: 스펙 작성 (Specification)
+- 구현을 시작하기 전, 기능의 입력/출력 인터페이스와 경계 조건(Edge Cases)을 담은 `SPEC.md`를 작성한다.
+- 모호한 요구사항이 있다면 코드를 작성하지 말고 즉시 인터뷰 질문을 던져 사양을 확정한다.
+
+## Phase 2: 구현 계획 승인 (Plan &amp; Review)
+- 영향을 받는 파일 목록과 의존성 그래프를 정리한 `implementation_plan.md`를 생성한다.
+- **사용자의 명시적 승인 전까지 절대로 소스 코드를 편집하지 않는다.**
+
+## Phase 3: 테스트 주도 구현 (Test-First Execution)
+1. 새로운 스펙을 검증하는 실패하는 테스트(Red)를 먼저 작성한다.
+2. 테스트를 통과시키는 최소한의 프로덕션 코드(Green)를 작성한다.
+3. 코드의 복잡성을 줄이고 중복을 제거한다(Refactor).
+
+## Phase 4: 증거 기반 완료 (Evidence Verification)
+- 테스트 러너의 실행 로그와 터미널 종료 코드(Exit code 0)를 직접 확인하고, 검증 결과 보고서(`walkthrough.md`)를 남긴다.</code></pre>
+</div><hr>
+<h2 id="7-스킬-운영의-백미-과감한-가지치기-pruning"><a href="#7-스킬-운영의-백미-과감한-가지치기-pruning" class="heading-anchor" aria-hidden="true">#</a> 7. 스킬 운영의 백미: 과감한 가지치기 (Pruning)</h2><p>스킬 시스템을 도입한 팀이 가장 흔하게 저지르는 실수는 **&quot;스킬의 개수를 끝없이 늘리는 것&quot;**입니다.</p>
+<p>새로운 모델(예: Claude 3.5 Sonnet에서 3.7 Sonnet, 혹은 GPT-5로의 전환)이 출시되면, 과거에 모델의 실수를 보완하기 위해 덧붙였던 수많은 방어적 프롬프트와 땜질식 워크어라운드 스킬들은 <strong>오히려 새로운 모델의 최적 추론 경로를 방해하는 노이즈</strong>로 변질됩니다.</p>
+<p>앤드류 응은 2026년 9월 기고에서 이를 명확히 경고했습니다:</p>
+<blockquote>
+<p><em>&quot;Occasionally you will prune them when they are no longer necessary (such as when a new model obviates an old skill).&quot;</em></p>
+</blockquote>
+<h3 id="스킬-수명-주기-관리-수칙"><a href="#스킬-수명-주기-관리-수칙" class="heading-anchor" aria-hidden="true">#</a> 스킬 수명 주기 관리 수칙</h3><ol>
+<li><strong>모델 메이저 업그레이드 시 스킬 감사(Audit)</strong>:<ul>
+<li>새로운 파운데이션 모델을 도입할 때 기존 스킬 목록을 전수 조사합니다.</li>
+<li>모델의 자체 추론 능력으로 기본 해결되는 문제(예: 간단한 파이썬 타입 힌팅, 기본적인 JSON 포맷팅 등)를 다루는 스킬은 즉각 보관(Archive)하거나 삭제합니다.</li>
+</ul>
+</li>
+<li><strong>스킬 250줄 법칙 (Simplicity Ceiling)</strong>:<ul>
+<li>하나의 <code>SKILL.md</code>가 250줄을 넘어가기 시작하면, 해당 스킬이 너무 많은 책임을 지고 있다는 신호입니다.</li>
+<li>도메인 지식은 <code>references/</code>로 분리하고, 절차는 3~5단계의 명확한 서브 태스크로 모듈화하십시오.</li>
+</ul>
+</li>
+<li><strong>증거 기반 주석(Annotation)</strong>:<ul>
+<li>스킬에 변경을 가할 때는 단순한 주관적 느낌이 아니라, 실제 에이전트 실패 로그와 회귀 테스트 데이터를 근거로 커밋해야 합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="8-요약-마스터를-위한-6가지-핵심-테제"><a href="#8-요약-마스터를-위한-6가지-핵심-테제" class="heading-anchor" aria-hidden="true">#</a> 8. 요약: 마스터를 위한 6가지 핵심 테제</h2><ol>
+<li><strong>스킬은 폴더다</strong>: 긴 프롬프트 대신, 메타데이터로 인덱싱되고 필요할 때만 호출되는 온디맨드 패키지(<code>SKILL.md</code>)를 구성하라.</li>
+<li><strong>한 번 만들고 어디서나 구동하라</strong>: 특정 벤더의 전유물이 아닌 오픈 표준 규격을 따라 IDE와 CLI를 넘나드는 이식성을 확보하라.</li>
+<li><strong>삼위일체를 구분하라</strong>: 스킬(절차와 지식), MCP(도구와 리소스), 서브에이전트(격리 실행)의 경계를 명확히 나눠 설계하라.</li>
+<li><strong>최신 지식을 주입하고 공유하라</strong>: Context Hub처럼 모델의 지식 단절을 메우고, 실행 결과를 주석으로 남겨 다음 에이전트에게 전달하라.</li>
+<li><strong>바이브 코딩을 스펙으로 통제하라</strong>: 빠르지만 깨지기 쉬운 직관 대신, 명세-계획-검증 루프를 스킬로 묶어 팀의 소프트웨어 품질을 수호하라.</li>
+<li><strong>주기적으로 가지치기하라</strong>: 모델이 발전하여 기본으로 해낼 수 있게 된 옛 지식은 과감히 도려내어 컨텍스트의 순도를 유지하라.</li>
+</ol>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
