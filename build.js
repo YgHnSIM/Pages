@@ -104,6 +104,65 @@ function isTrivialDiagram(text, lang) {
   return lines.length <= 1;
 }
 
+/**
+ * CommonMark closes a fence on the first ``` line with length >= opener.
+ * Nested ```bash inside ```markdown therefore breaks the outer block.
+ * Promote outer fences so they are longer than any nested fence in the body.
+ */
+function normalizeNestedCodeFences(md) {
+  const lines = String(md || '').split(/\r?\n/);
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const open = lines[i].match(/^( {0,3})(`{3,})([^`\n]*)$/);
+    if (!open) {
+      out.push(lines[i]);
+      i++;
+      continue;
+    }
+    const indent = open[1];
+    const openLen = open[2].length;
+    const info = open[3];
+    let j = i + 1;
+    while (j < lines.length) {
+      const innerOpen = lines[j].match(/^( {0,3})(`{3,})([\w+-.]*)\s*$/);
+      if (innerOpen && innerOpen[3]) {
+        const innerLen = innerOpen[2].length;
+        j++;
+        while (
+          j < lines.length &&
+          !new RegExp(`^( {0,3})\`{${innerLen},}\\s*$`).test(lines[j])
+        ) {
+          j++;
+        }
+        if (j < lines.length) j++;
+        continue;
+      }
+      const closer = lines[j].match(/^( {0,3})(`{3,})\s*$/);
+      if (closer && closer[2].length >= openLen) break;
+      j++;
+    }
+    const body = lines.slice(i + 1, j);
+    let maxInner = 0;
+    for (const line of body) {
+      const m = line.match(/(`{3,})/);
+      if (m) maxInner = Math.max(maxInner, m[1].length);
+    }
+    const need = Math.max(openLen, maxInner > 0 ? maxInner + 1 : openLen);
+    const fence = '`'.repeat(need);
+    out.push(`${indent}${fence}${info}`);
+    out.push(...body);
+    if (j < lines.length) {
+      out.push(`${indent}${fence}`);
+      i = j + 1;
+    } else {
+      i = j;
+    }
+  }
+  return out.join('\n');
+}
+
+
 function compileMarkdown(markdown, meta = {}) {
   const headings = [];
   const headingCounts = {};
@@ -209,6 +268,7 @@ function compileMarkdown(markdown, meta = {}) {
     breaks: false
   });
 
+  protectedMd = normalizeNestedCodeFences(protectedMd);
   let html = marked.parse(protectedMd);
 
   // Restore Math blocks
