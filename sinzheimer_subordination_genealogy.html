@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>타인의 처분권 아래의 노동 — 휴고 진츠하이머와 '종속성' 개념의 계보 심화 분석</title>
+  <meta name="description" content="한국 법원이 근로자성을 가릴 때 묻는 '종속적인 관계'는 어디서 왔는가. 독일 노동법학을 세운 휴고 진츠하이머의 생애와 사상에서 출발해, 로마법의 노무 임대차와 독일 민법의 형식적 대등성, 로트마르의 노동계약론을 거쳐 '타인의 처분권 아래의 노동'이라는 종속노동 개념이 나오고, 그것이 독일에서 인격적 종속과 경제적 종속으로 갈라져 일본과 한국으로 건너가는 경로를 따라간다. 국제 규범과 플랫폼 시대의 대응, 2026년 '종속성' 연구가 진츠하이머를 읽는 방식까지 계보 위에서 검토하고, 출처끼리 엇갈리는 사실은 한쪽을 고르지 않고 함께 적는다.">
+  
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+
+  <style>
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 57px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.6em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      max-width: 85vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      right: 0;
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 40px;
+    }
+
+    .toc-drawer-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 8px;
+    }
+
+    .toc-drawer-body li.depth-2 { padding-left: 0; }
+    .toc-drawer-body li.depth-3 { padding-left: 14px; }
+    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.45;
+      display: block;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 '종속성' 개념의 계보 심화 분석</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Reading Progress Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#타인의-처분권-아래의-노동-휴고-진츠하이머와-39종속성39-개념의-계보-심화-분석" class="toc-link">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</a></li><li class="depth-2"><a href="#1-테제-종속이라는-말은-어디서-와서-어디로-가는가" class="toc-link">1. 테제 — 종속이라는 말은 어디서 와서 어디로 가는가</a></li><li class="depth-2"><a href="#2-진츠하이머라는-사람-변호사-헌법-기초자-망명-법학자" class="toc-link">2. 진츠하이머라는 사람 — 변호사, 헌법 기초자, 망명 법학자</a></li><li class="depth-3"><a href="#21-보름스에서-프랑크푸르트까지" class="toc-link">2.1 보름스에서 프랑크푸르트까지</a></li><li class="depth-3"><a href="#22-혁명과-헌법-바이마르-헌법의-경제생활-편" class="toc-link">2.2 혁명과 헌법 — 바이마르 헌법의 경제생활 편</a></li><li class="depth-3"><a href="#23-박해와-망명-그리고-은신" class="toc-link">2.3 박해와 망명, 그리고 은신</a></li><li class="depth-2"><a href="#3-사상-종속노동-사회적-자기결정-노동헌법" class="toc-link">3. 사상 — 종속노동, 사회적 자기결정, 노동헌법</a></li><li class="depth-3"><a href="#31-노동법을-하나의-법질서로" class="toc-link">3.1 노동법을 하나의 법질서로</a></li><li class="depth-3"><a href="#32-종속노동-타인의-처분권과-법적-권력관계" class="toc-link">3.2 종속노동 — 타인의 처분권과 법적 권력관계</a></li><li class="depth-3"><a href="#33-인격과-노동력은-분리되지-않는다" class="toc-link">3.3 인격과 노동력은 분리되지 않는다</a></li><li class="depth-3"><a href="#34-단체협약의-규범적-효력과-사회적-자기결정" class="toc-link">3.4 단체협약의 규범적 효력과 사회적 자기결정</a></li><li class="depth-3"><a href="#35-노동헌법과-경제민주주의-그리고-방법" class="toc-link">3.5 노동헌법과 경제민주주의, 그리고 방법</a></li><li class="depth-3"><a href="#36-제자들과-계승" class="toc-link">3.6 제자들과 계승</a></li><li class="depth-2"><a href="#4-기원-노무-임대차에서-종속노동으로" class="toc-link">4. 기원 — 노무 임대차에서 종속노동으로</a></li><li class="depth-3"><a href="#41-로마법-노동을-빌려주는-계약" class="toc-link">4.1 로마법: 노동을 빌려주는 계약</a></li><li class="depth-3"><a href="#42-독일-민법-제611조-형식적-대등성" class="toc-link">4.2 독일 민법 제611조: 형식적 대등성</a></li><li class="depth-3"><a href="#43-로트마르-사법-안의-노동계약-그러나-지시권은-징표가-아니다" class="toc-link">4.3 로트마르: 사법 안의 노동계약, 그러나 지시권은 징표가 아니다</a></li><li class="depth-3"><a href="#44-진츠하이머-타인의-처분권이라는-한-마디" class="toc-link">4.4 진츠하이머: 타인의 처분권이라는 한 마디</a></li><li class="depth-3"><a href="#45-경제적-종속과-인격적-종속의-갈림길" class="toc-link">4.5 경제적 종속과 인격적 종속의 갈림길</a></li><li class="depth-2"><a href="#5-독일에서의-전개-지시의-선은-정련되고-의존의-선은-별실로" class="toc-link">5. 독일에서의 전개 — 지시의 선은 정련되고, 의존의 선은 별실로</a></li><li class="depth-3"><a href="#51-인격적-종속의-정착-오케스트라-단원에서-방송-종사자까지" class="toc-link">5.1 인격적 종속의 정착: 오케스트라 단원에서 방송 종사자까지</a></li><li class="depth-3"><a href="#52-반론-유형-개념과-기업가적-위험" class="toc-link">5.2 반론: 유형 개념과 기업가적 위험</a></li><li class="depth-3"><a href="#53-2017년의-성문화-민법-제611a조" class="toc-link">5.3 2017년의 성문화: 민법 제611a조</a></li><li class="depth-3"><a href="#54-경제적-종속의-별실-유사근로자" class="toc-link">5.4 경제적 종속의 별실: 유사근로자</a></li><li class="depth-3"><a href="#55-독일-계보의-요약" class="toc-link">5.5 독일 계보의 요약</a></li><li class="depth-2"><a href="#6-일본과-한국으로-문헌의-수용-기준의-정형화-영역별-분화" class="toc-link">6. 일본과 한국으로 — 문헌의 수용, 기준의 정형화, 영역별 분화</a></li><li class="depth-3"><a href="#61-다이쇼-데모크라시와-독일-노동법-단체협약-이론이-먼저-건너갔다" class="toc-link">6.1 다이쇼 데모크라시와 독일 노동법: 단체협약 이론이 먼저 건너갔다</a></li><li class="depth-3"><a href="#62-전후-일본-번역-학설의-분화-1985년의-정형화" class="toc-link">6.2 전후 일본: 번역, 학설의 분화, 1985년의 정형화</a></li><li class="depth-3"><a href="#63-한국-문헌의-수용과-판례의-종속" class="toc-link">6.3 한국: 문헌의 수용과 판례의 종속</a></li><li class="depth-3"><a href="#64-수용-경로는-단정할-수-있는가" class="toc-link">6.4 수용 경로는 단정할 수 있는가</a></li><li class="depth-2"><a href="#7-국제-동향-사실-우선-지표의-확장-추정" class="toc-link">7. 국제 동향 — 사실 우선, 지표의 확장, 추정</a></li><li class="depth-2"><a href="#8-플랫폼-시대의-쟁점-계보의-갈래들이-다시-불려-나오다" class="toc-link">8. 플랫폼 시대의 쟁점 — 계보의 갈래들이 다시 불려 나오다</a></li><li class="depth-3"><a href="#81-인격적-종속의-선을-넓혀-쓰기" class="toc-link">8.1 인격적 종속의 선을 넓혀 쓰기</a></li><li class="depth-3"><a href="#82-밀려났던-경제적-종속의-귀환" class="toc-link">8.2 밀려났던 경제적 종속의 귀환</a></li><li class="depth-3"><a href="#83-조직적-종속-곧-편입의-재발견" class="toc-link">8.3 조직적 종속, 곧 편입의 재발견</a></li><li class="depth-3"><a href="#84-누구에게-종속되는가" class="toc-link">8.4 누구에게 종속되는가</a></li><li class="depth-3"><a href="#85-추정-증명의-짐을-옮기기" class="toc-link">8.5 추정 — 증명의 짐을 옮기기</a></li><li class="depth-3"><a href="#86-진츠하이머로의-회귀" class="toc-link">8.6 진츠하이머로의 회귀</a></li><li class="depth-2"><a href="#9-2026년-논문은-진츠하이머와-종속성을-어떻게-다루는가" class="toc-link">9. 2026년 논문은 진츠하이머와 종속성을 어떻게 다루는가</a></li><li class="depth-3"><a href="#91-논문의-자리" class="toc-link">9.1 논문의 자리</a></li><li class="depth-3"><a href="#92-진츠하이머가-등장하는-자리" class="toc-link">9.2 진츠하이머가 등장하는 자리</a></li><li class="depth-3"><a href="#93-계보와-맞아떨어지는-것" class="toc-link">9.3 계보와 맞아떨어지는 것</a></li><li class="depth-3"><a href="#94-해석상-긴장-다섯-가지-읽는-법" class="toc-link">9.4 해석상 긴장 — 다섯 가지 읽는 법</a></li><li class="depth-3"><a href="#95-사실관계에서-바로잡을-곳" class="toc-link">9.5 사실관계에서 바로잡을 곳</a></li><li class="depth-3"><a href="#96-두-축으로-다시-읽기" class="toc-link">9.6 두 축으로 다시 읽기</a></li><li class="depth-2"><a href="#10-한눈에-보기" class="toc-link">10. 한눈에 보기</a></li><li class="depth-3"><a href="#101-연표" class="toc-link">10.1 연표</a></li><li class="depth-3"><a href="#102-간추린-설명과-실제" class="toc-link">10.2 간추린 설명과 실제</a></li><li class="depth-2"><a href="#11-평가-계보가-말해-주는-것" class="toc-link">11. 평가 — 계보가 말해 주는 것</a></li><li class="depth-3"><a href="#111-종속은-처음부터-여러-겹이었다" class="toc-link">11.1 종속은 처음부터 여러 겹이었다</a></li><li class="depth-3"><a href="#112-좁힘에는-이유가-있었다" class="toc-link">11.2 좁힘에는 이유가 있었다</a></li><li class="depth-3"><a href="#113-밀려난-것들이-돌아온다" class="toc-link">11.3 밀려난 것들이 돌아온다</a></li><li class="depth-3"><a href="#114-두-축으로-진츠하이머-다시-읽기" class="toc-link">11.4 두 축으로 진츠하이머 다시 읽기</a></li><li class="depth-3"><a href="#115-계보의-약한-고리" class="toc-link">11.5 계보의 약한 고리</a></li><li class="depth-2"><a href="#12-맺음-경제적-신민에서-경제적-시민으로" class="toc-link">12. 맺음 — 경제적 신민에서 경제적 시민으로</a></li><li class="depth-2"><a href="#출처" class="toc-link">출처</a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-02</span>
+          <span class="meta-badge">⏱️ 약 140분</span>
+          <span class="meta-badge">✍️ Pages 노동법 해설</span>
+        </div>
+        <h1 class="article-title">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 '종속성' 개념의 계보 심화 분석</h1>
+        <p class="article-subtitle">로마법의 노무 임대차에서 플랫폼의 알고리즘까지, 노동법은 보호할 사람을 어떻게 골라 왔나</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#노동법</span>
+          
+          <span class="tag-pill">#노동법사</span>
+          
+          <span class="tag-pill">#종속성</span>
+          
+          <span class="tag-pill">#근로자성</span>
+          
+          <span class="tag-pill">#진츠하이머</span>
+          
+          <span class="tag-pill">#독일노동법</span>
+          
+          <span class="tag-pill">#비교노동법</span>
+          
+          <span class="tag-pill">#플랫폼노동</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="타인의-처분권-아래의-노동-휴고-진츠하이머와-39종속성39-개념의-계보-심화-분석"><a href="#타인의-처분권-아래의-노동-휴고-진츠하이머와-39종속성39-개념의-계보-심화-분석" class="heading-anchor" aria-hidden="true">#</a> 타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</h2><p><strong>노동을 하는 사람은 재산을 내주는 것이 아니라 자기 자신을 내준다.</strong> 독일 노동법의 아버지로 불리는 휴고 진츠하이머(Hugo Sinzheimer, 1875–1945)의 이 문장에는 노동법이 민법에서 떨어져 나와야 했던 이유가 압축되어 있다. 물건을 빌려주는 사람은 물건과 떨어져 있을 수 있지만, 노동력을 내주는 사람은 자기 몸과 시간과 인격을 함께 넘긴다. 그래서 노동을 사고파는 계약에는 물건의 거래에 없는 권력이 깃든다. 진츠하이머는 그 권력 아래에서 하는 노동을 종속노동(abhängige Arbeit), 곧 타인의 처분권 아래에 있는 노동이라고 불렀다.</p>
+<p>한 세기가 지난 지금 한국 법원은 어떤 사람이 근로자인지 가릴 때 그가 &quot;종속적인 관계에서&quot; 근로를 제공했는지를 묻는다. 근로기준법 어디에도 없는 이 말의 계보를 거슬러 올라가면 진츠하이머에 닿는다. 그러나 그 계보는 한 줄로 이어지지 않는다. 진츠하이머의 &#39;종속&#39;은 오늘 판례가 찾는 지휘·감독보다 넓었고, 그가 더 많은 힘을 쏟은 일은 개별 노동자의 종속을 판정하는 것보다 단체협약과 노동자의 집단적 자기결정으로 종속을 상쇄하는 것이었다. 그 뒤 독일 판례는 종속을 지시에 대한 구속으로 좁혔고, 경제적 의존은 별도의 범주로 밀려났으며, 일본과 한국은 그것을 저마다의 법체계 안에서 다시 짰다.</p>
+<p>이 글은 그 갈림길을 차례로 짚는다. 먼저 진츠하이머라는 사람과 그의 사상을 살피고, 로마법의 노무 임대차에서 독일 민법, 로트마르의 노동계약론을 거쳐 종속노동이라는 개념이 태어나는 과정을 따라간다. 이어서 그 개념이 독일에서 어떻게 좁혀지고 나뉘었는지, 일본과 한국에 어떤 경로로 건너왔는지, 국제 규범과 플랫폼 시대의 대응이 그 계보의 어느 갈래를 다시 불러내는지 본다. 마지막으로 박은정·백승호·이승윤의 논문 「노동보호법제 적용을 위한 &quot;종속성&quot; 연구」(『노동법학』 제98호, 한국노동법학회, 2026. 6.)가 진츠하이머를 &#39;타인결정성&#39;의 근거로 호출하는 방식을 계보와 견주어 검토한다.</p>
+<blockquote>
+<p><strong>읽는 법.</strong> 진츠하이머의 생애와 저작, 법령·판례·국제기구 문서는 전기 사전, 원전 디지털본, 법령 원문, 공식 자료로 확인한 것을 중심으로 적었고, 2차 문헌에 기댄 대목은 본문에서 그 문헌을 밝혔다. 출처끼리 엇갈리는 사실은 한쪽을 고르지 않고 함께 적었다. 원 출처를 확인하지 못했거나 기록으로 확정하지 못한 대목에는 <strong>[확인 필요]</strong> 표시를 붙였다. 이 표시가 붙은 문장은 지금까지 확인된 범위까지만 말한다는 뜻이며, 표시 뒤에 무엇이 확인되지 않았는지 짧게 적었다. 법령 원문을 이번에 새로 대조해 덧붙인 내용에는 &#39;보충&#39;이라고 적었다. 2장과 3장은 진츠하이머의 생애와 사상, 4장부터 6장까지는 종속성 개념의 기원과 독일·일본·한국에서의 전개, 7장과 8장은 국제 동향과 플랫폼 시대의 쟁점, 9장은 2026년 논문이 진츠하이머와 종속성을 다루는 방식에 대한 검토, 10장은 연표와 간추린 설명을 실제와 대조한 표다. 알고리즘 통제와 타인결정성 자체에 대한 분석은 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가 — 알고리즘이 통제하는 노동과 타인결정성 심화 분석</a>에서 따로 다루었으므로, 이 글은 계보에 집중한다. 법령상 지위를 말할 때는 &#39;근로자&#39;, 역사·사회적 맥락에서는 &#39;노동자&#39;라고 쓴다. 독일어 Arbeitnehmer는 법적 지위를 가리킬 때 &#39;근로자&#39;로 옮긴다. 진츠하이머의 한국어 표기는 문헌에 따라 &#39;진쯔하이머&#39;로도 쓰인다.</p>
+</blockquote>
+<hr>
+<h2 id="1-테제-종속이라는-말은-어디서-와서-어디로-가는가"><a href="#1-테제-종속이라는-말은-어디서-와서-어디로-가는가" class="heading-anchor" aria-hidden="true">#</a> 1. 테제 — 종속이라는 말은 어디서 와서 어디로 가는가</h2><p>근로자인지 아닌지는 노동보호법의 거의 모든 보호가 적용되느냐를 가르는 입구다. 한국에서 그 입구를 지키는 말은 &#39;종속&#39;이고, 그 말은 법률이 아니라 판례가 들여왔다. 판례가 들여온 개념이라면 그것이 어디서 왔는지, 들어오는 길에 무엇이 덧붙고 무엇이 떨어져 나갔는지 묻는 일은 단순한 역사 공부가 아니다. 지금 그 개념을 고치자는 논의가 진츠하이머의 이름을 다시 부르고 있기 때문이다.</p>
+<p>이 글의 논지는 여섯 단계로 정리할 수 있다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>논지</th>
+<th>핵심 개념</th>
+<th>다루는 곳</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>① 사람</td>
+<td>진츠하이머는 노동변호사이자 바이마르 헌법의 기초자, 망명 법사회학자였다. 그의 노동법은 단체협약과 사회적 자기결정에서 출발했고, 종속노동은 그 체계의 대상 규정이었다</td>
+<td>사회적 자기결정, 노동헌법</td>
+<td>2·3장</td>
+</tr>
+<tr>
+<td>② 기원</td>
+<td>로마법과 독일 민법은 노동을 대등한 교환으로 구성했고, 로트마르는 사법 안에서 노동계약을 체계화하면서도 지시권을 징표로 삼지 않았다. 진츠하이머가 &#39;타인의 처분권&#39;을 노동법의 대상으로 세웠다</td>
+<td>locatio conductio, 제611조, 종속노동</td>
+<td>4장</td>
+</tr>
+<tr>
+<td>③ 분기</td>
+<td>독일에서 종속은 인격적 종속(지시 구속·편입)으로 좁혀졌고, 경제적 종속은 유사근로자라는 별도의 범주로 옮겨 갔다</td>
+<td>인격적 종속, 유사근로자, 제611a조</td>
+<td>5장</td>
+</tr>
+<tr>
+<td>④ 수용</td>
+<td>일본은 전전부터 독일 이론을 받아들여 1985년 사용종속성으로 정형화했다. 한국은 법문 없이 판례가 종속을 덧붙였고, 노조법과 사회보험에서는 경제적·조직적 종속이 다시 기능한다. 수용 경로는 단정하기 어렵다</td>
+<td>사용종속성, 종속적 관계</td>
+<td>6장</td>
+</tr>
+<tr>
+<td>⑤ 수렴</td>
+<td>국제 규범과 플랫폼 대응은 사실 우선과 추정으로 모인다. 인격적 종속의 법리는 넓혀 적용되고, 밀려났던 경제적·조직적 종속은 다시 평가된다</td>
+<td>권고 제198호, 추정</td>
+<td>7·8장</td>
+</tr>
+<tr>
+<td>⑥ 회귀</td>
+<td>2026년 논문은 진츠하이머를 타인결정성의 근거로 호출한다. 그 호출은 원래의 넓은 개념과 오늘의 인격적 종속 사이의 차이, 그리고 진츠하이머의 집단적 축을 함께 볼 때 정확해진다</td>
+<td>타인결정성, 해석적 재구성</td>
+<td>9장</td>
+</tr>
+</tbody></table>
+</div><p>미리 밝혀 둘 점이 있다. 이 글은 진츠하이머를 오늘 문제의 정답을 가진 사람으로 세우려는 것이 아니다. 그의 개념은 1920년대 독일의 산업 현실과 정치 지형 속에서 만들어졌고, 그 자신의 경제민주주의 구상도 당대 맥락에서만 이해할 수 있다는 평가가 있다(Weiss 2015). 계보를 따라가는 목적은 오늘의 &#39;종속성&#39;이 자연스럽게 주어진 기준이 아니라 선택과 좁힘의 결과라는 점, 그리고 그 과정에서 떨어져 나간 요소들이 지금 다른 이름으로 돌아오고 있다는 점을 보이는 데 있다.</p>
+<hr>
+<h2 id="2-진츠하이머라는-사람-변호사-헌법-기초자-망명-법학자"><a href="#2-진츠하이머라는-사람-변호사-헌법-기초자-망명-법학자" class="heading-anchor" aria-hidden="true">#</a> 2. 진츠하이머라는 사람 — 변호사, 헌법 기초자, 망명 법학자</h2><h3 id="21-보름스에서-프랑크푸르트까지"><a href="#21-보름스에서-프랑크푸르트까지" class="heading-anchor" aria-hidden="true">#</a> 2.1 보름스에서 프랑크푸르트까지</h3><p>진츠하이머는 1875년 4월 12일 라인강변의 보름스(Worms)에서 유대계 직물공장주 레오폴트(Leopold)의 아들로 태어났다. 형 루트비히(Ludwig Sinzheimer)는 뮌헨대학교의 국민경제학 교수가 되었다. 보름스에서 아비투어를 마친 뒤 상업 견습을 시작했다가 그만두었고, 1894년부터 뮌헨·베를린·프라이부르크·마부르크·할레에서 법학과 국민경제학을 공부했다. 할레에서는 신칸트학파 법철학자 루돌프 슈탐러(Rudolf Stammler)에게서 법을 &#39;사회적 기술&#39;로 보는 관념의 영향을 받았다(『신독일전기(Neue Deutsche Biographie)』, 이하 NDB).</p>
+<p>하이델베르크대학교에서 법학박사 학위를 받은 해는 출처마다 다르다. NDB(2010), 프리드리히에베르트재단(FES)의 인물 소개, 휴고진츠하이머연구소(HSI)의 전기 글은 1901년으로 적고, 『독일 사회정책사 인물사전(Biographisches Lexikon zur Geschichte der deutschen Sozialpolitik 1871 bis 1945)』 제2권(2018, 이하 사회정책사 인물사전)과 독일어 위키백과는 1898년으로 적는다. 사회정책사 인물사전은 서면 논문 없이(ohne schriftliche Arbeit) 받은 학위라고 덧붙인다.</p>
+<p>흔히 학위논문으로 소개되는 『Lohn und Aufrechnung(임금과 상계)』도 문제를 남긴다. 이 책은 1902년 베를린의 카를 하이만스(Carl Heymanns) 출판사에서 나왔는데, 디지털본의 표제지에는 저자가 이미 &#39;Dr. jur.&#39;로 적혀 있고 학위논문이라는 표시가 없다. 서문은 &quot;1902년 3월, 프랑크푸르트&quot;에서 쓰였고, 1901년 여름 할레에 머물 때 슈탐러에게 받은 도움에 감사하는 말이 들어 있다. 그렇다면 이 책을 학위논문(Diss.)으로 적는 설명은 원 자료와 맞지 않을 수 있다. 원 자료로 확인되는 것은 그가 1902년 3월 이전에 이미 박사였다는 데까지다 <strong>[확인 필요: 하이델베르크대학교의 학위 기록 미확인. 1898년과 1901년 중 어느 쪽인지 확정하지 못함]</strong>.</p>
+<p>1903년부터 그는 프랑크푸르트 암마인에서 변호사로 일했다. 공증인을 겸하기 시작한 해는 NDB가 1920년, 『프랑크푸르트 인물사전(Frankfurter Personenlexikon)』과 사회정책사 인물사전이 1922년으로 적는다. 정치 사건과 노동조합 사건을 많이 맡았고, 독일금속노조(DMV)의 법률고문, 독일노동조합총연맹(ADGB)의 법률대리인으로 활동했다. 1914년에는 하인츠 포트호프(Heinz Potthoff)와 함께 잡지 『Arbeitsrecht(노동법)』를 창간했고, 1925년에는 라드브루흐(Radbruch) 등과 함께 공화주의 판사연맹의 기관지 『Die Justiz』를 편집했다.</p>
+<h3 id="22-혁명과-헌법-바이마르-헌법의-경제생활-편"><a href="#22-혁명과-헌법-바이마르-헌법의-경제생활-편" class="heading-anchor" aria-hidden="true">#</a> 2.2 혁명과 헌법 — 바이마르 헌법의 경제생활 편</h3><p>1차대전이 터진 뒤 그는 사회민주당(SPD)에 들어갔다. 입당 시기는 프랑크푸르트 인물사전이 1914년, 사회정책사 인물사전이 1916년 무렵으로 적는다. 프랑크푸르트 시의원으로 일한 기간도 NDB는 1917–1933년, 프랑크푸르트 인물사전과 사회정책사 인물사전은 1917–1919년으로 적어 차이가 크다. 1918년 11월 9일 혁명 와중에 노동자·병사평의회가 그를 프랑크푸르트 경찰청장으로 임명했지만, 프로이센 내무장관이 임명 확정을 거부해 1919년 4월 물러났다(프랑크푸르트 인물사전).</p>
+<p>1919년 그는 국민의회 의원이 되었고, 헌법 제정 과정에서 보고자(Berichterstatter)로서 &#39;경제생활(Das Wirtschaftsleben)&#39; 편과 이른바 평의회 조항인 제165조의 성안에 결정적으로 참여했다(NDB). 사형 폐지도 강하게 주장했다. 제165조 제1항은 이렇게 시작한다. &quot;노동자와 직원은 기업가와 공동으로 동등한 권리를 갖고 임금·노동조건의 규율과 생산력의 경제적 발전 전반에 참여할 사명을 갖는다. 양측의 조직과 그 협약은 승인된다.&quot; 노동자를 계약의 한쪽 당사자로만이 아니라 경제 질서의 공동 형성자로 세우려는 구상이 헌법 문언에 들어간 것이다.</p>
+<p>그보다 앞서 1918년 12월 23일 인민대표평의회가 제정한 단체협약령(Tarifvertragsverordnung, TVO)이 있었다. 단체협약령 100주년을 정리한 슐텐(T. Schulten)에 따르면, 브렌타노(Brentano)의 법안은 노동조합들 사이의 이견 때문에 반영되지 못했고 단체협약령은 &quot;오히려 진츠하이머의 구상을 따랐다(eher an den Vorstellungen Sinzheimers orientierte)&quot;. 이 법령 제2조가 처음으로 단체협약의 일반적 구속력 선언을 도입했다. 진츠하이머는 협약 규범의 효력과 강행성(Unabdingbarkeit)을 보장하는 독자적인 단체협약법을 일관되게 요구했고, 1921년에는 제국노동부가 의뢰한 전문가위원회의 위원장으로 단체협약법 초안을 만들었다. 이 초안은 입법되지 않았다(NDB).</p>
+<p>대학과의 인연도 이 무렵 시작되었다. 그는 프랑크푸르트대학교의 노동법 명예교수(Honorarprofessor)가 되었고 뒤에는 법사회학도 맡았다. 시작 연도는 NDB, 사회정책사 인물사전, HSI 전기, FES가 1920년으로, 바이스(Manfred Weiss)의 2015년 글, 프랑크푸르트시의 &#39;Frankfurt 1933–1945&#39; 인물 페이지, 프랑크푸르트 인물사전(&quot;1919년 11월부터 1933년까지&quot;)이 1919년으로 적는다. 1919년 11월에 강의를 시작하고 1920년에 정식으로 임명된 차이일 가능성이 있지만, 대학의 인사 기록으로 확인한 것은 아니다 <strong>[확인 필요: 프랑크푸르트대학교 인사 기록 미확인]</strong>.</p>
+<p>1921년에는 시의원이자 노동조합 간부였던 테오도어 토마스(Theodor Thomas)와 함께 대학 부설 노동아카데미(Akademie der Arbeit)를 세웠다. 설립 계약은 1921년 3월 3일, 개원은 5월 2일이었고, 그는 1933년까지 이곳에서 강의했다. 1928년에는 ADGB의 경제민주주의 구상 위원회에 참여했다. 노동운동과 늘 같은 편에 섰던 것만은 아니다. 1930년 베를린 금속 파업의 중재에서는 임금 삭감을 담은 중재안에 참여해 노동조합의 비판을 받았다(NDB).</p>
+<h3 id="23-박해와-망명-그리고-은신"><a href="#23-박해와-망명-그리고-은신" class="heading-anchor" aria-hidden="true">#</a> 2.3 박해와 망명, 그리고 은신</h3><p>1933년 나치가 집권하자 그는 이른바 보호구금으로 체포되었다. 4월에 풀려난 뒤 자르 지역을 거쳐 네덜란드로 망명했고, 같은 해 9월 프랑크푸르트대학교 교수 자격을 박탈당했다. 1937년에는 국적과 재산을 빼앗겼고, 그해 5월 하이델베르크대학교 법학부는 그의 박사학위를 박탈했다(HSI 전기).</p>
+<p>네덜란드에서 그가 맡은 교수직은 출처마다 대학, 분야, 연도가 조금씩 다르다. NDB와 프랑크푸르트 인물사전은 1933년 암스테르담대학교의 법사회학 교수, 1935년 레이던대학교의 노동법 정교수로 적는다. HSI 전기와 FES는 1933년 10월 암스테르담의 법사회학 원외교수, 1936년 레이던의 법사회학 원외교수로 적고, 사회정책사 인물사전은 암스테르담에서 노동법, 레이던(1935–1941)에서 법사회학 원외교수를 맡았다고 적는다. 프랑크푸르트 인물사전에 따르면 그는 1941년 2월 레이던에서 해임되었다. 1933년 암스테르담 취임 강연이 『Das Problem des Menschen im Recht(법에서의 인간의 문제)』다.</p>
+<p>1940년 독일군이 네덜란드를 점령한 뒤 그는 다시 잠시 체포되었고, 그 뒤 부인과 함께 숨어 지내며 전쟁을 넘겼다. 해방 직후인 1945년 9월 16일 블루멘달-오버베인(Bloemendaal-Overveen)에서 세상을 떠났다. FES는 그가 극도의 쇠약에 따른 후유증으로 숨졌다고 적는다. 오늘 그의 이름은 암스테르담대학교의 휴고진츠하이머연구소(Hugo Sinzheimer Instituut)와 독일 한스뵈클러재단의 휴고진츠하이머연구소(Hugo Sinzheimer Institut)에 남아 있다.</p>
+<p>생애의 사실 가운데 출처가 엇갈리는 것을 한곳에 모으면 다음과 같다. 대부분 사소해 보이지만, 학위 연도와 명예교수 연도는 그의 학문적 출발을 언제로 볼지와 연결되고, 『Lohn und Aufrechnung』의 성격은 그의 첫 저작을 어떻게 읽을지와 연결된다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>한쪽의 기록</th>
+<th>다른 쪽의 기록</th>
+<th>이 글의 처리</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>박사학위 취득 연도</td>
+<td>1901년: NDB(2010), FES, HSI</td>
+<td>1898년: 사회정책사 인물사전(2018, 서면 논문 없이), 독일어 위키백과</td>
+<td>병기. 1902년 3월 이전 취득까지만 확인 [확인 필요]</td>
+</tr>
+<tr>
+<td>『Lohn und Aufrechnung』(1902)의 성격</td>
+<td>학위논문으로 소개(위키백과, 사회정책사 인물사전, 프랑크푸르트 인물사전의 &#39;Diss.&#39; 표기)</td>
+<td>표제지에 이미 &#39;Dr. jur.&#39;, 학위논문 표시 없음(디지털본)</td>
+<td>학위논문으로 단정하지 않음</td>
+</tr>
+<tr>
+<td>공증인 겸업 시작</td>
+<td>1920년: NDB</td>
+<td>1922년: 프랑크푸르트 인물사전, 사회정책사 인물사전</td>
+<td>병기</td>
+</tr>
+<tr>
+<td>SPD 입당</td>
+<td>1914년: 프랑크푸르트 인물사전</td>
+<td>1916년 무렵: 사회정책사 인물사전</td>
+<td>병기. 1차대전 개전 뒤라는 점은 같음</td>
+</tr>
+<tr>
+<td>프랑크푸르트 시의원 재임</td>
+<td>1917–1933년: NDB</td>
+<td>1917–1919년: 프랑크푸르트 인물사전, 사회정책사 인물사전</td>
+<td>병기</td>
+</tr>
+<tr>
+<td>프랑크푸르트대 명예교수</td>
+<td>1920년: NDB, 사회정책사 인물사전, HSI, FES</td>
+<td>1919년(11월부터): Weiss(2015), 프랑크푸르트 인물사전, 프랑크푸르트시 인물 페이지</td>
+<td>강의 개시와 정식 임명의 차이일 가능성 [확인 필요]</td>
+</tr>
+<tr>
+<td>네덜란드 교수직</td>
+<td>NDB, 프랑크푸르트 인물사전: 1933년 암스테르담 법사회학, 1935년 레이던 노동법 정교수</td>
+<td>HSI, FES: 1936년 레이던 법사회학 원외교수 / 사회정책사 인물사전: 암스테르담 노동법, 레이던(1935–1941) 법사회학 원외교수</td>
+<td>병기. 레이던대학교 기록과는 대조하지 못함</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="3-사상-종속노동-사회적-자기결정-노동헌법"><a href="#3-사상-종속노동-사회적-자기결정-노동헌법" class="heading-anchor" aria-hidden="true">#</a> 3. 사상 — 종속노동, 사회적 자기결정, 노동헌법</h2><h3 id="31-노동법을-하나의-법질서로"><a href="#31-노동법을-하나의-법질서로" class="heading-anchor" aria-hidden="true">#</a> 3.1 노동법을 하나의 법질서로</h3><p>진츠하이머의 첫 번째 업적은 노동법을 독자적인 법영역으로 세운 것이다. NDB는 그가 &quot;노동법에 독자적 법영역으로서의 지위를 확보해 주었다&quot;고 쓴다. 1927년의 『Das Wesen des Arbeitsrechts(노동법의 본질)』에서 그는 노동법이 &quot;민법과 공법의 여러 영역에 흩어져 있는 것이 아니라, 자기 고유의 근거 위에 선 하나의 법질서&quot;이며, 공법과 사법이라는 &quot;두 종류의 법은 노동법에서 서로 분리될 수 없다. 내적으로 연관되어 있기 때문이다&quot;라고 썼다(Weiss 2015에서 재인용). 제자 칸프로인트(Otto Kahn-Freund)는 그가 공법과 사법을 가르는 &quot;물신(Fetisch)&quot;을 넘어섰다고 평가했다.</p>
+<p>1921년 초판, 1927년 제2판이 나온 『Grundzüge des Arbeitsrechts(노동법 원리)』는 최초의 통일적 노동법 체계서로 평가된다(NDB). 종속노동 개념과 노동헌법(Arbeitsverfassung) 구상이 이 책에 담겼다. 이 책의 제2판은 1955년 일본어로 옮겨졌다. 일본과 한국의 번역과 수용은 6장에서 다시 다룬다.</p>
+<h3 id="32-종속노동-타인의-처분권과-법적-권력관계"><a href="#32-종속노동-타인의-처분권과-법적-권력관계" class="heading-anchor" aria-hidden="true">#</a> 3.2 종속노동 — 타인의 처분권과 법적 권력관계</h3><p>진츠하이머에게 노동법의 출발점은 &quot;종속노동을 하는 인간&quot;이었다(Weiss 2015). 한국어판 『노동법원리』를 인용한 2026년 논문에 따르면, 그는 법적 의미의 노동을 &quot;타인의 욕구를 만족시키는 인간의 목적의식적 활동&quot;으로 규정하고, 그 기초인 노동력을 &quot;생명체 속에 인간이 살아갈 수 있는 인격 속에 존재하는 육체적 정신적 능력의 총체&quot;라고 했다. 노동은 인간이 자기 자신을 처분하는 방식으로 나타나는데, 이 처분권은 법적으로 타인에게 귀속될 수 있다. 그때 법적으로 노동을 실행하는 것은 노동하는 인간 자신이 아니라 그 타인이 되고, 이것이 종속노동이다. 따라서 종속노동은 &quot;타인의 처분권 하에 있는 노동&quot;이며, 노동하는 인간이 &quot;하나의 법적 권력관계 하에서 급부하는 노동&quot;이다(박은정 외 2026, 65쪽, 역서 2·5–7쪽 인용).</p>
+<p>바이스는 이 관계를 진츠하이머가 &quot;법적 권력관계(rechtliches Gewaltverhältnis)&quot;라고 불렀다고 소개한다. 여기서 주의할 것은 &#39;종속&#39;의 폭이다. 진츠하이머의 종속은 업무 지시에 따라야 한다는 좁은 의미에 그치지 않는다. 노동자가 생계를 위해 타인이 정한 조건을 받아들이고, 일하는 동안 자기 인격의 일부를 타인의 지배 아래 두며, 경제 질서 전체에서 신민의 처지에 놓인다는 사회적·인격적 사태 전체를 가리킨다. 그가 노동헌법의 목표로 &quot;경제적 신민 상태를 경제적 시민 상태로&quot; 바꾸는 것을 든 것도 그래서다(Weiss 2015). 이다혜는 『Grundzüge』 제2판을 제대로 읽으면 &#39;종속노동&#39;이 회색지대의 노동자까지 포섭할 수 있는 훨씬 유연한 분석 개념이며, 일부 학설과 판결의 이해는 본래 취지에서 동떨어져 있다고 본다(이다혜 2020).</p>
+<h3 id="33-인격과-노동력은-분리되지-않는다"><a href="#33-인격과-노동력은-분리되지-않는다" class="heading-anchor" aria-hidden="true">#</a> 3.3 인격과 노동력은 분리되지 않는다</h3><p>이 글의 첫 문장으로 삼은 명제도 같은 맥락이다. 바이스가 인용한 진츠하이머의 문장은 이렇다. &quot;노동은 특별한 즙이다. 노동을 하는 사람은 재산 대상을 내주는 것이 아니라 자기 자신을 내준다(Wer Arbeit leistet, gibt keinen Vermögensgegenstand, sondern sich selbst hin).&quot; 그리고 &quot;인간의 존엄을 지키는 것이 노동법의 특별한 과제이다. 그 사명은 인간이 물건처럼 취급되는 것을 막는 데 있다.&quot;</p>
+<p>노동력과 인격이 분리되지 않는다면, 노동력의 거래를 물건의 거래와 같은 규칙에 맡길 수 없다는 결론이 나온다. 노동시장은 상품시장이나 자본시장과 다른 규칙을 따라야 하고, 그 규칙을 만드는 일이 노동법의 과제가 된다. 4장에서 보듯 로마법과 독일 민법이 노동을 &#39;빌려주는 물건&#39;처럼 구성했다면, 진츠하이머의 출발점은 바로 그 구성을 거부하는 데 있었다.</p>
+<h3 id="34-단체협약의-규범적-효력과-사회적-자기결정"><a href="#34-단체협약의-규범적-효력과-사회적-자기결정" class="heading-anchor" aria-hidden="true">#</a> 3.4 단체협약의 규범적 효력과 사회적 자기결정</h3><p>진츠하이머의 이름을 독일 노동법사에 새긴 것은 사실 종속노동보다 단체협약 이론이다. 1907년과 1908년에 두 권으로 나온 『Der korporative Arbeitsnormenvertrag(단체적 노동규범계약)』에서 그는 단체협약을 기존 사법의 범주로는 포착할 수 없는 &#39;노동규범계약&#39;으로 구성했다. 협약 당사자를 정하고 협약의 규범적 효력과 채무적 효력을 구분한 이 이론은 NDB의 표현으로 &quot;오늘날까지 유효한 단체협약법의 기초&quot;가 되었고, FES는 이 구분이 칸프로인트의 말대로 &quot;대륙 유럽 법체계의 공유재산&quot;이 되었다고 소개한다.</p>
+<p>그 위에서 그는 1913년 『Brauchen wir ein Arbeitstarifgesetz?(우리에게 단체협약법이 필요한가?)』, 1916년 『Ein Arbeitstarifgesetz. Die Idee der sozialen Selbstbestimmung im Recht(단체협약법 — 법에서의 사회적 자기결정의 이념)』를 펴냈다. 1916년 책에서 그는 &quot;우리는 이 생각을 법에서의 사회적 자기결정의 이념이라 부른다&quot;고 썼다(FES 인용). 사회적 자기결정(soziale Selbstbestimmung)이란 국가가 정한 틀 안에서 자유롭게 조직된 사회세력이 스스로 법을 만들고 운영하게 하는 것이다. 바이스는 진츠하이머에게서 형식적 계약자유에 맞서는 집단적 자기결정이 개별 노동자의 자기결정의 전제가 된다고 정리한다.</p>
+<p>이 대목은 종속노동 개념을 읽을 때 빠뜨려서는 안 되는 짝이다. 진츠하이머에게 종속은 확인하고 끝나는 상태가 아니라 집단적 자기결정으로 상쇄해야 할 상태였다. 개별 근로계약에서 노동자가 타인의 처분권 아래 놓인다면, 단체협약과 노동헌법은 그 처분권을 노동자가 공동으로 행사하게 만드는 장치였다.</p>
+<h3 id="35-노동헌법과-경제민주주의-그리고-방법"><a href="#35-노동헌법과-경제민주주의-그리고-방법" class="heading-anchor" aria-hidden="true">#</a> 3.5 노동헌법과 경제민주주의, 그리고 방법</h3><p>노동헌법은 그 구상의 정점이다. 바이스가 인용한 정의에 따르면 노동헌법은 &quot;노동자를 … 과거 사용자에게만 속하던 처분권의 공동 행사에 불러들이는 질서&quot;이고, &quot;노동계약과 나란히 노동헌법이 동등하게 선다&quot;. 바이마르 헌법 제165조와 1928년 ADGB의 경제민주주의 구상은 그 정치적 표현이었다. 바이스는 이 구상이 당대 맥락에서만 이해될 수 있다고 거리를 두지만, 개별 노동법과 집단 노동법을 떼어 놓을 수 없는 하나로 본 그의 시각은 오늘 독일 노동법에 이어진다고 평가한다.</p>
+<p>방법론에서 그는 법사회학자였다. 1922년의 『Die soziologische und dogmatische Methode in der Arbeitsrechtswissenschaft(노동법학에서의 사회학적 방법과 교의학적 방법)』는 니퍼다이(Nipperdey)·카스켈(Kaskel)과의 방법 논쟁으로 이어졌다. 그는 &quot;법학의 궁극 목표는 법정책&quot;이라고 보았고, 비판적 법사회학과 발생적 법사회학을 구분했다(Weiss 2015).</p>
+<p>망명기의 저작도 있다. 1938년의 『Jüdische Klassiker der deutschen Rechtswissenschaft(독일 법학의 유대인 고전가들)』는 카를 슈미트(Carl Schmitt)의 반유대주의 강연에 대한 응답으로 구상된 후기의 주저이고 1953년 제2판이 나왔다. 입법이론서 『Theorie der Gesetzgebung. Die Idee der Evolution im Recht(입법의 이론 — 법에서의 진화의 이념)』는 1949년 유고로 출간되었다. 그의 논문과 강연은 1976년 칸프로인트와 람(T. Ramm)이 엮은 두 권의 선집 『Arbeitsrecht und Rechtssoziologie(노동법과 법사회학)』에 모였다(NDB 문헌란).</p>
+<h3 id="36-제자들과-계승"><a href="#36-제자들과-계승" class="heading-anchor" aria-hidden="true">#</a> 3.6 제자들과 계승</h3><p>NDB가 꼽는 제자로는 에른스트 프랭켈(Ernst Fraenkel, 1898–1975), 프란츠 노이만(Franz Neumann, 1900–1954), 노동법학자 오토 칸프로인트(1900–1979), 정치인 카를로 슈미트(Carlo Schmid), 정치학자 한스 모겐소(Hans Morgenthau)가 있다. 프랭켈과 노이만은 미국에서, 칸프로인트는 영국에서 노동법과 정치학 연구를 이끌었다. 칸프로인트의 &#39;집단적 자유방임(collective laissez-faire)&#39; 구상이 진츠하이머의 국가 중심 설계를 비판적으로 계승한 것이라는 분석도 있다(김연식, 「노동헌법의 의미와 역사적 전개」).</p>
+<p>독일 안에서는 단체협약 이론, 노동법의 독자성, 개별·집단 노동법의 통일성, 노동법원의 독립 같은 그의 유산이 오늘의 노동법에 이어진다(Weiss 2015). 여기서 눈여겨볼 것은 계승된 목록의 앞자리에 종속노동 개념이 아니라 단체협약과 노동법의 독자성이 놓인다는 점이다. 종속노동은 그의 체계에서 노동법의 대상을 정하는 개념이었지, 그의 사상의 중심이 아니었다. 그런데 이후 근로자 개념의 역사에서 살아남아 가장 널리 인용된 것은 바로 그 대상 규정이었다. 그 경로를 이제 처음부터 따라가 보자.</p>
+<hr>
+<h2 id="4-기원-노무-임대차에서-종속노동으로"><a href="#4-기원-노무-임대차에서-종속노동으로" class="heading-anchor" aria-hidden="true">#</a> 4. 기원 — 노무 임대차에서 종속노동으로</h2><h3 id="41-로마법-노동을-빌려주는-계약"><a href="#41-로마법-노동을-빌려주는-계약" class="heading-anchor" aria-hidden="true">#</a> 4.1 로마법: 노동을 빌려주는 계약</h3><p>로마법은 노동을 임대차(locatio conductio)의 틀로 다루었다. 사람의 노무를 빌려주는 노무 임대차(locatio conductio operarum)와 일의 완성을 맡기는 도급(locatio conductio operis)이 그 하위 유형이었다. 일반적인 법제사 서술에서 이 구성은 노동을 물건처럼 빌려주는 대등한 당사자 사이의 교환으로 이해된다. 노무를 빌려주는 사람과 빌리는 사람 사이의 힘의 차이는 계약의 구조 안에 들어 있지 않다.</p>
+<p>이 구분은 근대까지 살아남았다. 로트마르(Philipp Lotmar)는 1902년 저서에서 시간급 계약(Zeitlohnvertrag)을 노무 임대차에, 성과급 계약(Akkord)을 도급에 대응시켰다(Lotmar 1902 제1권 목차). 시간을 파는 노동과 결과를 파는 노동이라는 로마법의 두 범주가 산업사회의 임금 형태를 설명하는 틀로 다시 쓰인 것이다.</p>
+<h3 id="42-독일-민법-제611조-형식적-대등성"><a href="#42-독일-민법-제611조-형식적-대등성" class="heading-anchor" aria-hidden="true">#</a> 4.2 독일 민법 제611조: 형식적 대등성</h3><p>1896년 제정되어 1900년 시행된 독일 민법(BGB)은 이 전통을 고용계약(Dienstvertrag)이라는 유형으로 정리했다. 제611조 제1항은 지금도 같은 문언이다. &quot;고용계약에 의하여 노무를 약속한 자는 약속한 노무를 급부할 의무를, 상대방은 약정한 보수를 지급할 의무를 진다.&quot; 제2항은 &quot;모든 종류의 노무가 고용계약의 목적이 될 수 있다&quot;고 덧붙인다.</p>
+<p>이 조문에는 종속도 지휘도 없다. 공장 노동자의 노동과 의사·변호사의 자유로운 노무가 같은 계약 유형에 들어간다. 노무와 보수를 맞바꾸는 두 당사자는 법 앞에서 대등하고, 그 대등함은 형식적이다. 민법 제정 당시 이 형식성에 대한 비판이 없었던 것은 아니다. 1896년 제국의회 위원회에서 사회민주당 의원 프로메(Frohme)와 슈타트하겐(Stadthagen)은 고용과 도급의 구분이 비논리적이고 혼란스러우며 법적 불안을 키운다고 비판하고, &#39;노동계약(Arbeitsvertrag)&#39;을 상위 개념으로 삼자고 제안했지만 받아들여지지 않았다(HSI, 『Arbeit und Recht』 2015, 노동과 법의 역사 기획).</p>
+<p>훗날 일본의 민법학자 와가쓰마 사카에(我妻栄)는 독일이 종속성을 중심으로 노동법의 적용 대상을 가르게 된 배경을 독일 민법 특유의 구조, 곧 위임의 무상성에서 찾았다. 독일에서는 유상의 독립적 노무가 위임으로 처리되지 않고 고용계약 안에 들어가기 때문에, 그 안에서 노동법이 보호할 노동을 다시 골라낼 기준이 필요했다는 것이다. 일본에서는 독일에서 말하는 &#39;독립 고용&#39;이 민법상 유상 위임으로 처리되므로 민법상 고용은 모두 노동계약으로 이해하면 된다고 그는 보았다(박은정 외 2026, 72쪽, 大内伸哉 외 2006 재인용). 종속성이라는 기준이 보편적 필연이라기보다 특정 민법 구조의 산물일 수 있다는 지적이다.</p>
+<h3 id="43-로트마르-사법-안의-노동계약-그러나-지시권은-징표가-아니다"><a href="#43-로트마르-사법-안의-노동계약-그러나-지시권은-징표가-아니다" class="heading-anchor" aria-hidden="true">#</a> 4.3 로트마르: 사법 안의 노동계약, 그러나 지시권은 징표가 아니다</h3><p>종속노동 개념이 나오기 직전, 노동계약을 사법의 틀 안에서 처음으로 체계화한 사람이 로트마르다. 베른대학교의 로마법 교수였던 그는 1902년과 1908년 두 권으로 『Der Arbeitsvertrag nach dem Privatrecht des Deutschen Reiches(독일제국 사법에 따른 노동계약)』를 펴냈다(Leipzig: Duncker &amp; Humblot). 그는 교의학적 분류에서 출발하지 않고 &#39;사실의 세계&#39;에서 출발해 시간급 계약과 성과급 계약을 두 기본형으로 삼았고, 법학과 국민경제학을 결합했다(막스 베버 전집 편집 보고).</p>
+<p>로트마르의 노동계약 개념이 진츠하이머와 어떻게 다른지가 계보의 첫 번째 갈림길이다. 로트마르를 연구한 발트(K.-D. Waldt)의 1974년 학위논문에 따르면, 로트마르는 계약상 의무로서의 노동을 &quot;타인의 욕구(ein fremdes Bedürfnis)를 충족할 수 있고, 경험상 언젠가 어디선가 대가가 지급되는 인간의 모든 활동&quot;으로 정의했다. 그리고 노동의 내용·범위·장소·시간에 대한 지시권(Direktion der Arbeit)이 누구에게 있는지는 노동계약의 성립과 &quot;무관(gleichgültig)&quot;하다고 보았다. 본인이 직접 수행하는지, 사용자가 급부를 수령하는지도 상관없었다. 그래서 그의 노동계약은 운송인, 철도, 출판사와 저자의 관계까지 품는 추상적이고 형식적인 개념이었다. 그 뒤 후크(Hueck), 카스켈(Kaskel), 외르트만(Oertmann), 진츠하이머, 포트호프 같은 학자들은 이것을 &#39;넓은 의미의 노동계약&#39;으로만 인정하고, 고유한 의미의 노동계약을 &#39;종속노동에 관한 계약&#39;으로 좁혔다. 발트는 그 예로 후크와 니퍼다이의 1928년 교과서를 든다 <strong>[확인 필요: 로트마르 1902년 원전의 해당 쪽을 직접 대조하지 못함. 위 정의와 &#39;무관&#39; 판단은 발트(1974)의 요약에 따름]</strong>.</p>
+<p>두 사람은 함께 일하기도 했다. 1912년 로트마르는 진츠하이머, 카를 플레슈(Karl Flesch)와 함께 &#39;노동법 체계적 연구 위원회(Komitee zur systematischen Erforschung des Arbeitsrechts)&#39;를 세웠다(프랑크푸르트 인물사전). 그러나 단체협약의 법적 성질을 두고는 로트마르의 사법적 구성, 곧 대리의 법리로 협약을 설명하려는 시도와 진츠하이머의 단체(Verband) 이론이 맞섰다(Schulten 2019). 개별 계약의 언어로 노동관계를 끝까지 설명하려는 쪽과, 단체라는 새로운 법 주체를 세우려는 쪽의 대립이다.</p>
+<h3 id="44-진츠하이머-타인의-처분권이라는-한-마디"><a href="#44-진츠하이머-타인의-처분권이라는-한-마디" class="heading-anchor" aria-hidden="true">#</a> 4.4 진츠하이머: 타인의 처분권이라는 한 마디</h3><p>두 정의를 나란히 놓으면 차이가 선명해진다. 한국어판 『노동법원리』의 문언으로 보면, 진츠하이머가 법적 의미의 노동을 &quot;타인의 욕구를 만족시키는 인간의 목적의식적 활동&quot;으로 정의한 것은 로트마르의 &#39;타인의 욕구&#39;와 같은 계열이다. 갈라지는 곳은 그 다음이다. 진츠하이머는 여기에 처분권이 법적으로 타인에게 귀속된다는 요소를 더했고, 그렇게 타인의 처분권 아래에 놓인 노동만을 노동법의 대상으로 삼았다. 로트마르가 지시권의 소재를 계약 성립과 무관한 것으로 본 바로 그 자리에, 진츠하이머는 노동법의 존재 이유를 세운 것이다.</p>
+<p>이 한 마디의 차이가 노동법을 민법에서 떼어 냈다. 로트마르가 사법 내부에서 노동계약을 정교화했다면, 진츠하이머는 종속노동을 노동법의 고유한 대상으로 규정하고 그것을 근거로 노동법을 독자적인 법질서로 세웠다. 다만 3장에서 보았듯 그의 &#39;종속&#39;은 지시권 하나로 환원되지 않는 넓은 개념이었다. 그 넓은 개념이 실무의 기준으로 쓰이기 시작하면서 무엇이 남고 무엇이 떨어져 나갔는지가 다음 갈림길이다.</p>
+<h3 id="45-경제적-종속과-인격적-종속의-갈림길"><a href="#45-경제적-종속과-인격적-종속의-갈림길" class="heading-anchor" aria-hidden="true">#</a> 4.5 경제적 종속과 인격적 종속의 갈림길</h3><p>독일에서 먼저 나타난 것은 경제적 종속성(wirtschaftliche Abhängigkeit)의 관념이었다. 제국 시기에 근로자는 생계를 위해 노동에 의존할 수밖에 없고, 그래서 사용자가 일방적으로 정한 조건을 받아들일 수밖에 없다는 점이 근로자를 가르는 표지로 이해되었다. 그러나 독립적인 상인에게도 경제적 종속이 있을 수 있다는 점이 지적되면서, 경제적 종속성은 근로자와 자영인을 가르는 기준으로서 한계에 부딪혔다. 1920년대부터 인격적 종속성(persönliche Abhängigkeit)이 근로자 개념의 요소로 전면에 등장했다(박은정 외 2026, 66쪽, 박귀천 2020 재인용).</p>
+<p>학설은 이 인격적 종속을 두 방향으로 파악했다. 후크(Hueck)는 사용자의 지시권에 대한 구속 관계로, 니키쉬(Nikisch)는 타인의 사업 조직으로의 편입(Eingliederung)으로 보았다. 다수설과 판례는 후크가 발전시킨 정의, 곧 &quot;사법상 계약 또는 이와 동등한 법률관계에 따라 타인에게 고용되어 노무제공 의무를 지는 자&quot;를 근로자 개념으로 받아들였다(오상호 2015의 정리) <strong>[확인 필요: 후크·니퍼다이 교과서의 근로자 정의 원문을 열람하지 못함. 정의 문구는 오상호(2015)의 한국어 요약에 따름]</strong>. 그 교과서인 후크와 니퍼다이의 『Lehrbuch des Arbeitsrechts(노동법 교과서)』는 독일국립도서관 목록상 제1권이 1928년, 제2권이 1930년에 나왔다. 분책 간행이 그보다 앞서 시작되었을 가능성은 배제되지 않는다.</p>
+<p>시기에 관해서는 두 층을 구분해 두는 것이 정확하다. 인격적 종속이 근로자 개념의 요소로 전면에 선 것은 1920년대이고(박귀천 2020을 인용한 박은정 외), 그것이 학설의 통설과 연방노동법원의 판례로 굳어진 것은 1950–1970년대다(오상호 2015). 두 서술은 충돌한다기보다 등장과 정착이라는 서로 다른 단계를 가리킨다.</p>
+<p>결과는 역할의 분담이었다. 인격적 종속성은 근로자로 인정할지를 가르는 기준이 되고, 경제적 종속성은 근로자에 준하는 최소한의 보호, 곧 유사근로자를 가르는 기준으로 옮겨 갔다(박은정 외 2026, 70쪽). 진츠하이머의 넓은 &#39;종속&#39;은 이렇게 두 갈래로 쪼개졌고, 그 가운데 지시와 편입의 갈래가 근로자 개념의 본류가 되었다. 아래 그림은 이 장과 다음 두 장의 흐름을 한 장에 담은 것이다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 600" role="img" aria-label="로마법의 노무 임대차에서 진츠하이머의 종속노동을 거쳐 인격적 종속, 경제적 종속, 일본과 한국의 수용으로 갈라지고 2006년 이후 사실 우선과 추정으로 수렴하는 종속성 개념의 계보도">
+  <defs>
+    <marker id="sg-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="8" y="8" width="764" height="584" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">로마법에서 플랫폼까지: '종속' 개념의 계보</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">위 = 진츠하이머까지의 한 줄기 · 가운데 = 그 뒤 갈라진 세 갈래 · 아래 = 2006년 이후의 수렴</text>
+  <rect x="24" y="72" width="170" height="70" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="109" y="94" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">로마법</text>
+  <text x="109" y="113" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">locatio conductio</text>
+  <text x="109" y="130" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">노무 임대차 · 일의 도급</text>
+  <rect x="214" y="72" width="170" height="70" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="299" y="94" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">BGB 1896/1900 §611</text>
+  <text x="299" y="113" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">고용계약: 노무와 보수의 교환</text>
+  <text x="299" y="130" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">종속 없는 형식적 대등</text>
+  <rect x="404" y="72" width="170" height="70" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="489" y="94" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">Lotmar 1902/1908</text>
+  <text x="489" y="113" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">사법 안의 노동계약 체계</text>
+  <text x="489" y="130" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">지시권은 징표가 아님</text>
+  <rect x="594" y="72" width="170" height="70" rx="10" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.8"/>
+  <text x="679" y="94" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">진츠하이머 1907–1927</text>
+  <text x="679" y="113" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#1e3a8a">종속노동(abhängige Arbeit)</text>
+  <text x="679" y="130" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#1e3a8a">타인의 처분권 · 법적 권력관계</text>
+  <line x1="196" y1="107" x2="210" y2="107" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="386" y1="107" x2="400" y2="107" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="576" y1="107" x2="590" y2="107" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="679" y1="144" x2="679" y2="158" stroke="#64748b" stroke-width="2"/>
+  <line x1="679" y1="158" x2="16" y2="158" stroke="#64748b" stroke-width="2"/>
+  <line x1="16" y1="158" x2="16" y2="392" stroke="#64748b" stroke-width="2"/>
+  <text x="390" y="174" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">그 뒤 '종속'은 세 갈래로 나뉘어 흘렀다</text>
+  <line x1="16" y1="212" x2="21" y2="212" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="16" y1="302" x2="21" y2="302" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="16" y1="392" x2="21" y2="392" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <rect x="24" y="184" width="128" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="88" y="207" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">인적·인격적 종속</text>
+  <text x="88" y="226" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">지시와 편입의 선</text>
+  <rect x="162" y="184" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="230" y="206" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">1920년대</text>
+  <text x="230" y="226" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">인격적 종속이 전면에</text>
+  <rect x="312" y="184" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="380" y="206" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">Hueck · Nikisch</text>
+  <text x="380" y="226" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">지시 구속 · 조직 편입</text>
+  <rect x="462" y="184" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="530" y="206" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">BAG 1975 · 1980</text>
+  <text x="530" y="226" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">다지표 유형론</text>
+  <rect x="612" y="184" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="680" y="206" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">BGB §611a (2017)</text>
+  <text x="680" y="226" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">→ 2020 크라우드워커</text>
+  <line x1="300" y1="212" x2="309" y2="212" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="450" y1="212" x2="459" y2="212" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="600" y1="212" x2="609" y2="212" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <rect x="24" y="274" width="128" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="88" y="297" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">경제적 종속</text>
+  <text x="88" y="316" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">의존과 보호필요의 선</text>
+  <rect x="162" y="274" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="230" y="296" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">제국 시기</text>
+  <text x="230" y="316" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">경제적 종속 관념</text>
+  <rect x="312" y="274" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="380" y="296" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">ArbGG 1926 §5</text>
+  <text x="380" y="316" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">근로자 유사인</text>
+  <rect x="462" y="274" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="530" y="296" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">TVG 1974 §12a</text>
+  <text x="530" y="316" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">유사근로자</text>
+  <rect x="612" y="274" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="680" y="296" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">ILO R198 (2006)</text>
+  <text x="680" y="316" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">주된 소득원 · 재정위험</text>
+  <line x1="300" y1="302" x2="309" y2="302" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="450" y1="302" x2="459" y2="302" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="600" y1="302" x2="609" y2="302" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <rect x="24" y="364" width="128" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="88" y="387" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">일본·한국 수용</text>
+  <text x="88" y="406" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">번역과 정형화의 선</text>
+  <rect x="162" y="364" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="230" y="386" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">日 1924 · 1932</text>
+  <text x="230" y="406" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">末弘 강의 · 津曲</text>
+  <rect x="312" y="364" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="380" y="386" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">日 1985 보고</text>
+  <text x="380" y="406" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">사용종속성 정형화</text>
+  <rect x="462" y="364" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="530" y="386" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">韓 1994 · 2006</text>
+  <text x="530" y="406" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">'종속적 관계' 지표화</text>
+  <rect x="612" y="364" width="136" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="680" y="386" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">韓 2018 · 2024</text>
+  <text x="680" y="406" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">노조법 기준 · 타다</text>
+  <line x1="300" y1="392" x2="309" y2="392" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="450" y1="392" x2="459" y2="392" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="600" y1="392" x2="609" y2="392" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <line x1="390" y1="424" x2="390" y2="442" stroke="#64748b" stroke-width="2" marker-end="url(#sg-arr)"/>
+  <rect x="24" y="448" width="732" height="126" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="390" y="472" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">2006–2026: 사실 우선과 추정으로 수렴</text>
+  <text x="390" y="496" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">ILO 권고 제198호(2006) · 스페인 라이더법(2021) · EU 지침 2024/2831(전환 기한 2026. 12. 2.) · ILO 제193호 협약(2026)</text>
+  <text x="390" y="518" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">한국: 개정 노조법 시행(2026. 3. 10.) · 근로자 추정제 입법 논의(2026)</text>
+  <rect x="90" y="530" width="600" height="34" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="390" y="552" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">2026 박은정·백승호·이승윤: '타인결정성'으로 진츠하이머의 '타인의 처분권'을 다시 부르다</text>
+</svg>
+</div>
+
+<hr>
+<h2 id="5-독일에서의-전개-지시의-선은-정련되고-의존의-선은-별실로"><a href="#5-독일에서의-전개-지시의-선은-정련되고-의존의-선은-별실로" class="heading-anchor" aria-hidden="true">#</a> 5. 독일에서의 전개 — 지시의 선은 정련되고, 의존의 선은 별실로</h2><h3 id="51-인격적-종속의-정착-오케스트라-단원에서-방송-종사자까지"><a href="#51-인격적-종속의-정착-오케스트라-단원에서-방송-종사자까지" class="heading-anchor" aria-hidden="true">#</a> 5.1 인격적 종속의 정착: 오케스트라 단원에서 방송 종사자까지</h3><p>전후 독일 연방노동법원(BAG)은 인격적 종속을 여러 징표로 가늠하는 판단 방식을 다듬었다. 그 기준점이 1975년의 이른바 오케스트라 단원 사건(AP Nr. 16 zu § 611 BGB Abhängigkeit)이다. 2026년 논문은 이 판결의 기준이 지금까지 쓰이고 있다고 본다(67쪽 각주 27). 법원은 장소·시간·내용에 관한 지시 구속, 경영에의 편입, 시간적 구속, 거래 관념, 정규 근로자와의 비교 같은 실질적 지표와 보수의 형식, 사회보험과 소득세 원천징수, 신분 서류 같은 형식적 지표를 구분하고, 그 중요도를 사안마다 종합해 판단했다(오상호 2015, 박은정 외 2026, 67쪽 각주 26).</p>
+<p>1978년의 방송 공동작업자 사건(AP Nr. 26)에서는 새로운 형태의 노무제공자를 판단하기 위해 조직적 종속성(경영에의 편입)과 노무의 타인유익성(Fremdnützigkeit) 같은 지표가 제시되었다. 여기까지는 2026년 논문(각주 27)의 정리이고, 오상호는 이 판결이 경제적 종속성도 함께 제시했다고 정리한다. 경제적 종속성이 이 판결의 지표에 들어 있었는지는 두 문헌의 서술이 다르다. 그러나 이 지표들은 이후 다시 거론되지 않았고 판례는 인격적 종속 중심으로 돌아갔다. 1980년 4월 23일 판결은 그 판단 방식을 이렇게 요약했다. 인격적 종속을 말하기 위해 반드시 있어야 하는 단일한 징표는 없고, 비독립적 노동은 유형론적으로 구별할 수밖에 없으며, 사회적 보호필요성도 결정적 의미를 가진다(Waas 2012에서 인용).</p>
+<p>지시가 약한 영역에서 법원이 인격적 종속을 다른 방식으로 찾으려 한 흔적도 있다. 미디어·창작 노동을 다룬 판결(5 AZR 819/76)은 인격적 종속을 근로자가 &#39;타인이 결정한 노동(fremdbestimmte Arbeit)&#39;을 제공하는 것으로 정리하면서, 방송 제작 종사자의 경우 인격적 종속이 전통적 업무 지시보다 방송사의 기술적 장치(Apparat)와 팀(Team)에 대한 의존, 팀 작업의 조직화를 통해 나타날 수 있다고 보았다. 그러나 1994년의 판결(5 AZR 704/93)은 장치와 팀에 대한 의존만으로 방송 종사자를 곧바로 근로자로 볼 수는 없다는 쪽으로 물러섰다(박은정 외 2026, 67–68쪽). &#39;타인결정&#39;이라는 말이 독일 판례에 이렇게 들어와 있었다는 사실은 9장에서 다시 중요해진다.</p>
+<h3 id="52-반론-유형-개념과-기업가적-위험"><a href="#52-반론-유형-개념과-기업가적-위험" class="heading-anchor" aria-hidden="true">#</a> 5.2 반론: 유형 개념과 기업가적 위험</h3><p>인격적 종속 중심의 근로자 개념에 대한 반론도 일찍부터 있었다. 모든 근로자에게 적용될 통일적 기준은 있을 수 없으므로 근로자의 &#39;개념&#39;이 아니라 &#39;유형&#39;을 써야 한다는 견해(Hilger, Zöllner)가 그 하나다(박은정 외 2026, 68쪽).</p>
+<p>더 근본적인 반론은 1988년 방크(Rolf Wank)의 『Arbeitnehmer und Selbständige(근로자와 자영인)』에서 나왔다. 방크는 근로자 개념을 법률요건과 법률효과의 의미 연관에서 목적론적으로 형성해야 한다고 보고, 근로자와 자영인을 가르는 결정적 기준을 인격적 종속이 아니라 기업가적 위험의 자발적 인수와 기업가적 기회에서 찾았다. 그의 표현으로는 &quot;자영인은 기업가적 위험을 질 뿐 아니라 기업가적 기회도 활용할 수 있다. 근로자는 … 그렇지 못하다&quot;(Wank, NZA 1999, 225, 227). 이 견해는 학계 다수에게 받아들여지지 않았지만, 쾰른 주노동법원 등 일부 하급심이 채택했다(Waas 2012, 오상호 2015). 방크의 기업가적 위험론은 계보로 보면 경제적 종속의 갈래를 다른 언어로 되살리려는 시도로 읽을 수 있다. 8장에서 보듯 이 관점은 국제 통계의 경제적 위험 축과 이어진다.</p>
+<h3 id="53-2017년의-성문화-민법-제611a조"><a href="#53-2017년의-성문화-민법-제611a조" class="heading-anchor" aria-hidden="true">#</a> 5.3 2017년의 성문화: 민법 제611a조</h3><p>판례 법리는 2017년 4월 1일 시행된 민법 제611a조로 성문화되었다. 제1항은 이렇다. &quot;근로계약에 의하여 근로자는 타인을 위하여(im Dienste eines anderen) 인적 종속 상태에서(in persönlicher Abhängigkeit) 지시에 구속되고 타인에 의해 결정되는(weisungsgebundener, fremdbestimmter) 노동을 급부할 의무를 진다. 지시권은 활동의 내용, 수행, 시간 및 장소에 관할 수 있다. 본질적으로 자유롭게 자기 활동을 형성하고 노동시간을 정할 수 없는 자는 지시에 구속된다. 인적 종속의 정도는 해당 활동의 특성에도 좌우된다. 근로계약의 존부 확정에는 모든 사정을 전체적으로 고찰하여야 한다. 계약관계의 실제 수행이 근로관계임을 보여주면 계약상 명칭은 문제되지 않는다.&quot; 제2항은 사용자의 보수 지급 의무를 정한다.</p>
+<p>이 조문은 판례를 성문화했을 뿐 기준을 바꾸지는 않았다는 것이 일반적 평가다. 계보의 관점에서 눈여겨볼 것은 두 가지다. 첫째, 지시 구속(weisungsgebunden)과 타인결정(fremdbestimmt)이 한 문장 안에 나란히 들어갔다. 1920년대 이후 좁혀진 인격적 종속의 언어와, 진츠하이머의 &#39;타인의 처분권&#39;을 떠올리게 하는 언어가 법전 안에서 만난 셈이다. 둘째, 마지막 문장은 계약의 이름이 아니라 실제 수행 모습(tatsächliche Durchführung)을 기준으로 삼는다. 실질 우선이 법률 원칙이 된 것이다.</p>
+<p>이 조문은 플랫폼 노동에도 쓰였다. 연방노동법원은 2020년 12월 1일 9 AZR 102/20 판결에서 11개월 동안 2,978건의 소규모 작업을 처리한 크라우드워커를 근로자로 인정했다. 플랫폼이 등급과 인센티브 체계로 일의 장소·시간·내용을 자유롭게 정할 수 없도록 조종했다면, 작업을 받을 계약상 의무가 없어도 근로관계를 인정할 근거가 된다는 것이다(연방노동법원 보도자료 43/20). 이 판결의 사실관계와 결론은 <a href="us_germany_labor_law_comparison.html">미국과 독일 노동법의 기능적 비교 심화 분석</a>의 7.1과 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>의 5.1에서 자세히 다루었다.</p>
+<h3 id="54-경제적-종속의-별실-유사근로자"><a href="#54-경제적-종속의-별실-유사근로자" class="heading-anchor" aria-hidden="true">#</a> 5.4 경제적 종속의 별실: 유사근로자</h3><p>인격적 종속이 본류가 되는 동안 경제적 종속은 사라지지 않고 별실로 옮겨 갔다. 그 문을 연 것은 1926년 12월 23일의 노동법원법(ArbGG) 제5조다. 이 조항은 &#39;근로자의 개념&#39;을 정하면서, 근로자는 노동자와 직원(도제 포함)이라고 한 뒤, 근로계약관계에 있지 않더라도 &quot;특정한 타인의 위탁을 받아 그 계산으로(im Auftrag und für Rechnung bestimmter anderer Personen)&quot; 노동하는 자, 곧 가내공업자와 그 밖의 근로자 유사인을 근로자와 동등하게 보았다(제국법률공보 원문). 노동법원이라는 절차의 문을 경제적으로 종속된 사람에게도 열어 둔 것이다.</p>
+<p>1974년에는 단체협약법(TVG)에 제12a조가 신설되었다. 현행 조문 제1항 제1호는 경제적으로 종속되고 근로자에 준하여 사회적 보호가 필요한 사람(유사근로자)이 고용계약이나 도급계약에 따라 타인을 위해 일하면서, 약속한 급부를 본인이 직접, 본질적으로 근로자의 도움 없이 제공하고, 주로 한 사람을 위해 일하거나 한 사람에게서 평균적으로 전체 소득의 절반이 넘는 보수를 받는 경우에 이 법을 준용한다고 정한다. 예술·저술·언론 종사자에게는 이 비율이 3분의 1로 낮아지고(제3항), 상법상 대리상에게는 적용되지 않는다(제4항)(보충: 연방법무부 법령 포털의 현행 조문). 이로써 사회적 보호필요성은 법적으로 대등한 기준이 되었다(오상호 2015, 박은정 외 2026, 69쪽). 참고로 2026년 논문 69쪽 각주 34에 실린 제12a조의 독일어 원문과 번역은 현행 조문의 문언과 다르다. 특히 소득의 절반이라는 기준이 빠져 있다(보충).</p>
+<p>이 구조의 의미를 2026년 논문은 이렇게 정리한다. 독일은 일반 근로자에게 적용되는 종속성 개념을 넓히는 대신, 인격적 종속이 부족해도 보호가 필요한 집단을 별도의 법적 범주로 세웠다. 그 결과 경제적 종속성은 근로자 인정이 아니라 근로자에 준하는 최소 보호를 위한 개념으로 자리 잡았다(70쪽).</p>
+<h3 id="55-독일-계보의-요약"><a href="#55-독일-계보의-요약" class="heading-anchor" aria-hidden="true">#</a> 5.5 독일 계보의 요약</h3><p>독일의 구조는 &#39;인격적 종속성과 보완 범주&#39;로 요약된다(박은정 외 2026, 75쪽). 진츠하이머의 넓은 &#39;종속&#39;에서 지시와 편입의 갈래는 근로자 개념의 본류가 되어 판례로 정련되고 법전에 들어갔고, 의존과 보호필요의 갈래는 유사근로자라는 별실에서 제한된 보호를 받았다. 두 갈래는 한 번도 완전히 끊어지지 않았다. 1978년 판결은 잠시 두 갈래를 다시 섞으려 했고, 1980년 판결은 사회적 보호필요성을 결정적이라고 했으며, 방크는 경제적 위험의 언어로 경계 자체를 다시 그으려 했다. 독일의 계보는 하나의 기준이 승리한 역사라기보다, 넓은 개념을 실무에서 쓸 수 있게 좁히면서도 좁힌 대가를 다른 장치로 메워 온 역사다.</p>
+<hr>
+<h2 id="6-일본과-한국으로-문헌의-수용-기준의-정형화-영역별-분화"><a href="#6-일본과-한국으로-문헌의-수용-기준의-정형화-영역별-분화" class="heading-anchor" aria-hidden="true">#</a> 6. 일본과 한국으로 — 문헌의 수용, 기준의 정형화, 영역별 분화</h2><h3 id="61-다이쇼-데모크라시와-독일-노동법-단체협약-이론이-먼저-건너갔다"><a href="#61-다이쇼-데모크라시와-독일-노동법-단체협약-이론이-먼저-건너갔다" class="heading-anchor" aria-hidden="true">#</a> 6.1 다이쇼 데모크라시와 독일 노동법: 단체협약 이론이 먼저 건너갔다</h3><p>일본 노동법학자 니시타니 사토시(西谷敏)는 &quot;바이마르 시대에 꽃핀 독일 노동법과 노동법학은 다이쇼 데모크라시기부터 일본에 큰 영향을 주었다&quot;고 쓰고, 진츠하이머를 독일 노동법의 창시자로 소개한다(西谷 2012). 일본 노동법학의 출발점에 선 스에히로 이즈타로(末弘厳太郎)는 1921년 도쿄제국대학에서 &#39;노동법제&#39; 강의를 시작했고(1930년 &#39;노동법&#39;으로 이름을 바꿈), 1926년 『労働法研究』를 펴냈다.</p>
+<p>진츠하이머가 일본에 어떻게 들어왔는지는 1차 자료로 확인된다. 정치학자 야베 데이지(矢部貞治)가 받아 적은 스에히로의 1924년도 &#39;노동법제&#39; 강의 노트에는 제7장 &#39;노동협약&#39;의 참고문헌 맨 앞에 진츠하이머의 『Der korporative Arbeitsnormenvertrag』(2권, 1907)와 『Ein Arbeitstarifgesetz』가 적혀 있다(藤亮介·大谷伸治 翻刻, 2022). 흥미로운 것은 기록상 가장 먼저 건너간 것이 종속노동 개념이 아니라 단체협약 이론이었다는 점이다. 3장에서 본 대로 진츠하이머 자신에게도 단체협약이 사상의 중심이었다.</p>
+<p>다만 두 사람이 직접 만났거나 서신을 주고받았다는 기록은 찾지 못했다. 스에히로는 1차대전 때문에 예정했던 독일 유학을 포기하고 1917년 11월부터 미국 등지에서 유학한 뒤 1920년 9월 귀국했다(일본어 위키백과, 관보 인용). 강의 노트로 확인되는 것은 저작을 통한 수용까지다 <strong>[확인 필요: 스에히로와 진츠하이머의 직접적인 인적 교류나 서신. 관련 연구를 찾지 못함]</strong>.</p>
+<p>종속노동론 자체의 수용은 1930년대 초에 확인된다. 2026년 논문이 모미이 쓰네요시(籾井常喜)의 『戦後労働法学説史』(2002)를 인용해 소개하는 바에 따르면, 쓰마가리 구라노조(津曲蔵之丞)의 『労働法原理』(改造社, 1932)는 독일의 종속노동론을 받아들여 노동계약을 &quot;종속노동관계에 대한 고유한 법형태&quot;로 규정하고, 종속노동관계가 채권관계인 동시에 &quot;신분적 종속관계를 포장하고 있다&quot;고 보았다(70쪽).</p>
+<h3 id="62-전후-일본-번역-학설의-분화-1985년의-정형화"><a href="#62-전후-일본-번역-학설의-분화-1985년의-정형화" class="heading-anchor" aria-hidden="true">#</a> 6.2 전후 일본: 번역, 학설의 분화, 1985년의 정형화</h3><p>1947년 노동기준법 제정에서 중심 역할을 한 스에히로는 노동계약을 민법상 계약의 특수한 형태로, 노동기준법을 민법상 고용계약의 특별법으로 이해했다(박은정 외 2026, 71쪽). 노동기준법 제9조는 노동자를 &#39;사용되는 자로서 임금을 지급받는 자&#39;로 정의했다.</p>
+<p>전후 학설은 종속성을 두고 갈라졌다. 진츠하이머의 번역자이기도 한 다데누마 겐이치(蓼沼謙一)는 고용계약과 노동계약의 동일성을 강조했다. 민법이 이미 도급·위임과 구별되는 고용계약으로 자본제 노동을 규율하고 있고, 다만 국가가 그것을 규율하는 태도가 민법과 노동법에서 다를 뿐이라는 것이다. 반면 가타오카 노보루(片岡曻)는 노동계약의 본질을 &#39;노동의 종속성&#39;에서 찾으면서, 종속성을 노동 수행 과정의 인격적 복종을 뜻하는 인적 종속성과, 노동력 처분권의 지속적 양도와 노동조건의 사용자 일방결정을 뜻하는 경제적 종속성으로 나누었다. 와가쓰마는 4.2에서 본 대로 종속성을 적극적 판단 기준으로 쓰는 데 비판적이었다. 그는 노동법 규제의 필요성을 사용자의 지휘·명령으로 인한 인격적 구속에서 찾으면서도, 그것을 노동자 개념을 가르는 기준으로 체계화하지는 않았다(이상 박은정 외 2026, 71–72쪽, 籾井 2002 재인용). 독일식 종속성을 그대로 들여오려는 흐름과, 그것을 독일 민법의 특수한 산물로 상대화하려는 흐름이 함께 있었던 것이다.</p>
+<p>번역도 이어졌다. 나라사키 지로(楢崎二郎)와 다데누마가 옮긴 『勞働法原理』(東京大学出版会, 1955)는 『Grundzüge』 제2판(1927)의 번역이고, 1971년 제2판이 나왔으며, 2009년 『ジンツハイマー労働法原理』(信山社出版, 蓼沼謙一著作集 別巻)로 다시 나왔다(CiNii). 니시타니는 노동자를 자유의사의 주체가 아니라 사용자에게 종속된 &#39;계급적 존재&#39;로 파악하고 &#39;생존&#39; 보장을 노동법의 지상 목적으로 본 진츠하이머의 인간상론이 전후 일본에 큰 영향을 주었다고 평가한다(西谷 2012). 평전도 일본에서 먼저 나왔다. 구보 게이지(久保敬治)의 『フーゴ・ジンツハイマー：ある法学者の人生』(三省堂, 1986)는 2001년 제목 순서를 바꿔 信山社에서 다시 나왔고, 1995년에는 하나우(Peter Hanau)가 엮은 독일어판 『Hugo Sinzheimer – Vater des deutschen Arbeitsrechts(휴고 진츠하이머 — 독일 노동법의 아버지)』가 오토브레너재단 총서 제60권으로 나왔다. 독일어판 판권면은 일본어 원판이 1986년 三省堂에서 나왔다고 밝힌다. 구보에게는 『フーゴ・ジンツハイマーとドイツ労働法』(信山社, 1998)도 있다. 독일 노동법의 아버지를 다룬 본격적인 평전이 일본어로 먼저 쓰였다는 사실은 일본에서 진츠하이머가 얼마나 깊이 읽혔는지 보여 준다.</p>
+<p>실무 기준은 행정이 정형화했다. 1970년대 후반부터 1980년대 초까지 하급심 판결이 엇갈리자 노동성이 설치한 연구회가 1985년 12월 19일 「労働基準法の『労働者』の判断基準について」를 내놓았다. 보고서는 &#39;사용되는&#39;을 지휘·감독 아래의 노동으로, &#39;임금 지급&#39;을 보수의 노무대가성으로 풀어 둘을 합쳐 &#39;사용종속성&#39;이라 불렀다. 지휘·감독 여부는 일의 의뢰에 대한 수락·거부의 자유, 업무 수행상의 지휘·감독, 근무 장소·시간의 구속성, 대체성으로 판단하고, 사업자성과 전속성 같은 사정을 보강 요소로 삼았다. 계약 형식과 관계없이 실질적인 사용종속성을 종합 판단하고, 노동기준 관계 법제 전체에 공통의 판단을 적용한다는 점도 분명히 했다(후생노동성 원문). 같은 취지로 노동자성을 판단한 최고재판소 판례로는 용차 운전기사의 노동자성을 부정한 1996년 11월 28일의 横浜南労基署長(旭紙業)事件이 확인된다. 노동 전문지 労働新聞은 이 판결을 용차 운전기사의 노동자성에 관한 첫 판단으로, 노동기준법 연구회 보고와 같은 취지라고 소개한다.</p>
+<p>최근 일본은 이 틀을 다시 들여다보고 있다. 2023년 이른바 프리랜서법(特定受託事業者に係る取引の適正化等に関する法律)이 제정되어 2024년 11월 1일 시행되었고, 후생노동성은 2025년 1월 8일 공표한 「労働基準関係法制研究会報告書」에서 1985년 보고를 실태·판례·학설에 비추어 재검토할 필요를 지적하면서 플랫폼 워커에 대해서는 EU 지침의 추정 방식 등을 소개했다. 2025년 5월부터 열린 「労働基準法における『労働者』に関する研究会」는 2026년 7월 17일 제6회 회의를 거쳐 9월 9일 그동안의 논의를 정리한 문서를 공개했다.</p>
+<h3 id="63-한국-문헌의-수용과-판례의-종속"><a href="#63-한국-문헌의-수용과-판례의-종속" class="heading-anchor" aria-hidden="true">#</a> 6.3 한국: 문헌의 수용과 판례의 종속</h3><p>한국에서 진츠하이머를 직접 다룬 연구로 이 글이 확인한 가장 이른 것은 이흥재의 「휴고 진쯔하이머의 생애와 학문: 한 &#39;인간적 사회주의자&#39;에 대한 소묘」(『노동법연구』 제1호, 서울대학교 노동법연구회, 1991)다. 이어서 이원희의 「진쯔하이머의 노동법론과 그 업적」이 『노동법연구』 제5호에 실렸다. 이 논문의 연도는 DBpia 서지가 1996년 6월(202–268쪽)로 적는 반면, 2026년 논문은 1998년으로 적는다. 이원희가 옮긴 『노동법원리』는 2004년 2월 28일 관악사에서 나왔다(국립중앙도서관 서지). 최근에는 이다혜가 「근로자 개념의 재검토: 4차 산업혁명, 플랫폼 노동의 부상에 따른 &#39;종속노동&#39;의 재조명」(『노동법연구』 제49호, 2020)에서 진츠하이머의 종속노동을 회색지대 노동자를 포섭할 수 있는 개념으로 다시 읽자고 제안했고, 김연식은 「노동헌법의 의미와 역사적 전개」에서 진츠하이머의 노동헌법을 다루었다.</p>
+<p>판례의 &#39;종속&#39;은 이와 별도의 길로 들어왔다. 1953년 근로기준법 제14조는 근로자를 &quot;직업의 종류를 불문하고 사업 또는 사업장에 임금을 목적으로 근로를 제공한 자&quot;로 정의했고, 현행 제2조 제1항 제1호도 표현만 다듬었을 뿐 골격이 같다. 법문에는 &#39;종속&#39;이 없다. 대법원은 1972년(72도334)에는 정의 규정을 인용하는 데 그쳤고, &#39;종속&#39;이라는 말은 1980년 철도하역 근로자 사건(79다2147)에 처음 나타났다. 1989년 전공의 사건(88다카21296)은 &quot;실질적인 사용종속관계&quot;를 말했고, 1994년 12월 9일의 94다22859 판결이 종속적 관계를 판단할 지표를 처음 체계적으로 늘어놓았다. 2006년 12월 7일의 2004다29736 판결은 &#39;구체적·개별적 지휘·감독&#39;을 &#39;상당한 지휘·감독&#39;으로 낮추고, 고정급·원천징수·사회보장법상 지위 같은 사정은 사용자가 임의로 정할 여지가 크므로 그것만으로 근로자성을 쉽게 부정해서는 안 된다고 했다(박은정 외 2026, 59–62쪽). 이 연혁과 판단 구조의 문제는 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>의 2장과 3장에서 자세히 다루었다.</p>
+<p>계보의 관점에서 한국의 특징은 경제적 종속의 갈래가 독일처럼 별도의 &#39;유사근로자&#39; 범주로 묶이지 않고, 법 영역마다 다른 기준으로 되살아났다는 데 있다. 노동조합법상 근로자에 대해서는 1993년(90누1731)부터 2006년, 2011년, 2014년, 2015년의 판결을 거쳐 2018년 6월 15일 재능교육 학습지교사 사건(2014두12598·12604)이 판단 요소를 정식화했다. 대법원은 노조법상 근로자를 &quot;타인과의 사용종속관계하에서 노무에 종사하고 대가로 임금 기타 수입을 받아 생활하는 자&quot;로 보면서, 소득의 특정 사업자 의존, 보수 등 계약 내용의 일방적 결정, 사업 수행에 필수적인 노무를 제공해 그 사업을 통해 시장에 접근하는지, 지속적·전속적 관계, 어느 정도의 지휘·감독, 수입의 노무대가성을 따지고, &quot;노동3권을 보장할 필요성이 있는지의 관점&quot;에서 판단하며 노조법상 근로자가 &quot;반드시 근로기준법상 근로자에 한정된다고 할 것은 아니&quot;라고 했다. 학습지교사는 근로기준법상 근로자가 아니지만 &quot;경제적·조직적 종속관계&quot;를 이유로 노조법상 근로자로 인정되었다. 독일에서 근로자 개념 밖으로 밀려났던 경제적 종속과 조직적 편입이 한국에서는 집단법 영역의 근로자 개념 안으로 돌아온 것이다.</p>
+<p>사회보험에서도 같은 일이 일어났다. 2007년 산재보험법이 특수형태근로종사자 특례를 도입했고(박은정 외 2026, 95쪽), 이후 고용보험과 산재보험에 &#39;노무제공자&#39; 개념이 들어왔으며(94쪽), 2023년 7월 1일부터는 산재보험의 전속성 요건이 전면 폐지되었다(대한민국 정책브리핑, 2023. 6. 7.).</p>
+<h3 id="64-수용-경로는-단정할-수-있는가"><a href="#64-수용-경로는-단정할-수-있는가" class="heading-anchor" aria-hidden="true">#</a> 6.4 수용 경로는 단정할 수 있는가</h3><p>독일에서 일본을 거쳐 한국으로 이어지는 수용 경로는 그럴듯하지만 증명된 것은 아니다. 2026년 논문은 독일의 종속성 개념이 일본 노동법학 초기 형성기 학자들에게 영향을 미쳤고, 일본에서 정립된 개념이 한국 판례에 영향을 미친 것으로 &quot;해석되고 있다&quot;고 쓰면서도(65–66쪽), 한국 판례의 다요소 종합 판단이 &quot;직접적인 이론 수입의 결과인지, 아니면 유사한 산업화 과정과 노동관계 현실에 직면하여 독자적으로 형성된 결과인지를 실증적으로 단정하기는 어렵다&quot;고 유보한다(75쪽). 이 글도 이 유보를 따른다.</p>
+<p>연대를 겹쳐 보면 유보할 이유가 하나 더 보인다. 한국 판례에 &#39;종속&#39;이 처음 나타난 것은 1980년이고 지표가 체계화된 것은 1994년인데, 이 글이 확인한 범위에서 진츠하이머를 직접 다룬 한국어 연구는 1991년에, 한국어판 저작은 2004년에 나왔다. 한국 판례의 &#39;종속&#39;이 진츠하이머를 읽고 들여온 개념이라고 볼 근거는 적다. 오히려 일본의 판례·행정 기준과 학설, 그리고 공장형 고용이라는 같은 현실이 바탕이 되었을 가능성이 크지만, 그것 역시 추정이다. 일본 법리가 한국 노동법제에 미친 영향의 다른 단면, 곧 해고와 취업규칙 법리의 계보는 <a href="membership_employment_japan_korea.html">멤버십형 고용과 일본·한국 노동법제 심화 분석</a>의 7장에서 따로 다루었다.</p>
+<p>세 나라의 갈래를 한 장에 놓으면 다음과 같다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 500" role="img" aria-label="독일, 일본, 한국에서 인적·인격적 종속의 선과 경제적·조직적 종속의 선이 각각 어떤 제도로 자리 잡았는지 비교한 지도">
+  <rect x="8" y="8" width="764" height="484" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">두 개의 선, 세 나라의 지도</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">위 = 인적·인격적 종속의 선 · 아래 = 경제적·조직적 종속의 선</text>
+  <rect x="152" y="70" width="196" height="34" rx="8" fill="#1e3a8a"/>
+  <text x="250" y="92" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">독일</text>
+  <rect x="356" y="70" width="196" height="34" rx="8" fill="#1e3a8a"/>
+  <text x="454" y="92" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">일본</text>
+  <rect x="560" y="70" width="196" height="34" rx="8" fill="#1e3a8a"/>
+  <text x="658" y="92" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">한국</text>
+  <rect x="24" y="112" width="118" height="132" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="83" y="162" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">인적·인격적</text>
+  <text x="83" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">종속의 선</text>
+  <text x="83" y="202" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">누가 지휘하나</text>
+  <rect x="152" y="112" width="196" height="132" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="250" y="134" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">근로자(Arbeitnehmer)</text>
+  <text x="250" y="156" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">인격적 종속: 지시 구속 · 편입</text>
+  <text x="250" y="176" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">BAG 1975 다지표 유형론</text>
+  <text x="250" y="196" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">BGB §611a(2017) 성문화</text>
+  <text x="250" y="216" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2020 크라우드워커로 확장</text>
+  <rect x="356" y="112" width="196" height="132" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="454" y="134" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">노동기준법상 노동자</text>
+  <text x="454" y="156" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">1985 보고 '사용종속성'</text>
+  <text x="454" y="176" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">지휘감독 + 보수의 노무대가성</text>
+  <text x="454" y="196" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">수락 자유 · 구속성 · 대체성</text>
+  <text x="454" y="216" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">最高裁 1996 旭紙業(같은 취지)</text>
+  <rect x="560" y="112" width="196" height="132" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="658" y="134" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">근로기준법상 근로자</text>
+  <text x="658" y="156" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">판례가 덧붙인 '종속적 관계'</text>
+  <text x="658" y="176" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">94다22859 지표 체계화</text>
+  <text x="658" y="196" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2004다29736 상당한 지휘·감독</text>
+  <text x="658" y="216" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2024두32973 알고리즘 고려</text>
+  <rect x="24" y="254" width="118" height="132" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="83" y="304" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">경제적·조직적</text>
+  <text x="83" y="322" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">종속의 선</text>
+  <text x="83" y="344" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">누구에게 기대나</text>
+  <rect x="152" y="254" width="196" height="132" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="250" y="276" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">유사근로자</text>
+  <text x="250" y="298" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">ArbGG 1926 §5 근로자 유사인</text>
+  <text x="250" y="318" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">TVG 1974 §12a</text>
+  <text x="250" y="338" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">경제적 종속 + 사회적 보호필요</text>
+  <text x="250" y="358" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">근로자 인정이 아니라 최소 보호</text>
+  <rect x="356" y="254" width="196" height="132" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="454" y="276" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">학설과 보강 요소</text>
+  <text x="454" y="298" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">片岡: 인적 · 경제적 종속 구분</text>
+  <text x="454" y="318" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">我妻: 독일적 특수로 상대화</text>
+  <text x="454" y="338" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">1985 보고: 사업자성 · 전속성</text>
+  <text x="454" y="358" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2023 프리랜서법(거래 규율)</text>
+  <rect x="560" y="254" width="196" height="132" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="658" y="276" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">노조법 · 사회보험</text>
+  <text x="658" y="298" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2014두12598 학습지교사(2018)</text>
+  <text x="658" y="318" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">경제적 · 조직적 종속관계</text>
+  <text x="658" y="338" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2007 산재 특수형태근로종사자</text>
+  <text x="658" y="358" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2023. 7. 1. 전속성 요건 폐지</text>
+  <rect x="24" y="396" width="732" height="82" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="390" y="418" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">공통: 다지표 종합 판단 · 계약 형식보다 실질</text>
+  <text x="390" y="442" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">독일 = 인격적 종속성 + 보완 범주 · 일본 = 사용종속성 기준의 정형화 (박은정 외 2026, 75쪽)</text>
+  <text x="390" y="464" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">한국 = 근로기준법 · 노조법 · 사회보험으로 기준이 갈라진 구조 (이 글의 정리)</text>
+</svg>
+</div>
+
+<hr>
+<h2 id="7-국제-동향-사실-우선-지표의-확장-추정"><a href="#7-국제-동향-사실-우선-지표의-확장-추정" class="heading-anchor" aria-hidden="true">#</a> 7. 국제 동향 — 사실 우선, 지표의 확장, 추정</h2><p>국제 규범은 한 나라의 근로자 개념을 정하지 않는다. 그러나 각국이 기준을 손볼 때 참조하는 공통의 언어를 만든다. 계보의 관점에서 눈에 띄는 것은 그 언어가 인격적 종속 하나로 좁혀져 있지 않다는 점이다.</p>
+<p>2006년 6월 15일 제95차 국제노동총회가 채택한 ILO 고용관계 권고 제198호는 제9항에서 사실 우선(primacy of facts)의 원칙을 세웠다. 제11항은 (a) 고용관계를 판단하는 폭넓은 수단을 허용하고, (b) 하나 이상의 관련 지표가 있으면 고용관계가 존재한다고 법적으로 추정하며, (c) 노사 협의를 거쳐 특정한 특성을 가진 노동자를 피용자나 자영인으로 간주하는 방안을 제시한다. 제12항은 판단 조건의 예로 &quot;종속 또는 의존(subordination or dependence)&quot;을 든다. 제13항의 지표 목록에는 타인의 지시와 통제, 기업 조직으로의 통합(integration), 전적으로 또는 주로 타인의 이익을 위한 노동, 본인 수행, 특정 시간과 장소, 계속성, 대기 같은 인적 지표와 함께, 정기적 보수, 보수가 유일하거나 주된 소득원인지, 재정적 위험의 부재 같은 경제적 지표가 나란히 들어 있다(권고 원문). 독일에서 근로자 개념 밖으로 밀려났던 경제적 의존과 조직 편입이 국제 규범에서는 지시·통제와 같은 목록에 있는 셈이다.</p>
+<p>통계도 같은 방향으로 움직였다. 2018년 제20차 국제노동통계인회의가 채택한 국제종사상지위분류(ICSE-18)는 일하는 사람을 권한(authority)과 경제적 위험이라는 두 축으로 다시 분류하고, 형식상 자영이지만 다른 경제 단위에 의존하는 &#39;종속적 계약자(dependent contractors)&#39;를 새로 두었다(박은정 외 2026, 87–89쪽). 경제적 위험이라는 축은 5.2에서 본 방크의 기업가적 위험론과 닮았다. 통계 분류의 상세는 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>의 6장에서 다루었다.</p>
+<p>플랫폼 노동에 대해서는 입증 구조를 바꾸는 입법이 이어졌다. 스페인 대법원이 2020년 9월 25일 글로보(Glovo) 배달 노동자를 근로자로 본 판결(STS 805/2020)을 입법화한 이른바 라이더법은 2021년 5월 11일 왕령법(Real Decreto-ley 9/2021)으로 도입된 뒤, 의회 심의를 거쳐 2021년 9월 28일 법률 제12호(Ley 12/2021, 9. 29. 공포, 9. 30. 시행)로 확정되었다. 노동자헌장에 신설된 추가규정 제23조는 플랫폼을 통한 알고리즘 관리로 조직·지휘·통제 권한을 &quot;직접, 간접 또는 묵시적으로&quot; 행사하는 사업자를 위해 배달 노무를 제공하는 사람을 노동법 적용 대상으로 추정하고, 제64조 제4항 d호는 종업원대표에게 알고리즘과 인공지능의 파라미터와 규칙에 관한 정보권을 준다(스페인 관보 원문).</p>
+<p>EU의 플랫폼 노동 지침(Directive (EU) 2024/2831)은 2024년 10월 23일 서명되어 11월 11일 관보에 실렸고 12월 1일 발효했다. 국내법 전환 기한은 2026년 12월 2일이다(제29조). 제5조는 국내법·단체협약·관행에 따르고 EU사법재판소 판례를 고려하여 지휘와 통제(direction and control)를 나타내는 사실이 발견되면 플랫폼과 노무제공자의 계약관계를 고용관계로 법적으로 추정하고, 추정을 깨려면 플랫폼이 고용관계가 아님을 증명하도록 한다. 알고리즘 관리에 관한 정보 제공과 인간 검토 규정도 두었다(지침 채택문, EU 출판국 메타데이터).</p>
+<p>가장 최근의 이정표는 2026년 6월 12일 제114차 국제노동총회가 채택한 플랫폼 경제의 양질의 일에 관한 ILO 협약 제193호다. 국내법상 지위 분류와 관계없이 모든 플랫폼 노동자에게 결사의 자유와 단체교섭, 차별·아동노동·강제노동 금지, 산업안전보건을 보장하도록 요구하고, 고용관계 밖의 노동자에게도 산업안전과 계정 비활성화에 대한 보호를 넓히며, 알고리즘 투명성과 결정 재검토 장치를 둔다. 비준한 나라에만 구속력이 있다(ILO 보도). 매일경제는 정부가 &#39;일하는 사람 기본법&#39;을 통해 비준을 검토한다고 보도했다.</p>
+<p>이 흐름을 계보에 겹치면 두 가지가 보인다. 하나는 판단의 언어가 지시·통제에서 &#39;지휘와 통제를 나타내는 사실&#39;, 경제적 의존, 조직 통합으로 넓어지고 있다는 것이다. 다른 하나는 질문 자체가 &#39;이 사람이 종속되어 있는가&#39;에서 &#39;누가 종속이 아님을 증명해야 하는가&#39;로 옮겨 가고 있다는 것이다. 각국의 추정 규정 비교는 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>의 8.4와 <a href="us_germany_labor_law_comparison.html">미국과 독일 노동법의 기능적 비교 심화 분석</a>의 7.1에서 다루었다.</p>
+<hr>
+<h2 id="8-플랫폼-시대의-쟁점-계보의-갈래들이-다시-불려-나오다"><a href="#8-플랫폼-시대의-쟁점-계보의-갈래들이-다시-불려-나오다" class="heading-anchor" aria-hidden="true">#</a> 8. 플랫폼 시대의 쟁점 — 계보의 갈래들이 다시 불려 나오다</h2><p>알고리즘이 일을 배분하고 평점이 보상과 제재를 대신하는 플랫폼 노동은 지시 없는 통제다. 이 현상을 법이 어떻게 다룰지에 대한 논의는 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>에서 자세히 살폈다. 여기서는 그 논의들이 종속성 계보의 어느 갈래를 다시 불러내는지만 정리한다.</p>
+<h3 id="81-인격적-종속의-선을-넓혀-쓰기"><a href="#81-인격적-종속의-선을-넓혀-쓰기" class="heading-anchor" aria-hidden="true">#</a> 8.1 인격적 종속의 선을 넓혀 쓰기</h3><p>첫 번째 대응은 기존의 인격적 종속 법리를 플랫폼에 넓혀 적용하는 것이다. 독일 연방노동법원의 2020년 크라우드워커 판결과 한국 대법원의 2024년 7월 25일 타다 드라이버 판결(2024두32973)이 대표적이다. 타다 판결은 2004다29736의 기준을 유지하면서, 플랫폼 종사자에 대해서는 직접 개별적인 근로계약을 맺을 필요가 적은 사업 구조와, 일의 배분과 수행 방식 결정에 온라인 플랫폼의 알고리즘이나 복수의 사업참여자가 관여하는 노무관리의 특성을 고려해 판단 요소를 적정하게 적용해야 한다는 판단 방법을 처음 덧붙였다. 2026년 논문은 두 판결 모두 기준 자체를 다시 짜지 않고 기존 법리를 확장·유추한 것으로 평가한다(81–82쪽). 계보로 보면 1920년대에 자리 잡은 지시와 편입의 선이 여전히 본류이고, 그 선을 끝까지 늘여 쓰는 단계다.</p>
+<h3 id="82-밀려났던-경제적-종속의-귀환"><a href="#82-밀려났던-경제적-종속의-귀환" class="heading-anchor" aria-hidden="true">#</a> 8.2 밀려났던 경제적 종속의 귀환</h3><p>두 번째는 경제적 종속의 재평가다. 독일에서 경제적 종속은 근로자 개념에서 밀려나 유사근로자로 옮겨 갔지만, 한국에서는 노조법상 근로자(2014두12598)와 사회보험의 노무제공자에서 다시 기능한다. 권고 제198호 제13항의 경제적 지표, ICSE-18의 경제적 위험 축, 방크의 기업가적 위험론이 모두 이 흐름 위에 있다. 진츠하이머의 넓은 &#39;종속&#39;이 품고 있던 경제적 신민 상태라는 차원이, 그 뒤 좁혀진 근로자 개념 밖에서 다른 이름으로 돌아오고 있는 것이다.</p>
+<h3 id="83-조직적-종속-곧-편입의-재발견"><a href="#83-조직적-종속-곧-편입의-재발견" class="heading-anchor" aria-hidden="true">#</a> 8.3 조직적 종속, 곧 편입의 재발견</h3><p>세 번째는 조직적 종속성, 곧 사업 편입이다. 학습지교사 판결의 &quot;경제적·조직적 종속관계&quot;, 김린의 사업편입성 논의, 유럽 집행위원회 고용총국 명의로 나온 이른바 슈피오(Alain Supiot) 보고서, 그리고 니키쉬 이래 독일의 편입(Eingliederung) 기준이 여기에 속한다. 2026년 논문은 이 접근의 보완적 의미를 인정하면서도, 외주업체도 편입되어 있다고 볼 수 있어 외연이 불명확하고 권력관계 자체를 분석하지 않는다는 이유로 대체 기준으로 삼기는 어렵다고 본다(99–100쪽).</p>
+<h3 id="84-누구에게-종속되는가"><a href="#84-누구에게-종속되는가" class="heading-anchor" aria-hidden="true">#</a> 8.4 누구에게 종속되는가</h3><p>네 번째 쟁점은 종속의 상대방이다. 다층 하청과 플랫폼에서는 계약 상대방, 일을 배분하는 플랫폼, 실질적으로 조건을 정하는 원청이 서로 다를 수 있다. 진츠하이머의 &#39;타인의 처분권&#39;은 그 타인이 누구인지를 묻게 만든다.</p>
+<p>한국에서는 이 문제가 집단법에서 먼저 입법으로 다루어졌다. 이른바 노란봉투법(노조법 제2조·제3조 개정)은 2025년 8월 24일 국회를 통과해(재석 186명, 찬성 183명) 9월 9일 공포되었고 2026년 3월 10일 시행되었다. 제2조 제2호 후단은 &quot;근로계약 체결 당사자가 아니더라도 근로자의 근로조건에 대하여 실질적이고 구체적으로 지배·결정할 수 있는 지위에 있는 자도 그 범위에 있어서는 사용자로 본다&quot;고 정한다. 근로자가 아닌 자의 가입을 허용하면 노동조합으로 보지 않는다는 제2조 제4호 라목은 삭제되었고, 노동쟁의의 대상과 손해배상 청구 제한도 손보았다. 다만 제2조 제1호의 근로자 정의 자체는 바뀌지 않았다(김·장 법률사무소 개정 대비표). 바뀐 것은 &#39;누가 근로자인가&#39;보다 &#39;누가 사용자인가&#39;였다.</p>
+<p>개정 전 사건에 대해서는 대법원이 선을 그었다. 2026년 5월 21일 2018다296229 전원합의체 판결은 구 노조법이 적용되는 사안에서 단체교섭 의무를 지는 사용자를 명시적·묵시적 근로계약관계의 당사자로 한정하는 기존 법리를 유지하고, 개정법과 같은 법리를 해석으로 만들어 내는 것은 부적절하다고 보았다(대법원 보도자료, 연합뉴스). 같은 법리에 따라 2026년 7월 9일 2024두37015 판결은 원청 CJ대한통운의 교섭 의무를 인정한 원심을 파기환송했다(법률신문, 법무법인 화우, 연합뉴스 보도. 판결문 원문은 대조하지 못했다). 개별법에서는 타다 판결이 실질적 사용자를 판단했다. 종속의 상대방을 찾는 일이 집단법과 개별법에서 다른 경로로 진행되고 있는 셈이다.</p>
+<h3 id="85-추정-증명의-짐을-옮기기"><a href="#85-추정-증명의-짐을-옮기기" class="heading-anchor" aria-hidden="true">#</a> 8.5 추정 — 증명의 짐을 옮기기</h3><p>다섯 번째는 입증 구조의 전환이다. EU 지침 제5조, 권고 제198호 제11항 (b), 스페인 라이더법에 이어 한국에서도 근로자 추정 제도가 논의되고 있다. 2026년 3월 25일 국회 기후에너지환경노동위원회 전체회의가 일하는 사람의 권리에 관한 기본법안들과 근로기준법 개정안(근로자 추정)을 고용노동법안심사소위원회에 회부했지만, 4월 2일 소위에서 논의 대상에서 빠졌고 노동절 입법도 무산되었다(매일노동뉴스 2026. 4. 10., 경향신문 2026. 5. 1.). 7월 26일에는 이강일 의원이 노무제공자 근로자 추정 법안을 대표발의했다. 민사소송과 노동위원회 절차에서 근로자로 추정하고, 사용자가 지휘·감독의 부존재, 통상적 사업 범위 밖의 업무, 독립사업자성을 모두 증명해야 추정이 깨지며, 형사절차에는 적용되지 않는 구조다(대한경제 2026. 7. 26.). 고용노동부는 8월 4일 업무보고에서 12월까지 패키지 입법을 밝혔고(브릿지경제), 장관은 8월 12일 국회 업무보고에서 올해 안 입법 완료를 지원하겠다고 했다(서울신문 2026. 9. 13.). 9월 13일 보도 기준으로 법안은 소위에 계류 중이었고, 9월 하순까지 통과 보도는 찾지 못했다 <strong>[확인 필요: 국회 의안정보시스템 직접 조회에 실패해 의안번호와 최신 처리 상태는 언론 보도로만 확인함]</strong>. 2026년 논문의 근로기준법 제2조 개정안과 추정의 효과·한계는 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>의 8장에서 다루었다.</p>
+<h3 id="86-진츠하이머로의-회귀"><a href="#86-진츠하이머로의-회귀" class="heading-anchor" aria-hidden="true">#</a> 8.6 진츠하이머로의 회귀</h3><p>여섯 번째 흐름은 진츠하이머 자신을 다시 읽는 것이다. 이다혜(2020)는 『Grundzüge』 제2판을 올바로 읽으면 종속노동은 회색지대 노동자까지 포섭할 수 있는 훨씬 유연한 분석 개념이고, 일부 학설과 판결의 이해는 본래 취지와 동떨어져 있다고 본다. 2026년 논문의 &#39;타인결정성&#39;도 진츠하이머의 &#39;타인의 처분권&#39;에서 정당성을 끌어온다. 이 흐름을 정확히 읽으려면 진츠하이머의 다른 축도 함께 기억해야 한다. 바이스(Manfred Weiss)가 강조하듯 진츠하이머에게 개별 노동법과 집단 노동법은 떼어 놓을 수 없는 하나였고, 그가 더 많은 힘을 쏟은 것은 개별 노동자의 종속을 판정하는 일보다 단체협약과 노동헌법을 통한 집단적 자기결정으로 종속을 상쇄하는 일이었다(Weiss 2015). 노란봉투법이 사용자 개념을 넓히고 비근로자의 노조 가입 제한을 없앤 것은, 의도했든 아니든 이 두 번째 축과 맞닿아 있다.</p>
+<hr>
+<h2 id="9-2026년-논문은-진츠하이머와-종속성을-어떻게-다루는가"><a href="#9-2026년-논문은-진츠하이머와-종속성을-어떻게-다루는가" class="heading-anchor" aria-hidden="true">#</a> 9. 2026년 논문은 진츠하이머와 종속성을 어떻게 다루는가</h2><h3 id="91-논문의-자리"><a href="#91-논문의-자리" class="heading-anchor" aria-hidden="true">#</a> 9.1 논문의 자리</h3><p>박은정(한국방송통신대학교 법학과, 주저자·교신저자), 백승호(가톨릭대학교 사회복지학과), 이승윤(중앙대학교 사회복지학과)의 「노동보호법제 적용을 위한 &quot;종속성&quot; 연구」는 『노동법학』 제98호(2026. 6.) 57–126쪽에 실렸다. 2026년 5월 8일 투고되어 6월 3일 심사를 거쳐 6월 7일 게재가 확정되었다. 논문은 집단법(노조법)이 아니라 개별적 노동관계의 노동보호법제에서 쓰이는 종속성에 대상을 한정한다(58–59쪽 각주 1). 한국 판례의 연혁과 종속성 개념사, 독일·일본의 비교에서 출발해 종속성론의 내재적 모순과 대안론을 검토하고, 종속성을 &quot;발견되는 사실&quot;이 아니라 보호 필요성을 위해 &quot;구성된 규범적 개념&quot;으로 다시 놓은 뒤(101쪽), 대안 개념으로 &#39;타인결정성&#39;을 제안하고 근로기준법 제2조 개정안을 내놓는다(114–117쪽). 그 논증과 개정안 자체는 <a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가</a>의 7장과 8장에서 검토했으므로, 여기서는 논문이 진츠하이머와 종속성의 계보를 어떻게 쓰는지만 본다.</p>
+<h3 id="92-진츠하이머가-등장하는-자리"><a href="#92-진츠하이머가-등장하는-자리" class="heading-anchor" aria-hidden="true">#</a> 9.2 진츠하이머가 등장하는 자리</h3><p>논문에서 진츠하이머는 여섯 군데에 나온다.</p>
+<ul>
+<li><strong>65쪽 본문</strong>: 노동법을 시민법과 구별되는 독자적인 법 영역으로 이론적으로 체계화한 독일 노동법학의 창시자로 소개한다(각주 17, 이원희 논문 211쪽).</li>
+<li><strong>65쪽 본문</strong>: 법적 의미의 노동을 타인의 욕구를 만족시키는 인간의 목적의식적 활동으로, 그 기초인 노동력을 인격 속에 존재하는 육체적·정신적 능력의 총체로 정의하고, 처분권이 법적으로 타인에게 귀속되는 노동을 종속노동, 곧 &quot;타인의 처분권 하에 있는 노동&quot;이자 하나의 법적 권력관계 아래에서 급부하는 노동으로 소개한다(각주 18–23, 이원희 역 『노동법원리』 5·6·7·2쪽).</li>
+<li><strong>65–66쪽</strong>: 이 개념을 독일은 인격적 종속성, 프랑스는 법적 종속성(subordination juridique), 영미는 통제(control)로 설명해 왔다고 연결하고, 독일 개념이 일본 초기 학자에게, 일본 개념이 한국 판례에 영향을 준 것으로 &quot;해석되고 있다&quot;고 쓴다.</li>
+<li><strong>106–107쪽</strong>: 타인결정성이 &quot;전혀 새로운 것은 아니다&quot;라고 하면서, 진츠하이머가 이미 종속노동을 &#39;타인의 처분권 하에 있는 노동&#39;으로 이해함으로써 타인결정성을 핵심 요소로 파악했고, 독일 연방노동법원도 인격적 종속성의 핵심을 &#39;타인이 결정하는 노동(fremdbestimmte Arbeit)&#39;으로 설명한다고 쓴다.</li>
+<li><strong>118쪽 결론</strong>: 타인결정성을 &quot;진츠하이머 이래 종속노동의 본질로 파악되어 온 개념&quot;이라고 부른다.</li>
+<li><strong>125쪽 영문 초록</strong>: 같은 취지로 &quot;a notion identified as the essence of dependent labor since Sinzheimer&quot;라고 쓴다.</li>
+</ul>
+<p>요컨대 논문에서 진츠하이머는 종속노동 정의의 출처이자 대안 개념의 정당화 근거로 쓰인다. 생애, 단체협약의 규범적 효력, 사회적 자기결정, 노동헌법과 경제민주주의, 개별법과 집단법의 통일성은 다루지 않는다. 이것은 논문이 개별적 노동보호법제로 대상을 한정했기 때문으로 이해된다. 진츠하이머의 1차 문헌으로는 독일어 원전이 아니라 한국어판 『노동법원리』(2004) 하나를, 2차 문헌으로는 이원희의 논문 하나를 인용한다.</p>
+<h3 id="93-계보와-맞아떨어지는-것"><a href="#93-계보와-맞아떨어지는-것" class="heading-anchor" aria-hidden="true">#</a> 9.3 계보와 맞아떨어지는 것</h3><p>논문의 큰 줄기는 이 글이 따라온 계보와 일치한다. 진츠하이머가 독일 노동법학의 창시자로서 종속노동을 노동법의 대상으로 규정했다는 점, 독일에서 경제적 종속에서 인격적 종속으로 중심이 옮겨 가고 연방노동법원이 다지표 유형론을 다듬었으며 경제적 종속이 유사근로자로 옮겨 갔다는 점, 2017년 민법 제611a조의 성문화와 2020년 크라우드워커 판결, 일본 1985년 보고의 사용종속성과 네 가지 판단 요소, 권고 제198호 제12항의 &quot;subordination or dependence&quot;와 EU 지침의 추정 방식, 그리고 한국에서 94다22859가 지표를 처음 체계화하고 2004다29736이 &#39;상당한 지휘·감독&#39;으로 완화했다는 점이 그렇다. 수용 경로를 단정하지 않는 신중함(75쪽)도 계보 연구의 태도로서 타당하다.</p>
+<p>논문은 계보를 보강하는 자료도 제공한다. 1953년 근로기준법 제14조의 문언과 1972년부터 1991년까지의 판례 연혁, 진츠하이머 종속노동 정의의 한국어 문언, 일본의 전전·전후 학설사, 1978년 연방노동법원 판결의 조직적 종속성, ICSE-18과 스페인 라이더법, 2007년 산재보험법의 특수형태근로종사자 특례가 그 예다.</p>
+<h3 id="94-해석상-긴장-다섯-가지-읽는-법"><a href="#94-해석상-긴장-다섯-가지-읽는-법" class="heading-anchor" aria-hidden="true">#</a> 9.4 해석상 긴장 — 다섯 가지 읽는 법</h3><p>다만 진츠하이머를 다루는 대목에는 계보에 비추어 비판적으로 읽어야 할 곳이 있다. 오류라기보다 해석의 선택이 드러나는 곳들이다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>쟁점</th>
+<th>논문의 서술</th>
+<th>계보에서 보이는 것</th>
+<th>읽는 법</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>출처</td>
+<td>진츠하이머 정의를 한국어판 『노동법원리』(2004)의 쪽수로만 인용(65쪽 각주 18–23)</td>
+<td>원전 『Grundzüge』(1927)의 쪽수가 없어 독일어 문언과 대조할 수 없다</td>
+<td>인용할 때는 &quot;진츠하이머(이원희 역, 2004)&quot;로 밝히고, 원전의 해당 대목을 함께 확인하는 것이 안전하다</td>
+</tr>
+<tr>
+<td>등치</td>
+<td>진츠하이머의 종속노동을 독일의 인격적 종속성, 프랑스의 법적 종속성, 영미의 통제와 곧바로 잇는다(65–66쪽)</td>
+<td>논문 자신의 독일사 서술(66쪽)대로 인격적 종속성이 전면에 선 것은 1920년대 이후다. 진츠하이머의 &#39;종속&#39;은 법적 권력관계이자 경제적 신민 상태까지 품는 넓은 개념이었다(Weiss, 이다혜)</td>
+<td>오늘의 지시 구속 중심 인격적 종속과 같다고 보기 어렵다. 결론(118쪽)이 진츠하이머로 타인결정성을 세운 것은 오히려 이 차이를 활용한 것이어서 65쪽의 등치와 긴장이 있다</td>
+</tr>
+<tr>
+<td>용어</td>
+<td>진츠하이머가 타인결정성을 종속노동의 핵심 요소로 파악했고, 그것이 &quot;진츠하이머 이래 종속노동의 본질&quot;이라고 쓴다(106·118쪽)</td>
+<td>&#39;fremdbestimmt&#39;는 연방노동법원 판례(5 AZR 819/76 등)와 2017년 제611a조의 용어다. 진츠하이머 원전이 이 단어를 썼는지는 논문이 보여 주지 않는다</td>
+<td>&#39;타인의 처분권&#39;에서 &#39;타인결정&#39;으로 잇는 것은 저자들의 해석적 재구성으로 읽어야 한다. 재구성으로서는 4.4에서 본 계보와 잘 맞는다</td>
+</tr>
+<tr>
+<td>범위</td>
+<td>진츠하이머를 종속 판정 기준의 출처로만 다룬다(개별 노동보호법제로 대상 한정, 각주 1)</td>
+<td>진츠하이머 사상의 중심은 단체협약의 규범적 효력, 사회적 자기결정, 노동헌법이었다(3장)</td>
+<td>종속을 확인하는 축과 종속을 상쇄하는 축을 함께 보아야 진츠하이머가 온전히 보인다(9.6)</td>
+</tr>
+<tr>
+<td>로트마르</td>
+<td>로트마르를 노동계약이라는 민법적 계약 형식으로 노동질서를 체계화하려 한 시도로 정리하고(70쪽 각주 35), &quot;Phillpp Lotmar, Der Arbeitsvertrag, Duncker &amp; Humblot GmbH, 2001&quot;로 인용한다</td>
+<td>2001년 판은 레빈더(Manfred Rehbinder)가 검토·편집한 제2판이다(독일국립도서관 목록). 원저는 1902년과 1908년의 두 권이고, 이름은 Philipp이다. 로트마르는 지시권을 노동계약의 징표로 삼지 않았다(4.3)</td>
+<td>로트마르와 진츠하이머의 차이, 곧 지시권과 처분권을 노동법의 기준으로 삼느냐가 계보의 첫 갈림길이라는 점은 논문에서 드러나지 않는다 <strong>[확인 필요: 로트마르의 지시권 판단은 원전이 아니라 발트(1974)의 요약에 따름]</strong></td>
+</tr>
+</tbody></table>
+</div><h3 id="95-사실관계에서-바로잡을-곳"><a href="#95-사실관계에서-바로잡을-곳" class="heading-anchor" aria-hidden="true">#</a> 9.5 사실관계에서 바로잡을 곳</h3><p>1차 자료와 대조하면 사실관계에서 바로잡아야 할 곳도 있다. 진츠하이머 대목 밖의 것도 포함해 적는다.</p>
+<ol>
+<li><strong>일본 최고재판소 판례 인용(73쪽, 각주 41·42)</strong>: 논문은 1985년 기준이 &#39;太平洋炭鉱事件&#39;(1986. 3. 13.)과 &#39;大星ビル管理事件&#39;(1987. 2. 17.) 등 최고재판소 판례에 그대로 수용되었다고 쓴다. 그러나 大星ビル管理事件 최고재판소 판결은 2002년 2월 28일(平成9(オ)608·609) 선고된 가면(仮眠) 시간의 노동시간성 판례이고 노동자성 판례가 아니다. 1986년 3월 13일 최고재판소 제1소법정 판결은 電電公社帯広局事件(昭和58(オ)1408)으로, 정밀검진 수진 명령 위반과 징계에 관한 판례다. 같은 날짜의 &#39;太平洋炭鉱&#39; 최고재판소 판결은 확인되지 않는다. 1985년 기준과 같은 취지의 대표적 노동자성 판례는 6.2에서 본 1996년의 旭紙業 사건이다. 논문에서 가장 분명한 사실 오류로 보인다.</li>
+<li><strong>일본 재검토 보고서 연도(73·101쪽)</strong>: 논문은 &quot;2024년&quot; 연구보고서라고 쓰지만, 각주 43이 가리키는 「労働基準関係法制研究会報告書」는 2025년 1월 8일 공표되었다.</li>
+<li><strong>권고 제198호 조항(86쪽)</strong>: 논문은 사실 우선의 원칙과 법적 추정을 제9항으로 묶지만, 제9항은 사실 우선이고 법적 추정은 제11항 (b)다.</li>
+<li><strong>이원희 논문 연도(65쪽 각주 17, 121쪽)</strong>: 「진쯔하이머의 노동법론과 그 업적」을 1998년으로 적지만, DBpia 서지는 1996년 6월이다.</li>
+<li><strong>2007두4995 전원합의체 판결 선고일(94쪽 각주 72)</strong>: 2015년 6월 25일로 적지만, 2014두12598 판결문의 참조판례란은 2015년 6월 26일이다.</li>
+<li><strong>데이비도프의 소속(91쪽)</strong>: 논문은 &quot;영국의 Davidov 교수&quot;라고 쓰지만, 가이 데이비도프(Guy Davidov)는 이스라엘 예루살렘 히브리대학교 법학부 교수(Elias Lieberman Chair in Labour Law)다. 텔아비브대학교에서 법학사(1996), 토론토대학교에서 법학석사(1998)와 법학박사(SJD, 2002)를 받았고, 히브리대 이전에는 하이파대학교에 있었다. 논문이 인용한 『The Three Axes of Employment Relationships』(2002)는 토론토대 박사논문이다(히브리대 교수 페이지).</li>
+<li><strong>노동법원법 제5조 번역(69쪽)</strong>: &quot;특정한 타인의 책임하에&quot;로 옮겼지만, 원문 &quot;im Auftrag und für Rechnung bestimmter anderer Personen&quot;은 &#39;특정한 타인의 위탁을 받아 그 계산으로&#39;다.</li>
+<li><strong>민법 제611a조 번역(68쪽)</strong>: 마지막 문장을 &quot;계약관계가 실제로는 근로계약임을 증명한다면&quot;으로 옮겨 실질 우선의 핵심인 &#39;실제 수행(tatsächliche Durchführung)&#39;이 흐려졌고, 첫 문장의 &quot;im Dienste eines anderen&quot;과 &quot;weisungsgebundener, fremdbestimmter&quot;를 하나로 뭉쳐 옮겼다.</li>
+<li><strong>단체협약법 제12a조 인용(69쪽 각주 34)</strong>: 실린 독일어 문언과 번역이 현행 조문과 다르고, 소득의 절반 기준 등이 빠져 있다(보충: 현행 조문과 대조. 1974년 제정 당시 문언과는 대조하지 못했다).</li>
+<li><strong>경미한 것</strong>: 슈피오 보고서의 연도가 본문(98쪽)은 2001년, 각주 80은 1999년으로 엇갈린다. 영문 단행본 『Beyond Employment』(2001)와 1999년 보고서를 섞어 쓴 것으로 보인다. 67쪽 각주 27의 &quot;위 각주23번의 1975년 판결&quot;은 각주 26을 가리켜야 한다. 66쪽은 경제적 종속성의 한계를 &quot;20세기 초 독일 제국노동법원&quot;의 판단으로 서술하는데, 제국노동법원은 1926년 12월 23일의 노동법원법이 만들고 1927년 제국법원에 설치된 기관이므로(보충: 노동법원법 제40조 원문, 독일 연방문서보관소 기록 해설) 20세기 초의 판단 주체로는 시기가 맞지 않아 보인다.</li>
+</ol>
+<p>이 오류들은 논문의 중심 논증, 곧 종속성 판단의 한계와 타인결정성의 제안을 무너뜨리지는 않는다. 다만 계보와 비교법 서술을 인용할 때는 원 출처를 다시 확인할 필요가 있다.</p>
+<h3 id="96-두-축으로-다시-읽기"><a href="#96-두-축으로-다시-읽기" class="heading-anchor" aria-hidden="true">#</a> 9.6 두 축으로 다시 읽기</h3><p>논문이 진츠하이머를 부른 방식을 그림으로 놓으면, 진츠하이머의 사상이 두 축으로 이루어져 있고 논문이 그 가운데 한 축만 이어받았다는 점이 보인다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 470" role="img" aria-label="진츠하이머 사상의 두 축. 종속을 확인하는 법의 축은 노동계약과 노동보호에서 인격적 종속, 타인이 결정하는 노동을 거쳐 2026년 논문의 타인결정성으로 이어지고, 종속을 상쇄하는 법의 축은 단체협약, 사회적 자기결정, 노동헌법으로 이어지지만 2026년 논문의 범위 밖에 있다">
+  <defs>
+    <marker id="sz-arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="8" y="8" width="764" height="454" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">진츠하이머의 두 축과 2026년 논문이 이어받은 것</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">왼쪽 = 종속을 확인하는 법 · 오른쪽 = 종속을 상쇄하는 법</text>
+  <rect x="190" y="70" width="400" height="64" rx="12" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.8"/>
+  <text x="390" y="96" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">종속노동 = 타인의 처분권 아래의 노동</text>
+  <text x="390" y="118" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">법적 권력관계 · 경제적 신민 상태까지 품는 넓은 개념</text>
+  <line x1="300" y1="136" x2="200" y2="162" stroke="#64748b" stroke-width="2" marker-end="url(#sz-arr3)"/>
+  <line x1="480" y1="136" x2="580" y2="162" stroke="#64748b" stroke-width="2" marker-end="url(#sz-arr3)"/>
+  <rect x="24" y="168" width="352" height="196" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="200" y="192" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">축① 종속을 확인하는 법</text>
+  <rect x="44" y="204" width="312" height="30" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="200" y="224" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동계약과 노동보호의 대상 규정</text>
+  <rect x="44" y="242" width="312" height="30" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="200" y="262" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">1920년대 이후 인격적 종속(지시 구속 · 편입)</text>
+  <rect x="44" y="280" width="312" height="30" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="200" y="300" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">BAG 판례 · §611a의 fremdbestimmte Arbeit</text>
+  <rect x="44" y="318" width="312" height="34" rx="8" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="200" y="340" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">2026 논문: 타인결정성으로 재구성</text>
+  <rect x="404" y="168" width="352" height="196" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="580" y="192" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">축② 종속을 상쇄하는 법</text>
+  <rect x="424" y="204" width="312" height="30" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="580" y="224" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">단체협약의 규범적 효력(1907/08)</text>
+  <rect x="424" y="242" width="312" height="30" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="580" y="262" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사회적 자기결정(1916)</text>
+  <rect x="424" y="280" width="312" height="30" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="580" y="300" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동헌법 · 경제민주주의(1919 헌법 제165조, 1928)</text>
+  <rect x="424" y="318" width="312" height="34" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="580" y="340" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#64748b">2026 논문: 범위 밖(각주 1)</text>
+  <rect x="24" y="380" width="732" height="68" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="404" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">논문의 진츠하이머 인용 = 한국어판 『노동법원리』(2004) 쪽수만 · 독일어 원전 쪽수 없음</text>
+  <text x="390" y="428" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">진츠하이머에게 개별 노동법과 집단 노동법은 떼어 놓을 수 없는 하나였다(Weiss 2015) · 넓은 '종속'의 재독해(이다혜 2020)</text>
+</svg>
+</div>
+
+<p>왼쪽 축만 보면 논문의 호출은 자연스럽다. 진츠하이머의 &#39;타인의 처분권&#39;이 1920년대 이후 지시 구속으로 좁혀졌다가, 연방노동법원과 제611a조의 &#39;타인이 결정하는 노동&#39;을 거쳐 타인결정성으로 다시 넓어지는 흐름은 계보로서 설득력이 있다. 그러나 진츠하이머 자신에게 종속의 확인은 출발점이었을 뿐이다. 그는 종속을 확인한 다음 단체협약과 노동자의 집단적 자기결정으로 그 종속을 상쇄하는 법을 설계하는 데 더 많은 힘을 쏟았다. 개별 노동보호법제로 대상을 한정한 논문이 이 축을 다루지 않은 것은 정당한 선택이지만, 진츠하이머를 근거로 삼는 독자는 그가 두 축을 함께 세웠다는 점을 기억할 필요가 있다.</p>
+<hr>
+<h2 id="10-한눈에-보기"><a href="#10-한눈에-보기" class="heading-anchor" aria-hidden="true">#</a> 10. 한눈에 보기</h2><h3 id="101-연표"><a href="#101-연표" class="heading-anchor" aria-hidden="true">#</a> 10.1 연표</h3><p>출처끼리 엇갈리는 연도는 두 기록을 함께 적었다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>연도</th>
+<th>독일·국제</th>
+<th>일본</th>
+<th>한국</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>고대 로마</td>
+<td>임대차(locatio conductio) 안의 노무 임대차와 도급</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1875</td>
+<td>진츠하이머 출생(4. 12., 보름스)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1896/1900</td>
+<td>독일 민법 제정·시행(제611조 고용계약). 사민당 의원들의 &#39;노동계약&#39; 상위 개념 제안 부결</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1898 또는 1901</td>
+<td>진츠하이머 하이델베르크대 박사(사회정책사 인물사전·위키백과 1898 / NDB·FES·HSI 1901) [확인 필요: 학위 기록 미확인]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1902</td>
+<td>『Lohn und Aufrechnung』(Carl Heymanns, 서문 1902. 3.)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1902/1908</td>
+<td>로트마르 『Der Arbeitsvertrag nach dem Privatrecht des Deutschen Reiches』 제1·2권</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1903</td>
+<td>진츠하이머 프랑크푸르트 변호사 개업</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1907/08</td>
+<td>『Der korporative Arbeitsnormenvertrag』</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1912</td>
+<td>진츠하이머·로트마르·플레슈, 노동법 체계적 연구 위원회 설립</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1914</td>
+<td>잡지 『Arbeitsrecht』 창간. 사민당 입당(프랑크푸르트 인물사전 1914 / 사회정책사 인물사전 1916년 무렵)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1916</td>
+<td>『Ein Arbeitstarifgesetz. Die Idee der sozialen Selbstbestimmung im Recht』</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1918</td>
+<td>단체협약령(12. 23.)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1919</td>
+<td>바이마르 헌법(8. 11.) 제165조. ILO 창설. 프랑크푸르트대 명예교수 강의 개시(11월, 프랑크푸르트 인물사전 등) 또는 임명 1920(NDB 등) [확인 필요: 대학 인사 기록 미확인]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1921</td>
+<td>『Grundzüge des Arbeitsrechts』 초판. 노동아카데미 설립. 단체협약법 초안 위원회</td>
+<td>스에히로, 도쿄제대 &#39;노동법제&#39; 강의 시작</td>
+<td></td>
+</tr>
+<tr>
+<td>1924</td>
+<td></td>
+<td>스에히로 강의 노트에 진츠하이머의 단체협약 저작</td>
+<td></td>
+</tr>
+<tr>
+<td>1926</td>
+<td>노동법원법(12. 23.) 제5조 근로자 유사인</td>
+<td>스에히로 『労働法研究』</td>
+<td></td>
+</tr>
+<tr>
+<td>1927</td>
+<td>『Grundzüge』 제2판, 『Das Wesen des Arbeitsrechts』</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1928/1930</td>
+<td>후크·니퍼다이 『Lehrbuch des Arbeitsrechts』 제1권(1928)·제2권(1930). 1928 ADGB 경제민주주의 위원회</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1932</td>
+<td></td>
+<td>쓰마가리 『労働法原理』, 종속노동론 수용</td>
+<td></td>
+</tr>
+<tr>
+<td>1933</td>
+<td>진츠하이머 체포, 네덜란드 망명, 암스테르담대</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1935/1936</td>
+<td>레이던대 교수(NDB·프랑크푸르트 인물사전 1935 노동법 정교수 / HSI·FES 1936 법사회학 원외교수)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1937</td>
+<td>국적·재산·박사학위 박탈</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1938</td>
+<td>『Jüdische Klassiker der deutschen Rechtswissenschaft』</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1945</td>
+<td>진츠하이머 사망(9. 16., 블루멘달-오버베인)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1947</td>
+<td></td>
+<td>노동기준법 제9조</td>
+<td></td>
+</tr>
+<tr>
+<td>1953</td>
+<td></td>
+<td></td>
+<td>근로기준법 제정(제14조 근로자 정의)</td>
+</tr>
+<tr>
+<td>1955</td>
+<td></td>
+<td>나라사키·다데누마 역 『勞働法原理』(제2판 1971, 복간 2009)</td>
+<td></td>
+</tr>
+<tr>
+<td>1972</td>
+<td></td>
+<td></td>
+<td>72도334(정의 규정 인용)</td>
+</tr>
+<tr>
+<td>1974</td>
+<td>단체협약법 제12a조 유사근로자</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1975 / 1978</td>
+<td>연방노동법원 오케스트라 단원 사건 / 방송 공동작업자 사건</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1976</td>
+<td>칸프로인트·람 편 진츠하이머 선집</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1980</td>
+<td>연방노동법원 1980. 4. 23. 판결(유형론)</td>
+<td></td>
+<td>79다2147(&#39;종속&#39; 첫 등장)</td>
+</tr>
+<tr>
+<td>1985</td>
+<td></td>
+<td>노동기준법연구회 보고(12. 19.) &#39;사용종속성&#39;</td>
+<td></td>
+</tr>
+<tr>
+<td>1986</td>
+<td></td>
+<td>구보 게이지 『フーゴ・ジンツハイマー：ある法学者の人生』</td>
+<td></td>
+</tr>
+<tr>
+<td>1988</td>
+<td>방크 『Arbeitnehmer und Selbständige』</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1989</td>
+<td></td>
+<td></td>
+<td>88다카21296(&#39;실질적인 사용종속관계&#39;)</td>
+</tr>
+<tr>
+<td>1991</td>
+<td></td>
+<td></td>
+<td>이흥재, 진츠하이머의 생애와 학문</td>
+</tr>
+<tr>
+<td>1993</td>
+<td></td>
+<td></td>
+<td>90누1731(노조법상 근로자)</td>
+</tr>
+<tr>
+<td>1994</td>
+<td>5 AZR 704/93(장치·팀 의존 논리의 후퇴)</td>
+<td></td>
+<td>94다22859(종속적 관계 지표 체계화)</td>
+</tr>
+<tr>
+<td>1995</td>
+<td>구보 평전 독일어판(하나우 편)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1996</td>
+<td></td>
+<td>旭紙業 사건 최고재판소 판결(11. 28.)</td>
+<td>이원희, 「진쯔하이머의 노동법론과 그 업적」(DBpia 1996. 6. / 2026년 논문 표기 1998)</td>
+</tr>
+<tr>
+<td>2004</td>
+<td></td>
+<td></td>
+<td>이원희 역 『노동법원리』(관악사, 2. 28.)</td>
+</tr>
+<tr>
+<td>2006</td>
+<td>ILO 권고 제198호(6. 15.)</td>
+<td></td>
+<td>2004다29736(12. 7., &#39;상당한 지휘·감독&#39;)</td>
+</tr>
+<tr>
+<td>2007</td>
+<td></td>
+<td></td>
+<td>산재보험 특수형태근로종사자 특례</td>
+</tr>
+<tr>
+<td>2017</td>
+<td>민법 제611a조 시행(4. 1.)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2018</td>
+<td>ICSE-18(종속적 계약자)</td>
+<td></td>
+<td>2014두12598(6. 15., 학습지교사, 노조법상 근로자)</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>연방노동법원 크라우드워커 판결(12. 1.). 스페인 대법원 글로보 판결(9. 25.)</td>
+<td></td>
+<td>이다혜, 「근로자 개념의 재검토」</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>스페인 라이더법(왕령법 5. 11. → 법률 9. 28.)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2023</td>
+<td></td>
+<td>프리랜서법 제정</td>
+<td>산재보험 전속성 요건 폐지(7. 1.)</td>
+</tr>
+<tr>
+<td>2024</td>
+<td>EU 플랫폼 노동 지침(서명 10. 23., 관보 11. 11., 발효 12. 1.)</td>
+<td>프리랜서법 시행(11. 1.)</td>
+<td>2024두32973 타다(7. 25.)</td>
+</tr>
+<tr>
+<td>2025</td>
+<td></td>
+<td>労働基準関係法制研究会 보고서(1. 8.). &#39;노동자&#39; 연구회 발족(5월)</td>
+<td>노란봉투법 국회 통과(8. 24.)·공포(9. 9.)</td>
+</tr>
+<tr>
+<td>2026</td>
+<td>ILO 협약 제193호(6. 12.). EU 지침 전환 기한(12. 2.)</td>
+<td>&#39;노동자&#39; 연구회 제6회(7. 17.), 논의 정리(9. 9.)</td>
+<td>노란봉투법 시행(3. 10.). 2018다296229 전원합의체(5. 21.). 박은정 외 논문(6월). 2024두37015 파기환송(7. 9.). 근로자 추정제 입법 추진, 9월 하순까지 통과 보도 없음 [확인 필요: 의안정보시스템 직접 조회 실패]</td>
+</tr>
+</tbody></table>
+</div><h3 id="102-간추린-설명과-실제"><a href="#102-간추린-설명과-실제" class="heading-anchor" aria-hidden="true">#</a> 10.2 간추린 설명과 실제</h3><p>종속성의 계보를 짧게 설명하다 보면 흐름을 선명하게 하려다 사실이 앞서 나가기 쉽다. 아래 표는 흔히 쓰이는 간추린 설명을 원 자료에 비추어 정리한 것이다. 왼쪽 문장이 완전히 틀렸다는 뜻이 아니라, 그대로 인용하면 오해가 생길 수 있다는 뜻이다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>간추린 설명</th>
+<th>실제</th>
+<th>본문</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>진츠하이머가 인격적 종속성을 정식화했다</td>
+<td>그의 정식은 &#39;타인의 처분권 아래의 노동&#39;, 곧 법적 권력관계다. 지시 구속과 편입으로서의 인격적 종속은 1920년대 이후 학설과 판례가 다듬었다</td>
+<td>3.2, 4.5</td>
+</tr>
+<tr>
+<td>진츠하이머의 주된 업적은 근로자 판정 기준이다</td>
+<td>그의 유산으로 먼저 꼽히는 것은 단체협약 이론과 노동법의 독자성이다. 종속노동은 그의 체계에서 노동법의 대상을 정하는 개념이었다</td>
+<td>3.4, 3.6</td>
+</tr>
+<tr>
+<td>종속성은 로마법 이래의 전통이다</td>
+<td>로마법과 독일 민법은 노동을 대등한 교환으로 구성했고, 종속 개념이 없다. 종속노동은 20세기 초 노동법학이 만든 개념이다</td>
+<td>4.1, 4.2</td>
+</tr>
+<tr>
+<td>로트마르도 지시권을 노동계약의 징표로 삼았다</td>
+<td>발트(1974)의 요약에 따르면 로트마르는 지시권이 누구에게 있는지를 노동계약 성립과 &#39;무관&#39;하다고 보았다 [확인 필요: 로트마르 원전 미대조]</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>독일은 경제적 종속을 버렸다</td>
+<td>근로자 개념에서는 밀려났지만 노동법원법(1926) 제5조와 단체협약법 제12a조(1974)의 유사근로자로 이어졌다</td>
+<td>5.4</td>
+</tr>
+<tr>
+<td>제611a조가 근로자 기준을 바꿨다</td>
+<td>판례를 성문화했을 뿐 기준을 바꾸지 않았다는 것이 일반적 평가다. 다만 실제 수행을 기준으로 삼는다는 원칙을 법문에 적었다</td>
+<td>5.3</td>
+</tr>
+<tr>
+<td>일본은 전후에야 독일 이론을 받아들였다</td>
+<td>1924년 스에히로의 강의 노트에 진츠하이머의 단체협약 저작이 있고, 1932년 쓰마가리가 종속노동론을 받아들였다</td>
+<td>6.1</td>
+</tr>
+<tr>
+<td>스에히로는 진츠하이머와 직접 교류했다</td>
+<td>확인되는 것은 저작을 통한 수용까지다 [확인 필요: 직접 교류 기록 미확인]</td>
+<td>6.1</td>
+</tr>
+<tr>
+<td>한국 판례의 &#39;종속&#39;은 진츠하이머를 일본 경유로 들여온 것이다</td>
+<td>2026년 논문도 단정을 유보한다. 한국 판례의 &#39;종속&#39;(1980, 1994)은 이 글이 확인한 진츠하이머 한국어 연구(1991)나 번역서(2004)보다 앞서거나 비슷한 시기다</td>
+<td>6.4</td>
+</tr>
+<tr>
+<td>근로기준법은 근로자를 종속적 관계에서 일하는 사람으로 정의한다</td>
+<td>법문에는 &#39;종속&#39;이 없다. 판례가 1980년부터 덧붙였고 1994년에 지표를 체계화했다</td>
+<td>6.3</td>
+</tr>
+<tr>
+<td>노조법상 근로자도 같은 기준으로 판단한다</td>
+<td>2018년 2014두12598은 경제적·조직적 종속관계를 기준으로 삼고, 노조법상 근로자가 근로기준법상 근로자에 한정되지 않는다고 했다</td>
+<td>6.3</td>
+</tr>
+<tr>
+<td>『Lohn und Aufrechnung』은 진츠하이머의 학위논문이다</td>
+<td>1902년 간행본 표제지에 이미 &#39;Dr. jur.&#39;가 있고 학위논문 표시가 없다. 학위 연도도 1898년과 1901년으로 갈린다 [확인 필요: 학위 기록 미확인]</td>
+<td>2.1</td>
+</tr>
+<tr>
+<td>일본 최고재판소는 1985년 기준을 太平洋炭鉱·大星ビル管理 사건에서 수용했다</td>
+<td>해당 날짜와 사건은 노동자성 판례가 아니다. 같은 취지의 노동자성 판례는 1996년 旭紙業 사건이다</td>
+<td>6.2, 9.5</td>
+</tr>
+<tr>
+<td>EU에서는 이미 플랫폼 종사자가 근로자로 추정된다</td>
+<td>지침은 2024년 12월 1일 발효했지만 회원국의 국내법 전환 기한은 2026년 12월 2일이다</td>
+<td>7</td>
+</tr>
+<tr>
+<td>노란봉투법이 근로자의 정의를 넓혔다</td>
+<td>넓힌 것은 사용자의 범위다. 노조법 제2조 제1호의 근로자 정의는 바뀌지 않았다</td>
+<td>8.4</td>
+</tr>
+<tr>
+<td>한국은 근로자 추정제를 도입했다</td>
+<td>법안이 발의되고 정부가 연내 입법을 추진했지만, 9월 하순까지 통과 보도는 없다 [확인 필요: 의안정보시스템 직접 조회 실패]</td>
+<td>8.5</td>
+</tr>
+<tr>
+<td>&#39;타인결정성&#39;은 진츠하이머가 쓴 용어다</td>
+<td>&#39;fremdbestimmt&#39;는 연방노동법원 판례와 제611a조의 용어다. 진츠하이머와의 연결은 2026년 논문의 해석적 재구성이다</td>
+<td>9.4</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="11-평가-계보가-말해-주는-것"><a href="#11-평가-계보가-말해-주는-것" class="heading-anchor" aria-hidden="true">#</a> 11. 평가 — 계보가 말해 주는 것</h2><h3 id="111-종속은-처음부터-여러-겹이었다"><a href="#111-종속은-처음부터-여러-겹이었다" class="heading-anchor" aria-hidden="true">#</a> 11.1 종속은 처음부터 여러 겹이었다</h3><p>진츠하이머의 &#39;종속&#39;은 지시에 따라야 한다는 한 겹의 개념이 아니었다. 그것은 처분권이 법적으로 타인에게 넘어가는 권력관계이자, 생계를 위해 타인이 정한 조건을 받아들여야 하는 경제적 처지이며, 인격과 분리되지 않는 노동력을 내주는 인간의 사태였다. 그 여러 겹 가운데 무엇을 근로자 판정의 기준으로 삼을지는 개념 자체에서 나오지 않는다. 그 선택은 뒤에 학설과 판례가 했다.</p>
+<h3 id="112-좁힘에는-이유가-있었다"><a href="#112-좁힘에는-이유가-있었다" class="heading-anchor" aria-hidden="true">#</a> 11.2 좁힘에는 이유가 있었다</h3><p>넓은 개념을 실무의 기준으로 쓰려면 좁혀야 했다. 경제적 종속은 독립적인 상인에게도 있을 수 있다는 반론 앞에서 근로자와 자영인을 가르는 칼날로서 약했고, 지시 구속과 편입은 법원이 사실로 확인하기 쉬웠다. 인격적 종속이 1920년대에 전면에 서고 1950–1970년대에 통설과 판례로 굳어진 것은 그런 의미에서 실무적 합리성을 가진 선택이었다. 그 대가는 경제적 의존과 보호필요성을 근로자 개념 밖으로 밀어낸 것이었고, 독일은 그 대가를 유사근로자라는 별실로 메웠다. 일본은 행정 기준으로 정형화했고, 한국은 법 영역마다 다른 기준을 세우는 방식으로 메웠다.</p>
+<h3 id="113-밀려난-것들이-돌아온다"><a href="#113-밀려난-것들이-돌아온다" class="heading-anchor" aria-hidden="true">#</a> 11.3 밀려난 것들이 돌아온다</h3><p>플랫폼 노동은 이 좁힘의 대가를 드러냈다. 지시 없는 통제 앞에서 지휘·감독의 언어는 늘여 쓸 수는 있어도 쉽게 맞지 않는다. 그러자 계보에서 밀려났던 요소들이 다른 이름으로 돌아오고 있다. 경제적 의존은 권고 제198호의 지표와 ICSE-18의 경제적 위험 축, 한국 노조법과 사회보험의 기준으로, 조직 편입은 사업편입성론과 학습지교사 판결로, 타인의 처분권은 &#39;타인결정성&#39;으로 돌아온다. 증명의 짐을 옮기는 추정은 좁힌 기준을 그대로 두면서 그 기준이 놓치는 사람을 붙잡으려는 절차적 장치다.</p>
+<h3 id="114-두-축으로-진츠하이머-다시-읽기"><a href="#114-두-축으로-진츠하이머-다시-읽기" class="heading-anchor" aria-hidden="true">#</a> 11.4 두 축으로 진츠하이머 다시 읽기</h3><p>진츠하이머를 다시 부르는 흐름은 반갑지만, 그를 종속 판정 기준의 원조로만 부르면 절반만 읽는 셈이다. 그에게 종속의 확인은 출발점이었고, 목표는 단체협약과 노동헌법을 통한 집단적 자기결정으로 그 종속을 상쇄하는 것이었다. 오늘의 논의도 마찬가지다. 누가 근로자인지를 넓게 확인하는 일과, 확인된 종속을 집단적으로 상쇄할 수 있게 사용자의 범위와 교섭의 문을 넓히는 일은 함께 가야 한다. 2026년에 시행된 개정 노조법과 진행 중인 근로자 추정 논의는 각각 이 두 축의 한쪽을 맡고 있다.</p>
+<h3 id="115-계보의-약한-고리"><a href="#115-계보의-약한-고리" class="heading-anchor" aria-hidden="true">#</a> 11.5 계보의 약한 고리</h3><p>이 글이 따라온 계보에도 아직 원 자료로 메우지 못한 고리가 있다. 로트마르가 지시권을 노동계약의 징표로 삼지 않았다는 판단은 그의 1902년 원전이 아니라 발트의 1974년 학위논문의 요약에 기대고 있다 <strong>[확인 필요: 로트마르 원전 미대조]</strong>. 독일 다수설과 판례가 받아들였다는 후크의 근로자 정의도 후크·니퍼다이 교과서의 원문이 아니라 오상호(2015)의 한국어 요약으로만 확인했다 <strong>[확인 필요: 후크·니퍼다이 교과서 원문 미열람]</strong>. 두 고리는 계보의 첫 갈림길(로트마르와 진츠하이머)과 둘째 갈림길(진츠하이머와 인격적 종속)에 놓여 있다. 계보의 큰 줄기를 바꿀 만한 공백은 아니지만, 이 글의 4장과 5장을 인용할 때는 이 점을 함께 밝혀 두는 것이 정확하다. 스에히로와 진츠하이머의 직접 교류, 진츠하이머의 학위 연도와 명예교수 연도도 같은 이유로 열어 두었다.</p>
+<hr>
+<h2 id="12-맺음-경제적-신민에서-경제적-시민으로"><a href="#12-맺음-경제적-신민에서-경제적-시민으로" class="heading-anchor" aria-hidden="true">#</a> 12. 맺음 — 경제적 신민에서 경제적 시민으로</h2><p>진츠하이머는 노동헌법의 목표를 &quot;경제적 신민 상태를 경제적 시민 상태로&quot; 바꾸는 것이라고 했다(Weiss 2015). 종속노동이라는 개념은 그 목표를 위한 첫 진단이었다. 노동하는 사람이 타인의 처분권 아래에 있다는 진단이 있어야 그 처분권을 제한하고, 나누고, 공동으로 행사하게 만드는 법이 정당화된다.</p>
+<p>한 세기 동안 그 진단의 언어는 좁아졌다가 다시 넓어지고 있다. 감독자의 지시로 눈에 보이던 처분권이 알고리즘과 약관과 다층 계약 속으로 흩어진 지금, &#39;누가 지시하는가&#39;라는 질문만으로는 처분권의 소재를 다 찾을 수 없다. &#39;누가 정하는가&#39;, &#39;누구에게 기대는가&#39;, &#39;누가 증명해야 하는가&#39;라는 질문이 함께 필요해진 것은 그래서다. 이 질문들은 새로운 것처럼 보이지만, 계보를 거슬러 올라가면 진츠하이머가 처음 &#39;종속&#39;이라는 말로 가리키려 한 넓은 사태의 여러 얼굴이다.</p>
+<p>계보를 아는 것이 답을 주지는 않는다. 다만 오늘의 기준이 당연한 것이 아니라 선택의 결과라는 점, 그리고 그 선택에서 떨어져 나간 것들이 무엇이었는지를 알려 준다. 종속을 확인하는 법과 종속을 상쇄하는 법을 함께 세우려 했던 한 법학자의 기획은, 그 점에서 여전히 오늘의 질문이다.</p>
+<hr>
+<h2 id="출처"><a href="#출처" class="heading-anchor" aria-hidden="true">#</a> 출처</h2><p>URL의 열람일은 모두 2026-10-02(한국 시간)이다. 쪽수 표기 &#39;박은정 외 2026, ○쪽&#39;은 아래 논문의 학술지 쪽수다.</p>
+<ul>
+<li><strong>기본 자료</strong><ul>
+<li>박은정·백승호·이승윤, 「노동보호법제 적용을 위한 &quot;종속성&quot; 연구」, 『노동법학』 제98호, 한국노동법학회, 2026. 6., 57–126쪽.</li>
+</ul>
+</li>
+<li><strong>진츠하이머의 생애</strong><ul>
+<li>Sandro Blanke, &quot;Sinzheimer, Hugo Daniel&quot;, 『Neue Deutsche Biographie』 24(2010), S. 474–475. <a href="https://www.deutsche-biographie.de/sfz74825.html">https://www.deutsche-biographie.de/sfz74825.html</a></li>
+<li>E. Hansen/F. Tennstedt (Hg.), 『Biographisches Lexikon zur Geschichte der deutschen Sozialpolitik 1871 bis 1945』, Bd. 2, Kassel University Press, 2018, S. 181 f. <a href="https://www.uni-kassel.de/upress/online/OpenAccess/978-3-7376-0474-1.OpenAccess.pdf">https://www.uni-kassel.de/upress/online/OpenAccess/978-3-7376-0474-1.OpenAccess.pdf</a></li>
+<li>Frankfurter Personenlexikon, &quot;Sinzheimer, Hugo Daniel&quot;. <a href="https://frankfurter-personenlexikon.de/node/1250">https://frankfurter-personenlexikon.de/node/1250</a></li>
+<li>Hugo Sinzheimer Institut, &quot;Biographie&quot;. <a href="https://www.hugo-sinzheimer-institut.de/biographie-2122.htm">https://www.hugo-sinzheimer-institut.de/biographie-2122.htm</a></li>
+<li>Friedrich-Ebert-Stiftung, &quot;Hugo Sinzheimer&quot;(Vordenker:innen). <a href="https://www.fes.de/asd/vordenker-innen/hugo-sinzheimer">https://www.fes.de/asd/vordenker-innen/hugo-sinzheimer</a></li>
+<li>Manfred Weiss, &quot;Arbeitsrechtswissenschaft auf den Spuren Hugo Sinzheimers&quot;, Arbeitspapier Fachbereich Rechtswissenschaft Goethe-Universität Nr. 14/2015. <a href="https://d-nb.info/1081211830/34">https://d-nb.info/1081211830/34</a></li>
+<li>Wikipedia(독일어), &quot;Hugo Sinzheimer&quot;(박사 연도 1898 표기). <a href="https://de.wikipedia.org/wiki/Hugo_Sinzheimer">https://de.wikipedia.org/wiki/Hugo_Sinzheimer</a></li>
+<li>Wikipedia(독일어), &quot;Europäische Akademie der Arbeit&quot;. <a href="https://de.wikipedia.org/wiki/Akademie_der_Arbeit">https://de.wikipedia.org/wiki/Akademie_der_Arbeit</a></li>
+<li>프랑크푸르트시, &#39;Frankfurt 1933–1945&#39; 인물 페이지(명예교수 1919년 표기).</li>
+</ul>
+</li>
+<li><strong>진츠하이머의 저작과 번역</strong><ul>
+<li>Hugo Sinzheimer, 『Lohn und Aufrechnung. Ein Beitrag zur Lehre vom gewerblichen Arbeitsvertrag auf reichsrechtlicher Grundlage』, Berlin: Carl Heymanns, 1902(베를린자유대학교 디지털본). <a href="https://d-nb.info/1362670057/34">https://d-nb.info/1362670057/34</a>, <a href="https://doi.org/10.17169/refubium-46875">https://doi.org/10.17169/refubium-46875</a></li>
+<li>O. Kahn-Freund/T. Ramm (Hg.), 『Arbeitsrecht und Rechtssoziologie』, 2 Bde., 1976(NDB·Weiss의 인용에 따름, 원서 미열람).</li>
+<li>ジンツハイマー著, 楢崎二郎・蓼沼謙一譯『勞働法原理』東京大学出版会, 1955(原著第2版의 번역), 第2版 1971. <a href="https://ci.nii.ac.jp/ncid/BN05722802">https://ci.nii.ac.jp/ncid/BN05722802</a>, <a href="https://ci.nii.ac.jp/ncid/BN00925595">https://ci.nii.ac.jp/ncid/BN00925595</a></li>
+<li>蓼沼謙一著作集 別巻『ジンツハイマー労働法原理』信山社出版, 2009. <a href="https://ci.nii.ac.jp/ncid/BA90588016">https://ci.nii.ac.jp/ncid/BA90588016</a></li>
+<li>후고 진쯔하이머 원저, 이원희 역, 『노동법원리』, 관악사, 2004. 2. 28.(국립중앙도서관 서지). <a href="https://www.nl.go.kr/NL/contents/search.do?kwd=%EB%85%B8%EB%8F%99%EB%B2%95%EC%9B%90%EB%A6%AC">https://www.nl.go.kr/NL/contents/search.do?kwd=%EB%85%B8%EB%8F%99%EB%B2%95%EC%9B%90%EB%A6%AC</a></li>
+</ul>
+</li>
+<li><strong>진츠하이머 연구</strong><ul>
+<li>久保敬治『フーゴ・ジンツハイマー：ある法学者の人生』三省堂, 1986. <a href="https://ci.nii.ac.jp/ncid/BN00813784">https://ci.nii.ac.jp/ncid/BN00813784</a></li>
+<li>久保敬治『ある法学者の人生：フーゴ・ジンツハイマー』信山社出版, 2001. <a href="https://ci.nii.ac.jp/ncid/BA52020911">https://ci.nii.ac.jp/ncid/BA52020911</a></li>
+<li>Keiji Kubo, 『Hugo Sinzheimer – Vater des deutschen Arbeitsrechts. Eine Biographie』, hrsg. von Peter Hanau, Köln: Bund-Verlag, 1995(Schriftenreihe der Otto Brenner Stiftung Bd. 60). <a href="https://ci.nii.ac.jp/ncid/BA26920835">https://ci.nii.ac.jp/ncid/BA26920835</a></li>
+<li>久保敬治『フーゴ・ジンツハイマーとドイツ労働法』信山社出版, 1998. <a href="https://ci.nii.ac.jp/ncid/BA35356880">https://ci.nii.ac.jp/ncid/BA35356880</a></li>
+<li>이흥재, 「휴고 진쯔하이머의 생애와 학문: 한 &#39;인간적 사회주의자&#39;에 대한 소묘」, 『노동법연구』 제1호, 서울대학교 노동법연구회, 1991. <a href="https://www.nl.go.kr/NL/contents/search.do?kwd=%ED%9C%B4%EA%B3%A0+%EC%A7%84%EC%AF%94%ED%95%98%EC%9D%B4%EB%A8%B8%EC%9D%98+%EC%83%9D%EC%95%A0%EC%99%80+%ED%95%99%EB%AC%B8">https://www.nl.go.kr/NL/contents/search.do?kwd=%ED%9C%B4%EA%B3%A0+%EC%A7%84%EC%AF%94%ED%95%98%EC%9D%B4%EB%A8%B8%EC%9D%98+%EC%83%9D%EC%95%A0%EC%99%80+%ED%95%99%EB%AC%B8</a></li>
+<li>이원희, 「진쯔하이머의 노동법론과 그 업적」, 『노동법연구』 제5호, 202–268쪽(DBpia 서지 1996. 6., 2026년 논문 표기 1998). <a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE01645347">https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE01645347</a></li>
+<li>이다혜, 「근로자 개념의 재검토: 4차 산업혁명, 플랫폼 노동의 부상에 따른 &#39;종속노동&#39;의 재조명」, 『노동법연구』 제49호, 서울대학교 노동법연구회, 2020. <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002627369">https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002627369</a></li>
+<li>이다혜, 「노동법의 갱신(更新)」. <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003003827">https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003003827</a></li>
+<li>김연식, 「노동헌법의 의미와 역사적 전개」, 『공법연구』. <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003224020">https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003224020</a></li>
+</ul>
+</li>
+<li><strong>종속성 개념사와 독일</strong><ul>
+<li>Philipp Lotmar, 『Der Arbeitsvertrag nach dem Privatrecht des Deutschen Reiches』, Bd. 1 1902, Bd. 2 1908, Leipzig: Duncker &amp; Humblot(디지털본 서지·목차). <a href="https://d-nb.info/1242018603">https://d-nb.info/1242018603</a>, <a href="https://refubium.fu-berlin.de/handle/fub188/32026">https://refubium.fu-berlin.de/handle/fub188/32026</a> [확인 필요: 노동 정의와 지시권 관련 해당 쪽은 직접 대조하지 못함]</li>
+<li>Philipp Lotmar, 『Der Arbeitsvertrag』, 2. Aufl., durchges. und hrsg. von Manfred Rehbinder, Berlin: Duncker &amp; Humblot, 2001(2026년 논문이 인용한 판). <a href="https://d-nb.info/962890596">https://d-nb.info/962890596</a></li>
+<li>K.-D. Waldt, 『Die Lehre vom Arbeitsvertrag bis zum Ende der Weimarer Republik, insbesondere ein Beitrag zum Arbeitsvertrag von Philipp Lotmar』, Diss. Münster, 1974, S. 85 f. <a href="https://archive.org/details/IA41547228_0011">https://archive.org/details/IA41547228_0011</a></li>
+<li>Max Weber Gesamtausgabe, Rezension Lotmar – Editorischer Bericht. <a href="https://www.mwg-digital.badw.de/en/rezension-lotmar/editorischer-bericht/">https://www.mwg-digital.badw.de/en/rezension-lotmar/editorischer-bericht/</a></li>
+<li>A. Hueck/H. C. Nipperdey, 『Lehrbuch des Arbeitsrechts』, Bd. 1(1928), Bd. 2(1930), Mannheim/Berlin/Leipzig: Bensheimer(독일국립도서관 목록으로 연도 확인). <a href="https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=tit%3D%22Lehrbuch%20des%20Arbeitsrechts%22%20and%20per%3DHueck&recordSchema=oai_dc">https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=tit%3D%22Lehrbuch%20des%20Arbeitsrechts%22%20and%20per%3DHueck&amp;recordSchema=oai_dc</a> [확인 필요: 근로자 정의 원문 미열람]</li>
+<li>오상호, 「독일의 근로자개념과 근로자성 판단」, 『강원법학』 제44권, 2015. <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001968158">https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001968158</a></li>
+<li>Bernd Waas, 『Werkvertrag, freier Dienstvertrag und Arbeitsvertrag』, Hans-Böckler-Stiftung, 2012(연방노동법원 1980. 4. 23. 판결과 방크 인용). <a href="https://www.boeckler.de/pdf_fof/91476.pdf">https://www.boeckler.de/pdf_fof/91476.pdf</a></li>
+<li>Rolf Wank, 『Arbeitnehmer und Selbständige』, München, 1988; ders., NZA 1999, 225(Waas·오상호·ILO 국가보고서의 인용에 따름). Rolf Wank, 『Workers&#39; Protection – National Study for Germany』(ILO). <a href="https://www.ilo.org/media/22061/download">https://www.ilo.org/media/22061/download</a></li>
+<li>HSI, 『Arbeit und Rechtsgeschichte』 2015(독일 민법의 고용·도급 구분과 1896년 제국의회 위원회 논의). <a href="https://www.hugo-sinzheimer-institut.de/data/Arbeit_und_Rechtsgeschichte_201501-1.pdf">https://www.hugo-sinzheimer-institut.de/data/Arbeit_und_Rechtsgeschichte_201501-1.pdf</a></li>
+<li>Mallmann/Schaumburg/Schulten/Zitzelsberger, 『100 Jahre Tarifvertragsverordnung – Meilenstein der Arbeitsrechtsgeschichte』, HSI-Working Paper Nr. 14, 2019(Schulten 기고 S. 6–18). <a href="https://www.hugo-sinzheimer-institut.de/fpdf/HBS-007578/p_hsi_wp_14.pdf">https://www.hugo-sinzheimer-institut.de/fpdf/HBS-007578/p_hsi_wp_14.pdf</a></li>
+</ul>
+</li>
+<li><strong>법령·판례: 독일</strong><ul>
+<li>독일 민법(BGB) 제611조, 제611a조, 연방법무부 법령 포털. <a href="https://www.gesetze-im-internet.de/bgb/__611.html">https://www.gesetze-im-internet.de/bgb/__611.html</a>, <a href="https://www.gesetze-im-internet.de/bgb/__611a.html">https://www.gesetze-im-internet.de/bgb/__611a.html</a></li>
+<li>노동법원법(Arbeitsgerichtsgesetz) 1926. 12. 23., 제국법률공보 제1부, 제5조·제40조. <a href="https://cms-cdn.lmu.de/media/03-jura/zaar/doku/historische-gesetzestexte/mo-nr22_arbeitsgeri.pdf">https://cms-cdn.lmu.de/media/03-jura/zaar/doku/historische-gesetzestexte/mo-nr22_arbeitsgeri.pdf</a> (제40조는 보충)</li>
+<li>독일 연방문서보관소 &#39;Reichsarbeitsgericht&#39; 기록군 해설(EHRI 포털). <a href="https://portal.ehri-project.eu/units/de-002429-r_3010">https://portal.ehri-project.eu/units/de-002429-r_3010</a> (보충)</li>
+<li>바이마르 헌법 제165조. <a href="https://cms-cdn.lmu.de/media/03-jura/zaar/doku/historische-gesetzestexte/mo-nr_2_weimarerrei.pdf">https://cms-cdn.lmu.de/media/03-jura/zaar/doku/historische-gesetzestexte/mo-nr_2_weimarerrei.pdf</a></li>
+<li>단체협약법(TVG) 제12a조(현행), 연방법무부 법령 포털. <a href="https://www.gesetze-im-internet.de/tvg/__12a.html">https://www.gesetze-im-internet.de/tvg/__12a.html</a> (보충)</li>
+<li>연방노동법원 AP Nr. 16, Nr. 26 zu § 611 BGB Abhängigkeit(1975, 1978), 5 AZR 819/76, 5 AZR 704/93(2026년 논문 67–68쪽과 오상호 2015의 인용에 따름).</li>
+<li>연방노동법원 보도자료 43/20, 2020. 12. 1. 선고 9 AZR 102/20. <a href="https://www.bundesarbeitsgericht.de/presse/arbeitnehmereigenschaft-von-crowdworkern/">https://www.bundesarbeitsgericht.de/presse/arbeitnehmereigenschaft-von-crowdworkern/</a></li>
+</ul>
+</li>
+<li><strong>일본</strong><ul>
+<li>西谷敏「労働法学」『日本労働研究雑誌』No. 621(2012. 4.), 62–67頁. <a href="https://www.jil.go.jp/institute/zassi/backnumber/2012/04/pdf/062-067.pdf">https://www.jil.go.jp/institute/zassi/backnumber/2012/04/pdf/062-067.pdf</a></li>
+<li>藤亮介・大谷伸治「〈翻刻〉末弘厳太郎の1924年度『労働法制』講義録」『人文×社会』2巻6号(2022), 129–207頁. <a href="https://doi.org/10.50942/jinbunxshakai.2.6_129">https://doi.org/10.50942/jinbunxshakai.2.6_129</a></li>
+<li>籾井常喜『戦後労働法学説史』旬報社, 2002 / 津曲蔵之丞『労働法原理』改造社, 1932(2026년 논문 70–72쪽의 인용에 따름).</li>
+<li>労働基準法研究会報告「労働基準法の『労働者』の判断基準について」(昭和60年12月19日). <a href="https://www.mhlw.go.jp/content/001477330.pdf">https://www.mhlw.go.jp/content/001477330.pdf</a></li>
+<li>労働基準関係法制研究会報告書(令和7年1月8日公表). <a href="https://www.mhlw.go.jp/stf/newpage_48220.html">https://www.mhlw.go.jp/stf/newpage_48220.html</a>, <a href="https://www.mhlw.go.jp/content/11402000/001370269.pdf">https://www.mhlw.go.jp/content/11402000/001370269.pdf</a></li>
+<li>労働基準法における「労働者」に関する研究会(第1–6回, 2026. 9. 9. 논의 정리). <a href="https://www.mhlw.go.jp/stf/shingi/other-roudou_558547_00032.html">https://www.mhlw.go.jp/stf/shingi/other-roudou_558547_00032.html</a></li>
+<li>横浜南労基署長(旭紙業)事件, 最一小判 平成8.11.28. <a href="https://www.rodo.co.jp/precedent/97635/">https://www.rodo.co.jp/precedent/97635/</a>, <a href="https://www.mhlw.go.jp/content/11201250/001587026.pdf">https://www.mhlw.go.jp/content/11201250/001587026.pdf</a></li>
+<li>電電公社帯広局事件, 最一小判 昭和61.3.13(昭和58(オ)1408). <a href="https://www.zenkiren.com/Portals/0/html/jinji/hannrei/shoshi/00261.html">https://www.zenkiren.com/Portals/0/html/jinji/hannrei/shoshi/00261.html</a>, <a href="https://www.courts.go.jp/assets/hanrei/hanrei-pdf-62298.pdf">https://www.courts.go.jp/assets/hanrei/hanrei-pdf-62298.pdf</a></li>
+<li>大星ビル管理事件, 最一小判 平成14.2.28(平成9(オ)608·609). <a href="https://www.courts.go.jp/assets/hanrei/hanrei-pdf-52614.pdf">https://www.courts.go.jp/assets/hanrei/hanrei-pdf-52614.pdf</a></li>
+<li>일본어 위키백과 &#39;末弘厳太郎&#39;(관보 인용, 유학 경로).</li>
+</ul>
+</li>
+<li><strong>법령·판례: 한국</strong><ul>
+<li>대법원 1972. 3. 28. 선고 72도334 판결, 1980. 12. 9. 선고 79다2147 판결, 1989. 7. 11. 선고 88다카21296 판결(2026년 논문 59–60쪽의 인용에 따름).</li>
+<li>대법원 1994. 12. 9. 선고 94다22859 판결. <a href="https://casenote.kr/%EB%8C%80%EB%B2%95%EC%9B%90/94%EB%8B%A422859">https://casenote.kr/대법원/94다22859</a></li>
+<li>대법원 2006. 12. 7. 선고 2004다29736 판결. <a href="https://casenote.kr/%EB%8C%80%EB%B2%95%EC%9B%90/2004%EB%8B%A429736">https://casenote.kr/대법원/2004다29736</a></li>
+<li>대법원 2018. 6. 15. 선고 2014두12598, 12604 판결. <a href="https://casenote.kr/%EB%8C%80%EB%B2%95%EC%9B%90/2014%EB%91%9012598">https://casenote.kr/대법원/2014두12598</a></li>
+<li>대법원 2024. 7. 25. 선고 2024두32973 판결. <a href="https://casenote.kr/%EB%8C%80%EB%B2%95%EC%9B%90/2024%EB%91%9032973">https://casenote.kr/대법원/2024두32973</a></li>
+<li>대법원 2026. 5. 21. 선고 2018다296229 전원합의체 판결(대법원 보도자료). <a href="https://www.scourt.go.kr/portal/news/NewsViewAction.work?gubun=6&pageIndex=1&searchOption=&searchWord=&seqnum=2980">https://www.scourt.go.kr/portal/news/NewsViewAction.work?gubun=6&amp;pageIndex=1&amp;searchOption=&amp;searchWord=&amp;seqnum=2980</a></li>
+<li>대법원 2026. 7. 9. 선고 2024두37015 판결(법률신문·연합뉴스 보도, 판결문 원문 미대조). <a href="https://www.lawtimes.co.kr/news/articleView.html?idxno=223309">https://www.lawtimes.co.kr/news/articleView.html?idxno=223309</a>, <a href="https://www.yna.co.kr/view/AKR20260709097700004">https://www.yna.co.kr/view/AKR20260709097700004</a></li>
+<li>김·장 법률사무소, 노동조합법 개정(2025. 9. 9. 공포, 2026. 3. 10. 시행) 대비표. <a href="https://www.kimchang.com/ko/insights/detail.kc?idx=32869&sch_section=4">https://www.kimchang.com/ko/insights/detail.kc?idx=32869&amp;sch_section=4</a></li>
+<li>대한민국 정책브리핑(근로복지공단), 「7월부터 … 산재보험 적용 — &#39;전속성&#39; 요건 폐지」(2023. 6. 7.). <a href="https://www.korea.kr/news/policyNewsView.do?newsId=148915989">https://www.korea.kr/news/policyNewsView.do?newsId=148915989</a></li>
+<li>근로자 추정 입법 논의: 매일노동뉴스(2026. 4. 10., 7. 21.) <a href="https://www.labortoday.co.kr/news/articleView.html?idxno=233719">https://www.labortoday.co.kr/news/articleView.html?idxno=233719</a>, <a href="https://www.labortoday.co.kr/news/articleView.html?idxno=235778">https://www.labortoday.co.kr/news/articleView.html?idxno=235778</a>; 경향신문(2026. 5. 1.); 대한경제(2026. 7. 26.) <a href="https://www.dnews.co.kr/uhtml/view.jsp?idxno=202607261744577240551">https://www.dnews.co.kr/uhtml/view.jsp?idxno=202607261744577240551</a>; 브릿지경제(2026. 8. 4.) <a href="https://www.viva100.com/article/20260804500810">https://www.viva100.com/article/20260804500810</a>; 서울신문(2026. 9. 13.) <a href="https://www.seoul.co.kr/news/society/2026/09/13/20260913500041">https://www.seoul.co.kr/news/society/2026/09/13/20260913500041</a> [확인 필요: 국회 의안정보시스템 직접 조회 실패]</li>
+</ul>
+</li>
+<li><strong>국제</strong><ul>
+<li>ILO, Employment Relationship Recommendation, 2006 (No. 198). <a href="https://webapps.ilo.org/static/english/inwork/cb-policy-guide/employmentrelationshiprecommendationno198.pdf">https://webapps.ilo.org/static/english/inwork/cb-policy-guide/employmentrelationshiprecommendationno198.pdf</a></li>
+<li>ILO, ICSE-18 Manual(2023)(2026년 논문 87–89쪽의 인용에 따름).</li>
+<li>España, Real Decreto-ley 9/2021, de 11 de mayo; Ley 12/2021, de 28 de septiembre, disposición adicional vigesimotercera. <a href="https://www.boe.es/eli/es/rdl/2021/05/11/9">https://www.boe.es/eli/es/rdl/2021/05/11/9</a>, <a href="https://www.boe.es/eli/es/l/2021/09/28/12/con">https://www.boe.es/eli/es/l/2021/09/28/12/con</a></li>
+<li>Directive (EU) 2024/2831 on improving working conditions in platform work(채택문, EU 출판국 메타데이터). <a href="https://data.consilium.europa.eu/doc/document/PE-89-2024-REV-1/EN/pdf">https://data.consilium.europa.eu/doc/document/PE-89-2024-REV-1/EN/pdf</a>, <a href="https://eur-lex.europa.eu/eli/dir/2024/2831/oj/eng">https://eur-lex.europa.eu/eli/dir/2024/2831/oj/eng</a></li>
+<li>ILO, &quot;International Labour Conference ends with adoption of the first Convention on decent work in the platform economy&quot;(2026. 6. 16.). <a href="https://www.ilo.org/resource/news/ilc/ilc114/international-labour-conference-ends-adoption-first-convention-decent-work">https://www.ilo.org/resource/news/ilc/ilc114/international-labour-conference-ends-adoption-first-convention-decent-work</a></li>
+<li>Hebrew University of Jerusalem, Faculty of Law, &quot;Prof. Guy Davidov&quot;. <a href="https://en.law.huji.ac.il/people/guy-davidov">https://en.law.huji.ac.il/people/guy-davidov</a></li>
+</ul>
+</li>
+<li><strong>함께 읽을 글</strong><ul>
+<li><a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가 — 알고리즘이 통제하는 노동과 타인결정성 심화 분석</a>: 같은 2026년 논문을 바탕으로 알고리즘 통제, 타인결정성, 근로기준법 개정안과 근로자 추정을 다룬다</li>
+<li><a href="us_germany_labor_law_comparison.html">미국과 독일 노동법의 기능적 비교 심화 분석</a>: 7.1 플랫폼 노동, 독일 크라우드워커 판결과 근로자 추정</li>
+<li><a href="membership_employment_japan_korea.html">멤버십형 고용과 일본·한국 노동법제 심화 분석</a>: 7장 일본 법리가 한국 법제로 이어진 계보</li>
+</ul>
+</li>
+</ul>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
