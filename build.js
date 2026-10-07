@@ -441,6 +441,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "중노위 차별시정명령 판정 검토 (모바일)",
+      subtitle: "인천2026차별5 취소 검토 · 유급병가 차별시정명령 판정 검토",
+      date: "2026-10-07",
+      summary: "부평물류사업소 주 20시간 무기계약 단시간근로자 유급병가 일수 축소(이중삭감) 위법성 검토 및 상시적 안전망 차별에 관한 시정명령 주문·판정이유(안).",
+      tags: ["노동법", "차별시정", "단시간근로자", "병가", "판정검토", "중노위"],
+      tag_string: "노동법 차별시정 단시간근로자 병가 판정검토 중노위 인천2026차별5",
+      reading_time: 10,
+      url: "paid_sick_leave_discrimination_review.html",
+      _timestamp: new Date("2026-10-07T17:30:00+09:00").getTime()
+    },
+    {
       title: "[1부] 파이썬 객체 생성과 바인딩의 기계적 실체",
       subtitle: "클래스 정의부터 tp_new, Bound Method 동적 생성, 7가지 임시 객체까지",
       date: "2026-09-15",
