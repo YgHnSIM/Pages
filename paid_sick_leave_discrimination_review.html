@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>중노위 차별시정명령 판정 검토 (모바일)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    .seg-btn.active {
+      background-color: var(--primary, #2563eb);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background,#0f172a)] text-[var(--foreground,#f8fafc)] min-h-screen pb-16 antialiased selection:bg-blue-500/30">
+
+  <!-- Mobile Sticky Top Header -->
+  <header class="sticky top-0 z-30 bg-[var(--background,#0f172a)]/95 backdrop-blur-md border-b border-[var(--border,#334155)] px-4 py-3">
+    <div class="max-w-2xl mx-auto flex items-center justify-between gap-2">
+      <div class="min-w-0">
+        <div class="flex items-center gap-1.5 mb-0.5">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span class="text-[11px] font-semibold tracking-wider text-emerald-400 uppercase">인천2026차별5 취소 검토</span>
+        </div>
+        <h1 class="text-base font-bold truncate text-[var(--foreground,#f8fafc)]">
+          유급병가 차별시정명령 판정 검토
+        </h1>
+      </div>
+      <button id="quickCopyBtn" class="shrink-0 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+        <span>요약 복사</span>
+      </button>
+    </div>
+
+    <!-- Segmented Navigation (Mobile Optimized 3 Tabs) -->
+    <nav class="max-w-2xl mx-auto mt-2.5 p-1 bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl grid grid-cols-3 gap-1 text-center text-xs">
+      <button onclick="setTab('legal')" id="btn-legal" class="seg-btn active py-2 rounded-lg font-medium transition text-[var(--muted-foreground,#94a3b8)]">
+        ⚖️ 핵심 법리
+      </button>
+      <button onclick="setTab('order')" id="btn-order" class="seg-btn py-2 rounded-lg font-medium transition text-[var(--muted-foreground,#94a3b8)]">
+        📋 주문(안)
+      </button>
+      <button onclick="setTab('reason')" id="btn-reason" class="seg-btn py-2 rounded-lg font-medium transition text-[var(--muted-foreground,#94a3b8)]">
+        ✍️ 판정이유
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-2xl mx-auto px-4 pt-4 space-y-4">
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: LEGAL GROUNDS & DOCTRINE       -->
+    <!-- ========================================== -->
+    <div id="sec-legal" class="tab-pane space-y-4">
+
+      <!-- Case Context Banner -->
+      <div class="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs space-y-1">
+        <div class="flex items-center justify-between text-blue-400 font-bold">
+          <span>🎯 대상 사건 및 신청인 지위</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-blue-500/20">인천지노위 2026. 5. 8. 인천2026차별5</span>
+        </div>
+        <p class="text-[var(--foreground,#f8fafc)] font-medium">
+          부평물류사업소 물류 발착 업무 · 주 20시간(1일 4h) 무기계약 단시간근로자 · <strong>근로계약서 제4조: 주 5일(월~금) 전일 출근</strong>
+        </p>
+      </div>
+
+      <!-- Point 1: Frame Shift & 상시적 안전망 -->
+      <article class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-[var(--border,#334155)]/70 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs flex items-center justify-center">1</span>
+            <h2 class="text-sm font-bold text-[var(--foreground,#f8fafc)]">상시적 안전망과 배정 차별</h2>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-medium">대법원 2020두49355</span>
+        </div>
+
+        <div class="space-y-2.5 text-xs sm:text-sm leading-relaxed">
+          <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300">
+            <div class="font-bold mb-0.5 text-rose-400">❌ 사측의 수세적 프레임 지양</div>
+            “아직 30일을 초과하여 아프지 않았으므로 구체적·현실적 침해가 없다”는 사측의 구제이익 결여 항변.
+          </div>
+
+          <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
+            <div class="font-bold mb-0.5 text-emerald-400">⭕ 공세적 권리 프레임 구축</div>
+            병가 제도는 고용관계를 유지하며 치료에 전념케 하는 <strong>‘상시적 안전망’</strong>이자 핵심 근로조건입니다.
+          </div>
+
+          <p class="text-[var(--muted-foreground,#94a3b8)] pt-1 text-xs sm:text-sm">
+            통상근로자는 60일의 두터운 안전망을 누리는 반면, 신청인은 30일로 제한되어 30일 초과 시 <strong>임금보전 조기단절, 연차 강제소진, 무급휴가·질병휴직 조기전환</strong> 등 상시적 불이익 지위에 놓입니다. 이는 개별 발병 시점이 아닌, <strong>노사협정서 제2조를 상시 적용받는 현재 시점에서 이미 완결적으로 발생하는 현존하는 권리 침해</strong>입니다.
+          </p>
+
+          <!-- 보론 하이라이트 -->
+          <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-200">
+            <div class="font-bold text-indigo-300 mb-1 flex items-center gap-1">
+              <span>💡</span> [보 론] 복지포인트 배정 구조와의 채권적 동일성
+            </div>
+            연초 최고 보장한도 일괄 부여 → 상병 시 차감 → 미사용 시 연말 당연 소멸(리셋) 구조는 복지포인트·바우처와 본질이 같습니다. 대법원(2020두49355)은 미사용 소멸 급부라도 <strong>‘배정·부여 단계의 차등 설정 자체’</strong>가 불리한 처우라고 판시하였으므로, 사측 항변은 ‘사전적 배정 권리 격차’와 ‘사후적 소비 실적’을 혼동한 것에 불과합니다.
+          </div>
+        </div>
+      </article>
+
+      <!-- Point 2: Standing, Remedial Benefit, Continuing Discrimination -->
+      <article class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-[var(--border,#334155)]/70 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center justify-center">2</span>
+            <h2 class="text-sm font-bold text-[var(--foreground,#f8fafc)]">신청인적격 및 시정이익 (특별권리구제절차)</h2>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">대법원 2014두43288</span>
+        </div>
+
+        <div class="space-y-2.5 text-xs sm:text-sm leading-relaxed text-[var(--muted-foreground,#94a3b8)]">
+          <div class="p-3 rounded-xl bg-[var(--background,#0f172a)]/60 border border-[var(--border,#334155)]">
+            <strong class="text-[var(--foreground,#f8fafc)] block mb-1">1. 신청인적격 (기간제법 제9조 제1항)</strong>
+            부평물류사업소 주 20시간 무기계약 단시간근로자로서 노사협정서의 적용을 직접 받는 당사자이므로 정당한 적격 구비.
+          </div>
+
+          <div class="p-3 rounded-xl bg-[var(--background,#0f172a)]/60 border border-[var(--border,#334155)]">
+            <strong class="text-[var(--foreground,#f8fafc)] block mb-1">2. 시정이익: 원상회복 및 제도개선 (기간제법 제13조 제1항)</strong>
+            노동위 시정절차는 일반 항고소송과 달리 차별을 해소하여 원상회복시키는 특별절차입니다. 현실적 불승인 처분 시까지 기다려야 한다면 실효적 권리구제 공백이 생기고 사규 개선의 입법취지가 몰각됩니다.
+          </div>
+
+          <div class="p-3 rounded-xl bg-[var(--background,#0f172a)]/60 border border-[var(--border,#334155)]">
+            <strong class="text-[var(--foreground,#f8fafc)] block mb-1">3. 계속되는 차별 (대법원 2010두3237)</strong>
+            차별적 규정이 근로관계 존속 중 계속 적용되므로 제척기간 도과가 발생하지 않습니다.
+          </div>
+        </div>
+      </article>
+
+      <!-- Point 3: 이중삭감 & 12 Weeks vs 6 Weeks -->
+      <article class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-[var(--border,#334155)]/70 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xs flex items-center justify-center">3</span>
+            <h2 class="text-sm font-bold text-[var(--foreground,#f8fafc)]">이중삭감 위법성 & 전일출근 회복기간 박탈</h2>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-medium">방법·정도 부적정</span>
+        </div>
+
+        <!-- Formula Card -->
+        <div class="p-3.5 bg-[var(--background,#0f172a)] rounded-xl border border-[var(--border,#334155)] space-y-2">
+          <div class="text-[11px] font-bold text-[var(--muted-foreground,#94a3b8)]">📊 주 20시간(1일 4h) 보장량 및 치료기간 비교</div>
+          
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between items-center p-2 rounded bg-blue-500/10 text-blue-300">
+              <span>통상근로자 (기준 8h)</span>
+              <span class="font-bold">60일 × 8h = 480시간 (100%)</span>
+            </div>
+            <div class="flex justify-between items-center p-2 rounded bg-emerald-500/10 text-emerald-300">
+              <span>정당 비례 (단일비례 4h)</span>
+              <span class="font-bold">60일 × 4h = 240시간 (50%)</span>
+            </div>
+            <div class="flex justify-between items-center p-2 rounded bg-rose-500/10 text-rose-300">
+              <span>사측 현행 (이중삭감)</span>
+              <span class="font-bold">30일 × 4h = 120시간 (25%)</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-rose-400 font-semibold text-right pt-0.5">
+            ⚠️ 비례율(α=0.5)을 일수와 시간에 중복 적용하여 25%(α²)로 과잉 삭감
+          </div>
+        </div>
+
+        <!-- 12주 vs 6주 박탈 논리 -->
+        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs sm:text-sm leading-relaxed space-y-1">
+          <div class="font-bold text-amber-300">🗓️ 주 5일 전일 출근 사실관계와 실질 회복기간의 부당한 박탈</div>
+          신청인은 근로계약서 제4조에 따라 통상근로자와 완벽히 동일하게 <strong>‘주 5일(월~금)’ 전일 출근</strong>하는 근로자입니다. 질병 치유 속도는 1일 근로시간에 따라 빨라지지 않음에도,
+          통상근로자에게는 <strong>12주(= 60일 ÷ 주 5일)</strong>의 치료기간을 보장하면서, 신청인에게는 겨우 <strong>6주(= 30일 ÷ 주 5일)</strong> 만에 치료를 단절시키는 것은 방법과 정도의 적정성을 완전히 상실한 처우입니다.
+        </div>
+
+        <div class="space-y-2 text-xs sm:text-sm text-[var(--muted-foreground,#94a3b8)] leading-relaxed">
+          <p>
+            <strong class="text-[var(--foreground,#f8fafc)]">시행령 [별표 2] 원칙:</strong> 연차휴가 산식처럼 '총 유급시간 기준 단 1회 비례'가 노동법의 기본 원리입니다.
+          </p>
+          <p>
+            <strong class="text-[var(--foreground,#f8fafc)]">노사자치 한계:</strong> 강행규정인 기간제법 제8조 제2항을 위반한 노사협약 조항은 무효이므로 노사자치를 이유로 면책될 수 없습니다(대법원 2014두43288).
+          </p>
+        </div>
+      </article>
+
+      <!-- Point 4: Enforcement & Directives -->
+      <article class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-2xl p-4 sm:p-5 shadow-sm space-y-2">
+        <div class="flex items-center justify-between border-b border-[var(--border,#334155)]/70 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xs flex items-center justify-center">4</span>
+            <h2 class="text-sm font-bold text-[var(--foreground,#f8fafc)]">집행력을 확보한 제도개선 명령 설계</h2>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 font-medium">실무 방어 전략</span>
+        </div>
+        <p class="text-xs sm:text-sm text-[var(--muted-foreground,#94a3b8)] leading-relaxed">
+          노조와의 합의가 필수적인 '노사협정 자체'의 개정을 명할 경우 발생할 수 있는 사용자의 <em>'이행불능'</em> 항변을 차단하기 위하여, <strong>사용자가 단독으로 제·개정할 수 있는 사내 「병가 운영지침 및 취업규칙 시행세칙」을 30일 이내에 정비하도록 명함으로써 행정명령의 완벽한 집행력</strong>을 확보합니다.
+        </p>
+      </article>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: PROPOSED ORDER (5 ITEMS)        -->
+    <!-- ========================================== -->
+    <div id="sec-order" class="tab-pane hidden space-y-3">
+      <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-[var(--border,#334155)]">
+          <div>
+            <h2 class="text-sm font-bold text-[var(--foreground,#f8fafc)]">시정명령 주문안 (총 5개 항)</h2>
+            <p class="text-[11px] text-[var(--muted-foreground,#94a3b8)]">인천2026차별5 취소 · 적용배제 · 부여형 · 시행세칙 정비(30일)</p>
+          </div>
+          <button id="copyOrderMobileBtn" class="px-3 py-1 bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-lg shadow transition">
+            주문 복사
+          </button>
+        </div>
+
+        <div id="orderList" class="space-y-2.5 text-xs sm:text-sm">
+          <!-- Item 1 -->
+          <div class="p-3 bg-[var(--background,#0f172a)] rounded-xl border border-[var(--border,#334155)] leading-relaxed">
+            <span class="font-bold text-blue-400 mr-1.5">1.</span>
+            <strong>이 사건 초심판정(인천지방노동위원회 2026. 5. 8. 판정 인천2026차별5)을 취소한다.</strong>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="p-3 bg-[var(--background,#0f172a)] rounded-xl border border-[var(--border,#334155)] leading-relaxed">
+            <span class="font-bold text-blue-400 mr-1.5">2.</span>
+            <strong>피신청인이 신청인에 대하여 통상근로자와 달리 소정근로시간 비례 방식을 이중으로 적용하여 연간 유급병가 허가 가능 일수를 30일로 제한한 것은 「기간제 및 단시간근로자 보호 등에 관한 법률」 제8조 제2항을 위반한 차별적 처우임을 인정한다.</strong>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30 text-emerald-200 leading-relaxed">
+            <span class="font-bold text-emerald-400 mr-1.5">3.</span>
+            <strong>피신청인은 신청인에 대하여 「2025년도 노사협정서(병가 및 보상휴가제도)」 제2조 중 단시간근로자의 병가 일수를 근무시간에 비례하여 삭감하도록 정한 조항을 적용하여서는 아니 된다.</strong>
+            <span class="block text-[11px] text-emerald-400/80 mt-1 font-mono">※ [주위적 부작위 명령] 개별 사안에서 위법 감축 조항 적용 배제</span>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30 text-emerald-200 leading-relaxed">
+            <span class="font-bold text-emerald-400 mr-1.5">4.</span>
+            <strong>피신청인은 신청인이 유급병가를 신청하는 경우, 취업규칙 제21조 제5호에 따른 병가 승인 요건을 갖춘 때에는 통상근로자와 동일하게 연간 최대 60일의 범위 내에서 유급병가를 승인하여야 한다. 다만, 병가 1일에 대한 유급 처리 시간은 신청인의 1일 소정근로시간(4시간)을 기준으로 산정하여 임금을 지급하여야 한다.</strong>
+            <span class="block text-[11px] text-emerald-400/80 mt-1 font-mono">※ [주위적 급부 명령] 60일 보장 + 인사재량권 요건 조화</span>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="p-3 bg-purple-500/10 rounded-xl border border-purple-500/30 text-purple-200 leading-relaxed">
+            <span class="font-bold text-purple-400 mr-1.5">5.</span>
+            <strong>피신청인은 제3항 및 제4항의 이행을 위하여 이 판정서를 송달받은 날부터 30일 이내에 사내 병가 운영지침 및 관련 취업규칙 시행세칙 중 단시간근로자의 병가 산정 기준을 제4항의 취지에 맞추어 개정·정비하여야 한다.</strong>
+            <span class="block text-[11px] text-purple-400/80 mt-1 font-mono">※ [제도개선 명령] 사내 세칙 정비로 집행력 확보 (30일 이행기한)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: REASONING DRAFT (FULL)          -->
+    <!-- ========================================== -->
+    <div id="sec-reason" class="tab-pane hidden space-y-3">
+      <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-[var(--border,#334155)]">
+          <div>
+            <h2 class="text-sm font-bold text-[var(--foreground,#f8fafc)]">판정이유 표준 설시문</h2>
+            <p class="text-[11px] text-[var(--muted-foreground,#94a3b8)]">판정문 '3. 판단' 파트 전문</p>
+          </div>
+          <button id="copyReasonMobileBtn" class="px-3 py-1 bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-lg shadow transition">
+            전문 복사
+          </button>
+        </div>
+
+        <div class="p-3.5 bg-[var(--background,#0f172a)] rounded-xl border border-[var(--border,#334155)] font-mono text-xs leading-relaxed text-[var(--foreground,#f8fafc)] whitespace-pre-wrap select-all max-h-[500px] overflow-y-auto" id="reasonMobileText">### 3. 판 단
+
+이 사건에 관한 당사자의 주장, 우리 위원회에 제출된 증거자료, 심문회의 진술 내용 등을 종합하여 다음과 같이 판단한다.
+
+가. 본안 전 항변(신청인적격 및 시정이익의 존부)에 대한 판단
+
+ 1) 피신청인 주장의 요지
+    피신청인은, 신청인이 실제로 연간 30일을 초과하여 병가를 신청하거나 피신청인으로부터 불승인 처분을 받은 사실이 없으므로 신청인의 권리에 대한 구체적·현실적 침해가 발생하지 아니하였고, 따라서 이 사건 구제신청은 시정이익(구제이익)이 결여되어 각하되어야 한다고 주장한다.
+
+ 2) 관련 법리
+    가) 「기간제 및 단시간근로자 보호 등에 관한 법률」(이하 ‘기간제법’이라 한다) 제9조 제1항은 “기간제근로자 또는 단시간근로자는 차별적 처우를 받은 경우 노동위원회에 그 시정을 신청할 수 있다.”고 규정하고 있고, 같은 법 제13조 제1항은 시정명령의 내용으로 “차별적 행위의 중지, 임금 등 근로조건의 개선(취업규칙, 단체협약 등의 제도개선 명령을 포함한다) 또는 적절한 배상 등”을 규정하고 있다.
+    나) 노동위원회의 차별시정절차는 개별적 거부처분의 취소를 구하는 일반 항고소송과 달리, 사용자의 차별적 처우로 말미암아 발생한 불이익을 해소하여 차별적 처우가 없었더라면 존재하였을 상태로 개선하고 근로조건의 보호를 강화하는 데 근본적인 목적이 있는 특별권리구제절차이다(대법원 2016. 12. 1. 선고 2014두43288 판결 참조). 기간제법 제13조 제1항이 시정명령의 내용으로 취업규칙·단체협약 등의 ‘제도개선 명령’을 명문으로 규정한 것은, 구체적 차별이 인정된 사건에서 그 원인이 된 자치규범 자체를 개정하도록 명함으로써 장래에 반복될 불이익을 근원적으로 차단하는 형성적 권한을 노동위원회에 부여한 것이다.
+    다) 대법원은 기간제법 제2조 제3호의 ‘불리한 처우’에 대하여 “사용자가 임금 그 밖의 근로조건 등에서 단시간근로자와 비교대상근로자를 다르게 처우함으로써 단시간근로자에게 발생하는 불이익 전반을 의미한다”고 판시하고 있다(대법원 2012. 3. 29. 선고 2011두2132 판결 참조). 나아가 복리후생이나 근로조건에 관한 급부가 기간 내 미사용 시 소멸하는 성격을 가졌다 하더라도, “그 권리를 배정·부여하는 단계에서 비교대상근로자와 차등을 둔 것 자체”가 기간제법 제2조 제3호의 ‘불리한 처우’를 구성한다(대법원 2024. 2. 29. 선고 2020두49355 판결 참조).
+    라) 또한 사용자가 계속되는 근로 제공에 대하여 단시간근로자에게 차별적인 규정을 적용하여 온 경우, 특별한 사정이 없는 한 그와 같은 차별적 상태는 근로관계 존속 중 계속되는 것이므로 이는 기간제법 제9조 제1항 단서의 ‘계속되는 차별적 처우’에 해당한다(대법원 2011. 12. 22. 선고 2010두3237 판결 참조).
+
+ 3) 구체적 판단
+    위 법리에 비추어 이 사건을 살피건대, 아래와 같은 사정들을 종합하면 신청인은 이미 차별적 처우를 받은 당사자로서 본건 시정을 구할 법률상 시정이익이 확고히 인정되므로, 피신청인의 본안 전 항변은 이유 없다.
+    가) 신청인은 피신청인 사업장에서 주 소정근로시간 20시간을 근무하는 무기계약 단시간근로자로서, 피신청인이 체결·시행 중인 「2025년도 노사협정서(병가 및 보상휴가제도)」(이하 ‘이 사건 노사협정서’라 한다)의 적용을 직접 받고 있는 당사자이므로 정당한 신청인적격을 갖추었다.
+    나) 병가 제도는 근로자가 업무 외 질병이나 부상으로 근로제공이 불가능할 때 고용관계를 안정적으로 유지하면서 임금 삭감 없이 치료와 회복에 전념할 수 있도록 보장하는 ‘상시적 안전망’이자 핵심적 근로조건이다. 비교대상인 통상근로자는 연간 60일의 유급병가 보장 한도라는 두터운 안전망 하에서 질병 발생 시 60일까지 안정적으로 유급 치료를 받을 수 있는 법적 지위를 누린다.
+    다) 반면, 신청인을 비롯한 단시간근로자는 연간 30일로 제한된 안전망만을 부여받음으로써, 30일을 초과하는 상병 발생 시 유급 임금 보전이 조기 단절되고, 이 사건 노사협정서 제2조에 따라 자신의 연차유급휴가를 치료에 강제로 소진하여야 하거나 무급휴가 또는 질병휴직 조치로 조기 전환되는 등 실질적인 소득 손실과 근로조건상의 불이익을 상시적으로 감수하여야 하는 열등하고 불안정한 법적 지위에 놓이게 된다.
+    라) 이러한 법적 지위의 격차와 불이익은 신청인이 실제로 상병에 걸려 30일을 초과하는 병가를 신청하고 거부당하는 개별적 사건이 발생하여야 비로소 생겨나는 것이 아니다. 피신청인이 이 사건 노사협정서 제2조를 통해 단시간근로자의 병가 일수를 30일로 제한하여 신청인에게 상시 적용하고 있는 현재 시점에서 이미 완결적으로 발생하고 있는 ‘현존하는 권리 침해’이다(대법원 2020두49355 판결 참조).
+    마) [보 론: 권리의 배정 구조와 채권적 본질에 관한 검토]
+        이 사건 유급병가 제도의 실질적인 운영 방식을 살펴보면, 연초(회계연도 개시일)에 전 재직 근로자를 대상으로 연간 사용할 수 있는 유급병가의 최고 보장 한도를 일괄 부여하고, 상병 발생 시 이를 일 단위로 차감·소진하며, 연도 내에 사용하지 아니한 잔여 일수는 다음 연도로 이월되지 아니하고 당연 소멸(리셋)하는 구조를 취하고 있다.
+        이러한 이행 방식은 사내 복지포인트나 바우처 등과 같이 일정 한도의 청구권을 사전에 일괄 배정하고 사유 발생 시 차감하는 소멸성 급부 제도의 채권·채무 구조와 권리적 측면에서 본질적으로 아무런 차이가 없다.
+        대법원은 맞춤형 복지포인트와 같이 기간 내 미사용 시 소멸하는 급부라 하더라도, ‘그 권리를 배정·부여하는 단계에서 비교대상근로자와 차등을 둔 상태 자체’가 이미 기간제법 제2조 제3호의 불리한 처우를 구성한다고 명시적으로 판시하고 있다(대법원 2024. 2. 29. 선고 2020두49355 판결 참조). 복지포인트 제도에서 근로자가 연간 배정된 포인트를 실제로 전액 소진하여 초과 지출을 시도하거나 거부당한 실적이 없더라도 배정액 자체의 차등 설정이 현존하는 차별이 되는 것과 마찬가지로, 유급병가 제도에서도 연초 보장 한도가 30일로 축소 설정된 상태 자체가 신청인에게 현존하는 법적 권리의 불이익이다.
+        따라서 신청인이 실제로 30일을 초과하여 병가를 신청하고 거부당한 실적이 없다는 사정을 들어 구제이익이 없다고 주장하는 피신청인의 항변은, 급부의 ‘사전적 배정 단계에서의 권리 격차’와 ‘사후적 소비·소진 실적’을 혼동한 독자적 견해에 불과하여 받아들일 수 없다.
+    바) 더욱이 피신청인의 주장처럼 현실적 불승인 처분이 발생할 때까지 구제신청을 할 수 없다고 본다면, 질병에 걸려 유급 소득이 끊기고 휴직 조치로 내몰린 후에야 비로소 다툴 수 있게 되어 실효적 권리구제의 공백이 발생할 뿐만 아니라, 차별의 근원이 되는 사규 자체를 개선하여 반복을 막고자 하는 기간제법 제13조 제1항의 ‘제도개선 명령’의 입법 취지가 완전히 몰각된다.
+    사) 나아가 위법한 차별 조항이 현재도 신청인에게 계속 적용되고 있는 이상 이는 ‘계속되는 차별적 처우’에 해당하므로 제척기간이 도과하지 아니하였음은 물론, 신청인에게는 위법한 규정의 적용 배제 및 장래를 향한 제도개선을 청구할 법률상 구제이익이 온전히 인정된다.
+
+---
+
+나. 차별적 처우의 성립 여부
+
+ 1) 비교대상근로자의 존부 및 불리한 처우의 인정
+    신청인과 같은 사업소(부평물류사업소)에서 동일한 물류 발착 업무를 수행하는 주 40시간 정규직근로자는 주된 업무 내용에 본질적 차이가 없으므로 적법한 비교대상근로자에 해당한다(대법원 2012. 10. 25. 선고 2011두7045 판결 참조). 피신청인이 비교대상근로자에게는 연 60일의 유급병가를 보장하면서 단시간근로자인 신청인에게는 그 절반인 연 30일만을 보장한 것은 기간제법 제2조 제3호의 ‘불리한 처우’에 해당한다.
+
+ 2) 합리적 이유의 부존재 (이중삭감의 위법성)
+    피신청인은 근로기준법 제18조 제1항의 근로시간 비례원칙 및 노동조합과의 노사협정에 따른 것이므로 합리적 이유가 있다고 주장하나, 아래와 같은 이유로 받아들일 수 없다.
+    가) 비례원칙의 왜곡과 이중삭감의 위법:
+        신청인은 1일 소정근로시간이 4시간이므로 병가 1일을 사용할 때 지급받는 임금은 통상근로자(8시간분)의 절반인 4시간분에 불과하다. 즉, 근로시간이 짧다는 사정은 1일당 유급시간에서 이미 정확히 50%의 비율로 1회 반영된다. 그럼에도 피신청인이 사용 가능 ‘일수’까지 30일로 축소한 것은 비례율(α=0.5)을 중복 적용하여 신청인의 연간 보장 총량을 120시간(30일×4시간)으로 떨어뜨린 것으로서, 통상근로자(480시간) 대비 25%(α²)로 과잉 삭감한 것이다.
+    나) 주 5일 전일 출근 사실관계와 실질 회복기간의 부당한 박탈:
+        신청인은 근로계약서 제4조에 따라 통상근로자와 완벽히 동일하게 ‘주 5일(월~금요일)’ 매일 출근하는 전일 출근 근로자이다. 질병 치유에 필요한 생물학적 회복기간은 1일 근로시간의 길이에 따라 단축되지 않는다. 통상근로자에게는 12주(= 60일 ÷ 주 5일)의 치료기간을 보장하면서, 동일하게 주 5일 출근하는 신청인에게는 겨우 6주(= 30일 ÷ 주 5일) 만에 치료기간을 단절시키는 것은 방법과 정도의 적정성을 완전히 상실한 것이다.
+    다) 규범적 조리 및 노사자치의 한계:
+        근로기준법 시행령 [별표 2]가 천명한 ‘총 유급시간 기준 단 1회 비례 원칙’에 비추어 보더라도 현행 방식은 노동법의 기본 원리에 반하며, 강행규정인 기간제법 제8조 제2항을 위반한 노사협약 조항은 무효이므로 노사자치를 이유로 면책될 수 없다(대법원 2014두43288 판결 참조).
+
+---
+
+다. 시정명령의 내용 및 결론
+
+ 1) 초심판정의 취소 및 차별적 처우의 인정 (주문 제1항, 제2항)
+    피신청인의 행위는 위법한 차별적 처우에 해당하므로 초심판정을 취소하고 차별적 처우임을 인정한다.
+ 2) 위법 조항의 개별적 적용 배제 (주문 제3항)
+    피신청인은 강행규정 위반으로 무효인 2025년 노사협정서 제2조의 병가 일수 축소 조항을 신청인에게 적용하여서는 아니 된다.
+ 3) 정당한 병가 청구권 보장과 인사재량권의 조화 (주문 제4항)
+    피신청인의 정당한 병가 승인 심사 권한을 존중하여, 신청인이 취업규칙 제21조 제5호에 따른 승인 요건을 구비한 때에는 통상근로자와 동일하게 연 60일 범위 내에서 병가를 승인하되, 1일당 유급시간은 신청인의 소정근로시간(4시간)을 기준으로 지급하도록 명한다.
+ 4) 사내 규정 정비 명령 (주문 제5항)
+    노조의 합의가 필요한 노사협정 자체의 개정 명령을 피하고, 사용자가 단독으로 제·개정할 수 있는 사내 ‘병가 운영지침 및 취업규칙 시행세칙’을 30일 이내에 정비하도록 명함으로써 행정명령의 집행력을 완벽히 확보한다.
+ 5) 따라서 기간제법 제12조 및 제13조에 따라 주문과 같이 판정한다.</div>
+      </div>
+    </div>
+
+    <!-- Summary Tip Card -->
+    <div class="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-xs space-y-1">
+      <div class="font-bold text-blue-400 flex items-center gap-1">
+        <span>💡</span> 실무 판정관 설득 요약
+      </div>
+      <p class="text-[var(--muted-foreground,#94a3b8)] leading-relaxed">
+        사측의 <em>“현실적 손해 없음”</em> 항변은 대법원 <strong>2020두49355</strong>(사전적 배정 단계의 권리 격차 법리 및 보론의 채권적 본질)로 완벽히 탄핵되며, 주 5일 전일 출근 근로자에게 12주가 아닌 6주 치료기간만을 강요하는 것은 <strong>2014두43288</strong>에 반하는 위법한 이중삭감입니다.
+      </p>
+    </div>
+
+  </main>
+
+  <!-- Mobile Toast Notification -->
+  <div id="mobileToast" class="fixed bottom-4 inset-x-4 max-w-sm mx-auto bg-emerald-600 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-2xl text-center transition-all duration-300 transform translate-y-16 opacity-0 pointer-events-none z-50">
+    복사되었습니다.
+  </div>
+
+  <script>
+    function setTab(tabName) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.seg-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.remove('bg-blue-600', 'text-white', 'font-bold');
+        btn.classList.add('text-[var(--muted-foreground,#94a3b8)]');
+      });
+
+      const pane = document.getElementById('sec-' + tabName);
+      if (pane) pane.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('btn-' + tabName);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.classList.remove('text-[var(--muted-foreground,#94a3b8)]');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showMobileToast(msg) {
+      const toast = document.getElementById('mobileToast');
+      toast.textContent = msg;
+      toast.classList.remove('translate-y-16', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-16', 'opacity-0');
+      }, 2000);
+    }
+
+    // Quick Copy Handlers
+    document.getElementById('quickCopyBtn').addEventListener('click', () => {
+      const summaryText = `[인천2026차별5 취소 지원 핵심 요약]
+1. 프레임: 조건부 권리가 아닌 상시적 안전망(보장 한도) 차별. 복지포인트와 동일한 사전 배정 단계의 현존 권리 침해 (대법원 2020두49355).
+2. 사실관계: 부평물류사업소 물류발착 주5일 전일출근 근로자에게 치료기간 12주를 6주로 강제 축소한 이중삭감(25% 과잉축소).
+3. 시정명령: 초심판정 취소 + 위법조항 적용배제 + 60일(4h 유급) 보장 + 시행세칙 정비 명령(30일 이행기한).`;
+      navigator.clipboard.writeText(summaryText).then(() => {
+        showMobileToast('핵심 요약이 복사되었습니다.');
+      });
+    });
+
+    document.getElementById('copyOrderMobileBtn').addEventListener('click', () => {
+      const orderEls = document.querySelectorAll('#orderList > div');
+      const text = Array.from(orderEls).map(el => el.innerText.replace(/※.*$/g, '').trim()).join('\n\n');
+      navigator.clipboard.writeText(text).then(() => {
+        showMobileToast('주문 5개 항이 복사되었습니다.');
+      });
+    });
+
+    document.getElementById('copyReasonMobileBtn').addEventListener('click', () => {
+      const text = document.getElementById('reasonMobileText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showMobileToast('판정이유 전문이 복사되었습니다.');
+      });
+    });
+  </script>
+</body>
+</html>
