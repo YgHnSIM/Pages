@@ -185,7 +185,11 @@ function compileMarkdown(markdown, meta = {}) {
     return placeholder;
   });
 
-  protectedMd = protectedMd.replace(/\$([^\$\n]+?)\$/g, (m) => {
+  // Inline math: Pandoc/KaTeX rules
+  // 1. Opening $: not preceded by backslash, not followed by whitespace
+  // 2. Content: cannot contain newlines or Korean characters (two $ across Korean sentences are not LaTeX math)
+  // 3. Closing $: not preceded by whitespace, not followed by digit
+  protectedMd = protectedMd.replace(/(?<!\\)\$(?!\s)([^$\n\uAC00-\uD7A3]+?)(?<!\s)\$(?!\d)/g, (m) => {
     const placeholder = `%%MATH_INLINE_${mathPlaceholders.length}%%`;
     mathPlaceholders.push({ placeholder, original: m });
     return placeholder;
@@ -196,6 +200,11 @@ function compileMarkdown(markdown, meta = {}) {
     mathPlaceholders.push({ placeholder, original: m });
     return placeholder;
   });
+
+  // CommonMark quirk: when ** closes after punctuation (like ), %, ', ", ]) and is followed by Korean syllable,
+  // CommonMark treats it as non-right-flanking delimiter and refuses to parse bold.
+  // We convert it directly to <strong>...</strong> so it is preserved through marked.
+  protectedMd = protectedMd.replace(/\*\*([^*\n]+?[\p{P}\p{S}])\*\*([\uAC00-\uD7A3])/gu, '<strong>$1</strong>$2');
 
   const renderer = new marked.Renderer();
 
@@ -267,6 +276,17 @@ function compileMarkdown(markdown, meta = {}) {
     gfm: true,
     breaks: false
   });
+
+  // GFM strikethrough: strictly require double tildes (~~...~~).
+  // Single tilde (~) is standard Korean notation for numeric/date ranges (e.g. 10~20, 48~60셀).
+  const strictDoubleTildeDel = /^(~~)(?=[^\s~])((?:\\.|[^\\])*?(?:\\.|[^\s~\\]))\1(?=[^~]|$)/;
+  if (marked.Lexer?.rules?.inline) {
+    for (const mode of Object.keys(marked.Lexer.rules.inline)) {
+      if (marked.Lexer.rules.inline[mode]?.del) {
+        marked.Lexer.rules.inline[mode].del = strictDoubleTildeDel;
+      }
+    }
+  }
 
   protectedMd = normalizeNestedCodeFences(protectedMd);
   let html = marked.parse(protectedMd);
