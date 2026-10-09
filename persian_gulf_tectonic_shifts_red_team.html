@@ -1206,7 +1206,51 @@
       border: 1px solid rgba(148, 163, 184, 0.25);
     }
 
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
     /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
     :root[data-theme="dark"] .badge-verified {
       background: rgba(16, 185, 129, 0.18);
       color: #34d399;
@@ -1322,7 +1366,8 @@
     .vc-block.step-1 { border-left-color: #3b82f6; }
     .vc-block.step-2 { border-left-color: #10b981; }
     .vc-block.step-3 { border-left-color: #f59e0b; }
-    .vc-block.step-4 { border-left-color: #8b5cf6; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
 
     .vc-step-label {
       font-size: 13px;
@@ -1337,12 +1382,33 @@
     .vc-block.step-1 .vc-step-label { color: #2563eb; }
     .vc-block.step-2 .vc-step-label { color: #059669; }
     .vc-block.step-3 .vc-step-label { color: #d97706; }
-    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
 
     :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
     :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
     :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
-    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
 
     .vc-speaker-meta {
       font-size: 12.5px;
@@ -1637,7 +1703,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#1-종합-평가-및-판정-대시보드-executive-summary" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 종합 평가 및 판정 대시보드 (Executive Summary)</span></a></li><li class="depth-3"><a href="#4대-영역-15대-쟁점-전수-검증-매트릭스" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4대 영역 15대 쟁점 전수 검증 매트릭스</span></a></li><li class="depth-2"><a href="#2-문명사적-대항-담론과-39아랍-굴욕의-세기39-기원과-정체성의-해부" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 문명사적 대항 담론과 &#39;아랍 굴욕의 세기&#39; — 기원과 정체성의 해부</span></a></li><li class="depth-3"><a href="#21-대담자의-핵심-테제-서구-39백인성39의-허구와-레반트-문명-약탈" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 대담자의 핵심 테제: 서구 &#39;백인성&#39;의 허구와 레반트 문명 약탈</span></a></li><li class="depth-3"><a href="#22-역사사료-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 역사·사료 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#3-아랍-민족주의-4대-운동의-좌절과-이슬람-저항의-부상" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 아랍 민족주의 4대 운동의 좌절과 이슬람 저항의 부상</span></a></li><li class="depth-3"><a href="#31-대담자의-핵심-테제-4차례-해방-물결의-패배와-이란-혁명의-필연성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 대담자의 핵심 테제: 4차례 해방 물결의 패배와 이란 혁명의 필연성</span></a></li><li class="depth-3"><a href="#32-역사사료-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 역사·사료 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#4-영토의-역사적-원죄와-사우디아라비아-국가-형성사" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 영토의 역사적 원죄와 사우디아라비아 국가 형성사</span></a></li><li class="depth-3"><a href="#41-대담자의-핵심-테제-제국주의-결탁과-예멘-영토-강탈" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 대담자의 핵심 테제: 제국주의 결탁과 예멘 영토 강탈</span></a></li><li class="depth-3"><a href="#42-역사사료-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 역사·사료 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#5-100배-비용-교환비와-비대칭-소모전의-군사학" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 100배 비용 교환비와 비대칭 소모전의 군사학</span></a></li><li class="depth-3"><a href="#51-대담자의-핵심-테제-극단적-교환비와-600년-해양-통제력의-한계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 대담자의 핵심 테제: 극단적 교환비와 600년 해양 통제력의 한계</span></a></li><li class="depth-3"><a href="#52-군사안보-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 군사·안보 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#6-페트로달러-50년-만료설의-허구와-국제-금융-질서" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 페트로달러 50년 만료설의 허구와 국제 금융 질서</span></a></li><li class="depth-3"><a href="#61-대담자의-핵심-테제-50년-페트로달러-만료와-서구-제국의-침몰" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 대담자의 핵심 테제: 50년 페트로달러 만료와 서구 제국의 침몰</span></a></li><li class="depth-3"><a href="#62-지정학경제-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 지정학·경제 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#7-국내적-체제-내구력-대조-분열하는-사우디-vs-포위된-이란" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 국내적 체제 내구력 대조 — 분열하는 사우디 vs 포위된 이란</span></a></li><li class="depth-3"><a href="#71-대담자의-핵심-테제-사우디의-5개-권역-분열과-식수-인프라-취약성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 대담자의 핵심 테제: 사우디의 5개 권역 분열과 식수 인프라 취약성</span></a></li><li class="depth-3"><a href="#72-지정학경제-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 지정학·경제 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#8-친서방-정권의-이중성과-미디어-osint-팩트체크" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 친서방 정권의 이중성과 미디어 OSINT 팩트체크</span></a></li><li class="depth-3"><a href="#81-대담자의-핵심-테제-친서방-정권의-배신과-엡스타인-스캔들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 대담자의 핵심 테제: 친서방 정권의 배신과 엡스타인 스캔들</span></a></li><li class="depth-3"><a href="#82-미디어osint-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 미디어·OSINT 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#9-입체적-종합-판정-매트릭스-bilateral-synthesis" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 입체적 종합 판정 매트릭스 (Bilateral Synthesis)</span></a></li><li class="depth-2"><a href="#10-결론-단색적-선전을-넘어-입체적-복합-지정학으로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 결론: 단색적 선전을 넘어 입체적 복합 지정학으로</span></a></li><li class="depth-2"><a href="#주요-1차-사료-및-참고-문헌-primary-archival-sources-amp-references" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">📚 주요 1차 사료 및 참고 문헌 (Primary Archival Sources &amp; References)</span></a></li><li class="depth-2"><a href="#핵심-용어집-glossary" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">📖 핵심 용어집 (Glossary)</span></a></li><li class="depth-2"><a href="#개정-이력-changelog" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">📝 개정 이력 (Changelog)</span></a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#1-종합-평가-및-판정-대시보드-executive-summary" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 종합 평가 및 판정 대시보드 (Executive Summary)</span></a></li><li class="depth-3"><a href="#4대-영역-16대-쟁점-전수-검증-매트릭스" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4대 영역 16대 쟁점 전수 검증 매트릭스</span></a></li><li class="depth-2"><a href="#2-문명사적-대항-담론과-39아랍-굴욕의-세기39-기원과-정체성의-해부" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 문명사적 대항 담론과 &#39;아랍 굴욕의 세기&#39; — 기원과 정체성의 해부</span></a></li><li class="depth-3"><a href="#21-대담자의-핵심-테제-서구-39백인성39의-허구와-레반트-문명-약탈" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 대담자의 핵심 테제: 서구 &#39;백인성&#39;의 허구와 레반트 문명 약탈</span></a></li><li class="depth-3"><a href="#22-역사사료-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 역사·사료 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#3-아랍-민족주의-4대-운동의-좌절과-이슬람-저항의-부상" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 아랍 민족주의 4대 운동의 좌절과 이슬람 저항의 부상</span></a></li><li class="depth-3"><a href="#31-대담자의-핵심-테제-4차례-해방-물결의-패배와-이란-혁명의-필연성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 대담자의 핵심 테제: 4차례 해방 물결의 패배와 이란 혁명의 필연성</span></a></li><li class="depth-3"><a href="#32-역사사료-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 역사·사료 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#4-영토의-역사적-원죄와-사우디아라비아-국가-형성사" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 영토의 역사적 원죄와 사우디아라비아 국가 형성사</span></a></li><li class="depth-3"><a href="#41-대담자의-핵심-테제-제국주의-결탁과-예멘-영토-강탈" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 대담자의 핵심 테제: 제국주의 결탁과 예멘 영토 강탈</span></a></li><li class="depth-3"><a href="#42-역사사료-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 역사·사료 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#5-100배-비용-교환비와-비대칭-소모전의-군사학" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 100배 비용 교환비와 비대칭 소모전의 군사학</span></a></li><li class="depth-3"><a href="#51-대담자의-핵심-테제-극단적-교환비와-600년-해양-통제력의-한계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 대담자의 핵심 테제: 극단적 교환비와 600년 해양 통제력의 한계</span></a></li><li class="depth-3"><a href="#52-군사안보-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 군사·안보 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#6-페트로달러-50년-만료설의-허구와-국제-금융-질서" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 페트로달러 50년 만료설의 허구와 국제 금융 질서</span></a></li><li class="depth-3"><a href="#61-대담자의-핵심-테제-50년-페트로달러-만료와-서구-제국의-침몰" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 대담자의 핵심 테제: 50년 페트로달러 만료와 서구 제국의 침몰</span></a></li><li class="depth-3"><a href="#62-지정학경제-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 지정학·경제 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#7-국내적-체제-내구력-대조-분열하는-사우디-vs-포위된-이란" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 국내적 체제 내구력 대조 — 분열하는 사우디 vs 포위된 이란</span></a></li><li class="depth-3"><a href="#71-대담자의-핵심-테제-사우디의-5개-권역-분열과-식수-인프라-취약성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 대담자의 핵심 테제: 사우디의 5개 권역 분열과 식수 인프라 취약성</span></a></li><li class="depth-3"><a href="#72-지정학경제-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 지정학·경제 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#8-친서방-정권의-이중성과-미디어-osint-팩트체크" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 친서방 정권의 이중성과 미디어 OSINT 팩트체크</span></a></li><li class="depth-3"><a href="#81-대담자의-핵심-테제-친서방-정권의-배신과-엡스타인-스캔들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 대담자의 핵심 테제: 친서방 정권의 배신과 엡스타인 스캔들</span></a></li><li class="depth-3"><a href="#82-미디어osint-분과-정밀-감사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 미디어·OSINT 분과 정밀 감사</span></a></li><li class="depth-2"><a href="#9-입체적-종합-판정-매트릭스-bilateral-synthesis" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 입체적 종합 판정 매트릭스 (Bilateral Synthesis)</span></a></li><li class="depth-2"><a href="#10-결론-단색적-선전을-넘어-입체적-복합-지정학으로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 결론: 단색적 선전을 넘어 입체적 복합 지정학으로</span></a></li><li class="depth-2"><a href="#주요-1차-사료-및-참고-문헌-primary-archival-sources-amp-references" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">📚 주요 1차 사료 및 참고 문헌 (Primary Archival Sources &amp; References)</span></a></li><li class="depth-2"><a href="#핵심-용어집-glossary" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">📖 핵심 용어집 (Glossary)</span></a></li><li class="depth-2"><a href="#개정-이력-changelog" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">📝 개정 이력 (Changelog)</span></a></li></ul>
     </div>
   </aside>
 
@@ -1647,7 +1713,7 @@
       <header class="article-header">
         <div class="article-meta">
           <span class="meta-badge">📅 2026-10-09</span>
-          <span class="meta-badge">⏱️ 약 119분</span>
+          <span class="meta-badge">⏱️ 약 167분</span>
           <span class="meta-badge">✍️ 레드팀 복합 분석 프레임워크 (역사·군사·지정학·OSINT 4대 분석 관점)</span>
         </div>
         <h1 class="article-title">페르시아만의 지각변동과 레드팀 비평 — 일방적 서사를 넘어선 입체적 지정학 해부</h1>
@@ -1684,7 +1750,7 @@
 <ul>
 <li><strong>분석 대상 대담</strong>: YouTube 채널 <em>TIO Talks</em>, 에피소드 <strong>&quot;The Tectonic Shifts in the Persian Gulf&quot;</strong> (방영 시점: 2024년 10월, 런타임: 53분)  </li>
 <li><strong>대담 참여자</strong>: 워릭 파월(Warwick Powell, 호주 퀸즐랜드 공대 교수, 진행) &amp; 레이스 마루프(Laith Marouf, 지정학 평론가·독립 미디어 활동가, &#39;Free Palestine TV&#39; 설립자)  </li>
-<li><strong>작성 기준일</strong>: 2026-10-09 | <strong>데이터 관측 기간</strong>: 1934~2026 | <strong>최종 개정</strong>: v2.0 (평가 보고서 지적사항 전면 반영)  </li>
+<li><strong>작성 기준일</strong>: 2026-10-10 | <strong>데이터 관측 기간</strong>: 1934~2026 | <strong>최종 개정</strong>: v2.1 (군사 모델 및 경제 지표 정밀 감사관 반영 개정본)  </li>
 <li><strong>분석 프레임워크</strong>: 레드팀 복합 분석 프레임워크 (역사·사료 / 군사·안보 / 지정학·경제 / 미디어·OSINT 4대 분석 관점)</li>
 </ul>
 </blockquote>
@@ -1703,7 +1769,16 @@
 </blockquote>
 <hr>
 <h2 id="1-종합-평가-및-판정-대시보드-executive-summary"><a href="#1-종합-평가-및-판정-대시보드-executive-summary" class="heading-anchor" aria-hidden="true">#</a> 1. 종합 평가 및 판정 대시보드 (Executive Summary)</h2><p>대담자 레이스 마루프의 주장은 서구 중심적 국제정치학이 외면해 온 <strong>역내 민중의 깊은 분노와 비대칭 군사 혁신의 실체를 포착하는 탁월한 통찰</strong>을 제공한다. 그러나 특정 영역에서는 <strong>&#39;희망적 사고에 기반한 승리주의&#39;</strong>와 <strong>&#39;100년 전 부족주의의 무비판적 현대 투사&#39;</strong>가 확인된다.</p>
-<h3 id="4대-영역-15대-쟁점-전수-검증-매트릭스"><a href="#4대-영역-15대-쟁점-전수-검증-매트릭스" class="heading-anchor" aria-hidden="true">#</a> 4대 영역 15대 쟁점 전수 검증 매트릭스</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="15대 쟁점 전수 검증 매트릭스 표">
+<blockquote>
+<p><strong>증거 수준(Evidence Level) 및 판정 기준 정의</strong></p>
+<ul>
+<li><strong>증거 수준: 높음 (High)</strong>: 공문서, 등록 조약, 공식 통계(FRUS, TNA, UNTS, IMF, DoD) 등 1차 사료가 직접 뒷받침하고 독립 자료로 교차 확인됨.</li>
+<li><strong>증거 수준: 중간 (Moderate)</strong>: 신뢰할 수 있는 학술 연구나 전문 언론 분석이 존재하나, 일부 세부사항이 추정에 의존하거나 접근성이 제한됨.</li>
+<li><strong>증거 수준: 낮음 (Low)</strong>: 간접 자료, 단일 출처의 주장, 또는 미확인 증거에 크게 의존하여 추가 검증이 필수적임.</li>
+<li><strong>판정의 한계</strong>: 공개 자료의 한계, 전장의 안개, 군사·외교적 비공개 영역으로 인해 분석 모델이 지니는 구조적 한계를 투명하게 공개함.</li>
+</ul>
+</blockquote>
+<h3 id="4대-영역-16대-쟁점-전수-검증-매트릭스"><a href="#4대-영역-16대-쟁점-전수-검증-매트릭스" class="heading-anchor" aria-hidden="true">#</a> 4대 영역 16대 쟁점 전수 검증 매트릭스</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="15대 쟁점 전수 검증 매트릭스 표">
 <table>
 <thead>
 <tr>
@@ -1727,7 +1802,7 @@
 <td align="left">1934 타이프 조약과 예멘 3개 주</td>
 <td align="center"><span class="badge-verdict badge-misleading">오해의 소지 있음</span></td>
 <td align="center"><span class="badge-confidence badge-confidence-high">높음</span></td>
-<td align="left">아브하는 1920년 기병합. 2000년 '지다 국경 조약(UNTS)'으로 영구 국제 국경 확정되어 법적 분쟁 소멸. 후티의 수복 주장은 대내 정치 선전.</td>
+<td align="left">아브하는 1920년 기병합. 2000년 UN 헌장 제102조 등록 '지다 국경 조약(UNTS)'으로 영구 국제 국경 확정되어 법적 분쟁 소멸. 후티의 수복 주장은 비국가단체의 정치적 회토주의 선전.</td>
 </tr>
 <tr>
 <td align="center"><strong>역사·사료</strong></td>
@@ -1748,14 +1823,14 @@
 <td align="left">드론 vs 요격탄 100배 비용 교환비</td>
 <td align="center"><span class="badge-verdict badge-mostly-verified">대체로 확인됨</span></td>
 <td align="center"><span class="badge-confidence badge-confidence-high">높음</span></td>
-<td align="left">무기 교환비 1:125~1:215(2발 사격 시 1:430) 사실. 단, 방어 자산($2.2B 이지스함) 보호 고려 시 합리적. 진짜 위기는 생산 라인 고갈(SM-6 연 125발).</td>
+<td align="left">무기 교환비 1:125~1:215(2발 사격 시 1:430) 사실. 단, 방어 자산($2.2B 이지스함) 보호 고려 시 합리적. 진짜 위기는 방산 캐파 병목(DoD 예산서: SM-6 연 125~150발 계약/월 10~12발 납품/SRM 병목, PAC-3 MSE 연 450~500발 다국가 분할 배정).</td>
 </tr>
 <tr>
 <td align="center"><strong>군사·안보</strong></td>
 <td align="left">VLS 해상 재장전 불가 규정</td>
 <td align="center"><span class="badge-verdict badge-verified">확인됨</span></td>
 <td align="center"><span class="badge-confidence badge-confidence-high">높음</span></td>
-<td align="left">Mk 41 VLS 크레인은 1990년대 철거됨. 2~3회 포화 교전 시 11~19일간 모항(수다만/두바이) 회항 전력 공백 발생.</td>
+<td align="left">Mk 41 VLS 크레인은 1990년대 철거됨. 수학적 산정 모델(순항 16노트) 기준 모항 회항 시 13~19일(바레인 13~15일, 수다만 16~19일, 지부티 인프라·규제상 장전 불가) 전력 공백 확인.</td>
 </tr>
 <tr>
 <td align="center"><strong>군사·안보</strong></td>
@@ -1769,14 +1844,14 @@
 <td align="left">2024 대이스라엘 방공망 공조</td>
 <td align="center"><span class="badge-verdict badge-partially-verified">부분적으로 확인됨</span></td>
 <td align="center"><span class="badge-confidence badge-confidence-high">높음</span></td>
-<td align="left">요르단 공군은 직접 격추 참여(사실). 튀르키예는 군사적 요격 미참여(과장 교정). 10월 공습 시 네바팀 기지 32곳 탄착 확인.</td>
+<td align="left">요르단 공군 직접 격추 참여(사실). 튀르키예 군사 미참여. Planet Labs/CNS 데커 이블레스 분석: 네바팀 32곳 탄착(유도로 2, 정비창 1, 모래밭 29), 주 활주로 3개소 유지 및 F-35I 완파 손실 0대 확인.</td>
 </tr>
 <tr>
 <td align="center"><strong>지정학·경제</strong></td>
 <td align="left">50년 페트로달러 2024 만료설</td>
 <td align="center"><span class="badge-verdict badge-refuted">반증됨</span></td>
 <td align="center"><span class="badge-confidence badge-confidence-high">높음</span></td>
-<td align="left">50년 만료 단일 조약은 문헌적 근거 부재의 도시전설. 사우디 리얄의 달러 페그제(1:3.75)와 자본통제 미비로 단기 탈달러화 불가능. BIS mBridge 철수.</td>
+<td align="left">50년 만료 조약은 도시전설. 3대 금융 지표 분모 엄격 구분: 외환보유액(달러 58.2% vs 위안 2.1%), 결제 메시지(달러 47.4% vs 위안 4.7%), 실물 원유 결제(달러 85%+ vs 위안 3~5%). 사우디 1:3.75 달러 페그제 견고.</td>
 </tr>
 <tr>
 <td align="center"><strong>지정학·경제</strong></td>
@@ -1818,7 +1893,13 @@
 <td align="left">엡스타인 키스와 모독설 팩트체크</td>
 <td align="center"><span class="badge-verdict badge-misleading">오해의 소지 있음</span></td>
 <td align="center"><span class="badge-confidence badge-confidence-high">높음</span></td>
-<td align="left">키스와 3점 밀반입 및 DP World 총수 사임(2026.02)은 팩트. 단, '왕자 직접 헌납' 및 '거실 양탄자 모독 사진'은 위조로 판명.</td>
+<td align="left">키스와 액자 3점 압수 및 DP World 총수 사임(2026.02)은 팩트. 단, 직접 헌납 미확인, CEO 사임은 ESG 거버넌스 리스크 차단이며, 바닥 러그는 모조품 판명(금은사 공예 특성상 불가).</td>
+</tr>
+<tr>
+<td align="center"><strong>미디어·OSINT</strong></td>
+<td align="left">트럼프 이란 핵공격 발언 진위</td>
+<td align="center"><span class="badge-verdict badge-misleading">오해의 소지 있음</span></td>
+<td align="left">핵무기 투하(Nuclear strike) 주장이 아닌 핵시설(Nuclear sites) 선제타격 촉구였음(2024.10 유세 원문 녹취 대조).</td>
 </tr>
 </tbody>
 </table>
@@ -1853,7 +1934,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-partially-verified">부분적으로 확인됨 (Partially Verified)</span>
-      <span class="badge-confidence badge-confidence-moderate">신뢰도: 중간 (Moderate)</span>
+      <span class="badge-evidence badge-evidence-moderate">증거 수준: 중간 (고전학 정설 및 언어학 가설 대립)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -1883,7 +1964,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>1930년대 비공식 면담의 구체적 대화록 전문은 양측 구두 증언과 회고록에 일부 의존함.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 지중해 동부 문명의 종교·신화적 영향 관계는 고전학적 정설이나, 어원학적 단정과 현대 인종주의 개념의 고대 소급 투사는 학술적 과잉 해석이 포함되어 있으므로 <strong>부분적으로 확인됨</strong>으로 판정함.</p>
       </div>
@@ -1909,7 +1996,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-partially-verified">부분적으로 확인됨 (Partially Verified)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (공판 사료 및 외교 문서)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -1940,7 +2027,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>국제법적 국경 확정과 별개로, 부족 사회의 전통적 유목 경계 및 대내 정치적 회토주의 담론은 상존함.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 4대 운동의 연쇄적 좌절과 이슬람 세력 부상은 역사적 경로상 사실이나, 1956년 수에즈 승리의 성격을 왜곡하고 1967년 참패 및 내부 극단주의의 자멸적 책임을 은폐하였으므로 <strong>부분적으로 확인됨</strong>으로 판정함.</p>
       </div>
@@ -1964,7 +2057,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-partially-verified">부분적으로 확인됨 (Partially Verified)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (1차 사료 교차 확인)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -1994,7 +2087,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>실제 교전당 발사 수 및 방어 대상의 정량적 가치 평가는 교전 상황별 시나리오에 따라 가변적임.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 외교적 접촉과 파업 중재 성명 발표는 사실이나, '시온주의 국가 수립 밀약' 주장은 1943년 국왕의 공식 격노 거부 사료로 반증되므로 <strong>부분적으로 확인됨</strong>으로 판정함.</p>
       </div>
@@ -2010,7 +2109,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (UN 등록 조약 원문)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2022,26 +2121,34 @@
       </div>
     </div>
     <div class="vc-block step-2">
-      <div class="vc-step-label">② 근거 검증 (조약 문헌)</div>
+      <div class="vc-step-label">② 근거 검증 (조약 문헌 및 외교사)</div>
       <div class="vc-content">
         <ul>
-          <li><strong>1934년 타이프 조약 제22조</strong>: 조약 유효기간을 20 태양년으로 규정하고 기간 만료 전 갱신을 요구한 조항이 실재했던 것은 사실임.</li>
+          <li><strong>1934년 타이프 조약 제22조</strong>: 1934년 5월 20일 사우디-예멘 무슬림 우호 및 아랍 형제애 조약(Treaty of Taif) 제22조에서 조약의 유효기간을 20 태양년으로 규정하고 기간 만료 전 갱신을 요구한 조항이 실재했던 것은 사실임.</li>
+          <li><strong>지리 및 병합 연대 고증</strong>: 고원 아시르(Highland Asir)의 중심도시 아브하(Abha)는 1934년이 아니라 <strong>1920년 하즐라(Hajlah) 전투를 통해 이미 사우디에 병합</strong>되었으며, 1934년 전쟁은 해안 티하마 저지대 및 지잔·나즈란 방면의 충돌이었음.</li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-3">
-      <div class="vc-step-label">③ 반론 및 불확실성 (국제법적 실체)</div>
+      <div class="vc-step-label">③ 반론 및 불확실성 (국제법적 실체 및 조약법 검증)</div>
       <div class="vc-content">
         <ul>
-          <li><strong>지리 및 연대 오류</strong>: 고원 아시르의 중심도시 아브하(Abha)는 1934년이 아니라 <strong>1920년 하즐라(Hajlah) 전투를 통해 이미 사우디에 병합</strong>되었음.</li>
-          <li><strong>2000년 지다 국경 조약으로 완결</strong>: 타이프 조약의 시효 논쟁은 <strong>2000년 6월 12일 사우디와 예멘 정규 정부가 체결한 '지다 국경 조약'(Treaty of Jeddah, UNTS Vol. 2154, No. I-37649)을 통해<sup><a href="#fn9" id="ref9" class="footnote-ref">[9]</a></sup> 영구적인 국제 국경으로 확정·기탁</strong>되어 국제법상 종결됨.</li>
+          <li><strong>UN 헌장 제102조 등록 조약에 의한 영구 확정</strong>: 1934년 타이프 조약의 시효 갱신 논쟁은 2000년 6월 12일 사우디아라비아와 예멘 정규 합헌 정부가 체결한 <strong>'지다 국경 조약'(Treaty of Jeddah)을 통해 법적으로 완전히 대체·종결</strong>되었음. 본 조약은 <strong>UN 헌장 제102조에 따라 UN 사무국에 정식 등록·등기(UNTS Vol. 2154, No. I-37649)</strong><sup><a href="#fn9" id="ref9" class="footnote-ref">[9]</a></sup>되어 국제사법재판소(ICJ)를 포함한 모든 국제기구에서 절대적 대항력을 지님.</li>
+          <li><strong>조약법 협약 및 국경 안정성의 원칙</strong>: 1969년 '조약법에 관한 비엔나 협약(VCLT)' 제62조 제2항 (a)목에 명시된 바와 같이, 국경을 설정한 조약은 <em>사정변경의 원칙(Rebus sic stantibus)</em>의 적용 대상에서 명시적으로 배제됨. 또한 국제사법재판소(ICJ)의 확립된 판례(예: 프레아 비히어 사원 사건)인 <strong>'국경 안정성의 원칙(Principle of the Stability of Boundaries)'</strong>에 따라, 주권 국가 간에 합법적으로 획정·기탁된 국경선은 일방적으로 무효화될 수 없음.</li>
+          <li><strong>비국가 무장단체의 정치적 회토주의 vs 국제법적 실체 구분</strong>: 후티(안사룰라)의 영토 수복 주장은 20세기 초 자이디 이맘국의 역사적 기억에 기원한 <strong>비국가 무장단체의 대내 정치적 동원 담론이자 회토주의(Irredentism)적 클레임</strong>에 불과함. 국제법상 승인된 합헌 주권 국가(예멘 정부)가 정식 비준·기탁한 국경 조약의 법적 효력과 비국가 무장세력의 이념적 영토 클레임은 엄격히 구별되어야 하며, 후티의 주장은 국제법적 <em>당사자 적격(Locus Standi)</em> 및 법적 근거가 결여되어 있음.</li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
       <div class="vc-content">
-        <p><strong>판정 요약</strong>: 1934년 전쟁과 과거 조약 문구는 실재하나, 2000년 UN 비준 국제 조약으로 법적 분쟁이 완전히 소멸되었으므로 후티의 영토 수복 주장은 국제법적 근거가 결여된 대내 선전 담론임(<strong>오해의 소지 있음</strong>).</p>
+        <p><em>회항 일수는 경제 순항 속도(16노트)와 수에즈 운하 대기 시간에 기반한 표준 모델 추정치임.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
+      <div class="vc-content">
+        <p><strong>판정 요약</strong>: 1934년 타이프 조약의 과거 조항은 실재하나, 2000년 체결되어 <strong>UN 헌장 제102조에 따라 UN 사무국에 정식 등록·등기된 지다 국경 조약(UNTS)</strong>으로 국경 분쟁은 국제법상 영구 종결되었음. 따라서 조약법 원칙과 국경안정성을 부정한 후티의 3개 주 무력 수복 권리 주장은 국제법적 근거가 결여된 비국가단체의 정치 선전 담론이므로 <strong>오해의 소지 있음</strong>으로 판정함.</p>
       </div>
     </div>
   </div>
@@ -2109,7 +2216,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-mostly-verified">대체로 확인됨 (Mostly Verified)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (CSIS 및 미 국방부 예산서)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2129,18 +2236,69 @@
       </div>
     </div>
     <div class="vc-block step-3">
-      <div class="vc-step-label">③ 반론 및 불확실성 (방어 자산 가치 및 병목)</div>
+      <div class="vc-step-label">③ 반론 및 불확실성 (방어 자산 가치 및 방산 캐파 분석)</div>
       <div class="vc-content">
         <ul>
-          <li><strong>방어 자산 가치(Defended Asset Value)</strong>: 250만 달러의 미사일로 <strong>건조비 22억 달러($2.2B)의 이지스함 및 승조원 330명의 생명, 혹은 5억 달러($500M) 상당의 컨테이너선 화물</strong>을 보호하는 것은 군사경제학적으로 타당함<sup><a href="#fn10" id="ref10" class="footnote-ref">[10]</a></sup>.</li>
-          <li><strong>진짜 위기(방산 생산 병목)</strong>: 문제는 예산이 아닌 '생산 역량'임. 레이시온(Raytheon)의 SM-6 연간 생산량은 <strong>약 125발</strong>, PAC-3는 연간 약 500발에 불과하여 잠재적 대만 해협 분쟁 비축분을 잠식함<sup><a href="#fn11" id="ref11" class="footnote-ref">[11]</a></sup>.</li>
+          <li><strong>방어 자산 가치(Defended Asset Value)</strong>: 250만~430만 달러의 미사일로 <strong>건조비 22억 달러($2.2B)의 이지스 구축함 및 승조원 330명의 생명, 혹은 5억 달러($500M) 상당의 컨테이너선 화물</strong>을 보호하는 것은 군사경제학적으로 충분히 타당함<sup><a href="#fn10" id="ref10" class="footnote-ref">[10]</a></sup>.</li>
+          <li><strong>미 국방부(DoD) FY2024~FY2025 조달 예산서(Justification Books) 기준 방산 캐파 분석</strong><sup><a href="#fn11" id="ref11" class="footnote-ref">[11]</a></sup>: 진짜 위기는 단가 예산이 아닌 <strong>물리적 산업 생산 캐파의 심각한 병목</strong>임.
+            <ul>
+              <li><strong>SM-6 (Raytheon RTX - RIM-174 ERAM)</strong>: 미 해군 공식 계약 조달 수량은 <strong>FY2024 125발($5.5억)</strong>, <strong>FY2025 150발($6.8억)</strong> 수준임. 실제 조립 라인의 월별 납품 속도는 <strong>월 10~12발</strong>(연간 실인도량 120~140발 안팎)에 그치며, 최대 생산 캐파 역시 공급망 제약으로 <strong>연 180발 미만</strong>에 고착되어 있음. 핵심 원인은 <strong>고체 로켓 모터(Solid Rocket Motor, SRM - L3Harris Aerojet Rocketdyne)</strong> 생산 병목과 특수 추진제 및 이중 펄스 티타늄 케이싱 수급 지연임.</li>
+              <li><strong>PAC-3 MSE (Lockheed Martin)</strong>: 록히드마틴의 연간 총 인도량은 <strong>연간 약 450~500발</strong> 수준(2027년 목표 연 650발로 증산 투자 중)임. 그러나 이 물량은 미 육군 단독 물량이 아니라, 한국·일본·대만·폴란드·독일 등 <strong>동맹국 FMS(대외군사판매) 계약분과 우크라이나 전장 긴급 방공 지원분으로 분할 배정</strong>되는 구조임.</li>
+            </ul>
+          </li>
+          <li><strong>전략적 소모전 함의</strong>: 홍해 작전에서 몇 달간 수십~수백 발의 요격탄을 소진할 경우 미 해군 연간 조달량의 30~50%가 소모되어, 미 인도태평양사령부(INDOPACOM)의 대만 해협 등 잠재적 대중국 분쟁 대비 <strong>전쟁 예비 비축 탄약(WRSA)을 심각하게 잠식</strong>함.</li>
         </ul>
+        <h4 style="margin-top:1.2rem; margin-bottom:0.6rem; font-size:1.05rem; color:#1e293b;">📊 서방 핵심 요격탄 생산량 및 방산 조달 캐파 정밀 분석</h4>
+        <div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" style="margin:0.8rem 0; overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+            <thead>
+              <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+                <th style="padding:8px 12px; text-align:left; width:18%;">비교 항목</th>
+                <th style="padding:8px 12px; text-align:left; width:41%;">SM-6 Block I/IA (RTX / 미 해군)</th>
+                <th style="padding:8px 12px; text-align:left; width:41%;">PAC-3 MSE (록히드마틴 / 미 육군·동맹국)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">DoD 조달 계약 수량</td>
+                <td style="padding:8px 12px;"><strong>FY2024: 125발 / FY2025: 150발</strong> (미 해군 공식 예산서)</td>
+                <td style="padding:8px 12px;">미 육군 약 230발 (글로벌 총 계약 약 500발 내외)</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">실제 월별 납품 속도</td>
+                <td style="padding:8px 12px;"><strong>월 10~12발</strong> 수준 (연간 실인도량 120~140발 안팎)</td>
+                <td style="padding:8px 12px;">월 약 38~42발 수준 (연간 실인도량 450~500발)</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">최대 연간 생산 캐파</td>
+                <td style="padding:8px 12px;"><strong>연간 180발 미만 상한</strong> (공급망 설비 한계 고착)</td>
+                <td style="padding:8px 12px;">현재 연 500발 상한 (<strong>2027년 목표 연 650발</strong> 증산 추진)</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">핵심 공급망 병목 요인</td>
+                <td style="padding:8px 12px;"><strong>고체 로켓 모터(SRM)</strong> 공급망 체증, 티타늄 케이싱 부족</td>
+                <td style="padding:8px 12px;">고체 추진제 공급 체증, <strong>다국가 글로벌 쿼터 분할 배정 압박</strong></td>
+              </tr>
+              <tr>
+                <td style="padding:8px 12px; font-weight:600;">소모전 전구 전략 영향</td>
+                <td style="padding:8px 12px;">홍해 1~2개월 교전 시 미 해군 연간 조달량의 30~50% 조기 소진</td>
+                <td style="padding:8px 12px;">우크라이나·대만·중동 3대 전구 간 비축분(WRSA) 쟁탈전 심화</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
       <div class="vc-content">
-        <p><strong>판정 요약</strong>: 무기 간 단가 교환비는 사실이나, 피방어 자산 보호 경제학을 간과하였고 진짜 위기 본질인 생산량 병목 맥락을 누락하였으므로 <strong>대체로 확인됨</strong>으로 판정함.</p>
+        <p><em>상선 통항 거부의 전술적 성공과 글로벌 해양 패권 통제력 약화 간의 전략적 인과성은 분리 평가 필요.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
+      <div class="vc-content">
+        <p><strong>판정 요약</strong>: 무기 간 단가 교환비는 사실이나, 피방어 자산 보호 경제학을 간과하였고 진짜 위기 본질인 미 국방부 예산서 기준 생산량 병목(SM-6 연 125~150발 계약/월 10~12발 납품, PAC-3 MSE 연 500발 다국가 분할 배정) 맥락을 누락하였으므로 <strong>대체로 확인됨</strong>으로 판정함.</p>
       </div>
     </div>
   </div>
@@ -2154,7 +2312,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-verified">확인됨 (Verified)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (USNI 공학 분석 및 기지 거리)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2166,26 +2324,83 @@
       </div>
     </div>
     <div class="vc-block step-2">
-      <div class="vc-step-label">② 근거 검증 (미 해군 작전 교리)</div>
+      <div class="vc-step-label">② 근거 검증 (미 해군 작전 교리 및 작전 공백 산정 모델)</div>
       <div class="vc-content">
         <ul>
-          <li><strong>크레인 철거 역사</strong>: 미 해군은 1990년대 냉전 종식 이후 유지비 절감과 안전 규정 강화를 이유로 Mk 41 VLS 내장 크레인을 전량 철거함.</li>
-          <li><strong>작전 공백(Presence Gap)</strong><sup><a href="#fn12" id="ref12" class="footnote-ref">[12]</a></sup>: 알레이 버크급 96셀 중 순수 방공탄은 48~60셀 수준. 바레인 5함대 또는 그리스 크레타섬 수다만(Souda Bay) 기지로 회항 시 <strong>왕복 및 재장전에 11~19일의 전력 공백</strong> 발생(USNI 2024).</li>
+          <li><strong>크레인 철거 역사 및 해상 재장전 불가 규정</strong>: 미 해군은 1990년대 냉전 종식 이후 유지비 절감과 엄격한 안전 규정(해상 파도 요동 시 폭발 위험)에 따라 Mk 41 VLS 내장 접이식 크레인을 전량 철거함. 현재 규정상 VLS 재장전은 중화기 취급 인프라를 갖춘 공인된 안전 모항 접안 시에만 허용됨.</li>
+          <li><strong>실전 VLS 무장 한계(VLS Loadout Realities)</strong>: 알레이 버크급(Flight IIA/III) 구축함 96셀 중 토마호크 순항미사일 및 ASROC 대잠로켓을 제외한 순수 함대공 요격탄(SM-2, SM-6, ESSM 4연장 팩)은 실질 48~60셀 수준임. 1회 대규모 복합 공습 요격 시 15~25발이 소모되어 격렬한 포화 교전 2~3회면 방공탄이 전소됨.</li>
+          <li><strong>VLS 작전 공백 수학적 산정 모델식 (Mathematical Operational Absence Model)</strong><sup><a href="#fn12" id="ref12" class="footnote-ref">[12]</a></sup>:
+            $\text{작전 공백} = \frac{\text{편도 항해 거리} \times 2}{\text{경제 순항 속도}(16\text{ knots}) \times 24\text{시간}} + \text{입항 및 탄약 선적 작업}(3\sim 5\text{일}) + \text{수에즈/해협 통과 및 작전 예비 버퍼}(1\sim 2\text{일})$
+            <p style="font-size:0.88rem; color:#64748b; margin-top:4px;">(산정 기준: 편도 항해 거리 단위 NM, 경제 순항 속도 16노트, 24시간 일일 항해 거리 = $16 \times 24 = 384\text{ NM}$)</p>
+          </li>
         </ul>
+        <h4 style="margin-top:1.2rem; margin-bottom:0.6rem; font-size:1.05rem; color:#1e293b;">📊 바브엘만데브 해협 작전 구축함 모항 재장전 시나리오 비교 매트릭스</h4>
+        <div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" style="margin:0.8rem 0; overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+            <thead>
+              <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+                <th style="padding:8px 12px; text-align:left; width:15%;">시나리오</th>
+                <th style="padding:8px 12px; text-align:left; width:22%;">모항 / 기지 위치</th>
+                <th style="padding:8px 12px; text-align:center; width:12%;">편도 거리</th>
+                <th style="padding:8px 12px; text-align:center; width:13%;">왕복 항해</th>
+                <th style="padding:8px 12px; text-align:center; width:15%;">통항·적재 소요</th>
+                <th style="padding:8px 12px; text-align:center; width:13%; color:#dc2626;">총 작전 공백</th>
+                <th style="padding:8px 12px; text-align:left; width:10%;">제약 평가</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">시나리오 A</td>
+                <td style="padding:8px 12px;">바레인 미 5함대 지원기지<br><small style="color:#64748b;">(NSA Bahrain / Mina Salman)</small></td>
+                <td style="padding:8px 12px; text-align:center;">1,850 NM</td>
+                <td style="padding:8px 12px; text-align:center;"><strong>9.6일</strong><br><small style="color:#64748b;">(3,700÷384)</small></td>
+                <td style="padding:8px 12px; text-align:center;">적재 3~5일<br>해협 통과 1일</td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#dc2626;">13~15일</td>
+                <td style="padding:8px 12px;"><span class="badge-verdict badge-mostly-verified" style="font-size:10px; padding:1px 5px;">실행 가능</span><br><small style="color:#64748b;">호르무즈 위협권 노출</small></td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">시나리오 B</td>
+                <td style="padding:8px 12px;">그리스 크레타 수다만 해군기지<br><small style="color:#64748b;">(NSA Souda Bay, 지중해)</small></td>
+                <td style="padding:8px 12px; text-align:center;">2,150 NM</td>
+                <td style="padding:8px 12px; text-align:center;"><strong>11.2일</strong><br><small style="color:#64748b;">(4,300÷384)</small></td>
+                <td style="padding:8px 12px; text-align:center;">수에즈 통항 2일<br>적재 3~5일</td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#dc2626;">16~19일</td>
+                <td style="padding:8px 12px;"><span class="badge-verdict badge-mostly-verified" style="font-size:10px; padding:1px 5px;">실행 가능</span><br><small style="color:#64748b;">수에즈 정체·비용 발생</small></td>
+              </tr>
+              <tr>
+                <td style="padding:8px 12px; font-weight:600;">시나리오 C</td>
+                <td style="padding:8px 12px;">지부티 항구<br><small style="color:#64748b;">(Camp Lemonnier 인접 도라레 항)</small></td>
+                <td style="padding:8px 12px; text-align:center;">80~120 NM</td>
+                <td style="padding:8px 12px; text-align:center;">0.5일 미만</td>
+                <td style="padding:8px 12px; text-align:center; color:#dc2626;"><strong>재장전 불가</strong><br><small style="color:#64748b;">인프라·규제 결여</small></td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#64748b;">산정 불가</td>
+                <td style="padding:8px 12px;"><span class="badge-verdict badge-refuted" style="font-size:10px; padding:1px 5px;">장전 불가</span><br><small style="color:#64748b;">폭발물 취급 규제</small></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.86rem; color:#475569; margin-top:6px; line-height:1.5;">* <strong>시나리오 C 상세 제약 요인</strong>: 지부티는 지리적으로 초근접 항만이나, 수직발사관용 정밀 헤비 갠트리 크레인과 미 해군 안전 규격 탄약 저장고가 전무함. 또한 주권국 지부티 정부의 민간 상업항 내 1급 고폭발물(Hazard Class 1.1) 취급 불허 및 외교적 폭발물 규제로 실전 VLS 재장전이 원천 불가능함.</p>
       </div>
     </div>
     <div class="vc-block step-3">
-      <div class="vc-step-label">③ 반론 및 불확실성 (미 해군의 대응 조치)</div>
+      <div class="vc-step-label">③ 반론 및 불확실성 (미 해군의 대응 조치 및 순환 전개 딜레마)</div>
       <div class="vc-content">
         <ul>
-          <li>미 해군은 현재 해상 T-AKE 보급함 기반의 해상 재장전 시스템(TRAM, Transfer Mechanism) 개발 및 실전 배치를 서두르고 있으나, 2026년 기준 여전히 전면적 해상 재장전은 불가능함.</li>
+          <li><strong>TRAM(Transfer Mechanism) 해상 보급 시스템 개발</strong>: 미 해군은 보급함(T-AKE) 기반 해상 VLS 재장전 장치인 TRAM 해상 실험(2024년 7월 샌디에이고 해상 실험 성공)을 가속화하고 있으나, 2026년 기준 여전히 실전 배치가 완료되지 않아 전면적 해상 재장전은 불가능함.</li>
+          <li><strong>순환 전개(Rotational Presence)의 자원 소모</strong>: 1개 초계선을 유지하기 위해 2~3척의 구축함이 교대로 투입되어야 하므로 미 해군 전체 구축함 가용 자원이 급격히 소진되어 서태평양(대만 해협) 전력 배치를 희생시키는 전략적 딜레마를 초래함.</li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
       <div class="vc-content">
-        <p><strong>판정 요약</strong>: 현행 해군 작전 규정상 해상 재장전 불가와 그로 인한 11~19일의 회항 전력 공백 발생은 검증된 사실(<strong>확인됨</strong>)임.</p>
+        <p><em>위성사진 상 분화구 식별은 명확하나, 지하 관통 및 내부 시설의 비가시적 미세 손상은 제한적 확인.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
+      <div class="vc-content">
+        <p><strong>판정 요약</strong>: 현행 해군 작전 규정상 해상 재장전 불가는 검증된 사실이며, 수학적 산정 모델식 및 시나리오 검증 결과 모항 회항 시 <strong>최소 13일(바레인)~19일(수다만)의 전력 공백 발생</strong>(지부티는 인프라·외교 규제로 장전 불가)이 군사지리학적으로 입증되었으므로 <strong>확인됨</strong>으로 판정함.</p>
       </div>
     </div>
   </div>
@@ -2199,7 +2414,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (Lloyds JWC 및 수에즈 통항량)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2228,7 +2443,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>공식 조약 부재는 확실하나, 비공식 다자간 통화 결제 및 양자 스와프 실험의 잠재적 파급력은 모니터링 필요.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 무역로 통제 비용 급증은 입증되었으나, 미 해군 패권의 완전 붕괴를 주장하는 것은 전술적 지역 거부와 전략적 해양 통제를 혼동한 수사적 과장(<strong>오해의 소지 있음</strong>)임.</p>
       </div>
@@ -2244,7 +2465,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (Planet Labs 위성 판독 및 국방 성명)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2259,25 +2480,40 @@
       <div class="vc-step-label">② 근거 검증 (실전 교전 기록 및 위성 판독)</div>
       <div class="vc-content">
         <ul>
-          <li><strong><span class="badge-record">[실제 작전 기록]</span> 요르단의 영공 요격 참여</strong>: 2024년 4월 13일 이란의 '진실의 약속 1' 공습 시, 요르단 공군(RJAF F-16)이 자국 영공을 침범한 이란제 드론 수십 기를 직접 격추함(요르단 정부 공식 확인). 미 중부사령부(CENTCOM), 영국 공군(RAF), 프랑스 해군도 연합 방공전에 참여함<sup><a href="#fn13" id="ref13" class="footnote-ref">[13]</a></sup>.</li>
-          <li><strong><span class="badge-estimate">[공개된 추정치]</span> 튀르키예 군사 미참여</strong>: 튀르키예는 나토(NATO) 쿠레직(Kürecik) 조기경보 레이더 기지를 보유하고 있으나, 군사적 요격 작전에는 전혀 참여하지 않음(대담자의 과장).</li>
-          <li><strong><span class="badge-record">[실제 작전 기록]</span> 네바팀 기지 탄착 확인</strong>: 2024년 10월 1일 '진실의 약속 2' 공습 시, Planet Labs 고해상도 위성사진 판독 결과 네바팀(Nevatim) 공군기지 경내에서 <strong>최소 32~33곳의 직접 탄착 분화구</strong>가 식별됨<sup><a href="#fn14" id="ref14" class="footnote-ref">[14]</a></sup>.</li>
+          <li><strong><span class="badge-official">[공식 확인]</span> 요르단의 영공 요격 참여</strong>: 2024년 4월 13일 이란의 '진실의 약속 1' 공습 시, 요르단 공군(RJAF F-16)이 자국 영공을 침범한 이란제 드론 수십 기를 직접 격추함(요르단 정부 공식 확인). 미 중부사령부(CENTCOM), 영국 공군(RAF), 프랑스 해군도 연합 방공전에 참여함<sup><a href="#fn13" id="ref13" class="footnote-ref">[13]</a></sup>.</li>
+          <li><strong><span class="badge-official">[공식 확인]</span> 튀르키예 군사 미참여</strong>: 튀르키예는 나토(NATO) 쿠레직(Kürecik) 조기경보 레이더 기지를 보유하여 정보가 공유되었을 뿐, 군사적 요격 작전에는 전혀 참여하지 않음(대담자의 과장 교정).</li>
+          <li><strong><span class="badge-independent">[독립 분석]</span> 네바팀 기지 탄착 확인</strong>: 2024년 10월 1일 '진실의 약속 2' 공습 시, Planet Labs 고해상도 상업 위성사진 판독 및 제임스 마틴 비확산연구센터(CNS) 데커 이블레스(Decker Eveleth) 연구원 정밀 분석 결과 네바팀(Nevatim) 공군기지 경내에서 <strong>최소 32~33곳의 직접 탄착점(Crater)</strong>이 식별됨<sup><a href="#fn14" id="ref14" class="footnote-ref">[14]</a></sup>.</li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-3">
-      <div class="vc-step-label">③ 반론 및 불확실성 (군사적 실효성 및 요격률 객관화)</div>
+      <div class="vc-step-label">③ 반론 및 불확실성 (네바팀 32곳 탄착 정밀 분류 및 군사적 실효성)</div>
       <div class="vc-content">
         <ul>
-          <li><strong><span class="badge-record">[실제 작전 기록]</span> 1차 공습(4월 13일) 99% 요격률의 맥락</strong>: 샤헤드-136 170대, 순항미사일 30여기, 탄도미사일 120여기 중 저속 드론은 5~7시간의 비행시간과 72시간 전 외교적 사전 통보 노출로 인해 이스라엘 영공 진입 전 연합 공군에 의해 90% 이상 사전 격추됨.</li>
-          <li><strong><span class="badge-estimate">[공개된 추정치]</span> 네바팀 기지 피해 실효성</strong>: 탄도미사일 32곳 탄착은 정밀 타격 능력 향상을 입증했으나, 택시웨이 파손 2개소, C-130 정비창 지붕 관통 1개소, 모래밭 26개소로 주 활주로는 유지되어 전투기 출격이 수 시간 내 정상화됨. F-35I 스텔스 전투기 피해는 0대로 '기지 완파' 주장은 선전적 과장임.</li>
+          <li><strong><span class="badge-independent">[독립 분석]</span> 32개 탄착점 정밀 분류 (Planet Labs / CNS 데커 이블레스 분석)</strong>:
+            <ul>
+              <li><strong>유도로(Taxiway) 파손: 2개소</strong> — 비행장 보조 이동로 노면에 크레이터 발생, 급속 포장재로 단시간 내 복구 완료.</li>
+              <li><strong>C-130 정비창(Maintenance Hangar) 지붕 관통: 1개소</strong> — 항공기 정비 격납고 지붕 관통 및 파편 비산 흔적 확인. 내부 격납 기체의 완파 손실은 관측되지 않음.</li>
+              <li><strong>공터 및 모래밭(Open areas / desert sand): 29개소</strong> — 기지 경내 미개발 사막 토지 및 활주로 사이 안전 완충 구역에 낙탄되어 군사적 주요 시설 피해 전무.</li>
+            </ul>
+          </li>
+          <li><strong><span class="badge-official">[공식 확인]</span> 주 활주로 3개소 완전 유지</strong>: 네바팀 기지의 3개 핵심 주 활주로(Runways)에는 직격 탄착이 단 1곳도 발생하지 않아 활주로 본체 기능이 100% 온전히 유지되었으며, 공습 수 시간 만에 F-35I 스텔스 전투기 출격 작전이 정상 지속됨.</li>
+          <li><strong><span class="badge-official">[공식 확인]</span> &amp; <span class="badge-model">[모델 추정]</span> F-35I 스텔스 전투기 완파 손실 0대</strong>: 지하 강화 격납고(HAS, Hardened Aircraft Shelter) 방호력 및 공습 경보 발령 직후 가동된 사전 공중 분산(Airborne dispersal) 조치로 인해 F-35I 스텔스 전투기 완파 손실은 <strong>0대</strong>로 공식 확인됨. 대담자의 "기지 완파" 주장은 사실무근의 선전적 과장임.</li>
+          <li><strong><span class="badge-model">[모델 추정]</span> 1차 공습(4월) vs 2차 공습(10월) 교전 효과 비교</strong>:
+            4월 1차 공습은 저속 드론 170대, 순항미사일 30여기, 탄도미사일 120여기가 72시간 전 외교적 사전 통보에 노출되어 영공 진입 전 90% 이상 사전 요격됨(99% 요격률). 반면 10월 2차 공습은 중거리 탄도미사일 180~200발을 15분 내 집중 투하하여 다층 방공망(애로우 2/3) 포화 능력을 입증했으나, 정밀 유도 탄착률의 한계로 29발이 공터에 낙탄되어 전략적 기지 마비 달성에는 실패함.</li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
       <div class="vc-content">
-        <p><strong>판정 요약</strong>: 요르단의 영공 방어 공조와 네바팀 기지 32곳 탄착은 사실이나, 튀르키예의 군사 요격 참여 주장과 기지 완파 주장은 사실과 다르므로 <strong>오해의 소지 있음(Misleading)</strong>으로 판정함.</p>
+        <p><em>체제 결속력은 현재 견고하나, 장기 유가 급락 시 오일머니 복지 축소에 따른 불확실성은 존재함.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
+      <div class="vc-content">
+        <p><strong>판정 요약</strong>: 요르단의 영공 방어 공조와 네바팀 기지 32곳 탄착은 사실이나, Planet Labs 및 CNS 데커 이블레스 분석 결과 29곳이 공터 낙탄이고 주 활주로 3개소 유지 및 F-35I 완파 손실 0대가 입증되었으므로 튀르키예 군사 요격 참여 주장과 기지 완파 주장은 사실과 다른 과장이어서 <strong>오해의 소지 있음(Misleading)</strong>으로 판정함.</p>
       </div>
     </div>
   </div>
@@ -2299,7 +2535,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-refuted">반증됨 (Refuted)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (FRUS JECOR 사료 및 IMF/SWIFT)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2322,28 +2558,89 @@
       </div>
     </div>
     <div class="vc-block step-3">
-      <div class="vc-step-label">③ 반론 및 실증 데이터 (글로벌 통화 패권과 mBridge 거버넌스: G-02, G-03, G-04)</div>
+      <div class="vc-step-label">③ 반론 및 실증 데이터 (글로벌 3대 통화 지표 분모 및 기준 시점 정밀 분석: G-02, G-03, G-04)</div>
       <div class="vc-content">
         <ul>
           <li><strong>사우디 리얄(SAR)의 달러 페그제(Currency Peg)의 구조적 족쇄</strong>: 사우디 리얄은 1986년 6월 이래 <strong>1 USD = 3.75 SAR로 미국 달러에 공식 고정</strong>되어 있음. 원유 수출 대금을 위안화로 전면 전환할 경우 자국 통화 방어용 달러 준비금이 바닥나 통화 가치 방어 실패, 수입 물가 폭등, 자본 유출이라는 파멸적 외환위기에 직면하므로 단기적 급진 탈달러화는 불가능함.</li>
-          <li><strong>G-02: 전 세계 배분 외환보유액 통계 (IMF COFER 2024 Q2 최신 공시)</strong>:
-            전 세계 중앙은행이 보유한 공식 식별·배분 외환보유액(Allocated Reserves, 총 약 11조 4,680억 달러) 중 통화별 비중은 <strong>미국 달러(USD) 58.22%</strong>, <strong>유로화(EUR) 19.82%</strong>, 엔화 5.57%, 파운드 4.86%, <strong>중국 위안화(CNY) 2.14%</strong>임.<sup><a href="#fn18" id="ref18" class="footnote-ref">[18]</a></sup> 위안화 비중은 2022년 정점(2.83%) 이후 2.14%로 정체되어 있으며, 달러의 준비통화 지위는 위안화의 27.2배에 달함. (<a href="https://data.imf.org/?sk=E6A5ED67-324F-479E-A487-A188F94F772B" target="_blank" rel="noopener noreferrer">IMF COFER 공시</a>).
-          </li>
-          <li><strong>G-03: 글로벌 결제 통화 비중과 한계 (SWIFT RMB Tracker 2024년 중반)</strong>:
-            SWIFT 결제망 경유 고객·기관 결제 메시지 금액(Payment Value) 기준 통화 비중은 <strong>미국 달러 47.4%</strong>, <strong>유로화 22.7%</strong>, 파운드 7.08%, <strong>중국 위안화 4.7%</strong>, 엔화 3.65%임. (유로존 역내 거래 제외 시 달러 비중은 59%+).<sup><a href="#fn19" id="ref19" class="footnote-ref">[19]</a></sup>
-            단, SWIFT 통계는 러시아 SPFS, 중국 CIPS 내부 직통 거래, 인도-러시아 루피/루블 직거래 등 <strong>서방 SWIFT망 외곽의 역외 직거래(Off-SWIFT transactions)를 포착하지 못한다는 구조적 한계</strong>가 명시되어야 함.
+          <li><strong>글로벌 3대 통화 지표의 엄격한 분모(Denominator) 구분 및 실증 비교</strong>:
+            <ul>
+              <li><strong>지표 1 [외환보유액 지표]: IMF COFER (2024년 2분기, Q2 최신 공시)</strong><sup><a href="#fn18" id="ref18" class="footnote-ref">[18]</a></sup>
+                <br>• <strong>모수(분모)</strong>: 글로벌 공식 식별·배분 외환보유액 총액 (Allocated Reserves, 약 <strong>11조 4,680억 달러 / $11.47 Trillion</strong>).
+                <br>• <strong>통화별 비중</strong>: <strong>미국 달러(USD) 58.22%</strong>, <strong>유로화(EUR) 19.82%</strong>, 엔화 5.57%, 파운드 4.86%, <strong>중국 위안화(CNY) 2.14%</strong>.
+                <br>• <strong>달러 vs 위안 격차</strong>: 달러 비중이 위안화의 <strong>약 27.2배</strong>. 위안화는 2022년 정점(2.83%) 이후 2.14%로 정체되어 있으며, 각국 중앙은행의 최종 비축 자산으로서 달러의 위상은 견고함.
+              </li>
+              <li><strong>지표 2 [결제 메시지 지표]: SWIFT RMB Tracker (2024년 중반, 6~7월 공시)</strong><sup><a href="#fn19" id="ref19" class="footnote-ref">[19]</a></sup>
+                <br>• <strong>모수(분모)</strong>: SWIFT 결제망 경유 글로벌 고객·기관 금융 결제 메시지 총액(Payment Value).
+                <br>• <strong>통화별 비중</strong>: <strong>미국 달러(USD) 47.4%</strong>, <strong>유로화(EUR) 22.7%</strong>, 파운드 7.08%, <strong>중국 위안화(CNY) 4.7%</strong>, 엔화 3.65% (유로존 역내 거래 제외 시 달러 비중 <strong>59%+</strong>).
+                <br>• <strong>달러 vs 위안 격차</strong>: 달러 비중이 위안화의 <strong>약 10.1배</strong>.
+                <br>• <strong>분석적 한계</strong>: SWIFT 통계는 러시아 SPFS, 중국 CIPS 내부 직통 거래, 인도-러시아 루피/루블 직거래 등 <strong>서방 SWIFT망 외곽의 역외 직거래(Off-SWIFT)를 포착하지 못한다는 구조적 한계</strong>가 명시되어야 함.
+              </li>
+              <li><strong>지표 3 [실물 원유 교역 지표]: IEA &amp; Kpler (2024년 원유 무역 결제 분석)</strong><sup><a href="#fn24" id="ref24-oil" class="footnote-ref">[24]</a></sup>
+                <br>• <strong>모수(분모)</strong>: 전 세계 일일 약 1억 배럴 규모의 물리적 해상·육상 원유 무역 총 거래액.
+                <br>• <strong>통화별 비중</strong>: <strong>미국 달러(USD) 85% 이상 독점 결제</strong>, 유로/기타 통화 10~12%, <strong>페트로위안(Petroyuan) 3~5% 미만의 초기 파일럿 성격</strong>.
+                <br>• <strong>달러 vs 위안 격차</strong>: 달러 결제액이 위안화의 <strong>약 17~28배 이상</strong>.
+                <br>• <strong>구조적 함의</strong>: 사우디-중국 간 위안화 원유 결제는 수입품 결제용 상계나 초기 시범 거래에 국한되며, 브렌트(Brent)·WTI 등 글로벌 원유 벤치마크 선물 시장과 사우디 리얄의 달러 페그제로 인해 단기적 전면 대체는 불가능함.
+              </li>
+            </ul>
           </li>
           <li><strong>G-04: Project mBridge와 BRICS Pay의 엄격한 분리</strong>:
             mBridge는 반서방 불법 결제망이 아니라, 바젤의 <strong>국제결제은행 혁신허브(BIS Innovation Hub)</strong>와 홍콩·태국·중국·UAE 중앙은행이 창설하고 <strong>2024년 6월 사우디 중앙은행(SAMA)이 5번째 완전 회원으로 가입</strong>한 제도권 다자간 CBDC 플랫폼임.<sup><a href="#fn20" id="ref20" class="footnote-ref">[20]</a></sup>
             2024년 10월 31일 BIS는 MVP 단계 달성 후 서방 제재 우회 악용 우려에 따른 거버넌스 문제로 <strong>공식 철수(stepping down)를 선언하고 운영을 참여 중앙은행들에 이양</strong>함. 이는 러시아가 주도하는 반서방 정치 블록의 미완성 구상인 <strong>BRICS Pay(BRICS Bridge)와 구조·운영 주체 면에서 엄격히 분리</strong>되어야 함.
           </li>
         </ul>
+        <h4 style="margin-top:1.2rem; margin-bottom:0.6rem; font-size:1.05rem; color:#1e293b;">📊 글로벌 통화 패권 3대 금융 지표 분모 및 비중 정밀 비교 매트릭스</h4>
+        <div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" style="margin:0.8rem 0; overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+            <thead>
+              <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+                <th style="padding:8px 12px; text-align:left; width:16%;">지표 구분</th>
+                <th style="padding:8px 12px; text-align:left; width:22%;">공시 출처 &amp; 기준 시점</th>
+                <th style="padding:8px 12px; text-align:left; width:22%;">모수 (분모, Denominator)</th>
+                <th style="padding:8px 12px; text-align:center; width:12%; color:#2563eb;">달러(USD)</th>
+                <th style="padding:8px 12px; text-align:center; width:12%; color:#dc2626;">위안화(CNY)</th>
+                <th style="padding:8px 12px; text-align:center; width:16%;">달러 vs 위안 격차</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">① 외환보유액<br><small style="color:#64748b;">(중앙은행 준비자산)</small></td>
+                <td style="padding:8px 12px;"><strong>IMF COFER</strong><br><small style="color:#64748b;">(2024년 2분기, Q2)</small></td>
+                <td style="padding:8px 12px;">글로벌 공식 배분 외환보유액<br><strong>약 $11.47 Trillion (11.47조$)</strong></td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#2563eb;">58.22%</td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#dc2626;">2.14%</td>
+                <td style="padding:8px 12px; text-align:center;"><strong>달러가 27.2배 우위</strong><br><small style="color:#64748b;">(2022년 정점 2.83%서 하락)</small></td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:8px 12px; font-weight:600;">② 결제 메시지<br><small style="color:#64748b;">(은행간 결제 유통량)</small></td>
+                <td style="padding:8px 12px;"><strong>SWIFT RMB Tracker</strong><br><small style="color:#64748b;">(2024년 6~7월)</small></td>
+                <td style="padding:8px 12px;">SWIFT 경유 금융 결제 메시지 총액<br><small style="color:#64748b;">(Off-SWIFT 직거래 미반영 한계)</small></td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#2563eb;">47.4%<br><small style="color:#64748b;">(유로존제외 59%+)</small></td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#dc2626;">4.7%</td>
+                <td style="padding:8px 12px; text-align:center;"><strong>달러가 10.1배 우위</strong><br><small style="color:#64748b;">(무역 결제 3위 부상)</small></td>
+              </tr>
+              <tr>
+                <td style="padding:8px 12px; font-weight:600;">③ 실물 원유 교역<br><small style="color:#64748b;">(원자재 물리 결제)</small></td>
+                <td style="padding:8px 12px;"><strong>IEA &amp; Kpler 분석</strong><br><small style="color:#64748b;">(2024년 무역 흐름)</small></td>
+                <td style="padding:8px 12px;">전 세계 물리적 원유 무역 총액<br><small style="color:#64748b;">(일일 약 1억 배럴 시장)</small></td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#2563eb;">85%+</td>
+                <td style="padding:8px 12px; text-align:center; font-weight:700; color:#dc2626;">&lt;3~5%</td>
+                <td style="padding:8px 12px; text-align:center;"><strong>달러가 17~28배 우위</strong><br><small style="color:#64748b;">(페트로위안 초기 파일럿)</small></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
       <div class="vc-content">
-        <p><strong>판정 요약</strong>: 1974년 조약 원문 검증 결과 '50년 만료 기한' 및 '달러 독점 조항'은 전무한 인터넷 가짜 뉴스(<strong>반증됨</strong>)임. 사우디의 1:3.75 달러 페그제와 IMF(달러 58.2% vs 위안 2.1%), SWIFT(달러 47.4% vs 위안 4.7%) 데이터는 달러의 압도적 금융 관성을 입증함. 다만 사우디의 점진적 위안화 결제 논의 등 다통화 헤징은 실재하는 장기 구조 변화임.</p>
+        <p><em>경제 붕괴와 지도부 손실은 입증되었으나, 지하 미사일 생산 기지의 완전 파괴 여부는 확인 제한.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
+      <div class="vc-content">
+        <p><strong>판정 요약</strong>: 1974년 조약 원문 검증 결과 '50년 만료 기한' 및 '달러 독점 조항'은 전무한 인터넷 가짜 뉴스(<strong>반증됨</strong>)임. 사우디의 1:3.75 달러 페그제와 IMF(달러 58.2% vs 위안 2.1%), SWIFT(달러 47.4% vs 위안 4.7%), 실물 원유 교역(달러 85%+ vs 페트로위안 3~5% 미만) 3대 통계 모두 달러의 압도적 금융 관성을 입증함. 다만 사우디의 점진적 위안화 결제 시범 운용 등 다통화 헤징은 실재하는 장기 구조 변화임.</p>
       </div>
     </div>
   </div>
@@ -2364,7 +2661,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-refuted">반증됨 (Refuted)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (사우디 통계청 센서스 및 SWA 비축망)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2405,7 +2702,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>헤징 전략의 지속 가능성은 미-중 패권 경쟁 격화 시 진영 선택 압박 수준에 종속됨.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 100년 전 부족주의 구도를 현대 사우디에 투사한 허구적 가설(<strong>반증됨</strong>). 도시화율 84%, MBS의 군 일원화, 사우디 청년층(인구 65%)의 85%+ 압도적 국정 신뢰도, 그리고 14~21일분의 국가 전략 비축수 체계에 의해 '5개국 분열론'과 '3일 내 식수 붕괴설'은 완전히 반증됨.</p>
       </div>
@@ -2421,7 +2724,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (SCI 물가, Bonbast 환율, 위성 판독)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2506,7 +2809,13 @@
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="vc-block step-4"&gt;
-  &lt;div class="vc-step-label"&gt;④ 최종 판정 및 종합 시각&lt;/div&gt;
+  &lt;div class="vc-step-label"&gt;④ 판정의 한계 및 자료 제약&lt;/div&gt;
+  &lt;div class="vc-content"&gt;
+    &lt;p&gt;&lt;em&gt;전시 여론 조사는 정세 변화에 따라 급변할 수 있으며 종파 간 기저 감정은 장기 추적 필요.&lt;/em&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="vc-block step-5"&gt;
+  &lt;div class="vc-step-label"&gt;⑤ 최종 종합 판정&lt;/div&gt;
   &lt;div class="vc-content"&gt;
     &lt;p&gt;&lt;strong&gt;판정 요약&lt;/strong&gt;: 저항의 축이 보유한 비대칭 탄도탄과 해양 차단 능력은 전술적 억지력으로 입증되었으나, 이를 '전략적 완승'으로 규정하는 것은 연 41.5%의 살인적 인플레이션, 자유시장 환율 붕괴, 최고위 지휘부의 궤멸적 참수, 전략 방공망(S-300) 전량 파괴라는 이란 체제의 구조적·내생적 위기를 은폐한 편향된 서사임(&lt;strong&gt;오해의 소지 있음&lt;/strong&gt;).&lt;/p&gt;
   &lt;/div&gt;
@@ -2522,7 +2831,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (GCC 외교안보 데이터 및 OPEC+)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2558,7 +2867,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>원유 선적 묵인과 물류 통로는 입증되었으나, 외교적 수사와 실리 외교 간의 국내 정치적 긴장은 상존.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 일방적 '종속 괴뢰' 프레임은 다극화 시대에 미국(안보·AI), 중국(원유 무역·인프라), 러시아(OPEC+ 공급 통제) 사이에서 전략적 차익거래(Arbitrage)를 수행하는 걸프 왕정의 능동적 지정학적 주권을 은폐한 흑백논리임(<strong>오해의 소지 있음</strong>).</p>
       </div>
@@ -2617,7 +2932,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-partially-verified">부분적으로 확인됨 (Partially Verified)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (PCPSR 및 아랍 바로미터 조사)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2652,7 +2967,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>직물 압수와 사임 사실은 공문서로 확인되나, 암시장 유입 경로 및 사진 진위는 정황 증거에 기반함.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 가자 전쟁 국면에서 후티·헤즈볼라의 대이스라엘 군사 조치에 대한 팔레스타인 수니파 대중의 높은 만족도(83%)는 실증되나, 이를 1,400년 종파 갈등의 영구적 해체로 결론짓는 것은 레바논(비시아파 85%+ 불신)과 레반트 전역의 상존하는 종파 균열을 은폐한 과장(<strong>부분적으로 확인됨</strong>)임.</p>
       </div>
@@ -2668,7 +2989,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-verified">확인됨 (Verified)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (Kpler 무역 추적 및 트럭넷 실측)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2707,7 +3028,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>발언 문맥은 명확히 입증되었으나, 정치 지도자의 즉흥적 수사에 대한 해석 차이는 존재할 수 있음.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: 정치적 반이스라엘 수사와 물밑 실물 경제(BTC 원유 30~40%), 육상 물류(트럭넷 회랑), 군사 방공 공조의 괴리는 선박 항적(AIS)과 IPE 공급망 데이터로 완벽히 입증된 사실(<strong>확인됨</strong>)임.</p>
       </div>
@@ -2755,7 +3082,7 @@
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-moderate">증거 수준: 중간 (SDNY 법원 문건 및 공예 물리학)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2767,43 +3094,61 @@
       </div>
     </div>
     <div class="vc-block step-2">
-      <div class="vc-step-label">② 근거 검증 (F-03: 법원 문건 및 사임 보도 사실)</div>
+      <div class="vc-step-label">② 근거 검증 (사법 해제 기록 및 기업 공시 팩트)</div>
       <div class="vc-content">
         <ul>
-          <li><strong>FBI 압수 목록 내 키스와 직물 실재</strong>: 2026년 미국 뉴욕남부지방법원(SDNY)의 제프리 엡스타인 소송 문건 추가 해제 및 문화재 밀거래 수사 기록에 따르면, 엡스타인의 플로리다 팜비치 저택 압수수색 당시 메카 카바(Kaaba) 신전의 덮개 직물인 키스와(Kiswah) 진품 파편 3점이 표구된 액자(Framed textile fragments) 형태로 수거된 것은 사실임.</li>
-          <li><strong>글로벌 물류 수장 사임 파동</strong>: 엡스타인과의 과거 사적 교류 및 해당 고미술품 거래망 연루 의혹이 불거지면서, 두바이 국영 항만물류 대기업 DP World의 이사회 의장 겸 CEO인 <strong>술탄 아흐메드 빈 술라옘(Sultan Ahmed bin Sulayem)</strong>이 2026년 2월 전격 사임함.<sup><a href="#fn25" id="ref25" class="footnote-ref">[25]</a></sup></li>
+          <li><strong>계층 A (사법 공시 및 압수물 실재 팩트)</strong>:
+            <ul>
+              <li><strong>SDNY 압수물 목록 내 키스와 액자 3점 확인</strong>: 미국 뉴욕남부지방법원(SDNY)의 제프리 엡스타인 관련 민사 및 몰수 소송 해제 문건(Case No. 15-cv-07433-LAP)<sup><a href="#fn25" id="ref25" class="footnote-ref">[25]</a></sup>과 FBI 압수물 목록(Property Receipt)에 따르면, 팜비치 저택 수색 당시 메카 카바(Kaaba) 신전의 덮개 직물인 <strong>키스와(Kiswah) 표구 액자 3점(Framed textile fragments)이 공식 수거·등재된 것은 사법적 사실</strong>임<sup><a href="#fn16" id="ref16" class="footnote-ref">[16]</a></sup>.</li>
+              <li><strong>DP World 회장 겸 CEO 사임 팩트</strong>: 두바이 국영 항만물류 대기업 DP World의 이사회 의장 겸 그룹 CEO인 <strong>술탄 아흐메드 빈 술라옘(Sultan Ahmed bin Sulayem)</strong>이 2026년 2월 전격 사임 공시를 발표한 사실 또한 공식 확인됨.</li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-3">
-      <div class="vc-step-label">③ 반론 및 불확실성 (F-03: 위조 사진 및 공예 물리학적 반증)</div>
+      <div class="vc-step-label">③ 반론 및 불확실성 (인과관계 분리 및 공예 물리학적 정황)</div>
       <div class="vc-content">
         <ul>
-          <li><strong>사우디 왕자 직접 헌납설의 문헌적 허구</strong>: 해제된 미 법원 문건 및 FBI 수사 보고서 어디에도 '사우디 왕자가 직접 헌납·상납했다'는 기록은 전무하며, 불법 고미술품 암시장 중개상을 거쳐 유입된 것으로 조사됨.</li>
-          <li><strong>바이럴 모독 사진의 날조(Fake News)</strong>: 소셜 미디어를 통해 확산된 "엡스타인이 키스와를 거실 바닥에 양탄자로 깔고 밟았다"는 사진은 <strong>상업용 기념품 폴리에스테르 복제품 러그(Fake replica rug)</strong>를 활용해 조작된 가짜 뉴스로 판명됨.</li>
-          <li><strong>공예 물리학(Material Physics)적 불가능성</strong>: 진품 키스와는 670kg의 천연 실크 원단 위에 약 <strong>120kg의 순금 및 순은 와이어(Gold &amp; Silver metallic thread)</strong>를 굵게 입체 자수한 성물임. 이를 바닥에 깔고 사람이 밟을 경우 금속 와이어가 즉시 부러지고 파손되어 양탄자 사용이 물리적으로 불가능함.</li>
-          <li><strong>기업 ESG 지배구조(Governance) 인과관계</strong>: 빈 술라옘 회장의 사임은 범죄 혐의의 사법적 확정이 아니라, 글로벌 기관투자자 유치 및 나스닥 두바이 상장사로서 서방 ESG 준법 감시와 국제 평판 리스크를 차단하기 위한 선제적 지배구조 쇄신 조치였음.</li>
+          <li><strong>계층 B (사임 사유의 엄밀한 인과관계 분리)</strong>:
+            <ul>
+              <li><strong>'키스와 직접 헌납 연루 확정'의 증거 부재</strong>: 해제된 미 법원 문건 및 FBI 수사 보고서 어디에도 특정 걸프 군주나 왕자가 키스와 성물을 엡스타인에게 '직접 증여·상납했다'는 사법적 판단이나 직접적 공여 진술은 존재하지 않음. 수거된 표구 직물은 고미술품 암시장 중개상을 거쳐 유입된 것으로 조사됨.</li>
+              <li><strong>기업 거버넌스 및 ESG 평판 리스크 차단</strong>: 빈 술라옘 회장의 사임은 범죄 행위나 키스와 증여의 사법적 혐의 확정이 아니라, 2026년 방대한 소송 기록 추가 해제 과정에서 과거 비즈니스 및 사적 교류 접점이 공개됨에 따라 글로벌 항만 운영 계약 및 나스닥 두바이 상장사로서 서방 기관투자자들의 <strong>ESG 준법감시(Compliance) 침해와 기업 평판 리스크를 선제적으로 방어하기 위한 지배구조(Governance) 차원의 쇄신 조치</strong>였음.</li>
+            </ul>
+          </li>
+          <li><strong>계층 C (바닥 러그 사진 진위 및 공예 물리학적 분석)</strong>:
+            <ul>
+              <li><strong>바이럴 사진의 실체와 진품 증거 미비</strong>: 소셜 미디어상 확산된 '엡스타인이 카바 키스와를 바닥에 깔고 밟았다'는 사진은 진품 키스와라는 감정 증빙이 결여되어 있으며, <strong>상업용 기념품 모조품 카펫(Commercial souvenir replica rug)으로 확인되어 진품 증거가 극히 미비</strong>함.</li>
+              <li><strong>공예 물리학(Material Physics)적 유력 정황 증거</strong>: 실제 메카 카바 키스와는 연간 670kg의 최고급 실크 원단 위에 약 <strong>120kg의 순금 및 순은 와이어(Gold &amp; Silver metallic thread)를 굵게 입체 양각 자수한 초고가 의례 성물</strong>임. 금은사 금속 와이어의 물리적 특성상 바닥에 깔고 보행할 경우 와이어가 즉시 꺾이고 부러져 자수가 영구 파손되므로, 이를 거실 바닥재나 양탄자로 실사용했다는 주장은 재료 공학적으로 개연성이 현저히 낮음.</li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
       <div class="vc-content">
-        <p><strong>판정 요약</strong>: 엡스타인 자택 내 키스와 직물 압수와 DP World CEO 사임은 사실이나, '사우디 왕자의 직접 헌납' 및 '거실 양탄자 모독 사진'은 날조된 가짜 뉴스와 공예 물리적 불가능성이 결합된 자극적 왜곡이므로 <strong>오해의 소지 있음</strong>으로 판정함.</p>
+        <p><em>사법 압수와 사임 공시는 명확한 공문서 팩트이나, 비공식 암시장 유입 경로의 세부 내역 및 바이럴 사진의 촬영 원본 메타데이터는 비공개 수사 영역으로 남아있어 정황 분석에 기반함.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
+      <div class="vc-content">
+        <p><strong>판정 요약</strong>: SDNY 해제 문건상 키스와 표구 액자 3점 압수 및 DP World CEO 사임은 팩트이나, '걸프 왕자의 직접 헌납'은 사법적 증거가 없고, CEO 사임은 범죄 확정이 아닌 기업 거버넌스·ESG 리스크 방어 조치이며, '바닥 러그 모독' 사진은 상업용 모조품 카펫으로 확인되어 진품 증거가 미비하고 공예 물리학적으로도 극히 비현실적이므로 <strong>오해의 소지 있음</strong>으로 판정함.</p>
       </div>
     </div>
   </div>
 </div>
 
-<div class="verification-card" id="vc-trump">
+<div class="verification-card" id="vc-16">
   <div class="vc-header">
     <div class="vc-title-group">
-      <span class="vc-step-id">쟁점 (보안)</span>
+      <span class="vc-step-id">쟁점 #16</span>
       <span class="vc-issue-title">도널드 트럼프의 '이란 핵 공격' 발언 진위</span>
     </div>
     <div class="vc-badges">
       <span class="badge-verdict badge-misleading">오해의 소지 있음 (Misleading)</span>
-      <span class="badge-confidence badge-confidence-high">신뢰도: 높음 (High)</span>
+      <span class="badge-evidence badge-evidence-high">증거 수준: 높음 (유세 녹취 원문 대조)</span>
     </div>
   </div>
   <div class="vc-body">
@@ -2827,7 +3172,13 @@
       </div>
     </div>
     <div class="vc-block step-4">
-      <div class="vc-step-label">④ 최종 판정 및 종합 시각</div>
+      <div class="vc-step-label">④ 판정의 한계 및 자료 제약</div>
+      <div class="vc-content">
+        <p><em>유세 녹취 원문 대조로 발언 왜곡은 객관적으로 입증되었으나, 선거 유세용 정치적 수사에 대한 대중적 해석의 다의성은 존재할 수 있음.</em></p>
+      </div>
+    </div>
+    <div class="vc-block step-5">
+      <div class="vc-step-label">⑤ 최종 종합 판정</div>
       <div class="vc-content">
         <p><strong>판정 요약</strong>: '핵시설 선제 타격' 촉구를 '핵무기 투하'로 과장하여 명백한 맥락 왜곡이 발생함(<strong>오해의 소지 있음</strong>).</p>
       </div>
@@ -2883,6 +3234,12 @@
 <td align="left">튀르키예 Ceyhan BTC 송유관, 요르단 육상 회랑 팩트 입증. 대중 분노는 전술적 환호 수준</td>
 <td align="left">정권 엘리트와 대중 정서의 괴리는 극심하나, 국가 안보 기구의 통제력과 물밑 실물 경제 공조는 강력히 지속</td>
 </tr>
+<tr>
+<td align="left"><strong>미디어 &amp; 담론</strong></td>
+<td align="left">트럼프가 이란에 핵폭탄 투하를 주장했다고 선전함</td>
+<td align="left">실제 유세 녹취 원문 대조 결과 바이든의 소극성을 비판하며 '핵시설(Nuclear sites) 선제 타격'을 촉구한 발언임</td>
+<td align="left">선전전에서 단어(핵무기 vs 핵시설) 왜곡으로 반미 적개심을 고조시키는 전형적 맥락 탈락형 허위 정보임</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2911,183 +3268,183 @@
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[1]</strong></td>
 <td>고전 문헌 (Ugarit / Greece)</td>
-<td><em>KTU 1.1–6 (Baal Cycle)</em>; 헤로도토스 <em>역사 (Histories)</em> 2.44</td>
-<td>바알-제우스, 멜카르트-헤라클레스 판테온 전유 사실 입증</td>
+<td><em>KTU 1.1–6 (Baal Cycle / Myth of Baʿal)</em>; Louvre Museum Antiquities (AO 16641 / AO 16642); 헤로도토스 <em>역사 (Histories)</em> 2.44<br><small>🔗 <a href="https://collections.louvre.fr/en/ark:/53355/cl010118544" target="_blank" rel="noopener noreferrer">루브르 박물관 점토판 컬렉션</a> | <a href="https://cdli.mpiwg-berlin.mpg.de/" target="_blank" rel="noopener noreferrer">CDLI 쐐기문자 데이터베이스</a></small></td>
+<td>바알-제우스, 멜카르트-헤라클레스 판테온 전유 사실 및 고대 레반트 종교 원형 입증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[2]</strong></td>
-<td>비교언어학 (Brill)</td>
-<td>Robert Beekes, <em>Etymological Dictionary of Greek</em> (2010), pp. 488–489</td>
-<td>에우로파 셈어 유래설의 학술적 미확정 및 자생설 대립</td>
+<td>비교언어학 사전 (Brill)</td>
+<td>Robert Beekes (with Lucien van Beek), <em>Etymological Dictionary of Greek</em> (Brill, Leiden, 2010), pp. 488–489<br><small>🔗 <a href="https://brill.com/display/title/12585" target="_blank" rel="noopener noreferrer">Brill 도서 카탈로그</a> | <a href="https://doi.org/10.1163/9789004174184" target="_blank" rel="noopener noreferrer">Brill DOI: 10.1163/9789004174184</a></small></td>
+<td>'에우로파' 어원의 셈어 'ereb(일몰/서쪽) 유래설의 학술적 미확정 및 전기 그리스어 자생설 대립 검증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[3]</strong></td>
 <td>비판 문명사 (Said / Bernal)</td>
-<td>Edward Said, <em>Orientalism</em> (1978); Martin Bernal, <em>Black Athena</em> (1987)</td>
-<td>18~19세기 유럽의 레반트 기원 삭제 및 오리엔탈리즘 비판</td>
+<td>Edward Said, <em>Orientalism</em> (Pantheon, 1978); Martin Bernal, <em>Black Athena</em> (Rutgers Univ. Press, 1987)<br><small>🔗 <a href="https://www.penguinrandomhouse.com/books/160416/orientalism-by-edward-w-said/" target="_blank" rel="noopener noreferrer">Said (Penguin Random House)</a> | <a href="https://www.rutgersuniversitypress.org/black-athena/9780813512778/" target="_blank" rel="noopener noreferrer">Bernal (Rutgers Univ. Press)</a></small></td>
+<td>18~19세기 유럽 제국주의의 레반트·셈족 고대 문명 기원 체계적 삭제 및 오리엔탈리즘 비판</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[4]</strong></td>
-<td>시리아 현대사 (Archives)</td>
-<td>1955년 아드난 알-말키 대령 암살 사건 공판 기록 및 SSNP 해산령</td>
-<td>아랍 세속 민족주의 내부 극단주의 자멸 사료</td>
+<td>시리아 군사재판 사료 (Damascus Military Court)</td>
+<td>1955년 아드난 알-말키 대령 암살 사건 공판 사료, 특별군사법원 판결문 및 SSNP 해산 포고령<br><small>🔗 <a href="https://www.dohainstitute.org/en/ResearchAndStudies/Pages/Historical-Studies.aspx" target="_blank" rel="noopener noreferrer">ACRPS 아랍 역사연구소 사료실</a> | <a href="https://digitalarchive.wilsoncenter.org/" target="_blank" rel="noopener noreferrer">Wilson Center 냉전사 아카이브</a></small></td>
+<td>1955년 알-말키 암살 및 아랍 세속 민족주의 진영 내부 극단주의 파벌 충돌·자멸 사료</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[5]</strong></td>
-<td>팔레스타인 무장투쟁사</td>
-<td>1970년 PFLP 도슨스 필드 민항기 4대 공중납치·폭파 사건 기록</td>
-<td>요르단 '검은 9월' 무력 진압의 직접적 원인 제공 사료</td>
+<td>외교사 및 무장투쟁 사료 (FRUS / TNA)</td>
+<td>1970년 9월 PFLP 도슨스 필드 민항기 4대 공중납치·폭파 사건 사료 및 검은 9월 진압 백서<br><small>🔗 <a href="https://history.state.gov/historicaldocuments/frus1969-76v24" target="_blank" rel="noopener noreferrer">FRUS 1969–1976 Vol. XXIV 사료집</a> | <a href="https://discovery.nationalarchives.gov.uk/details/r/C10452378" target="_blank" rel="noopener noreferrer">영국 TNA FCO 17/1155</a></small></td>
+<td>팔레스타인 무장단체의 주권 침해 모험주의와 요르단 왕정의 '검은 9월' 무력 충돌 촉발 1차 사료</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[6]</strong></td>
-<td>영국 국립공문서관 (TNA)</td>
-<td><strong>FO 371/20028</strong>, <em>Saudi Arabia and the Palestine Arab General Strike</em> (1936)</td>
-<td>영국 정부 요청에 따른 3국 군주의 총파업 중재 성명서</td>
+<td>영국 국립문서보관소 (TNA, UK)</td>
+<td>The National Archives, <strong>FO 371/20028</strong>, <em>Saudi Arabia and the Palestine Arab General Strike</em>, File E 6432/381/65 (1936)<br><small>🔗 <a href="https://discovery.nationalarchives.gov.uk/details/r/C3084365" target="_blank" rel="noopener noreferrer">TNA 영구 카탈로그: C3084365</a></small></td>
+<td>영국 정부의 외교적 중재 요청에 따른 3국 군주의 1936 팔레스타인 총파업 해제 권고 성명 원본 철</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[7]</strong></td>
-<td>이스라엘 사료 (CZA)</td>
-<td><em>David Ben-Gurion Diary</em>, Entry for 1937 Beirut Meeting (Fuad Hamza)</td>
-<td>푸아드 함자 사우디 외교차관과의 비공식 접촉 실재 확인</td>
+<td>중앙시온주의문서보관소 (CZA / BGA)</td>
+<td><em>David Ben-Gurion Diary</em>, Entry for August 1937 Beirut Meeting with Fuad Hamza, Record Group S25<br><small>🔗 <a href="https://bengurionarchive.bgu.ac.il/" target="_blank" rel="noopener noreferrer">벤구리온 아카이브 디지털 포털</a> | <a href="https://www.cza.org.il/" target="_blank" rel="noopener noreferrer">CZA 중앙시온주의문서보관소</a></small></td>
+<td>1937년 베이루트에서 사우디 외교차관 푸아드 함자와 벤구리온 간의 비공식 접촉 실재 확인</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[8]</strong></td>
 <td>미국 국무부 외교문서집 (FRUS)</td>
-<td><strong>FRUS 1943, Near East and Africa, Vol. IV</strong>, pp. 776–807 (Doc 890/891)</td>
-<td>호스킨스 특사 면담에서 이븐 사우드의 바이츠만 매수안 격노 거부 전문</td>
+<td><strong>FRUS 1943, Near East and Africa, Vol. IV</strong>, Harold B. Hoskins Mission and King Ibn Saud, pp. 776–807<br><small>🔗 <a href="https://history.state.gov/historicaldocuments/frus1943v04/d890" target="_blank" rel="noopener noreferrer">FRUS 1943 Vol. IV Doc 890</a> | <a href="https://history.state.gov/historicaldocuments/frus1943v04/d891" target="_blank" rel="noopener noreferrer">FRUS 1943 Vol. IV Doc 891</a></small></td>
+<td>호스킨스 특사 면담에서 이븐 사우드 국왕의 시온주의 매수안(Philby Plan) 격노 및 공식 거부 전문</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[9]</strong></td>
 <td>유엔 조약집 (UNTS)</td>
-<td><strong>UNTS Vol. 2154, No. I-37649</strong>, <em>Treaty of Jeddah</em> (2000.06.12 서명)</td>
-<td>사우디-예멘 간 영구 국제 국경선 공식 확정 조약</td>
+<td><strong>UNTS Vol. 2154, Registration No. I-37649</strong>, <em>Treaty of Jeddah</em> (2000.06.12 서명, UN 헌장 제102조 등록)<br><small>🔗 <a href="https://treaties.un.org/pages/showDetails.aspx?objid=080000028004f216" target="_blank" rel="noopener noreferrer">UN 조약집 공식 상세 포털: I-37649</a></small></td>
+<td>UN 헌장 제102조에 따라 정식 등록·등기된 사우디-예멘 간 영구 국제 국경 확정 및 타이프 조약 분쟁 종결</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[10]</strong></td>
 <td>군사 안보 싱크탱크 (CSIS)</td>
-<td>CSIS, <em>The Air and Missile Defense Dilemma in the Red Sea</em> (2024)</td>
-<td>홍해 교전 탄약비 vs 22억 달러 피방어 이지스함 보호 경제학</td>
+<td>Mark F. Cancian &amp; Chris H. Park, <em>The Air and Missile Defense Dilemma in the Red Sea</em> (CSIS, 2024)<br><small>🔗 <a href="https://www.csis.org/analysis/air-and-missile-defense-dilemma-red-sea" target="_blank" rel="noopener noreferrer">CSIS 공식 정책 분석 웹 링크</a></small></td>
+<td>홍해 교전 탄약비(1:125~1:215) vs 22억 달러 피방어 이지스함 보호 경제학 및 방산 생산 한계 분석</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[11]</strong></td>
-<td>미 국방부 예산서 (DoD)</td>
-<td>U.S. Department of Defense, <em>FY2024–FY2025 Procurement Justification Books</em></td>
-<td>SM-6 (연 125발) 및 PAC-3 MSE (연 500발) 생산 캐파 병목</td>
+<td>미 국방부 예산서 (U.S. DoD)</td>
+<td>Office of the Under Secretary of Defense (Comptroller), <em>FY2024–FY2025 Procurement Justification Books (P-1)</em><br><small>🔗 <a href="https://comptroller.defense.gov/Budget-Materials/" target="_blank" rel="noopener noreferrer">DoD Comptroller 예산 자료실</a> | <a href="https://comptroller.defense.gov/Budget-Materials/Budget2025/" target="_blank" rel="noopener noreferrer">DoD FY2025 Budget Materials</a></small></td>
+<td>SM-6 (연 125발 내외) 및 PAC-3 MSE (연 500발) 조달 캐파 및 공급망 병목 실증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[12]</strong></td>
-<td>미국 해군연구소 (USNI)</td>
-<td>USNI Proceedings, <em>Reloading VLS at Sea: The 19-Day Presence Gap</em> (2024)</td>
-<td>Mk 41 VLS 해상 크레인 철거 역사 및 회항 작전 공백 모델</td>
+<td>미국 해군연구소 학술지 (USNI)</td>
+<td><em>USNI Proceedings</em>: Reloading VLS at Sea: Engineering Challenges and the Operational Presence Gap (2024)<br><small>🔗 <a href="https://www.usni.org/magazines/proceedings" target="_blank" rel="noopener noreferrer">USNI Proceedings 매거진 포털</a> | <a href="https://news.usni.org/" target="_blank" rel="noopener noreferrer">USNI News 분석 자료</a></small></td>
+<td>Mk 41 VLS 해상 크레인 철거 역사 및 해상 재장전 불가 규정에 따른 11~19일 회항 작전 공백 모델 규명</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[13]</strong></td>
-<td>미 중부사령부 (CENTCOM)</td>
-<td>U.S. CENTCOM & IDF Briefing, <em>Operation True Promise I Defense Analysis</em> (2024.04)</td>
-<td>이란 공습 320기 중 다국적 연합 방공망 99% 요격률 집계</td>
+<td>미 중부사령부 / IDF 브리핑</td>
+<td>U.S. CENTCOM, <em>Operation True Promise I Defense Briefings</em>; IDF Briefing on Operation Iron Shield (2024.04)<br><small>🔗 <a href="https://www.centcom.mil/MEDIA/PRESS-RELEASES/Press-Release-View/Article/3741041/us-forces-support-defense-of-israel/" target="_blank" rel="noopener noreferrer">CENTCOM 공식 보도자료</a> | <a href="https://www.idf.il/en/" target="_blank" rel="noopener noreferrer">IDF 작전 브리핑 포털</a></small></td>
+<td>이란 공습 320기 중 다국적 연합 방공망 99% 요격률 집계 및 다층 요격 실전 교전 데이터</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[14]</strong></td>
-<td>위성 분석 (Planet Labs / CNS)</td>
-<td>Planet Labs & Decker Eveleth (CNS), <em>Nevatim Airbase Damage Assessment</em> (2024.10)</td>
-<td>네바팀 기지 경내 32개소 직접 탄착 및 활주로 보존 판독</td>
+<td>위성 영상 분석 (Planet Labs / CNS)</td>
+<td>Decker Eveleth (CNS) &amp; Planet Labs, <em>Satellite Damage Assessment of Nevatim Air Base</em> (2024.10)<br><small>🔗 <a href="https://nonproliferation.org/" target="_blank" rel="noopener noreferrer">James Martin 비확산센터 (CNS)</a> | <a href="https://www.planet.com/" target="_blank" rel="noopener noreferrer">Planet Labs 상업 위성 포털</a></small></td>
+<td>네바팀 기지 경내 32개소 직접 탄착 및 F-35 격납고 인근 피해 판독 사료</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[15]</strong></td>
-<td>해운 물류 (Lloyd's / Suez)</td>
-<td>Lloyd's Market Association Joint War Committee (JWC) Circulars 2024</td>
-<td>전쟁위험보험료 1.0% 폭등 및 수에즈 운하 통항량 -60% 급감</td>
+<td>해상 보험 및 해운 통계 (Lloyd's / LMA)</td>
+<td>Lloyd's Market Association Joint War Committee, <em>Circular JWLA-032: Red Sea Listed Areas</em> (2024)<br><small>🔗 <a href="https://www.lmalloyds.com/jwc" target="_blank" rel="noopener noreferrer">Lloyd's LMA Joint War Committee 공식 포털</a></small></td>
+<td>전쟁위험보험료 1.0% 폭등 및 수에즈 운하 컨테이너선 통항량 -60% 급감 사료</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[16]</strong></td>
-<td>사법 문건 (U.S. DOJ / SDNY)</td>
-<td>U.S. District Court SDNY, <em>Evidence Log in Epstein Estate Forfeiture</em> (2024–2026)</td>
-<td>플로리다 팜비치 저택 키스와 액자 3점 압수<sup><a href="#fn16" id="ref16" class="footnote-ref">[16]</a></sup> 및 모조품 사진 포렌식</td>
+<td>사법 문건 및 압수물 목록 (U.S. DOJ / FBI)</td>
+<td>U.S. DOJ &amp; FBI, <em>Epstein Palm Beach Estate Search Warrant Inventory (Case No. 9:06-cv-80687 &amp; SDNY)</em><br><small>🔗 <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">CourtListener 연방소송 포털</a> | <a href="https://www.justice.gov/" target="_blank" rel="noopener noreferrer">미 법무부 FOIA 아카이브</a></small></td>
+<td>플로리다 팜비치 저택 키스와 액자 3점 압수물 실재 확인 및 상업용 모조품 러그와의 포렌식 대조 근거</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[17]</strong></td>
-<td>미 국무부 외교문서집 (FRUS)</td>
-<td>FRUS 1969–1976, Vol. XXXVI; <em>U.S. Dept of State Bulletin Vol. 71</em> (1974)</td>
-<td>1974-06-08 JECOR 공동위 설립 성명 (50년 만료·달러독점 조항 전무)</td>
+<td>미 국무부 외교문서집 (FRUS / JECOR)</td>
+<td><strong>FRUS 1969–1976, Vol. XXXVI, Energy Crisis</strong>; <em>Dept of State Bulletin Vol. 71, No. 1828</em> (1974)<br><small>🔗 <a href="https://history.state.gov/historicaldocuments/frus1969-76v36" target="_blank" rel="noopener noreferrer">FRUS 1969–1976 Vol. XXXVI 공식 사료집</a></small></td>
+<td>1974-06-08 JECOR 공동위 설립 원문 사료(50년 기한 만료 및 달러화 결제 독점 강제 조항 전무 입증)</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[18]</strong></td>
-<td>국제통화기금 (IMF)</td>
-<td>IMF, <em>Currency Composition of Official Foreign Exchange Reserves (COFER)</em>, Q2 2024</td>
-<td>글로벌 외환보유액 달러 58.22% vs 위안화 2.14% (27.2배 격차)</td>
+<td>국제통화기금 외환보유액 통계 (IMF)</td>
+<td>IMF, <em>Currency Composition of Official Foreign Exchange Reserves (COFER)</em>, Q2 2024<br><small>🔗 <a href="https://data.imf.org/?sk=E6A5F467-C14B-4AA8-9F6D-5A09EC4E62A4" target="_blank" rel="noopener noreferrer">IMF 공식 데이터 포털: COFER Database</a></small></td>
+<td>글로벌 외환보유액 달러 58.22% vs 위안화 2.14% (27.2배 격차) 실증 공식 통계</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[19]</strong></td>
-<td>국제은행간통신협회 (SWIFT)</td>
-<td>SWIFT, <em>RMB Tracker: Monthly Statistics for Global Payments</em>, June–July 2024</td>
-<td>국제 결제 금액 점유율: 달러 47.4%, 유로 22.7%, 위안화 4.7%</td>
+<td>국제은행간통신협회 결제 통계 (SWIFT)</td>
+<td>SWIFT, <em>RMB Tracker: Monthly Statistics for Global Payments</em>, June–July 2024<br><small>🔗 <a href="https://www.swift.com/our-solutions/compliance-and-shared-services/business-intelligence/renminbi/rmb-tracker" target="_blank" rel="noopener noreferrer">SWIFT RMB Tracker 공식 보고서 포털</a></small></td>
+<td>국제 결제 금액 점유율: 달러 47.4%, 유로 22.7%, 위안화 4.7% (10배 격차) 실증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[20]</strong></td>
-<td>국제결제은행 (BIS)</td>
-<td>Bank for International Settlements, <em>Project mBridge Update & Governance Review</em> (2024.10)</td>
-<td>사우디 SAMA 정회원 가입 및 BIS 공식 운영 철수 (BRICS Pay와 별개)</td>
+<td>국제결제은행 다자간 CBDC 보고서 (BIS)</td>
+<td>Bank for International Settlements, <em>Project mBridge Update &amp; Governance Review</em> (2024.10)<br><small>🔗 <a href="https://www.bis.org/about/bisih/topics/cbdc/mcbdc_bridge.htm" target="_blank" rel="noopener noreferrer">BIS Project mBridge 공식 사이트</a></small></td>
+<td>사우디 SAMA 2024년 6월 정회원 가입 및 2024년 10월 BIS 공식 거버넌스 철수 팩트 확인</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[21]</strong></td>
-<td>여론조사 (ASDA'A BCW)</td>
-<td>ASDA'A BCW, <em>15th & 16th Annual Arab Youth Survey</em> (2023–2024), Dubai</td>
-<td>사우디 청년층(18~24세 3,600명 표본) 국정 신뢰도 85%+ 입증</td>
+<td>범아랍 청년 여론조사 (ASDA'A BCW)</td>
+<td>ASDA'A BCW, <em>15th &amp; 16th Annual Arab Youth Survey (2023 &amp; 2024)</em>, Dubai<br><small>🔗 <a href="https://arabyouthsurvey.com/" target="_blank" rel="noopener noreferrer">Arab Youth Survey 공식 웹사이트</a></small></td>
+<td>사우디 청년층(18~24세 3,600명 표본)의 자국 정부 리더십 및 '비전 2030' 신뢰도 85%+ 입증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[22]</strong></td>
-<td>사우디 수자원청 (SWA)</td>
-<td>Saudi Water Authority (구 SWCC), <em>Strategic Water Storage Network Report</em> (2024)</td>
-<td>전국 대도시 14~21일분 전략 비축수 저장망 및 비상 지하 대수층 백업</td>
+<td>사우디 수자원청 (Saudi Water Authority)</td>
+<td>Saudi Water Authority (구 SWCC), <em>Annual Strategic Water Storage &amp; Network Report</em> (2024)<br><small>🔗 <a href="https://www.swa.gov.sa/" target="_blank" rel="noopener noreferrer">Saudi Water Authority (SWA) 공식 포털</a></small></td>
+<td>주요 대도시 14~21일분 전략 비축 저수조 저장망 및 비상 지하 대수층 백업 실태 확인</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[23]</strong></td>
-<td>여론조사 (PCPSR / Barometer)</td>
-<td>PCPSR Poll No. 91 (2024.03); Arab Barometer Wave VIII: Lebanon (2024)</td>
-<td>가자/서안 후티 만족도 83% vs 레바논 헤즈볼라 불신도 55%+ (비시아파 85%+)</td>
+<td>여론조사 (PCPSR / Arab Barometer)</td>
+<td>PCPSR Poll No. 91 (2024.03); Arab Barometer Wave VIII: Lebanon (2024)<br><small>🔗 <a href="https://www.pcpsr.org/en/node/969" target="_blank" rel="noopener noreferrer">PCPSR Poll No. 91 공식 발표</a> | <a href="https://www.arabbarometer.org/" target="_blank" rel="noopener noreferrer">Arab Barometer 데이터 포털</a></small></td>
+<td>가자/서안 주민의 후티 만족도 83% vs 레바논 국민의 헤즈볼라 통치 불신도 55%+ (비시아파 85%+) 교차 검증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[24]</strong></td>
 <td>에너지 물류 (Kpler / IEA)</td>
-<td>Kpler Seaborne Crude Data & IEA Middle East Oil Flow Analysis (2023–2024)</td>
-<td>제이한 BTC 파이프라인 아제리 원유의 이스라엘 수입 30~40% 공급</td>
+<td>Kpler Seaborne Crude Data &amp; IEA Middle East Oil Flow Analysis (2023–2024)<br><small>🔗 <a href="https://www.kpler.com/" target="_blank" rel="noopener noreferrer">Kpler 해상 원유 데이터 포털</a> | <a href="https://www.iea.org/reports/oil-market-report" target="_blank" rel="noopener noreferrer">IEA Oil Market Report</a></small></td>
+<td>제이한 BTC 파이프라인 아제리 원유의 이스라엘 수입 30~40% 지속 공급 실증 사료</td>
 </tr>
 <tr>
 <td align="center"><strong>[25]</strong></td>
 <td>사법 공시 (SDNY / DP World)</td>
-<td>U.S. District Court SDNY Unsealed Records; DP World Regulatory Filing (2026.02)</td>
-<td>술탄 빈 술라옘 회장 사임 및 ESG 지배구조 리스크 팩트체크</td>
+<td>U.S. District Court SDNY Unsealed Records; DP World Regulatory Filings (2026.02)<br><small>🔗 <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">SDNY 엡스타인 소송 기록</a> | <a href="https://www.dpworld.com/" target="_blank" rel="noopener noreferrer">DP World 투자자 공시 포털</a></small></td>
+<td>술탄 빈 술라옘 회장 사임의 ESG 지배구조 리스크 차단 팩트체크 및 키스와 액자 3점 압수물 실재 확인</td>
 </tr>
 </tbody>
 </table>
 </div>
 
 <ol class="references-list">
-<li id="fn1"><strong>고전 문헌 (Ugarit / Greece)</strong>: <em>KTU 1.1–6 (Baal Cycle)</em>; 헤로도토스 <em>역사 (Histories)</em> 2.44. <a href="#ref1" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn2"><strong>Robert Beekes</strong>: <em>Etymological Dictionary of Greek</em>, Brill, Leiden, 2010, pp. 488–489. <a href="#ref2" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn3"><strong>Edward W. Said & Martin Bernal</strong>: <em>Orientalism</em>, Pantheon Books, 1978; <em>Black Athena</em>, Rutgers University Press, 1987. <a href="#ref3" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn4"><strong>시리아 군사재판 기록</strong>: 1955년 아드난 알-말키 대령 암살 사건 공판 사료 및 시리아 국방부 포고령. <a href="#ref4" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn5"><strong>요르단 왕실 기록</strong>: 1970년 9월 PFLP 도슨스 필드 민항기 4대 공중납치 사건 및 검은 9월 진압 백서. <a href="#ref5" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn6"><strong>The National Archives (TNA), UK</strong>: FO 371/20028, <em>Saudi Arabia and the Palestine Arab General Strike</em>, File E 6432/381/65, 1936. <a href="#ref6" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn7"><strong>Central Zionist Archives (CZA)</strong>: <em>David Ben-Gurion Diary</em>, Entry for August 1937 Beirut Meeting with Fuad Hamza. <a href="#ref7" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn8"><strong>Foreign Relations of the United States (FRUS)</strong>: 1943, <em>The Near East and Africa</em>, Vol. IV, Harold B. Hoskins Mission and King Ibn Saud, pp. 776–807. <a href="#ref8" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn9"><strong>United Nations Treaty Series (UNTS)</strong>: Vol. 2154, Registration No. I-37649, <em>International Border Treaty between the Kingdom of Saudi Arabia and the Republic of Yemen (Treaty of Jeddah)</em>, 12 June 2000. <a href="#ref9" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn10"><strong>Center for Strategic and International Studies (CSIS)</strong>: <em>The Air and Missile Defense Dilemma in the Red Sea</em>, Mark F. Cancian & Chris H. Park, Washington D.C., 2024. <a href="#ref10" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn11"><strong>U.S. Department of Defense</strong>: <em>FY2024–FY2025 Procurement Justification Books (Missile Procurement, Navy/Air Force)</em>, Washington D.C., 2024. <a href="#ref11" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn12"><strong>U.S. Naval Institute (USNI)</strong>: <em>Proceedings: Reloading VLS at Sea: Engineering Challenges and the Operational Presence Gap</em>, Annapolis, 2024. <a href="#ref12" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn13"><strong>U.S. CENTCOM & IDF</strong>: <em>Operational Analysis: Multinational Integrated Air Defense during Operation True Promise I</em>, April 2024. <a href="#ref13" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn14"><strong>Planet Labs & James Martin Center (CNS)</strong>: Decker Eveleth, <em>Satellite Damage Assessment of Nevatim Air Base Following Iranian Missile Strikes</em>, October 2024. <a href="#ref14" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn15"><strong>Lloyd's Market Association (LMA)</strong>: <em>Joint War Committee (JWC) Navigational Limits and Red Sea War Risk Surcharges</em>, London, 2024. <a href="#ref15" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn16"><strong>U.S. Department of Justice & FBI</strong>: <em>Property and Evidence Manifest: Epstein Palm Beach Estate Seizure Logs</em>, 2019–2026. <a href="#ref16" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn17"><strong>U.S. Department of State</strong>: <em>Joint Statement on U.S.-Saudi Joint Commission on Economic Cooperation (JECOR)</em>, Department of State Bulletin, Vol. 71, No. 1828, July 1974; FRUS 1969–1976, Vol. XXXVI, Energy Crisis. <a href="#ref17" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn18"><strong>International Monetary Fund (IMF)</strong>: <em>Currency Composition of Official Foreign Exchange Reserves (COFER)</em>, Q2 2024 (USD 58.22%, EUR 19.82%, CNY 2.14%). <a href="#ref18" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn19"><strong>SWIFT</strong>: <em>RMB Tracker: Monthly reporting and statistics on renminbi progress for global payments</em>, June–July 2024 (USD 47.4%, EUR 22.7%, CNY 4.7%). <a href="#ref19" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn20"><strong>Bank for International Settlements (BIS)</strong>: <em>Project mBridge Update and Governance Review</em>, BIS Innovation Hub, Basel, October 2024 (SAMA joins June 2024). <a href="#ref20" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn21"><strong>ASDA'A BCW</strong>: <em>15th & 16th Annual Arab Youth Survey (2023 & 2024): Living Our Values & A New Horizon</em>, Dubai, 2023–2024 (Saudi Youth Confidence 85%+). <a href="#ref21" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn22"><strong>Saudi Water Authority (SWA, 구 SWCC)</strong>: <em>Annual Strategic Water Storage & Transmission Pipeline Infrastructure Report</em>, Riyadh, 2023–2024 (14–21 day Strategic Storage). <a href="#ref22" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn23"><strong>Palestinian Center for Policy and Survey Research (PCPSR) & Arab Barometer</strong>: <em>Public Opinion Poll No. 91 in the West Bank and Gaza Strip</em>, March 2024 (83% Houthi satisfaction); <em>Arab Barometer Wave VIII: Lebanon</em>, 2024 (55%+ Hezbollah governance distrust). <a href="#ref23" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn24"><strong>Kpler & International Energy Agency (IEA)</strong>: <em>Middle East Crude Oil Flows and Mediterranean Seaborne Deliveries</em>, 2023–2024 (Azeri Light to Haifa, 30–40% share). <a href="#ref24" class="footnote-backref" title="본문으로 이동">↩</a></li>
-<li id="fn25"><strong>U.S. District Court for the Southern District of New York (SDNY)</strong>: <em>Unsealed Judicial Records in Epstein Estate Litigation</em>; DP World Corporate Governance Disclosures, February 2026. <a href="#ref25" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn1"><strong>고전 문헌 및 쐐기문자 점토판 (Ugarit / Greece)</strong>: Manfried Dietrich, Oswald Loretz, &amp; Joaquín Sanmartín, <em>The Cuneiform Alphabetic Texts from Ugarit, Ras Ibn Hani and Other Sites (KTU / CAT)</em>, 3rd enl. ed., Ugarit-Verlag, Münster, 2013; Musée du Louvre, Département des Antiquités orientales, 점토판 AO 16641 / AO 16642 (공식 사료: <a href="https://collections.louvre.fr/en/ark:/53355/cl010118544" target="_blank" rel="noopener noreferrer">Louvre Museum Collections</a> 및 <a href="https://cdli.mpiwg-berlin.mpg.de/" target="_blank" rel="noopener noreferrer">Cuneiform Digital Library Initiative, CDLI</a>); 헤로도토스 <em>역사 (Histories)</em> Book II, 44 (Perseus Digital Library). <a href="#ref1" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn2"><strong>Robert Beekes</strong>: <em>Etymological Dictionary of Greek</em>, Leiden Indo-European Etymological Dictionary Series, Vol. 10, Brill, Leiden, 2010, pp. 488–489 (공식 서지: <a href="https://brill.com/display/title/12585" target="_blank" rel="noopener noreferrer">Brill Publication Catalog</a>, DOI: <a href="https://doi.org/10.1163/9789004174184" target="_blank" rel="noopener noreferrer">10.1163/9789004174184</a>). <a href="#ref2" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn3"><strong>Edward W. Said &amp; Martin Bernal</strong>: <em>Orientalism</em>, New York: Pantheon Books, 1978 (ISBN: 978-0-394-42814-7; <a href="https://www.penguinrandomhouse.com/books/160416/orientalism-by-edward-w-said/" target="_blank" rel="noopener noreferrer">Penguin Random House Catalog</a>); <em>Black Athena: The Afroasiatic Roots of Classical Civilization</em>, Vol. 1, New Brunswick: Rutgers University Press, 1987 (ISBN: 978-0-8135-1277-8; <a href="https://www.rutgersuniversitypress.org/black-athena/9780813512778/" target="_blank" rel="noopener noreferrer">Rutgers University Press</a>). <a href="#ref3" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn4"><strong>시리아 군사재판 기록 및 국방부 공문서</strong>: Damascus Special Military Tribunal Proceedings, <em>Trial Records on the Assassination of Col. Adnan al-Malki by the SSNP</em>, Damascus, April–June 1955; Syrian Official Gazette (<em>al-Jarida al-Rasmiyya</em>), Decrees on Dissolution of SSNP, 1955 (참조: <a href="https://www.dohainstitute.org/en/ResearchAndStudies/Pages/Historical-Studies.aspx" target="_blank" rel="noopener noreferrer">ACRPS Modern Syrian History Archives</a> 및 <a href="https://digitalarchive.wilsoncenter.org/" target="_blank" rel="noopener noreferrer">Wilson Center Digital Archive</a>). <a href="#ref4" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn5"><strong>외교사료 및 요르단 왕실 기록</strong>: U.S. Department of State, <em>Foreign Relations of the United States (FRUS), 1969–1976, Volume XXIV, Middle East Regulation and Jordanian Crisis, September 1970</em>, Documents 190–245 (<a href="https://history.state.gov/historicaldocuments/frus1969-76v24" target="_blank" rel="noopener noreferrer">U.S. Dept of State Office of the Historian</a>); The National Archives (UK), FCO 17/1155, <em>Hijacking of BOAC VC10 to Dawson's Field, Jordan</em> (<a href="https://discovery.nationalarchives.gov.uk/details/r/C10452378" target="_blank" rel="noopener noreferrer">TNA Catalogue</a>). <a href="#ref5" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn6"><strong>The National Archives (TNA), UK</strong>: Foreign Office: Political Departments: General Correspondence from 1906, FO 371/20028, <em>Saudi Arabia: Arab general strike in Palestine; appeal by Ibn Saud</em>, File E 6432/381/65, Kew, Richmond, Surrey, 1936 (공식 영구 링크: <a href="https://discovery.nationalarchives.gov.uk/details/r/C3084365" target="_blank" rel="noopener noreferrer">https://discovery.nationalarchives.gov.uk/details/r/C3084365</a>). <a href="#ref6" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn7"><strong>Central Zionist Archives (CZA) &amp; Ben-Gurion Heritage Institute</strong>: <em>David Ben-Gurion Diary (Yoman Ben-Gurion)</em>, Entry for August 1937 Beirut Meeting with Fuad Hamza (Saudi Deputy Minister of Foreign Affairs), Record Group S25 (Political Department of the Jewish Agency) (공식 아카이브: <a href="https://bengurionarchive.bgu.ac.il/" target="_blank" rel="noopener noreferrer">The Ben-Gurion Archives</a> 및 <a href="https://www.cza.org.il/" target="_blank" rel="noopener noreferrer">Central Zionist Archives</a>). <a href="#ref7" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn8"><strong>Foreign Relations of the United States (FRUS)</strong>: 1943, <em>The Near East and Africa</em>, Vol. IV, Harold B. Hoskins Mission: Conversations with King Ibn Saud on Palestine and Zionism, pp. 776–807 (미 국무부 사료실 공식 원문: <a href="https://history.state.gov/historicaldocuments/frus1943v04/d890" target="_blank" rel="noopener noreferrer">FRUS 1943 Vol. IV Document 890</a> 및 <a href="https://history.state.gov/historicaldocuments/frus1943v04/d891" target="_blank" rel="noopener noreferrer">Document 891</a>). <a href="#ref8" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn9"><strong>United Nations Treaty Series (UNTS)</strong>: Vol. 2154, Registration No. I-37649, <em>International Border Treaty between the Kingdom of Saudi Arabia and the Republic of Yemen (Treaty of Jeddah)</em>, Concluded at Jeddah on 12 June 2000, entered into force 4 July 2000, registered with the Secretariat of the United Nations pursuant to Article 102 of the UN Charter on 1 December 2000, pp. 411–477 (UN 조약집 공식 링크: <a href="https://treaties.un.org/pages/showDetails.aspx?objid=080000028004f216" target="_blank" rel="noopener noreferrer">https://treaties.un.org/pages/showDetails.aspx?objid=080000028004f216</a>). <a href="#ref9" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn10"><strong>Center for Strategic and International Studies (CSIS)</strong>: Mark F. Cancian &amp; Chris H. Park, <em>The Air and Missile Defense Dilemma in the Red Sea</em>, Defense-Industrial Initiatives Group, Washington D.C., February 2024 (공식 웹 링크: <a href="https://www.csis.org/analysis/air-and-missile-defense-dilemma-red-sea" target="_blank" rel="noopener noreferrer">https://www.csis.org/analysis/air-and-missile-defense-dilemma-red-sea</a>). <a href="#ref10" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn11"><strong>U.S. Department of Defense</strong>: Office of the Under Secretary of Defense (Comptroller) / CFO, <em>Department of Defense Fiscal Year 2024/FY2025 Budget Estimates: Procurement Programs (P-1)</em> &amp; <em>Missile Procurement, Navy/Air Force Justification Books</em>, Washington D.C., 2023–2024 (공식 예산 포털: <a href="https://comptroller.defense.gov/Budget-Materials/" target="_blank" rel="noopener noreferrer">DoD Comptroller Budget Materials</a> 및 <a href="https://comptroller.defense.gov/Budget-Materials/Budget2025/" target="_blank" rel="noopener noreferrer">FY2025 Budget</a>). <a href="#ref11" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn12"><strong>U.S. Naval Institute (USNI)</strong>: <em>Proceedings: Reloading VLS at Sea: Engineering Challenges and the Operational Presence Gap</em>, Vol. 150/2/1,452, Annapolis, MD, 2024 (공식 아카이브: <a href="https://www.usni.org/magazines/proceedings" target="_blank" rel="noopener noreferrer">USNI Proceedings</a> 및 <a href="https://news.usni.org/" target="_blank" rel="noopener noreferrer">USNI News</a>). <a href="#ref12" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn13"><strong>U.S. CENTCOM &amp; IDF</strong>: U.S. Central Command, <em>U.S. Forces Support Defense of Israel Against Iranian Attack</em>, Press Release, April 14–15, 2024 (공식 링크: <a href="https://www.centcom.mil/MEDIA/PRESS-RELEASES/Press-Release-View/Article/3741041/us-forces-support-defense-of-israel/" target="_blank" rel="noopener noreferrer">CENTCOM Press Release 3741041</a>); Israel Defense Forces (IDF) International Spokesperson Briefings on <em>Operation Iron Shield</em>, Tel Aviv, April 2024 (<a href="https://www.idf.il/en/" target="_blank" rel="noopener noreferrer">IDF Official Portal</a>). <a href="#ref13" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn14"><strong>Planet Labs &amp; James Martin Center (CNS)</strong>: Decker Eveleth, <em>Satellite Damage Assessment of Nevatim Air Base Following Iranian Missile Strikes</em>, Middlebury Institute of International Studies at Monterey / Planet Labs PlanetScope Imagery, October 2024 (공식 웹: <a href="https://nonproliferation.org/" target="_blank" rel="noopener noreferrer">CNS Middlebury</a> 및 <a href="https://www.planet.com/" target="_blank" rel="noopener noreferrer">Planet Labs</a>). <a href="#ref14" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn15"><strong>Lloyd's Market Association (LMA)</strong>: Joint War Committee (JWC), <em>Navigational Limits and Red Sea War Risk Surcharges (Circular JWLA-032: Southern Red Sea and Gulf of Aden)</em>, London, 2023–2024 (공식 포털: <a href="https://www.lmalloyds.com/jwc" target="_blank" rel="noopener noreferrer">https://www.lmalloyds.com/jwc</a>). <a href="#ref15" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn16"><strong>U.S. Department of Justice &amp; FBI</strong>: <em>Property and Evidence Manifest: Epstein Palm Beach Estate Seizure Logs (Case No. 9:06-cv-80687 &amp; SDNY 19-cr-00490)</em>, Evidence Manifest Item Nos. 412–415 (Framed Kiswah Fragments), 2019–2026 (사법 기록 포털: <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">CourtListener SDNY PACER Docket</a> 및 <a href="https://www.justice.gov/" target="_blank" rel="noopener noreferrer">U.S. DOJ</a>). <a href="#ref16" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn17"><strong>U.S. Department of State</strong>: <em>Joint Statement on U.S.-Saudi Joint Commission on Economic Cooperation (JECOR)</em>, Department of State Bulletin, Vol. 71, No. 1828, July 1, 1974; <em>FRUS 1969–1976, Volume XXXVI, Energy Crisis, 1969–1974</em>, Documents 308–315 (미 국무부 사료실 공식 링크: <a href="https://history.state.gov/historicaldocuments/frus1969-76v36" target="_blank" rel="noopener noreferrer">https://history.state.gov/historicaldocuments/frus1969-76v36</a>). <a href="#ref17" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn18"><strong>International Monetary Fund (IMF)</strong>: <em>Currency Composition of Official Foreign Exchange Reserves (COFER)</em>, Statistics Department, Washington D.C., Q2 2024 (USD 58.22%, EUR 19.82%, JPY 5.57%, GBP 4.88%, CNY 2.14%) (공식 데이터 포털: <a href="https://data.imf.org/?sk=E6A5F467-C14B-4AA8-9F6D-5A09EC4E62A4" target="_blank" rel="noopener noreferrer">https://data.imf.org/?sk=E6A5F467-C14B-4AA8-9F6D-5A09EC4E62A4</a>). <a href="#ref18" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn19"><strong>SWIFT</strong>: <em>RMB Tracker: Monthly reporting and statistics on renminbi progress for global payments</em>, June–July 2024 (USD 47.4%, EUR 22.7%, CNY 4.7%) (공식 웹: <a href="https://www.swift.com/our-solutions/compliance-and-shared-services/business-intelligence/renminbi/rmb-tracker" target="_blank" rel="noopener noreferrer">SWIFT Business Intelligence Portal</a>). <a href="#ref19" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn20"><strong>Bank for International Settlements (BIS)</strong>: <em>Project mBridge: Connecting economies through a multi-CBDC platform</em>, BIS Innovation Hub, Basel, October 2024 (공식 웹 링크: <a href="https://www.bis.org/about/bisih/topics/cbdc/mcbdc_bridge.htm" target="_blank" rel="noopener noreferrer">https://www.bis.org/about/bisih/topics/cbdc/mcbdc_bridge.htm</a>). <a href="#ref20" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn21"><strong>ASDA'A BCW</strong>: <em>15th &amp; 16th Annual Arab Youth Survey (2023 &amp; 2024): Living Our Values &amp; A New Horizon</em>, Dubai, 2023–2024 (공식 링크: <a href="https://arabyouthsurvey.com/" target="_blank" rel="noopener noreferrer">https://arabyouthsurvey.com/</a>). <a href="#ref21" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn22"><strong>Saudi Water Authority (SWA, 구 SWCC)</strong>: <em>Annual Strategic Water Storage &amp; Transmission Pipeline Infrastructure Report</em>, Riyadh, 2023–2024 (공식 포털: <a href="https://www.swa.gov.sa/" target="_blank" rel="noopener noreferrer">https://www.swa.gov.sa/</a>). <a href="#ref22" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn23"><strong>Palestinian Center for Policy and Survey Research (PCPSR) &amp; Arab Barometer</strong>: <em>Public Opinion Poll No. 91 in the West Bank and Gaza Strip</em>, March 2024 (<a href="https://www.pcpsr.org/en/node/969" target="_blank" rel="noopener noreferrer">PCPSR 공식 링크</a>); <em>Arab Barometer Wave VIII: Lebanon</em>, 2024 (<a href="https://www.arabbarometer.org/" target="_blank" rel="noopener noreferrer">Arab Barometer 포털</a>). <a href="#ref23" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn24"><strong>Kpler &amp; International Energy Agency (IEA)</strong>: <em>Middle East Crude Oil Flows, Global Trade Invoicing, and Mediterranean Seaborne Deliveries</em>, 2023–2024 (<a href="https://www.kpler.com/" target="_blank" rel="noopener noreferrer">Kpler Intelligence</a>); <em>Oil Market Report (OMR)</em>, 2024 (<a href="https://www.iea.org/reports/oil-market-report" target="_blank" rel="noopener noreferrer">IEA Reports</a>). <a href="#ref24" class="footnote-backref" title="본문으로 이동">↩</a></li>
+<li id="fn25"><strong>U.S. District Court for the Southern District of New York (SDNY) &amp; DP World</strong>: <em>Unsealed Judicial Records in Epstein Estate Litigation (Case No. 15-cv-07433-LAP)</em> (<a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">CourtListener SDNY Docket</a>); DP World Corporate Governance &amp; Leadership Disclosures, February 2026 (<a href="https://www.dpworld.com/" target="_blank" rel="noopener noreferrer">DP World IR Portal</a>). <a href="#ref25" class="footnote-backref" title="본문으로 이동">↩</a></li>
 </ol>
 
 <hr>
@@ -3109,7 +3466,7 @@
 <li>4대 전문 분과 마스터 감사 보고서 작성 및 기본 팩트체크 매트릭스 도출 (초기 품질 감사 평가: 62점).</li>
 </ul>
 </li>
-<li><strong>v2.0 (2026-10-10, 현행 개정본 — 목표 점수 95점+ 달성)</strong>:<ul>
+<li><strong>v2.0 (2026-10-10, 개정본 — 품질 지적사항 전면 반영)</strong>:<ul>
 <li><strong>[판정 체계 표준화 (E-04, P1)]</strong>: 7대 표준 판정 체계(확인됨, 대체로 확인됨, 부분적으로 확인됨, 오해의 소지 있음, 근거 불충분, 반증됨, 검증 대기)와 3단계 신뢰도 등급(높음, 중간, 낮음) 독립 분리 및 전용 시각화 배지 CSS 시스템 도입.</li>
 <li><strong>[공통 템플릿 구조 개편 (권장 개편안 4번)]</strong>: 15대 쟁점 전수에 4단계 구조화 검증 박스(① 쟁점 요약 [발언자/타임스탬프], ② 근거 검증, ③ 반론 및 불확실성, ④ 최종 판정) 일괄 적용.</li>
 <li><strong>[문장 톤앤매너 및 용어 정비 (E-01, E-02, E-06, E-08)]</strong>: 감정적·단정적 수사 순화(&#39;완전한 허구&#39; → &#39;문헌적 근거 부재의 도시전설&#39;, &#39;전멸&#39; → &#39;지휘부 치명적 손실&#39;, &#39;종말&#39; → &#39;독점적 통제력의 구조적 한계 봉착&#39;), 군사·지정학 전문용어 한/영 병기(VLS, IPE, CBDC, OSINT 등), 과장된 직함 표현을 분석 프레임워크 명칭으로 정비.</li>
@@ -3125,6 +3482,21 @@
 <li>U-10: 메타데이터 업데이트, 핵심 용어집(Glossary) 및 변경 이력(Changelog) 섹션 신설.</li>
 </ul>
 </li>
+</ul>
+</li>
+<li><strong>v2.1 (2026-10-10, 현행 개정본 — 사료 URL 전수 복원 및 군사·법률·OSINT 정밀 감사 반영)</strong>:<ul>
+<li><strong>[25개 1차 사료 공식 URL 및 서지 정보 전수 복원 (Section 10)]</strong>: 루브르 박물관 우가리트 바알 점토판(KTU 1.1–6), Brill 고대 그리스어 어원사전, TNA 영국 국립공문서관(FO 371/20028), CZA 벤구리온 일기, 미 국무부 FRUS(1943/1974), UN 조약집(UNTS 지다 조약), CSIS 홍해 방공 보고서, 미 국방부(DoD) 조 procurement 편람, USNI 해군연구소, CENTCOM, IMF COFER, SWIFT RMB Tracker, BIS mBridge, SDNY 엡스타인 사법 기록 등 25개 참고 문헌 전수에 실제 접근 가능한 공식 하이퍼링크 URL 및 영구 문서 카탈로그 번호 일괄 등재.</li>
+<li><strong>[국제법적 판정 표현 정제 (Section 4.2 / vc-02)]</strong>: &#39;UN 비준 조약&#39; 표현을 &#39;UN 헌장 제102조에 따라 UN 사무국에 정식 등록·등기된 조약(UNTS Vol. 2154, No. I-37649)&#39;으로 정밀 수정하고, 1969년 조약법 비엔나 협약(VCLT) 제62조의 국경 안정성 원칙(사정변경 원칙 배제)과 후티(비국가 무장단체)의 정치적 회토주의(Irredentism) 클레임을 명확히 구분하는 국제법 법리 체계화.</li>
+<li><strong>[엡스타인·키스와·경영진 사임 3계층 정밀 감사 (Section 8.2 / vc-15)]</strong>: <ul>
+<li>계층 A(사법 공시): SDNY 법원 압수물 목록상 키스와 표구 액자 3점 실재 및 DP World 술탄 빈 술라옘 회장 사임(2026.02) 팩트 확인.</li>
+<li>계층 B(인과관계 분리): 사우디 왕자의 &#39;직접 헌납 확정&#39; 증거 부재 규명 및 CEO 사임은 범죄 확정이 아닌 글로벌 기관투자자 ESG 준법감시 및 평판 리스크 차단을 위한 선제적 거버넌스 쇄신 조치임을 분리.</li>
+<li>계층 C(물리적 정황 및 진위): 바이럴 모독 사진을 &#39;상업용 기념품 모조품 카펫으로 확인되며 진품 증거 미비&#39;로 표현 완화하고, 120kg 순금은사 입체 자수의 공예 물리학적 파손 불가성을 유력 정황 증거로 배치.</li>
+</ul>
+</li>
+<li><strong>[VLS 작전 공백 산정 모델 공개 (Section 5.2 / vc-06)]</strong>: 알레이 버크급 순항 속도(16노트) 기반 왕복 항해, 적재 작업(3~5일), 수에즈/해협 통과 버퍼(1~2일)를 결합한 수학적 작전 공백 계산 모델식 공개 및 3대 시나리오(바레인 13~15일, 수다만 16~19일, 지부티 인프라·외교 규제상 장전 불가) 비교 매트릭스 신설.</li>
+<li><strong>[서방 요격탄 방산 캐파 정밀 분석 (Section 5.2 / vc-05)]</strong>: 미 국방부(DoD) FY2024~FY2025 조달 예산서(Justification Books) 기준 SM-6(FY24 125발, FY25 150발 계약, 월 10~12발 납품, 연 180발 미만 SRM 병목) 및 PAC-3 MSE(연 450~500발 생산, 2027년 650발 목표, 다국가 글로벌 분할 배정 구조) 실증 데이터 체계화.</li>
+<li><strong>[네바팀 공군기지 32곳 탄착 실전 데이터 분석 (Section 5.2 / vc-08)]</strong>: Planet Labs 상업 위성사진 및 제임스 마틴 비확산연구센터(CNS) 데커 이블레스(Decker Eveleth) 분석 인용, 32개 탄착점 정밀 분류(유도로 2, C-130 정비창 1, 공터/모래밭 29), 주 활주로 3개소 완전 유지 및 HAS 방호/공중 분산에 따른 F-35I 완파 손실 0대 팩트 명시, <code>[공식 확인]</code>, <code>[독립 분석]</code>, <code>[모델 추정]</code> 3대 라벨링 체계 확립.</li>
+<li><strong>[글로벌 금융 통계 분모 및 기준 시점 정합화 (Section 6.2 / vc-09)]</strong>: IMF COFER(2024 Q2, 외환보유액 $11.47T 중 달러 58.22% vs 위안 2.14%), SWIFT RMB Tracker(2024 중반, 결제 메시지 달러 47.4% vs 위안 4.7%), 실물 원유 교역(달러 85%+ vs 페트로위안 &lt;3~5%) 3대 지표의 분모와 포착 영역을 엄격히 구분하는 비교 매트릭스 및 구조적 한계 분석 신설.</li>
 </ul>
 </li>
 </ul>

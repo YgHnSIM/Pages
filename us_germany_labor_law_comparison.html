@@ -1206,7 +1206,51 @@
       border: 1px solid rgba(148, 163, 184, 0.25);
     }
 
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
     /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
     :root[data-theme="dark"] .badge-verified {
       background: rgba(16, 185, 129, 0.18);
       color: #34d399;
@@ -1322,7 +1366,8 @@
     .vc-block.step-1 { border-left-color: #3b82f6; }
     .vc-block.step-2 { border-left-color: #10b981; }
     .vc-block.step-3 { border-left-color: #f59e0b; }
-    .vc-block.step-4 { border-left-color: #8b5cf6; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
 
     .vc-step-label {
       font-size: 13px;
@@ -1337,12 +1382,33 @@
     .vc-block.step-1 .vc-step-label { color: #2563eb; }
     .vc-block.step-2 .vc-step-label { color: #059669; }
     .vc-block.step-3 .vc-step-label { color: #d97706; }
-    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
 
     :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
     :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
     :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
-    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
 
     .vc-speaker-meta {
       font-size: 12.5px;
