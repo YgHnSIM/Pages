@@ -25,9 +25,15 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
 
   <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -2179,14 +2185,14 @@
 <li><p><strong>수식 속 기호들은 무슨 뜻일까?</strong></p>
 <ul>
 <li>$S$ = 스페인 군인 수 (Spanish), $A$ = 아즈텍 전사 수 (Aztec)</li>
-<li>$lpha$ (알파) = 스페인 군인 1명의 &#39;초당 공격력&#39; (단단한 톨레도 강철검과 말의 돌파력)</li>
-<li>$eta$ (베타) = 아즈텍 전사 1명의 &#39;초당 공격력&#39; (흑요석 돌칼의 위력)</li>
-<li>$rac{dS}{dt}$ = &#39;시간($t$)이 흐름에 따라 스페인 군인이 줄어드는 속도&#39; (미분 기호)</li>
+<li>$\alpha$ (알파) = 스페인 군인 1명의 &#39;초당 공격력&#39; (단단한 톨레도 강철검과 말의 돌파력)</li>
+<li>$\beta$ (베타) = 아즈텍 전사 1명의 &#39;초당 공격력&#39; (흑요석 돌칼의 위력)</li>
+<li>$\frac{dS}{dt}$ = &#39;시간($t$)이 흐름에 따라 스페인 군인이 줄어드는 속도&#39; (미분 기호)</li>
 </ul>
 </li>
 <li><p><strong>선형 법칙 vs 제곱 법칙: 좁은 골목길과 넓은 평지는 왜 다를까?</strong></p>
 <ul>
-<li><strong>선형 법칙 (1차원 좁은 골목길 싸움, $S$ vs $A$)</strong>: 영화 <em>300</em>의 스파르타 군대나 테노치티틀란 호수 위의 좁은 둑길(다리)을 상상해 보세요. 아즈텍 군대가 2만 5천 명이라도, 길이 좁으면 맨 앞줄의 10명만 칼을 휘두를 수 있고 나머지 2만 4,990명은 뒤에서 구경만 해야 합니다. 이때는 <strong>1:1 맞대결의 연속</strong>이 되므로, 아무리 숫자가 많아도 줄 서서 기다리다 스페인군의 강철검에 차례로 쓰러집니다. 병력의 수보다 무기의 질($lpha$)이 정직하게 결과를 좌우합니다.</li>
+<li><strong>선형 법칙 (1차원 좁은 골목길 싸움, $S$ vs $A$)</strong>: 영화 <em>300</em>의 스파르타 군대나 테노치티틀란 호수 위의 좁은 둑길(다리)을 상상해 보세요. 아즈텍 군대가 2만 5천 명이라도, 길이 좁으면 맨 앞줄의 10명만 칼을 휘두를 수 있고 나머지 2만 4,990명은 뒤에서 구경만 해야 합니다. 이때는 <strong>1:1 맞대결의 연속</strong>이 되므로, 아무리 숫자가 많아도 줄 서서 기다리다 스페인군의 강철검에 차례로 쓰러집니다. 병력의 수보다 무기의 질($\alpha$)이 정직하게 결과를 좌우합니다.</li>
 <li><strong>제곱 법칙 (넓은 평지의 집중 사격·기병 돌격, $S^2$ vs $A^2$)</strong>: 스타크래프트 게임에서 마린이나 시즈탱크 부대를 떠올려 보세요. 넓은 평지에서는 뒤에 있는 군인도 앞의 적을 향해 동시에 일제 사격을 퍼부을 수 있습니다. 내가 병력이 2배 많으면 단순히 2배 강한 것이 아니라, <strong>내가 공격할 기회도 2배, 적이 나를 맞출 확률은 절반으로 줄어들어 실제 위력은 $2 \times 2 = 4$배(제곱)</strong>로 폭발합니다! 스페인 기병 20기가 평지에서 아즈텍 총사령관을 향해 쐐기 모양으로 돌격했을 때(오툼바 전투), 아즈텍 대군이 순식간에 무너진 이유가 바로 이 제곱 법칙 때문입니다.</li>
 </ul>
 </li>
