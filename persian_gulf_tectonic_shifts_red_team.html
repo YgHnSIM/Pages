@@ -1410,6 +1410,107 @@
       opacity: 0.8;
     }
 
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
     .vc-speaker-meta {
       font-size: 12.5px;
       color: var(--text-muted);
@@ -1713,7 +1814,7 @@
       <header class="article-header">
         <div class="article-meta">
           <span class="meta-badge">📅 2026-10-09</span>
-          <span class="meta-badge">⏱️ 약 157분</span>
+          <span class="meta-badge">⏱️ 약 159분</span>
           <span class="meta-badge">✍️ 레드팀 복합 분석 프레임워크 (역사·군사·지정학·OSINT 4대 분석 관점)</span>
         </div>
         <h1 class="article-title">페르시아만의 지각변동과 레드팀 비평 — 일방적 서사를 넘어선 입체적 지정학 해부</h1>
@@ -3247,7 +3348,20 @@
 </ol>
 <p>진정한 지정학적 통찰은 어느 한쪽의 일방적 승리 선언이 아니라, <strong>서로 다른 취약성을 안고 부딪히는 거대한 판(Tectonic Plates)들의 마찰면을 객관적 사료와 숫자로 직시할 때</strong> 비로소 완성된다.</p>
 <hr>
-<h2 id="주요-1차-사료-및-참고-문헌-primary-archival-sources-amp-references"><a href="#주요-1차-사료-및-참고-문헌-primary-archival-sources-amp-references" class="heading-anchor" aria-hidden="true">#</a> 📚 주요 1차 사료 및 참고 문헌 (Primary Archival Sources &amp; References)</h2><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" style="margin: 1.5rem 0;">
+<h2 id="주요-1차-사료-및-참고-문헌-primary-archival-sources-amp-references"><a href="#주요-1차-사료-및-참고-문헌-primary-archival-sources-amp-references" class="heading-anchor" aria-hidden="true">#</a> 📚 주요 1차 사료 및 참고 문헌 (Primary Archival Sources &amp; References)</h2><details class="references-collapsible" open>
+<summary class="references-toggle">
+<div class="toggle-left">
+<span>📚 주요 1차 사료 및 참고 문헌 (클릭하여 접기/펼치기)</span>
+<span class="toggle-badge">총 25건 전수 직결 (1차 사료 14건 · 참고 문헌 11건)</span>
+</div>
+<span class="toggle-icon" aria-hidden="true">▼</span>
+</summary>
+<div class="references-body">
+
+<div class="references-group-title">📜 1. 주요 1차 사료 (Primary Archival Sources — 14건)</div>
+<p class="references-group-desc">국제 조약집(UNTS), 정부 공문서관 기밀해제 외교문서(TNA, FRUS), 군사 조달 예산 편람(DoD), 사법 압수 목록(DOJ/SDNY) 및 국제기구 공식 통계 원천(IMF COFER, BIS mBridge)</p>
+
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" style="margin: 1rem 0 2rem 0;">
 <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
 <thead>
 <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
@@ -3263,18 +3377,6 @@
 <td>고전 문헌 (Ugarit / Greece)</td>
 <td><em>KTU 1.1–6 (Baal Cycle / Myth of Baʿal)</em>; Louvre Museum Antiquities (AO 16641 / AO 16642); 헤로도토스 <em>역사 (Histories)</em> 2.44<br><small>🔗 <a href="https://collections.louvre.fr/en/ark:/53355/cl010118544" target="_blank" rel="noopener noreferrer">루브르 박물관 점토판 컬렉션</a> | <a href="https://cdli.mpiwg-berlin.mpg.de/" target="_blank" rel="noopener noreferrer">CDLI 쐐기문자 데이터베이스</a></small></td>
 <td>바알-제우스, 멜카르트-헤라클레스 판테온 전유 사실 및 고대 레반트 종교 원형 입증</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[2]</strong></td>
-<td>비교언어학 사전 (Brill)</td>
-<td>Robert Beekes (with Lucien van Beek), <em>Etymological Dictionary of Greek</em> (Brill, Leiden, 2010), pp. 488–489<br><small>🔗 <a href="https://brill.com/display/title/12585" target="_blank" rel="noopener noreferrer">Brill 도서 카탈로그</a> | <a href="https://doi.org/10.1163/9789004174184" target="_blank" rel="noopener noreferrer">Brill DOI: 10.1163/9789004174184</a></small></td>
-<td>'에우로파' 어원의 셈어 'ereb(일몰/서쪽) 유래설의 학술적 미확정 및 전기 그리스어 자생설 대립 검증</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[3]</strong></td>
-<td>비판 문명사 (Said / Bernal)</td>
-<td>Edward Said, <em>Orientalism</em> (Pantheon, 1978); Martin Bernal, <em>Black Athena</em> (Rutgers Univ. Press, 1987)<br><small>🔗 <a href="https://www.penguinrandomhouse.com/books/160416/orientalism-by-edward-w-said/" target="_blank" rel="noopener noreferrer">Said (Penguin Random House)</a> | <a href="https://www.rutgersuniversitypress.org/black-athena/9780813512778/" target="_blank" rel="noopener noreferrer">Bernal (Rutgers Univ. Press)</a></small></td>
-<td>18~19세기 유럽 제국주의의 레반트·셈족 고대 문명 기원 체계적 삭제 및 오리엔탈리즘 비판</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[4]</strong></td>
@@ -3313,16 +3415,82 @@
 <td>UN 헌장 제102조에 따라 정식 등록·등기된 사우디-예멘 간 영구 국제 국경 확정 및 타이프 조약 분쟁 종결</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[10]</strong></td>
-<td>군사 안보 싱크탱크 (CSIS)</td>
-<td>Mark F. Cancian &amp; Chris H. Park, <em>The Air and Missile Defense Dilemma in the Red Sea</em> (CSIS, 2024)<br><small>🔗 <a href="https://www.csis.org/analysis/air-and-missile-defense-dilemma-red-sea" target="_blank" rel="noopener noreferrer">CSIS 공식 정책 분석 웹 링크</a></small></td>
-<td>홍해 교전 탄약비(1:125~1:215) vs 22억 달러 피방어 이지스함 보호 경제학 및 방산 생산 한계 분석</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[11]</strong></td>
 <td>미 국방부 예산서 (U.S. DoD)</td>
 <td>Office of the Under Secretary of Defense (Comptroller), <em>FY2024–FY2025 Procurement Justification Books (P-1)</em><br><small>🔗 <a href="https://comptroller.defense.gov/Budget-Materials/" target="_blank" rel="noopener noreferrer">DoD Comptroller 예산 자료실</a> | <a href="https://comptroller.defense.gov/Budget-Materials/Budget2025/" target="_blank" rel="noopener noreferrer">DoD FY2025 Budget Materials</a></small></td>
 <td>SM-6 (연 125발 내외) 및 PAC-3 MSE (연 500발) 조달 캐파 및 공급망 병목 실증</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[16]</strong></td>
+<td>사법 문건 및 압수물 목록 (U.S. DOJ / FBI)</td>
+<td>U.S. DOJ &amp; FBI, <em>Epstein Palm Beach Estate Search Warrant Inventory (Case No. 9:06-cv-80687 &amp; SDNY)</em><br><small>🔗 <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">CourtListener 연방소송 포털</a> | <a href="https://www.justice.gov/" target="_blank" rel="noopener noreferrer">미 법무부 FOIA 아카이브</a></small></td>
+<td>플로리다 팜비치 저택 키스와 액자 3점 압수물 실재 확인 및 상업용 모조품 러그와의 포렌식 대조 근거</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[17]</strong></td>
+<td>미 국무부 외교문서집 (FRUS / JECOR)</td>
+<td><strong>FRUS 1969–1976, Vol. XXXVI, Energy Crisis</strong>; <em>Dept of State Bulletin Vol. 71, No. 1828</em> (1974)<br><small>🔗 <a href="https://history.state.gov/historicaldocuments/frus1969-76v36" target="_blank" rel="noopener noreferrer">FRUS 1969–1976 Vol. XXXVI 공식 사료집</a></small></td>
+<td>1974-06-08 JECOR 공동위 설립 원문 사료(50년 기한 만료 및 달러화 결제 독점 강제 조항 전무 입증)</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[18]</strong></td>
+<td>국제통화기금 외환보유액 통계 (IMF)</td>
+<td>IMF, <em>Currency Composition of Official Foreign Exchange Reserves (COFER)</em>, Q2 2024<br><small>🔗 <a href="https://data.imf.org/?sk=E6A5F467-C14B-4AA8-9F6D-5A09EC4E62A4" target="_blank" rel="noopener noreferrer">IMF 공식 데이터 포털: COFER Database</a></small></td>
+<td>글로벌 외환보유액 달러 58.22% vs 위안화 2.14% (27.2배 격차) 실증 공식 통계</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[20]</strong></td>
+<td>국제결제은행 다자간 CBDC 보고서 (BIS)</td>
+<td>Bank for International Settlements, <em>Project mBridge Update &amp; Governance Review</em> (2024.10)<br><small>🔗 <a href="https://www.bis.org/about/bisih/topics/cbdc/mcbdc_bridge.htm" target="_blank" rel="noopener noreferrer">BIS Project mBridge 공식 사이트</a></small></td>
+<td>사우디 SAMA 2024년 6월 정회원 가입 및 2024년 10월 BIS 공식 거버넌스 철수 팩트 확인</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[22]</strong></td>
+<td>사우디 수자원청 (Saudi Water Authority)</td>
+<td>Saudi Water Authority (구 SWCC), <em>Annual Strategic Water Storage &amp; Network Report</em> (2024)<br><small>🔗 <a href="https://www.swa.gov.sa/" target="_blank" rel="noopener noreferrer">Saudi Water Authority (SWA) 공식 포털</a></small></td>
+<td>주요 대도시 14~21일분 전략 비축 저수조 저장망 및 비상 지하 대수층 백업 실태 확인</td>
+</tr>
+<tr>
+<td align="center"><strong>[25]</strong></td>
+<td>사법 공시 (SDNY / DP World)</td>
+<td>U.S. District Court SDNY Unsealed Records; DP World Regulatory Filings (2026.02)<br><small>🔗 <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">SDNY 엡스타인 소송 기록</a> | <a href="https://www.dpworld.com/" target="_blank" rel="noopener noreferrer">DP World 투자자 공시 포털</a></small></td>
+<td>술탄 빈 술라옘 회장 사임의 ESG 지배구조 리스크 차단 팩트체크 및 키스와 액자 3점 압수물 실재 확인</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="references-group-title">📊 2. 참고 문헌 및 전문 분석 자료 (Secondary References & Analytical Reports — 11건)</div>
+<p class="references-group-desc">고전 비교언어학 어원사전(Brill), 비판 문명사(Said/Bernal), 안보 싱크탱크 분석(CSIS, USNI), 전황 공보(CENTCOM, IDF), 위성 판독(Planet Labs), 해상보험(Lloyd's), 결제 통계(SWIFT) 및 공인 여론조사(Arab Youth, PCPSR)</p>
+
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" style="margin: 1rem 0 2rem 0;">
+<table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+<thead>
+<tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+<th style="padding:8px 12px; text-align:center; width:8%;">번호</th>
+<th style="padding:8px 12px; text-align:left; width:22%;">문서 구분 및 발행기관</th>
+<th style="padding:8px 12px; text-align:left; width:45%;">자료 표제 및 상세 등록/발행 번호</th>
+<th style="padding:8px 12px; text-align:left; width:25%;">핵심 입증 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[2]</strong></td>
+<td>비교언어학 사전 (Brill)</td>
+<td>Robert Beekes (with Lucien van Beek), <em>Etymological Dictionary of Greek</em> (Brill, Leiden, 2010), pp. 488–489<br><small>🔗 <a href="https://brill.com/display/title/12585" target="_blank" rel="noopener noreferrer">Brill 도서 카탈로그</a> | <a href="https://doi.org/10.1163/9789004174184" target="_blank" rel="noopener noreferrer">Brill DOI: 10.1163/9789004174184</a></small></td>
+<td>'에우로파' 어원의 셈어 'ereb(일몰/서쪽) 유래설의 학술적 미확정 및 전기 그리스어 자생설 대립 검증</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[3]</strong></td>
+<td>비판 문명사 (Said / Bernal)</td>
+<td>Edward Said, <em>Orientalism</em> (Pantheon, 1978); Martin Bernal, <em>Black Athena</em> (Rutgers Univ. Press, 1987)<br><small>🔗 <a href="https://www.penguinrandomhouse.com/books/160416/orientalism-by-edward-w-said/" target="_blank" rel="noopener noreferrer">Said (Penguin Random House)</a> | <a href="https://www.rutgersuniversitypress.org/black-athena/9780813512778/" target="_blank" rel="noopener noreferrer">Bernal (Rutgers Univ. Press)</a></small></td>
+<td>18~19세기 유럽 제국주의의 레반트·셈족 고대 문명 기원 체계적 삭제 및 오리엔탈리즘 비판</td>
+</tr>
+<tr style="border-bottom:1px solid #e2e8f0;">
+<td align="center"><strong>[10]</strong></td>
+<td>군사 안보 싱크탱크 (CSIS)</td>
+<td>Mark F. Cancian &amp; Chris H. Park, <em>The Air and Missile Defense Dilemma in the Red Sea</em> (CSIS, 2024)<br><small>🔗 <a href="https://www.csis.org/analysis/air-and-missile-defense-dilemma-red-sea" target="_blank" rel="noopener noreferrer">CSIS 공식 정책 분석 웹 링크</a></small></td>
+<td>홍해 교전 탄약비(1:125~1:215) vs 22억 달러 피방어 이지스함 보호 경제학 및 방산 생산 한계 분석</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[12]</strong></td>
@@ -3349,68 +3517,35 @@
 <td>전쟁위험보험료 1.0% 폭등 및 수에즈 운하 컨테이너선 통항량 -60% 급감 사료</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[16]</strong></td>
-<td>사법 문건 및 압수물 목록 (U.S. DOJ / FBI)</td>
-<td>U.S. DOJ &amp; FBI, <em>Epstein Palm Beach Estate Search Warrant Inventory (Case No. 9:06-cv-80687 &amp; SDNY)</em><br><small>🔗 <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">CourtListener 연방소송 포털</a> | <a href="https://www.justice.gov/" target="_blank" rel="noopener noreferrer">미 법무부 FOIA 아카이브</a></small></td>
-<td>플로리다 팜비치 저택 키스와 액자 3점 압수물 실재 확인 및 상업용 모조품 러그와의 포렌식 대조 근거</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[17]</strong></td>
-<td>미 국무부 외교문서집 (FRUS / JECOR)</td>
-<td><strong>FRUS 1969–1976, Vol. XXXVI, Energy Crisis</strong>; <em>Dept of State Bulletin Vol. 71, No. 1828</em> (1974)<br><small>🔗 <a href="https://history.state.gov/historicaldocuments/frus1969-76v36" target="_blank" rel="noopener noreferrer">FRUS 1969–1976 Vol. XXXVI 공식 사료집</a></small></td>
-<td>1974-06-08 JECOR 공동위 설립 원문 사료(50년 기한 만료 및 달러화 결제 독점 강제 조항 전무 입증)</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[18]</strong></td>
-<td>국제통화기금 외환보유액 통계 (IMF)</td>
-<td>IMF, <em>Currency Composition of Official Foreign Exchange Reserves (COFER)</em>, Q2 2024<br><small>🔗 <a href="https://data.imf.org/?sk=E6A5F467-C14B-4AA8-9F6D-5A09EC4E62A4" target="_blank" rel="noopener noreferrer">IMF 공식 데이터 포털: COFER Database</a></small></td>
-<td>글로벌 외환보유액 달러 58.22% vs 위안화 2.14% (27.2배 격차) 실증 공식 통계</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[19]</strong></td>
 <td>국제은행간통신협회 결제 통계 (SWIFT)</td>
 <td>SWIFT, <em>RMB Tracker: Monthly Statistics for Global Payments</em>, June–July 2024<br><small>🔗 <a href="https://www.swift.com/our-solutions/compliance-and-shared-services/business-intelligence/renminbi/rmb-tracker" target="_blank" rel="noopener noreferrer">SWIFT RMB Tracker 공식 보고서 포털</a></small></td>
 <td>국제 결제 금액 점유율: 달러 47.4%, 유로 22.7%, 위안화 4.7% (10배 격차) 실증</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[20]</strong></td>
-<td>국제결제은행 다자간 CBDC 보고서 (BIS)</td>
-<td>Bank for International Settlements, <em>Project mBridge Update &amp; Governance Review</em> (2024.10)<br><small>🔗 <a href="https://www.bis.org/about/bisih/topics/cbdc/mcbdc_bridge.htm" target="_blank" rel="noopener noreferrer">BIS Project mBridge 공식 사이트</a></small></td>
-<td>사우디 SAMA 2024년 6월 정회원 가입 및 2024년 10월 BIS 공식 거버넌스 철수 팩트 확인</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[21]</strong></td>
 <td>범아랍 청년 여론조사 (ASDA'A BCW)</td>
-<td>ASDA'A BCW, <em>15th &amp; 16th Annual Arab Youth Survey (2023 &amp; 2024)</em>, Dubai<br><small>🔗 <a href="https://arabyouthsurvey.com/" target="_blank" rel="noopener noreferrer">Arab Youth Survey 공식 웹사이트</a></small></td>
+<td>ASDA'A BCW, <em>15th &amp; 16th Annual Arab Youth Survey (2023 &amp; 2024): Living Our Values &amp; A New Horizon</em>, Dubai, 2023–2024<br><small>🔗 <a href="https://arabyouthsurvey.com/" target="_blank" rel="noopener noreferrer">Arab Youth Survey 공식 웹사이트</a></small></td>
 <td>사우디 청년층(18~24세 3,600명 표본)의 자국 정부 리더십 및 '비전 2030' 신뢰도 85%+ 입증</td>
-</tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
-<td align="center"><strong>[22]</strong></td>
-<td>사우디 수자원청 (Saudi Water Authority)</td>
-<td>Saudi Water Authority (구 SWCC), <em>Annual Strategic Water Storage &amp; Network Report</em> (2024)<br><small>🔗 <a href="https://www.swa.gov.sa/" target="_blank" rel="noopener noreferrer">Saudi Water Authority (SWA) 공식 포털</a></small></td>
-<td>주요 대도시 14~21일분 전략 비축 저수조 저장망 및 비상 지하 대수층 백업 실태 확인</td>
 </tr>
 <tr style="border-bottom:1px solid #e2e8f0;">
 <td align="center"><strong>[23]</strong></td>
 <td>여론조사 (PCPSR / Arab Barometer)</td>
-<td>PCPSR Poll No. 91 (2024.03); Arab Barometer Wave VIII: Lebanon (2024)<br><small>🔗 <a href="https://www.pcpsr.org/en/node/969" target="_blank" rel="noopener noreferrer">PCPSR Poll No. 91 공식 발표</a> | <a href="https://www.arabbarometer.org/" target="_blank" rel="noopener noreferrer">Arab Barometer 데이터 포털</a></small></td>
+<td>PCPSR Poll No. 91 (2024.03); Arab Barometer Wave VIII: Lebanon (2024)<br><small>🔗 <a href="https://www.pcpsr.org/en/node/969" target="_blank" rel="noopener noreferrer">PCPSR 공식 링크</a> | <a href="https://www.arabbarometer.org/" target="_blank" rel="noopener noreferrer">Arab Barometer 데이터 포털</a></small></td>
 <td>가자/서안 주민의 후티 만족도 83% vs 레바논 국민의 헤즈볼라 통치 불신도 55%+ (비시아파 85%+) 교차 검증</td>
 </tr>
-<tr style="border-bottom:1px solid #e2e8f0;">
+<tr>
 <td align="center"><strong>[24]</strong></td>
 <td>에너지 물류 (Kpler / IEA)</td>
 <td>Kpler Seaborne Crude Data &amp; IEA Middle East Oil Flow Analysis (2023–2024)<br><small>🔗 <a href="https://www.kpler.com/" target="_blank" rel="noopener noreferrer">Kpler 해상 원유 데이터 포털</a> | <a href="https://www.iea.org/reports/oil-market-report" target="_blank" rel="noopener noreferrer">IEA Oil Market Report</a></small></td>
 <td>제이한 BTC 파이프라인 아제리 원유의 이스라엘 수입 30~40% 지속 공급 실증 사료</td>
 </tr>
-<tr>
-<td align="center"><strong>[25]</strong></td>
-<td>사법 공시 (SDNY / DP World)</td>
-<td>U.S. District Court SDNY Unsealed Records; DP World Regulatory Filings (2026.02)<br><small>🔗 <a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">SDNY 엡스타인 소송 기록</a> | <a href="https://www.dpworld.com/" target="_blank" rel="noopener noreferrer">DP World 투자자 공시 포털</a></small></td>
-<td>술탄 빈 술라옘 회장 사임의 ESG 지배구조 리스크 차단 팩트체크 및 키스와 액자 3점 압수물 실재 확인</td>
-</tr>
 </tbody>
 </table>
 </div>
+
+<div class="references-group-title" style="margin-top:2rem;">🔗 3. 각주 원문 및 영구 아카이브 링크 전수 목록 (Footnotes 1~25)</div>
+<p class="references-group-desc">본문 각 문장의 <sup>[N]</sup> 각주 번호와 직결된 25개 원문 출처 및 영구 웹 아카이브 링크 전수 목록</p>
 
 <ol class="references-list">
 <li id="fn1"><strong>고전 문헌 및 쐐기문자 점토판 (Ugarit / Greece)</strong>: Manfried Dietrich, Oswald Loretz, &amp; Joaquín Sanmartín, <em>The Cuneiform Alphabetic Texts from Ugarit, Ras Ibn Hani and Other Sites (KTU / CAT)</em>, 3rd enl. ed., Ugarit-Verlag, Münster, 2013; Musée du Louvre, Département des Antiquités orientales, 점토판 AO 16641 / AO 16642 (공식 사료: <a href="https://collections.louvre.fr/en/ark:/53355/cl010118544" target="_blank" rel="noopener noreferrer">Louvre Museum Collections</a> 및 <a href="https://cdli.mpiwg-berlin.mpg.de/" target="_blank" rel="noopener noreferrer">Cuneiform Digital Library Initiative, CDLI</a>); 헤로도토스 <em>역사 (Histories)</em> Book II, 44 (Perseus Digital Library). <a href="#ref1" class="footnote-backref" title="본문으로 이동">↩</a></li>
@@ -3439,6 +3574,8 @@
 <li id="fn24"><strong>Kpler &amp; International Energy Agency (IEA)</strong>: <em>Middle East Crude Oil Flows, Global Trade Invoicing, and Mediterranean Seaborne Deliveries</em>, 2023–2024 (<a href="https://www.kpler.com/" target="_blank" rel="noopener noreferrer">Kpler Intelligence</a>); <em>Oil Market Report (OMR)</em>, 2024 (<a href="https://www.iea.org/reports/oil-market-report" target="_blank" rel="noopener noreferrer">IEA Reports</a>). <a href="#ref24" class="footnote-backref" title="본문으로 이동">↩</a></li>
 <li id="fn25"><strong>U.S. District Court for the Southern District of New York (SDNY) &amp; DP World</strong>: <em>Unsealed Judicial Records in Epstein Estate Litigation (Case No. 15-cv-07433-LAP)</em> (<a href="https://www.courtlistener.com/docket/4355835/giuffre-v-maxwell/" target="_blank" rel="noopener noreferrer">CourtListener SDNY Docket</a>); DP World Corporate Governance &amp; Leadership Disclosures, February 2026 (<a href="https://www.dpworld.com/" target="_blank" rel="noopener noreferrer">DP World IR Portal</a>). <a href="#ref25" class="footnote-backref" title="본문으로 이동">↩</a></li>
 </ol>
+</div>
+</details>
 
 <hr>
 <h2 id="핵심-용어집-glossary"><a href="#핵심-용어집-glossary" class="heading-anchor" aria-hidden="true">#</a> 📖 핵심 용어집 (Glossary)</h2><ul>
