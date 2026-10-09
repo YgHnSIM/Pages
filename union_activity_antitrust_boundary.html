@@ -152,7 +152,7 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 75px;
+      scroll-padding-top: 80px;
     }
 
     body {
@@ -404,6 +404,10 @@
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
     }
 
     .content h1, .content h2, .content h3, .content h4 {
@@ -932,14 +936,145 @@
       }
     }
 
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
     .table-wrapper {
+      position: relative;
       width: 100%;
       overflow-x: auto;
-      margin: 1.6em 0;
+      margin: 1.8em 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       -webkit-overflow-scrolling: touch;
       box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     .content table {
@@ -952,16 +1087,17 @@
     .content th {
       background: var(--bg-surface);
       font-weight: 700;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .content td {
-      padding: 10px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
+      vertical-align: middle;
     }
 
     .content tr:last-child td {
@@ -970,6 +1106,273 @@
 
     .content tr:nth-child(even) td {
       background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
     }
 
     /* TOC Drawer (Slide-in) */
@@ -993,8 +1396,8 @@
       position: fixed;
       top: 0;
       right: -320px;
-      width: 300px;
-      max-width: 85vw;
+      width: 320px;
+      max-width: 88vw;
       height: 100%;
       background: var(--drawer-bg);
       border-left: 1px solid var(--border);
@@ -1034,29 +1437,83 @@
     .toc-drawer-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px 40px;
+      padding: 16px 16px 40px;
     }
 
-    .toc-drawer-body ul {
+    .toc-drawer-body ul.toc-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
     .toc-drawer-body li {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .toc-drawer-body li.depth-2 { padding-left: 0; }
-    .toc-drawer-body li.depth-3 { padding-left: 14px; }
-    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
 
     .toc-link {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.45;
-      display: block;
+      display: flex;
+      align-items: baseline;
       padding: 4px 6px;
       border-radius: var(--radius-sm);
       transition: all 0.15s ease;
@@ -1065,7 +1522,31 @@
     .toc-link:hover, .toc-link.active {
       color: var(--primary);
       background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
       font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
     }
 
     /* Floating Back to Top */
@@ -1156,7 +1637,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#1-핵심-질문과-논문의-답" class="toc-link">1. 핵심 질문과 논문의 답</a></li><li class="depth-2"><a href="#2-한-사람-두-지위" class="toc-link">2. 한 사람, 두 지위</a></li><li class="depth-2"><a href="#3-서울고등법원-판결-네-건" class="toc-link">3. 서울고등법원 판결 네 건</a></li><li class="depth-2"><a href="#4-해석의-출발점-학설-제116조-헌법" class="toc-link">4. 해석의 출발점 — 학설, 제116조, 헌법</a></li><li class="depth-2"><a href="#5-노동조합의-본성과-39사업자적-행위39" class="toc-link">5. 노동조합의 본성과 &#39;사업자적 행위&#39;</a></li><li class="depth-3"><a href="#51-바닥을-향한-경쟁" class="toc-link">5.1 바닥을 향한 경쟁</a></li><li class="depth-3"><a href="#52-사업자와-39사업자적-행위39" class="toc-link">5.2 사업자와 &#39;사업자적 행위&#39;</a></li><li class="depth-3"><a href="#53-경계선-위의-종속성" class="toc-link">5.3 경계선 위의 종속성</a></li><li class="depth-2"><a href="#6-다섯-가지-판단-기준-논문의-제안" class="toc-link">6. 다섯 가지 판단 기준 — 논문의 제안</a></li><li class="depth-2"><a href="#7-보호되는-활동" class="toc-link">7. 보호되는 활동</a></li><li class="depth-3"><a href="#71-활동별-정리" class="toc-link">7.1 활동별 정리</a></li><li class="depth-3"><a href="#72-안쪽과-바깥쪽은-나눌-수-없다" class="toc-link">7.2 안쪽과 바깥쪽은 나눌 수 없다</a></li><li class="depth-2"><a href="#8-그래도-공정거래법이-적용되는-경우" class="toc-link">8. 그래도 공정거래법이 적용되는 경우</a></li><li class="depth-2"><a href="#9-미국캐나다eu-비교" class="toc-link">9. 미국·캐나다·EU 비교</a></li><li class="depth-3"><a href="#91-미국" class="toc-link">9.1 미국</a></li><li class="depth-3"><a href="#92-캐나다" class="toc-link">9.2 캐나다</a></li><li class="depth-3"><a href="#93-eu" class="toc-link">9.3 EU</a></li><li class="depth-2"><a href="#10-2026년의-제도-움직임" class="toc-link">10. 2026년의 제도 움직임</a></li><li class="depth-2"><a href="#11-평가" class="toc-link">11. 평가</a></li><li class="depth-3"><a href="#111-층위별-정리" class="toc-link">11.1 층위별 정리</a></li><li class="depth-3"><a href="#112-논문이-바로-세운-것" class="toc-link">11.2 논문이 바로 세운 것</a></li><li class="depth-3"><a href="#113-논문이-남긴-것" class="toc-link">11.3 논문이 남긴 것</a></li><li class="depth-3"><a href="#114-논문의-오류와-불일치" class="toc-link">11.4 논문의 오류와 불일치</a></li><li class="depth-2"><a href="#12-맺음" class="toc-link">12. 맺음</a></li><li class="depth-2"><a href="#출처" class="toc-link">출처</a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#1-핵심-질문과-논문의-답" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 핵심 질문과 논문의 답</span></a></li><li class="depth-2"><a href="#2-한-사람-두-지위" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 한 사람, 두 지위</span></a></li><li class="depth-2"><a href="#3-서울고등법원-판결-네-건" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 서울고등법원 판결 네 건</span></a></li><li class="depth-2"><a href="#4-해석의-출발점-학설-제116조-헌법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 해석의 출발점 — 학설, 제116조, 헌법</span></a></li><li class="depth-2"><a href="#5-노동조합의-본성과-39사업자적-행위39" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 노동조합의 본성과 &#39;사업자적 행위&#39;</span></a></li><li class="depth-3"><a href="#51-바닥을-향한-경쟁" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 바닥을 향한 경쟁</span></a></li><li class="depth-3"><a href="#52-사업자와-39사업자적-행위39" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 사업자와 &#39;사업자적 행위&#39;</span></a></li><li class="depth-3"><a href="#53-경계선-위의-종속성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 경계선 위의 종속성</span></a></li><li class="depth-2"><a href="#6-다섯-가지-판단-기준-논문의-제안" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 다섯 가지 판단 기준 — 논문의 제안</span></a></li><li class="depth-2"><a href="#7-보호되는-활동" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 보호되는 활동</span></a></li><li class="depth-3"><a href="#71-활동별-정리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 활동별 정리</span></a></li><li class="depth-3"><a href="#72-안쪽과-바깥쪽은-나눌-수-없다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 안쪽과 바깥쪽은 나눌 수 없다</span></a></li><li class="depth-2"><a href="#8-그래도-공정거래법이-적용되는-경우" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 그래도 공정거래법이 적용되는 경우</span></a></li><li class="depth-2"><a href="#9-미국캐나다eu-비교" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 미국·캐나다·EU 비교</span></a></li><li class="depth-3"><a href="#91-미국" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 미국</span></a></li><li class="depth-3"><a href="#92-캐나다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 캐나다</span></a></li><li class="depth-3"><a href="#93-eu" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.3 EU</span></a></li><li class="depth-2"><a href="#10-2026년의-제도-움직임" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 2026년의 제도 움직임</span></a></li><li class="depth-2"><a href="#11-평가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11. 평가</span></a></li><li class="depth-3"><a href="#111-층위별-정리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.1 층위별 정리</span></a></li><li class="depth-3"><a href="#112-논문이-바로-세운-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.2 논문이 바로 세운 것</span></a></li><li class="depth-3"><a href="#113-논문이-남긴-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.3 논문이 남긴 것</span></a></li><li class="depth-3"><a href="#114-논문의-오류와-불일치" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.4 논문의 오류와 불일치</span></a></li><li class="depth-2"><a href="#12-맺음" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">12. 맺음</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
     </div>
   </aside>
 
@@ -1244,7 +1725,7 @@
 </div>
 
 <p>논문은 이 상황을 규범충돌로 보지 않는다. 노동조합법은 활동을 보장할 뿐 명령하지 않는다. 공정거래법은 금지할 뿐이다. 그래서 두 법은 &quot;규범충돌 상황에 있다고 보기는 어렵다&quot;(172쪽). 수범자가 겹칠 때 생기는 &quot;외견상 충돌&quot;일 뿐이다(175쪽). 외견상 충돌은 두 법을 조화시키는 해석으로 풀 수 있다. 논문은 근거로 제정 순서도 든다. 근로기준법과 구 노동조합법(1953)은 공정거래법(1980)보다 약 30년 앞서고, 공정거래법 제정 때 노동법과의 충돌을 고려한 자료는 찾기 어렵다(171쪽).</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>노동3권</th>
@@ -1273,7 +1754,7 @@
 </blockquote>
 <hr>
 <h2 id="3-서울고등법원-판결-네-건"><a href="#3-서울고등법원-판결-네-건" class="heading-anchor" aria-hidden="true">#</a> 3. 서울고등법원 판결 네 건</h2><p>논문은 건설기계 노동조합에 대한 공정위 처분의 취소소송 네 건을 다룬다(174–175쪽). 네 건 모두 상고되었다(174쪽 각주 10). 2026년 10월 초까지 대법원 판결은 찾지 못했다(보충). 모두 확정되지 않은 사건별 판단이다. 하나의 법리로 묶어 읽으면 안 된다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>사건(선고)</th>
@@ -1437,7 +1918,7 @@
 <p>이 명제는 판례가 확립한 기준이 아니다. 검토한 판결들은 종속성을 근로자성 판단에만 썼다. 경계 설정에 쓰자는 것은 논문의 제안이다. 이 글은 그 제안이 기능적으로 설득력이 있다고 본다. 한계는 11.3에서 다룬다. 종속을 단결로 상쇄한다는 생각의 계보는 <a href="sinzheimer_subordination_genealogy.html">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</a>에서 다루었다.</p>
 <hr>
 <h2 id="6-다섯-가지-판단-기준-논문의-제안"><a href="#6-다섯-가지-판단-기준-논문의-제안" class="heading-anchor" aria-hidden="true">#</a> 6. 다섯 가지 판단 기준 — 논문의 제안</h2><p>아래 기준은 판례가 확립한 기준이 아니다. 논문의 해석론이다. 원칙은 하나다. 노동조합의 행위가 &#39;사업자적 행위&#39;일 때만 공정거래법 적용 가능성을 인정한다(210쪽). 행위의 성격이 모호하면 다섯 기준으로 판단한다(210–216쪽).</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>기준</th>
@@ -1538,7 +2019,7 @@
 
 <hr>
 <h2 id="7-보호되는-활동"><a href="#7-보호되는-활동" class="heading-anchor" aria-hidden="true">#</a> 7. 보호되는 활동</h2><h3 id="71-활동별-정리"><a href="#71-활동별-정리" class="heading-anchor" aria-hidden="true">#</a> 7.1 활동별 정리</h3><p>논문에 따르면 노동3권의 보호영역은 노동조합법상 적법성보다 넓다. 노동조합법을 위반했어도 사업자적 행위가 아니면 공정거래법을 적용해서는 안 된다(219–220쪽). 이것은 절차 위반을 근거로 든 2023누38440 판결과 다른, 논문의 해석론이다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>활동</th>
@@ -1577,7 +2058,7 @@
 <p>논문은 일감 분쟁과 임금 분쟁도 다르지 않다고 본다. 노무제공자에게 일감은 근로조건과 &quot;직결&quot;된다(233쪽). 이것은 현행법상 확정된 명제가 아니라 논문의 기능적 주장이다. 근로조건과 거래조건의 구별은 2023누38440 판결을 둘러싼 논쟁의 핵심이기도 하다.</p>
 <hr>
 <h2 id="8-그래도-공정거래법이-적용되는-경우"><a href="#8-그래도-공정거래법이-적용되는-경우" class="heading-anchor" aria-hidden="true">#</a> 8. 그래도 공정거래법이 적용되는 경우</h2><p>논문은 노동조합 활동이 사업자적 행위가 되는 경우가 &quot;매우 드물다&quot;고 본다(237쪽 각주 125). 그래도 적용될 수 있는 경우는 상대방에 따라 나뉜다(237–243쪽).</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>상대방</th>
@@ -1762,7 +2243,7 @@
 
 <hr>
 <h2 id="10-2026년의-제도-움직임"><a href="#10-2026년의-제도-움직임" class="heading-anchor" aria-hidden="true">#</a> 10. 2026년의 제도 움직임</h2><p>먼저 현행법이다. 2026년 10월 초의 현행 공정거래법은 2026. 10. 2. 시행된 법률 제22043호(2026. 9. 29. 일부개정)다. 이 개정은 동의의결 절차 조문(제90조 제3항) 등을 고쳤다. 노동조합 활동에 관한 적용 제외 규정은 여전히 없다. 이 글이 인용한 제2조, 제40조, 제45조, 제51조, 제116조도 그대로다(보충).</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>구분</th>
@@ -1789,7 +2270,7 @@
 </div><p>논문은 같은 방향의 검토 소식(한겨레 2026. 2. 9. 보도)을 두고, 원론적으로 타당하지만 근본 해결책은 아니라고 평가했다(230–231쪽). 적용을 빼도 건설 현장의 덤핑 경쟁은 그대로이기 때문이다. 논문은 현장에 맞는 단체교섭 제도가 시급한데 &quot;안타깝게도 이에 대한 논의는 없는 상황&quot;이라고 맺는다(244쪽).</p>
 <p>이 글의 평가는 이렇다. 정부 방안과 법안은 신분을 기준으로 적용을 뺀다. 그 범위 안에서는 겸유 문제가 입법으로 정리된다. 범위 밖의 노무제공자와 경계 사례에는 여전히 행위의 성격을 가를 기준이 필요하다. 개정 노동조합법은 원청 등을 사용자로 포섭할 근거를 명확히 해서 &#39;사용자를 매개로 한 근로조건 향상&#39;의 경로를 넓힐 수 있다. 그러나 현장의 채용·배정 질서를 설계하지는 않는다.</p>
 <hr>
-<h2 id="11-평가"><a href="#11-평가" class="heading-anchor" aria-hidden="true">#</a> 11. 평가</h2><h3 id="111-층위별-정리"><a href="#111-층위별-정리" class="heading-anchor" aria-hidden="true">#</a> 11.1 층위별 정리</h3><div class="table-wrapper"><table>
+<h2 id="11-평가"><a href="#11-평가" class="heading-anchor" aria-hidden="true">#</a> 11. 평가</h2><h3 id="111-층위별-정리"><a href="#111-층위별-정리" class="heading-anchor" aria-hidden="true">#</a> 11.1 층위별 정리</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>쟁점</th>
@@ -1895,7 +2376,7 @@
 </svg>
 </div>
 
-<h3 id="114-논문의-오류와-불일치"><a href="#114-논문의-오류와-불일치" class="heading-anchor" aria-hidden="true">#</a> 11.4 논문의 오류와 불일치</h3><div class="table-wrapper"><table>
+<h3 id="114-논문의-오류와-불일치"><a href="#114-논문의-오류와-불일치" class="heading-anchor" aria-hidden="true">#</a> 11.4 논문의 오류와 불일치</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>쪽</th>
@@ -2139,6 +2620,49 @@
         closeDrawer();
       });
     });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
 
     // Copy Code Buttons
     document.querySelectorAll('.copy-btn').forEach(btn => {

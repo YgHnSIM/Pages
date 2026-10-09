@@ -235,7 +235,7 @@ function compileMarkdown(markdown, meta = {}) {
       headingCounts[slug] = 1;
     }
 
-    if (htmlDepth >= 2 && htmlDepth <= 3 && !isCommandHeading(cleanText)) {
+    if (htmlDepth >= 2 && htmlDepth <= 4 && !isCommandHeading(cleanText)) {
       headings.push({ text: cleanText, depth: htmlDepth, id: slug });
     }
 
@@ -268,7 +268,7 @@ function compileMarkdown(markdown, meta = {}) {
   // Custom Table
   renderer.table = function(token) {
     const originalTable = marked.Renderer.prototype.table.call(this, token);
-    return `<div class="table-wrapper">${originalTable}</div>`;
+    return `<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표">${originalTable}</div>`;
   };
 
   marked.setOptions({
@@ -309,7 +309,8 @@ function renderTOC(headings) {
 
   let html = '<ul class="toc-list">';
   headings.forEach(h => {
-    html += `<li class="depth-${h.depth}"><a href="#${h.id}" class="toc-link">${stripTocLabel(h.text)}</a></li>`;
+    const badgeLabel = h.depth === 2 ? '대주제' : (h.depth === 3 ? '중주제' : '소주제');
+    html += `<li class="depth-${h.depth}"><a href="#${h.id}" class="toc-link"><span class="toc-badge badge-h${h.depth}">${badgeLabel}</span><span class="toc-text">${stripTocLabel(h.text)}</span></a></li>`;
   });
   html += '</ul>';
   return html;

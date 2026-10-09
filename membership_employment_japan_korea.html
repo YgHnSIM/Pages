@@ -152,7 +152,7 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 75px;
+      scroll-padding-top: 80px;
     }
 
     body {
@@ -404,6 +404,10 @@
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
     }
 
     .content h1, .content h2, .content h3, .content h4 {
@@ -932,14 +936,145 @@
       }
     }
 
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
     .table-wrapper {
+      position: relative;
       width: 100%;
       overflow-x: auto;
-      margin: 1.6em 0;
+      margin: 1.8em 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       -webkit-overflow-scrolling: touch;
       box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     .content table {
@@ -952,16 +1087,17 @@
     .content th {
       background: var(--bg-surface);
       font-weight: 700;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .content td {
-      padding: 10px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
+      vertical-align: middle;
     }
 
     .content tr:last-child td {
@@ -970,6 +1106,273 @@
 
     .content tr:nth-child(even) td {
       background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
     }
 
     /* TOC Drawer (Slide-in) */
@@ -993,8 +1396,8 @@
       position: fixed;
       top: 0;
       right: -320px;
-      width: 300px;
-      max-width: 85vw;
+      width: 320px;
+      max-width: 88vw;
       height: 100%;
       background: var(--drawer-bg);
       border-left: 1px solid var(--border);
@@ -1034,29 +1437,83 @@
     .toc-drawer-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px 40px;
+      padding: 16px 16px 40px;
     }
 
-    .toc-drawer-body ul {
+    .toc-drawer-body ul.toc-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
     .toc-drawer-body li {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .toc-drawer-body li.depth-2 { padding-left: 0; }
-    .toc-drawer-body li.depth-3 { padding-left: 14px; }
-    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
 
     .toc-link {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.45;
-      display: block;
+      display: flex;
+      align-items: baseline;
       padding: 4px 6px;
       border-radius: var(--radius-sm);
       transition: all 0.15s ease;
@@ -1065,7 +1522,31 @@
     .toc-link:hover, .toc-link.active {
       color: var(--primary);
       background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
       font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
     }
 
     /* Floating Back to Top */
@@ -1156,7 +1637,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#1-테제-직무를-사는-계약이-아니라-회사의-일원이-되는-계약" class="toc-link">1. 테제 — 직무를 사는 계약이 아니라 회사의 일원이 되는 계약</a></li><li class="depth-2"><a href="#2-개념-틀-공백의-석판과-지위-설정-계약" class="toc-link">2. 개념 틀 — 공백의 석판과 지위 설정 계약</a></li><li class="depth-3"><a href="#21-직무형-상품을-특정하는-계약" class="toc-link">2.1 직무형: 상품을 특정하는 계약</a></li><li class="depth-3"><a href="#22-멤버십형-칠판을-비워-두는-계약" class="toc-link">2.2 멤버십형: 칠판을 비워 두는 계약</a></li><li class="depth-3"><a href="#23-멤버십형-대-직무형-비교" class="toc-link">2.3 멤버십형 대 직무형 비교</a></li><li class="depth-2"><a href="#3-시스템-삼종신기와-의도된-제너럴리스트" class="toc-link">3. 시스템 — 삼종신기와 의도된 제너럴리스트</a></li><li class="depth-3"><a href="#31-세-기둥은-서로를-필요로-한다" class="toc-link">3.1 세 기둥은 서로를 필요로 한다</a></li><li class="depth-3"><a href="#32-전문성이-자라지-않는-것은-부작용이-아니라-설계다" class="toc-link">3.2 전문성이 자라지 않는 것은 부작용이 아니라 설계다</a></li><li class="depth-2"><a href="#4-기원-유교가-아니라-전쟁이-만들었다" class="toc-link">4. 기원 — 유교가 아니라 전쟁이 만들었다</a></li><li class="depth-3"><a href="#41-메이지의-떠돌이-직공" class="toc-link">4.1 메이지의 떠돌이 직공</a></li><li class="depth-3"><a href="#42-전시-통제가-연공임금을-촉진하다" class="toc-link">4.2 전시 통제가 연공임금을 촉진하다</a></li><li class="depth-3"><a href="#43-산업보국회와-공직-대등" class="toc-link">4.3 산업보국회와 공직(工職) 대등</a></li><li class="depth-2"><a href="#5-법의-봉합-법원이라는-에뮬레이터" class="toc-link">5. 법의 봉합 — 법원이라는 에뮬레이터</a></li><li class="depth-3"><a href="#51-법전은-직무형-현실은-멤버십형" class="toc-link">5.1 법전은 직무형, 현실은 멤버십형</a></li><li class="depth-3"><a href="#52-왼손-해고권-남용-법리" class="toc-link">5.2 왼손: 해고권 남용 법리</a></li><li class="depth-3"><a href="#53-오른손-취업규칙-합리성-법리와-1968년-슈호쿠-버스-판결" class="toc-link">5.3 오른손 ①: 취업규칙 합리성 법리와 1968년 슈호쿠 버스 판결</a></li><li class="depth-3"><a href="#54-오른손-와-양손-타협의-구조" class="toc-link">5.4 오른손 ②와 양손 타협의 구조</a></li><li class="depth-2"><a href="#6-경계-입구-출구-그리고-성-밖" class="toc-link">6. 경계 — 입구, 출구, 그리고 성 밖</a></li><li class="depth-3"><a href="#61-입구-신졸-정기-일괄채용과-1973년-미쓰비시수지-판결" class="toc-link">6.1 입구: 신졸 정기 일괄채용과 1973년 미쓰비시수지 판결</a></li><li class="depth-3"><a href="#62-출구-정년제는-압력밥솥의-밸브" class="toc-link">6.2 출구: 정년제는 압력밥솥의 밸브</a></li><li class="depth-3"><a href="#63-성-밖-비정규직과-이중구조" class="toc-link">6.3 성 밖: 비정규직과 이중구조</a></li><li class="depth-2"><a href="#7-한국-법제로의-계보-닮은-곳과-갈라진-곳" class="toc-link">7. 한국 법제로의 계보 — 닮은 곳과 갈라진 곳</a></li><li class="depth-3"><a href="#71-닮은-곳" class="toc-link">7.1 닮은 곳</a></li><li class="depth-3"><a href="#72-갈라진-곳" class="toc-link">7.2 갈라진 곳</a></li><li class="depth-2"><a href="#8-평가-강점-흔한-단순화-한계-반론" class="toc-link">8. 평가 — 강점, 흔한 단순화, 한계, 반론</a></li><li class="depth-3"><a href="#81-강점" class="toc-link">8.1 강점</a></li><li class="depth-3"><a href="#82-간추린-설명과-실제-법" class="toc-link">8.2 간추린 설명과 실제 법</a></li><li class="depth-3"><a href="#83-한계" class="toc-link">8.3 한계</a></li><li class="depth-3"><a href="#84-예상되는-반론" class="toc-link">8.4 예상되는 반론</a></li><li class="depth-3"><a href="#85-이-글이-깊이-다루지-않은-것" class="toc-link">8.5 이 글이 깊이 다루지 않은 것</a></li><li class="depth-2"><a href="#9-함의-한국의-근로자-노동조합-계약-실무" class="toc-link">9. 함의 — 한국의 근로자, 노동조합, 계약 실무</a></li><li class="depth-3"><a href="#91-근로자-개인" class="toc-link">9.1 근로자 개인</a></li><li class="depth-3"><a href="#92-노동조합" class="toc-link">9.2 노동조합</a></li><li class="depth-3"><a href="#93-계약-실무" class="toc-link">9.3 계약 실무</a></li><li class="depth-2"><a href="#10-맺음-칠판을-누가-무엇으로-채우는가" class="toc-link">10. 맺음 — 칠판을 누가, 무엇으로 채우는가</a></li><li class="depth-2"><a href="#출처" class="toc-link">출처</a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#1-테제-직무를-사는-계약이-아니라-회사의-일원이-되는-계약" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 테제 — 직무를 사는 계약이 아니라 회사의 일원이 되는 계약</span></a></li><li class="depth-2"><a href="#2-개념-틀-공백의-석판과-지위-설정-계약" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 개념 틀 — 공백의 석판과 지위 설정 계약</span></a></li><li class="depth-3"><a href="#21-직무형-상품을-특정하는-계약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 직무형: 상품을 특정하는 계약</span></a></li><li class="depth-3"><a href="#22-멤버십형-칠판을-비워-두는-계약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 멤버십형: 칠판을 비워 두는 계약</span></a></li><li class="depth-3"><a href="#23-멤버십형-대-직무형-비교" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 멤버십형 대 직무형 비교</span></a></li><li class="depth-2"><a href="#3-시스템-삼종신기와-의도된-제너럴리스트" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 시스템 — 삼종신기와 의도된 제너럴리스트</span></a></li><li class="depth-3"><a href="#31-세-기둥은-서로를-필요로-한다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 세 기둥은 서로를 필요로 한다</span></a></li><li class="depth-3"><a href="#32-전문성이-자라지-않는-것은-부작용이-아니라-설계다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 전문성이 자라지 않는 것은 부작용이 아니라 설계다</span></a></li><li class="depth-2"><a href="#4-기원-유교가-아니라-전쟁이-만들었다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 기원 — 유교가 아니라 전쟁이 만들었다</span></a></li><li class="depth-3"><a href="#41-메이지의-떠돌이-직공" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 메이지의 떠돌이 직공</span></a></li><li class="depth-3"><a href="#42-전시-통제가-연공임금을-촉진하다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 전시 통제가 연공임금을 촉진하다</span></a></li><li class="depth-3"><a href="#43-산업보국회와-공직-대등" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 산업보국회와 공직(工職) 대등</span></a></li><li class="depth-2"><a href="#5-법의-봉합-법원이라는-에뮬레이터" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 법의 봉합 — 법원이라는 에뮬레이터</span></a></li><li class="depth-3"><a href="#51-법전은-직무형-현실은-멤버십형" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 법전은 직무형, 현실은 멤버십형</span></a></li><li class="depth-3"><a href="#52-왼손-해고권-남용-법리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 왼손: 해고권 남용 법리</span></a></li><li class="depth-3"><a href="#53-오른손-취업규칙-합리성-법리와-1968년-슈호쿠-버스-판결" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 오른손 ①: 취업규칙 합리성 법리와 1968년 슈호쿠 버스 판결</span></a></li><li class="depth-3"><a href="#54-오른손-와-양손-타협의-구조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.4 오른손 ②와 양손 타협의 구조</span></a></li><li class="depth-2"><a href="#6-경계-입구-출구-그리고-성-밖" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 경계 — 입구, 출구, 그리고 성 밖</span></a></li><li class="depth-3"><a href="#61-입구-신졸-정기-일괄채용과-1973년-미쓰비시수지-판결" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 입구: 신졸 정기 일괄채용과 1973년 미쓰비시수지 판결</span></a></li><li class="depth-3"><a href="#62-출구-정년제는-압력밥솥의-밸브" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 출구: 정년제는 압력밥솥의 밸브</span></a></li><li class="depth-3"><a href="#63-성-밖-비정규직과-이중구조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 성 밖: 비정규직과 이중구조</span></a></li><li class="depth-2"><a href="#7-한국-법제로의-계보-닮은-곳과-갈라진-곳" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 한국 법제로의 계보 — 닮은 곳과 갈라진 곳</span></a></li><li class="depth-3"><a href="#71-닮은-곳" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 닮은 곳</span></a></li><li class="depth-3"><a href="#72-갈라진-곳" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 갈라진 곳</span></a></li><li class="depth-2"><a href="#8-평가-강점-흔한-단순화-한계-반론" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 평가 — 강점, 흔한 단순화, 한계, 반론</span></a></li><li class="depth-3"><a href="#81-강점" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 강점</span></a></li><li class="depth-3"><a href="#82-간추린-설명과-실제-법" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 간추린 설명과 실제 법</span></a></li><li class="depth-3"><a href="#83-한계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.3 한계</span></a></li><li class="depth-3"><a href="#84-예상되는-반론" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.4 예상되는 반론</span></a></li><li class="depth-3"><a href="#85-이-글이-깊이-다루지-않은-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.5 이 글이 깊이 다루지 않은 것</span></a></li><li class="depth-2"><a href="#9-함의-한국의-근로자-노동조합-계약-실무" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 함의 — 한국의 근로자, 노동조합, 계약 실무</span></a></li><li class="depth-3"><a href="#91-근로자-개인" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 근로자 개인</span></a></li><li class="depth-3"><a href="#92-노동조합" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 노동조합</span></a></li><li class="depth-3"><a href="#93-계약-실무" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.3 계약 실무</span></a></li><li class="depth-2"><a href="#10-맺음-칠판을-누가-무엇으로-채우는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 맺음 — 칠판을 누가, 무엇으로 채우는가</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
     </div>
   </aside>
 
@@ -1203,7 +1684,7 @@
 <hr>
 <h2 id="1-테제-직무를-사는-계약이-아니라-회사의-일원이-되는-계약"><a href="#1-테제-직무를-사는-계약이-아니라-회사의-일원이-되는-계약" class="heading-anchor" aria-hidden="true">#</a> 1. 테제 — 직무를 사는 계약이 아니라 회사의 일원이 되는 계약</h2><p>출발점은 일상 장면이다. 서구 드라마 속 직원은 내 계약서에는 이런 일을 하라고 적혀 있지 않다며 선을 긋는다. 반면 우리 계약서에는 무슨 일을 할지가 구체적으로 적혀 있지 않을 가능성이 높고, 엉뚱한 부서로 발령이 나도 조직 생활이 원래 그렇다며 받아들이는 경우가 많다. 이 당연함은 세계적으로 보면 꽤 이질적인 시스템이고, 그 뿌리는 문화보다 제도에 있다.</p>
 <p>논의의 뼈대는 하마구치 게이이치로(濱口桂一郎)의 『日本の雇用と労働法』(日経文庫, 2011)과 연세대학교 법무대학원 권오성 교수의 강의 발췌본에서 가져왔고, 세부 사실은 법령·판례·정부 자료로 따로 확인했다. 이 글의 논지는 여섯 단계로 정리할 수 있다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>단계</th>
@@ -1255,7 +1736,7 @@
 <h3 id="22-멤버십형-칠판을-비워-두는-계약"><a href="#22-멤버십형-칠판을-비워-두는-계약" class="heading-anchor" aria-hidden="true">#</a> 2.2 멤버십형: 칠판을 비워 두는 계약</h3><p>반면 한국·일본의 정규직은 구체적인 직무가 비어 있는 상태로 서명하는 경우가 많다. 하마구치는 이를 <strong>공백의 석판</strong>(空白の石版), 곧 글씨가 적히지 않은 빈 판으로 묘사한다. 석판은 하마구치의 표현이고, 이 글에서는 이하 &#39;칠판&#39;으로도 부른다. 업무 내용·장소·시간의 한계를 적어 두지 않는다는 것은, 근로자가 사용자에게 자신의 노동력을 어떤 방식으로든 처분할 수 있는 포괄적 권한을 위임한다는 뜻이 된다.</p>
 <p>넷플릭스에 빗대면 이해가 쉽다. 직무형이 영화 한 편을 골라 개별 결제하는 VOD라면, 멤버십형은 무제한 구독에 가입했는데 무엇을 볼지는 회사가 틀어 주는 모델이다. 한 걸음 더 나아가면, 법적으로는 근로계약이지만 실제 작동 방식은 상거래가 아니라 조직의 사원이 되는 신분적 관계, 하마구치의 말로 <strong>지위 설정 계약</strong>(地位設定契約)에 가깝다. 이 전제 때문에 회사는 직무 범위를 훌쩍 넘는 지시·명령을 할 수 있는 막강한 인사권을 갖게 된다.</p>
 <h3 id="23-멤버십형-대-직무형-비교"><a href="#23-멤버십형-대-직무형-비교" class="heading-anchor" aria-hidden="true">#</a> 2.3 멤버십형 대 직무형 비교</h3><p>아래 표는 두 이념형을 항목별로 대비한 것이다. 실제 각국 제도는 이 이념형 사이 어딘가에 있다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>항목</th>
@@ -1408,7 +1889,7 @@
 <h3 id="54-오른손-와-양손-타협의-구조"><a href="#54-오른손-와-양손-타협의-구조" class="heading-anchor" aria-hidden="true">#</a> 5.4 오른손 ②와 양손 타협의 구조</h3><p>판사들이 악의로 사용자 편을 들었다기보다는 현실적 타협을 했다고 보는 편이 자연스럽다. 해고를 막아 놓고 룰 변경까지 전원 동의를 요구하면 경영이 마비된다. 그래서 취업규칙을 약관처럼 취급해 근로계약의 일부로 편입했다.</p>
 <p>그런데 오른손에는 모듈이 하나 더 있다. 사람을 옮기는 권한은 취업규칙 합리성 법리가 아니라 별도의 판례군이 받쳤다. 일본 최고재판소는 1986년 7월 14일 도아 페인트(東亜ペイント) 사건(제2소법정)에서, 취업규칙에 배치전환 근거가 있고 근무지 한정 합의가 없으면 회사는 개별 동의 없이 전근을 명할 수 있고, 업무상 필요성이 없거나, 부당한 동기·목적이 있거나, 근로자에게 &#39;통상 감수해야 할 정도를 현저히 넘는 불이익&#39;을 주는 경우에만 권리 남용이 된다고 보았다. 하마구치는 이 판결을 닛산자동차 무라야마공장 사건(직무 한정 부정), 히타치제작소 무사시공장 사건(시간외 노동 거부 불가)과 함께 멤버십형 정사원의 무한정성을 보여 주는 판례로 든다.</p>
 <p>결과적으로 법원은 한 손으로 평생직장을 지키고, 다른 손으로 규칙 변경권(취업규칙 합리성 법리)과 폭넓은 배치전환 인사권(배치전환 권리남용 법리)을 열어 주었다. 해고로부터 보호받는 대신 회사의 지시에 폭넓게 따라야 하는 고용 형태가 여기서 완성된다. 두 모듈을 나눠 보아야 7절에서 한국의 2023년 판례 변경이 어디까지 미치는지 정확히 볼 수 있다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>법원의 손</th>
@@ -1537,7 +2018,7 @@
 <li><strong>이중구조를 체제의 일부로 본다.</strong> 비정규직을 예외나 일탈이 아니라 정규직 보호의 구조적 짝으로 설명한다.</li>
 </ol>
 <h3 id="82-간추린-설명과-실제-법"><a href="#82-간추린-설명과-실제-법" class="heading-anchor" aria-hidden="true">#</a> 8.2 간추린 설명과 실제 법</h3><p>멤버십형 고용과 그 법리를 한두 문장으로 요약하면, 논지를 선명하게 하려다 판례의 사실관계나 법의 조건이 빠지기 쉽다. 아래 표는 그런 간추린 설명을 법령·판례·정부 자료에 비추어 정리한 것이다. 왼쪽 문장이 전부 틀렸다는 뜻이라기보다, 오른쪽의 조건을 붙여야 정확해진다는 뜻으로 읽으면 된다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>간추린 설명</th>
@@ -1858,6 +2339,49 @@
         closeDrawer();
       });
     });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
 
     // Copy Code Buttons
     document.querySelectorAll('.copy-btn').forEach(btn => {

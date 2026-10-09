@@ -152,7 +152,7 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 75px;
+      scroll-padding-top: 80px;
     }
 
     body {
@@ -404,6 +404,10 @@
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
     }
 
     .content h1, .content h2, .content h3, .content h4 {
@@ -932,14 +936,145 @@
       }
     }
 
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
     .table-wrapper {
+      position: relative;
       width: 100%;
       overflow-x: auto;
-      margin: 1.6em 0;
+      margin: 1.8em 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       -webkit-overflow-scrolling: touch;
       box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     .content table {
@@ -952,16 +1087,17 @@
     .content th {
       background: var(--bg-surface);
       font-weight: 700;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .content td {
-      padding: 10px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
+      vertical-align: middle;
     }
 
     .content tr:last-child td {
@@ -970,6 +1106,273 @@
 
     .content tr:nth-child(even) td {
       background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
     }
 
     /* TOC Drawer (Slide-in) */
@@ -993,8 +1396,8 @@
       position: fixed;
       top: 0;
       right: -320px;
-      width: 300px;
-      max-width: 85vw;
+      width: 320px;
+      max-width: 88vw;
       height: 100%;
       background: var(--drawer-bg);
       border-left: 1px solid var(--border);
@@ -1034,29 +1437,83 @@
     .toc-drawer-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px 40px;
+      padding: 16px 16px 40px;
     }
 
-    .toc-drawer-body ul {
+    .toc-drawer-body ul.toc-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
     .toc-drawer-body li {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .toc-drawer-body li.depth-2 { padding-left: 0; }
-    .toc-drawer-body li.depth-3 { padding-left: 14px; }
-    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
 
     .toc-link {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.45;
-      display: block;
+      display: flex;
+      align-items: baseline;
       padding: 4px 6px;
       border-radius: var(--radius-sm);
       transition: all 0.15s ease;
@@ -1065,7 +1522,31 @@
     .toc-link:hover, .toc-link.active {
       color: var(--primary);
       background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
       font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
     }
 
     /* Floating Back to Top */
@@ -1156,7 +1637,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#이-노트를-읽는-법" class="toc-link">이 노트를 읽는 법</a></li><li class="depth-2"><a href="#0-이-강의가-메우는-빈칸" class="toc-link">0. 이 강의가 메우는 빈칸</a></li><li class="depth-2"><a href="#1장-창고-번호와-내용" class="toc-link">1장. 창고: 번호와 내용</a></li><li class="depth-2"><a href="#2장-레시피도-같은-창고에-있다" class="toc-link">2장. 레시피도 같은 창고에 있다</a></li><li class="depth-2"><a href="#3장-실행-순서는-누가-정하는가" class="toc-link">3장. 실행 순서는 누가 정하는가</a></li><li class="depth-2"><a href="#4장-어셈블리를-처음부터" class="toc-link">4장. 어셈블리를 처음부터</a></li><li class="depth-2"><a href="#41-기계어와-어셈블리" class="toc-link">4.1 기계어와 어셈블리</a></li><li class="depth-2"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="toc-link">4.2 레지스터: CPU 안의 손바닥 상자</a></li><li class="depth-2"><a href="#43-대괄호-하나가-전부다" class="toc-link">4.3 대괄호 [] 하나가 전부다</a></li><li class="depth-2"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="toc-link">4.4 이 노트에서 쓰는 명령 여덟 개</a></li><li class="depth-3"><a href="#라벨-상자-번호-대신-붙이는-이름" class="toc-link">라벨 — 상자 번호 대신 붙이는 이름</a></li><li class="depth-2"><a href="#5장-점프와-goto" class="toc-link">5장. 점프와 goto</a></li><li class="depth-2"><a href="#6장-루프는-점프의-응용이다" class="toc-link">6장. 루프는 점프의 응용이다</a></li><li class="depth-2"><a href="#7장-왜-자기수정이-나왔는가" class="toc-link">7장. 왜 자기수정이 나왔는가</a></li><li class="depth-2"><a href="#8장-슬로모션-숫자-두-개" class="toc-link">8장. 슬로모션 — 숫자 두 개</a></li><li class="depth-2"><a href="#81-자기수정-버전-가상-기계" class="toc-link">8.1 자기수정 버전 (가상 기계)</a></li><li class="depth-2"><a href="#82-포인터-버전-가상-기계" class="toc-link">8.2 포인터 버전 (가상 기계)</a></li><li class="depth-2"><a href="#83-인터랙티브-슬로모션-시뮬레이터" class="toc-link">8.3 인터랙티브 슬로모션 시뮬레이터</a></li><li class="depth-2"><a href="#9장-실제-x86으로-옮기기" class="toc-link">9장. 실제 x86으로 옮기기</a></li><li class="depth-2"><a href="#91-먼저-포인터-버전이-정석이다" class="toc-link">9.1 먼저, 포인터 버전이 정석이다</a></li><li class="depth-2"><a href="#92-자기수정-버전-명령의-주소-칸을-고친다" class="toc-link">9.2 자기수정 버전 — 명령의 주소 칸을 고친다</a></li><li class="depth-3"><a href="#6502-8비트에서-더-잘-보이는-형태" class="toc-link">6502 / 8비트에서 더 잘 보이는 형태</a></li><li class="depth-2"><a href="#93-두-버전의-기계어-차이-한-줄로" class="toc-link">9.3 두 버전의 기계어 차이, 한 줄로</a></li><li class="depth-2"><a href="#10장-자기수정이-악몽인-이유" class="toc-link">10장. 자기수정이 악몽인 이유</a></li><li class="depth-2"><a href="#11장-포인터와-레지스터" class="toc-link">11장. 포인터와 레지스터</a></li><li class="depth-2"><a href="#질문" class="toc-link">질문</a></li><li class="depth-2"><a href="#답" class="toc-link">답</a></li><li class="depth-2"><a href="#12장-역사" class="toc-link">12장. 역사</a></li><li class="depth-2"><a href="#13장-한-창고에-모두-올려놓기" class="toc-link">13장. 한 창고에 모두 올려놓기</a></li><li class="depth-2"><a href="#부록-a-어셈블리-치트시트-이-노트-범위" class="toc-link">부록 A. 어셈블리 치트시트 (이 노트 범위)</a></li><li class="depth-2"><a href="#부록-b-복습-사다리" class="toc-link">부록 B. 복습 사다리</a></li><li class="depth-2"><a href="#부록-c-더-읽을거리-층별" class="toc-link">부록 C. 더 읽을거리 (층별)</a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#이-노트를-읽는-법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">이 노트를 읽는 법</span></a></li><li class="depth-2"><a href="#0-이-강의가-메우는-빈칸" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">0. 이 강의가 메우는 빈칸</span></a></li><li class="depth-2"><a href="#1장-창고-번호와-내용" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1장. 창고: 번호와 내용</span></a></li><li class="depth-2"><a href="#2장-레시피도-같은-창고에-있다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2장. 레시피도 같은 창고에 있다</span></a></li><li class="depth-2"><a href="#3장-실행-순서는-누가-정하는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3장. 실행 순서는 누가 정하는가</span></a></li><li class="depth-2"><a href="#4장-어셈블리를-처음부터" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4장. 어셈블리를 처음부터</span></a></li><li class="depth-2"><a href="#41-기계어와-어셈블리" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4.1 기계어와 어셈블리</span></a></li><li class="depth-2"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4.2 레지스터: CPU 안의 손바닥 상자</span></a></li><li class="depth-2"><a href="#43-대괄호-하나가-전부다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4.3 대괄호 [] 하나가 전부다</span></a></li><li class="depth-2"><a href="#44-이-노트에서-쓰는-명령-여덟-개" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4.4 이 노트에서 쓰는 명령 여덟 개</span></a></li><li class="depth-3"><a href="#라벨-상자-번호-대신-붙이는-이름" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">라벨 — 상자 번호 대신 붙이는 이름</span></a></li><li class="depth-2"><a href="#5장-점프와-goto" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5장. 점프와 goto</span></a></li><li class="depth-2"><a href="#6장-루프는-점프의-응용이다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6장. 루프는 점프의 응용이다</span></a></li><li class="depth-2"><a href="#7장-왜-자기수정이-나왔는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7장. 왜 자기수정이 나왔는가</span></a></li><li class="depth-2"><a href="#8장-슬로모션-숫자-두-개" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8장. 슬로모션 — 숫자 두 개</span></a></li><li class="depth-2"><a href="#81-자기수정-버전-가상-기계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8.1 자기수정 버전 (가상 기계)</span></a></li><li class="depth-2"><a href="#82-포인터-버전-가상-기계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8.2 포인터 버전 (가상 기계)</span></a></li><li class="depth-2"><a href="#83-인터랙티브-슬로모션-시뮬레이터" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8.3 인터랙티브 슬로모션 시뮬레이터</span></a></li><li class="depth-2"><a href="#9장-실제-x86으로-옮기기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9장. 실제 x86으로 옮기기</span></a></li><li class="depth-2"><a href="#91-먼저-포인터-버전이-정석이다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9.1 먼저, 포인터 버전이 정석이다</span></a></li><li class="depth-2"><a href="#92-자기수정-버전-명령의-주소-칸을-고친다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9.2 자기수정 버전 — 명령의 주소 칸을 고친다</span></a></li><li class="depth-3"><a href="#6502-8비트에서-더-잘-보이는-형태" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6502 / 8비트에서 더 잘 보이는 형태</span></a></li><li class="depth-2"><a href="#93-두-버전의-기계어-차이-한-줄로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9.3 두 버전의 기계어 차이, 한 줄로</span></a></li><li class="depth-2"><a href="#10장-자기수정이-악몽인-이유" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10장. 자기수정이 악몽인 이유</span></a></li><li class="depth-2"><a href="#11장-포인터와-레지스터" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11장. 포인터와 레지스터</span></a></li><li class="depth-2"><a href="#질문" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">질문</span></a></li><li class="depth-2"><a href="#답" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">답</span></a></li><li class="depth-2"><a href="#12장-역사" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">12장. 역사</span></a></li><li class="depth-2"><a href="#13장-한-창고에-모두-올려놓기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">13장. 한 창고에 모두 올려놓기</span></a></li><li class="depth-2"><a href="#부록-a-어셈블리-치트시트-이-노트-범위" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">부록 A. 어셈블리 치트시트 (이 노트 범위)</span></a></li><li class="depth-2"><a href="#부록-b-복습-사다리" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">부록 B. 복습 사다리</span></a></li><li class="depth-2"><a href="#부록-c-더-읽을거리-층별" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">부록 C. 더 읽을거리 (층별)</span></a></li></ul>
     </div>
   </aside>
 
@@ -1202,7 +1683,7 @@
 <p>대상은 <strong>어셈블리를 한 줄도 모른다고 가정한 독자</strong>다.<br>본문에 나오는 기계어·어셈블리는 모두 바로 아래에서 단어 단위로 푼다.</p>
 <p>권장 순서: 1장부터 차례로. 8장의 슬로모션 표는 그 앞을 읽은 뒤에야 의미가 있다.</p>
 <hr>
-<h2 id="0-이-강의가-메우는-빈칸"><a href="#0-이-강의가-메우는-빈칸" class="heading-anchor" aria-hidden="true">#</a> 0. 이 강의가 메우는 빈칸</h2><div class="table-wrapper"><table>
+<h2 id="0-이-강의가-메우는-빈칸"><a href="#0-이-강의가-메우는-빈칸" class="heading-anchor" aria-hidden="true">#</a> 0. 이 강의가 메우는 빈칸</h2><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>층</th>
@@ -1259,7 +1740,7 @@
 <li>CPU(일꾼)는 “몇 호를 열어라”, “그 숫자를 더하라” 같은 지시를 받는다.</li>
 </ul>
 <p>예시:</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>주소(호수)</th>
@@ -1339,7 +1820,7 @@
 </div><p>어셈블러라는 프로그램이 왼쪽 글을 오른쪽 바이트로 바꾼다.<br>이 노트에서 어셈블리는 “상자 작업을 줄여 쓴 메모”일 뿐이다.</p>
 <h2 id="42-레지스터-cpu-안의-손바닥-상자"><a href="#42-레지스터-cpu-안의-손바닥-상자" class="heading-anchor" aria-hidden="true">#</a> 4.2 레지스터: CPU 안의 손바닥 상자</h2><p>RAM 상자는 많고 상대적으로 느리다.<br>CPU 칩 안에는 이름 붙은 <strong>아주 빠른 상자</strong>가 몇 개 있다. 이것이 레지스터.</p>
 <p>이 노트에서 쓰는 x86-32 이름:</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>이름</th>
@@ -1468,7 +1949,7 @@ there:
   <pre><code class="language-asm">    cmp esi, 22
     jne there       ; esi ≠ 22 이면 there로, 아니면 다음 줄</code></pre>
 </div><p>기계의 제어는 거의 전부 이 점프다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>언어에 보이는 것</th>
@@ -1665,7 +2146,7 @@ loop:
     jne  loop
     ; 끝</code></pre>
 </div><p>박자표:</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th align="center">박자</th>
@@ -1757,7 +2238,7 @@ loop:
     jne  loop
     ; 끝</code></pre>
 </div><p>박자표:</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th align="center">박자</th>
@@ -2083,7 +2564,7 @@ STO: ADC $2000          ; 처음엔 $2000, 다음엔 $2001
 <hr>
 <h2 id="11장-포인터와-레지스터"><a href="#11장-포인터와-레지스터" class="heading-anchor" aria-hidden="true">#</a> 11장. 포인터와 레지스터</h2><h2 id="질문"><a href="#질문" class="heading-anchor" aria-hidden="true">#</a> 질문</h2><p>포인터가 생겼다는 것은 전용 레지스터가 생겼다는 뜻인가?</p>
 <h2 id="답"><a href="#답" class="heading-anchor" aria-hidden="true">#</a> 답</h2><p>반만 맞다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th></th>
@@ -2144,7 +2625,7 @@ STO: ADC $2000          ; 처음엔 $2000, 다음엔 $2001
 </div><p>손이 곧 책갈피는 아니다.<br>손이 생기면서 책갈피라는 생각이 <strong>싸게, 안전하게</strong> 쓰이게 된 것이다.</p>
 <hr>
 <h2 id="12장-역사"><a href="#12장-역사" class="heading-anchor" aria-hidden="true">#</a> 12장. 역사</h2><p>층마다 발명자가 다르다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>층</th>
@@ -2443,6 +2924,49 @@ jne loop           방금 비교가 불일치면 loop로 가라</code></pre>
         closeDrawer();
       });
     });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
 
     // Copy Code Buttons
     document.querySelectorAll('.copy-btn').forEach(btn => {

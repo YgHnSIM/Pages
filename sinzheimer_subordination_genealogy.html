@@ -152,7 +152,7 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 75px;
+      scroll-padding-top: 80px;
     }
 
     body {
@@ -404,6 +404,10 @@
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
     }
 
     .content h1, .content h2, .content h3, .content h4 {
@@ -932,14 +936,145 @@
       }
     }
 
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
     .table-wrapper {
+      position: relative;
       width: 100%;
       overflow-x: auto;
-      margin: 1.6em 0;
+      margin: 1.8em 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       -webkit-overflow-scrolling: touch;
       box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     .content table {
@@ -952,16 +1087,17 @@
     .content th {
       background: var(--bg-surface);
       font-weight: 700;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .content td {
-      padding: 10px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
+      vertical-align: middle;
     }
 
     .content tr:last-child td {
@@ -970,6 +1106,273 @@
 
     .content tr:nth-child(even) td {
       background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
     }
 
     /* TOC Drawer (Slide-in) */
@@ -993,8 +1396,8 @@
       position: fixed;
       top: 0;
       right: -320px;
-      width: 300px;
-      max-width: 85vw;
+      width: 320px;
+      max-width: 88vw;
       height: 100%;
       background: var(--drawer-bg);
       border-left: 1px solid var(--border);
@@ -1034,29 +1437,83 @@
     .toc-drawer-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px 40px;
+      padding: 16px 16px 40px;
     }
 
-    .toc-drawer-body ul {
+    .toc-drawer-body ul.toc-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
     .toc-drawer-body li {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .toc-drawer-body li.depth-2 { padding-left: 0; }
-    .toc-drawer-body li.depth-3 { padding-left: 14px; }
-    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
 
     .toc-link {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.45;
-      display: block;
+      display: flex;
+      align-items: baseline;
       padding: 4px 6px;
       border-radius: var(--radius-sm);
       transition: all 0.15s ease;
@@ -1065,7 +1522,31 @@
     .toc-link:hover, .toc-link.active {
       color: var(--primary);
       background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
       font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
     }
 
     /* Floating Back to Top */
@@ -1156,7 +1637,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#타인의-처분권-아래의-노동-휴고-진츠하이머와-39종속성39-개념의-계보-심화-분석" class="toc-link">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</a></li><li class="depth-2"><a href="#1-테제-종속이라는-말은-어디서-와서-어디로-가는가" class="toc-link">1. 테제 — 종속이라는 말은 어디서 와서 어디로 가는가</a></li><li class="depth-2"><a href="#2-진츠하이머라는-사람-변호사-헌법-기초자-망명-법학자" class="toc-link">2. 진츠하이머라는 사람 — 변호사, 헌법 기초자, 망명 법학자</a></li><li class="depth-3"><a href="#21-보름스에서-프랑크푸르트까지" class="toc-link">2.1 보름스에서 프랑크푸르트까지</a></li><li class="depth-3"><a href="#22-혁명과-헌법-바이마르-헌법의-경제생활-편" class="toc-link">2.2 혁명과 헌법 — 바이마르 헌법의 경제생활 편</a></li><li class="depth-3"><a href="#23-박해와-망명-그리고-은신" class="toc-link">2.3 박해와 망명, 그리고 은신</a></li><li class="depth-2"><a href="#3-사상-종속노동-사회적-자기결정-노동헌법" class="toc-link">3. 사상 — 종속노동, 사회적 자기결정, 노동헌법</a></li><li class="depth-3"><a href="#31-노동법을-하나의-법질서로" class="toc-link">3.1 노동법을 하나의 법질서로</a></li><li class="depth-3"><a href="#32-종속노동-타인의-처분권과-법적-권력관계" class="toc-link">3.2 종속노동 — 타인의 처분권과 법적 권력관계</a></li><li class="depth-3"><a href="#33-인격과-노동력은-분리되지-않는다" class="toc-link">3.3 인격과 노동력은 분리되지 않는다</a></li><li class="depth-3"><a href="#34-단체협약의-규범적-효력과-사회적-자기결정" class="toc-link">3.4 단체협약의 규범적 효력과 사회적 자기결정</a></li><li class="depth-3"><a href="#35-노동헌법과-경제민주주의-그리고-방법" class="toc-link">3.5 노동헌법과 경제민주주의, 그리고 방법</a></li><li class="depth-3"><a href="#36-제자들과-계승" class="toc-link">3.6 제자들과 계승</a></li><li class="depth-2"><a href="#4-기원-노무-임대차에서-종속노동으로" class="toc-link">4. 기원 — 노무 임대차에서 종속노동으로</a></li><li class="depth-3"><a href="#41-로마법-노동을-빌려주는-계약" class="toc-link">4.1 로마법: 노동을 빌려주는 계약</a></li><li class="depth-3"><a href="#42-독일-민법-제611조-형식적-대등성" class="toc-link">4.2 독일 민법 제611조: 형식적 대등성</a></li><li class="depth-3"><a href="#43-로트마르-사법-안의-노동계약-그러나-지시권은-징표가-아니다" class="toc-link">4.3 로트마르: 사법 안의 노동계약, 그러나 지시권은 징표가 아니다</a></li><li class="depth-3"><a href="#44-진츠하이머-타인의-처분권이라는-한-마디" class="toc-link">4.4 진츠하이머: 타인의 처분권이라는 한 마디</a></li><li class="depth-3"><a href="#45-경제적-종속과-인격적-종속의-갈림길" class="toc-link">4.5 경제적 종속과 인격적 종속의 갈림길</a></li><li class="depth-2"><a href="#5-독일에서의-전개-지시의-선은-정련되고-의존의-선은-별실로" class="toc-link">5. 독일에서의 전개 — 지시의 선은 정련되고, 의존의 선은 별실로</a></li><li class="depth-3"><a href="#51-인격적-종속의-정착-오케스트라-단원에서-방송-종사자까지" class="toc-link">5.1 인격적 종속의 정착: 오케스트라 단원에서 방송 종사자까지</a></li><li class="depth-3"><a href="#52-반론-유형-개념과-기업가적-위험" class="toc-link">5.2 반론: 유형 개념과 기업가적 위험</a></li><li class="depth-3"><a href="#53-2017년의-성문화-민법-제611a조" class="toc-link">5.3 2017년의 성문화: 민법 제611a조</a></li><li class="depth-3"><a href="#54-경제적-종속의-별실-유사근로자" class="toc-link">5.4 경제적 종속의 별실: 유사근로자</a></li><li class="depth-3"><a href="#55-독일-계보의-요약" class="toc-link">5.5 독일 계보의 요약</a></li><li class="depth-2"><a href="#6-일본과-한국으로-문헌의-수용-기준의-정형화-영역별-분화" class="toc-link">6. 일본과 한국으로 — 문헌의 수용, 기준의 정형화, 영역별 분화</a></li><li class="depth-3"><a href="#61-다이쇼-데모크라시와-독일-노동법-단체협약-이론이-먼저-건너갔다" class="toc-link">6.1 다이쇼 데모크라시와 독일 노동법: 단체협약 이론이 먼저 건너갔다</a></li><li class="depth-3"><a href="#62-전후-일본-번역-학설의-분화-1985년의-정형화" class="toc-link">6.2 전후 일본: 번역, 학설의 분화, 1985년의 정형화</a></li><li class="depth-3"><a href="#63-한국-문헌의-수용과-판례의-종속" class="toc-link">6.3 한국: 문헌의 수용과 판례의 종속</a></li><li class="depth-3"><a href="#64-수용-경로는-단정할-수-있는가" class="toc-link">6.4 수용 경로는 단정할 수 있는가</a></li><li class="depth-2"><a href="#7-국제-동향-사실-우선-지표의-확장-추정" class="toc-link">7. 국제 동향 — 사실 우선, 지표의 확장, 추정</a></li><li class="depth-2"><a href="#8-플랫폼-시대의-쟁점-계보의-갈래들이-다시-불려-나오다" class="toc-link">8. 플랫폼 시대의 쟁점 — 계보의 갈래들이 다시 불려 나오다</a></li><li class="depth-3"><a href="#81-인격적-종속의-선을-넓혀-쓰기" class="toc-link">8.1 인격적 종속의 선을 넓혀 쓰기</a></li><li class="depth-3"><a href="#82-밀려났던-경제적-종속의-귀환" class="toc-link">8.2 밀려났던 경제적 종속의 귀환</a></li><li class="depth-3"><a href="#83-조직적-종속-곧-편입의-재발견" class="toc-link">8.3 조직적 종속, 곧 편입의 재발견</a></li><li class="depth-3"><a href="#84-누구에게-종속되는가" class="toc-link">8.4 누구에게 종속되는가</a></li><li class="depth-3"><a href="#85-추정-증명의-짐을-옮기기" class="toc-link">8.5 추정 — 증명의 짐을 옮기기</a></li><li class="depth-3"><a href="#86-진츠하이머로의-회귀" class="toc-link">8.6 진츠하이머로의 회귀</a></li><li class="depth-2"><a href="#9-2026년-논문은-진츠하이머와-종속성을-어떻게-다루는가" class="toc-link">9. 2026년 논문은 진츠하이머와 종속성을 어떻게 다루는가</a></li><li class="depth-3"><a href="#91-논문의-자리" class="toc-link">9.1 논문의 자리</a></li><li class="depth-3"><a href="#92-진츠하이머가-등장하는-자리" class="toc-link">9.2 진츠하이머가 등장하는 자리</a></li><li class="depth-3"><a href="#93-계보와-맞아떨어지는-것" class="toc-link">9.3 계보와 맞아떨어지는 것</a></li><li class="depth-3"><a href="#94-해석상-긴장-다섯-가지-읽는-법" class="toc-link">9.4 해석상 긴장 — 다섯 가지 읽는 법</a></li><li class="depth-3"><a href="#95-사실관계에서-바로잡을-곳" class="toc-link">9.5 사실관계에서 바로잡을 곳</a></li><li class="depth-3"><a href="#96-두-축으로-다시-읽기" class="toc-link">9.6 두 축으로 다시 읽기</a></li><li class="depth-2"><a href="#10-한눈에-보기" class="toc-link">10. 한눈에 보기</a></li><li class="depth-3"><a href="#101-연표" class="toc-link">10.1 연표</a></li><li class="depth-3"><a href="#102-간추린-설명과-실제" class="toc-link">10.2 간추린 설명과 실제</a></li><li class="depth-2"><a href="#11-평가-계보가-말해-주는-것" class="toc-link">11. 평가 — 계보가 말해 주는 것</a></li><li class="depth-3"><a href="#111-종속은-처음부터-여러-겹이었다" class="toc-link">11.1 종속은 처음부터 여러 겹이었다</a></li><li class="depth-3"><a href="#112-좁힘에는-이유가-있었다" class="toc-link">11.2 좁힘에는 이유가 있었다</a></li><li class="depth-3"><a href="#113-밀려난-것들이-돌아온다" class="toc-link">11.3 밀려난 것들이 돌아온다</a></li><li class="depth-3"><a href="#114-두-축으로-진츠하이머-다시-읽기" class="toc-link">11.4 두 축으로 진츠하이머 다시 읽기</a></li><li class="depth-3"><a href="#115-계보의-약한-고리" class="toc-link">11.5 계보의 약한 고리</a></li><li class="depth-2"><a href="#12-맺음-경제적-신민에서-경제적-시민으로" class="toc-link">12. 맺음 — 경제적 신민에서 경제적 시민으로</a></li><li class="depth-2"><a href="#출처" class="toc-link">출처</a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#타인의-처분권-아래의-노동-휴고-진츠하이머와-39종속성39-개념의-계보-심화-분석" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</span></a></li><li class="depth-2"><a href="#1-테제-종속이라는-말은-어디서-와서-어디로-가는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 테제 — 종속이라는 말은 어디서 와서 어디로 가는가</span></a></li><li class="depth-2"><a href="#2-진츠하이머라는-사람-변호사-헌법-기초자-망명-법학자" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 진츠하이머라는 사람 — 변호사, 헌법 기초자, 망명 법학자</span></a></li><li class="depth-3"><a href="#21-보름스에서-프랑크푸르트까지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 보름스에서 프랑크푸르트까지</span></a></li><li class="depth-3"><a href="#22-혁명과-헌법-바이마르-헌법의-경제생활-편" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 혁명과 헌법 — 바이마르 헌법의 경제생활 편</span></a></li><li class="depth-3"><a href="#23-박해와-망명-그리고-은신" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 박해와 망명, 그리고 은신</span></a></li><li class="depth-2"><a href="#3-사상-종속노동-사회적-자기결정-노동헌법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 사상 — 종속노동, 사회적 자기결정, 노동헌법</span></a></li><li class="depth-3"><a href="#31-노동법을-하나의-법질서로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 노동법을 하나의 법질서로</span></a></li><li class="depth-3"><a href="#32-종속노동-타인의-처분권과-법적-권력관계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 종속노동 — 타인의 처분권과 법적 권력관계</span></a></li><li class="depth-3"><a href="#33-인격과-노동력은-분리되지-않는다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 인격과 노동력은 분리되지 않는다</span></a></li><li class="depth-3"><a href="#34-단체협약의-규범적-효력과-사회적-자기결정" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.4 단체협약의 규범적 효력과 사회적 자기결정</span></a></li><li class="depth-3"><a href="#35-노동헌법과-경제민주주의-그리고-방법" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.5 노동헌법과 경제민주주의, 그리고 방법</span></a></li><li class="depth-3"><a href="#36-제자들과-계승" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.6 제자들과 계승</span></a></li><li class="depth-2"><a href="#4-기원-노무-임대차에서-종속노동으로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 기원 — 노무 임대차에서 종속노동으로</span></a></li><li class="depth-3"><a href="#41-로마법-노동을-빌려주는-계약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 로마법: 노동을 빌려주는 계약</span></a></li><li class="depth-3"><a href="#42-독일-민법-제611조-형식적-대등성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 독일 민법 제611조: 형식적 대등성</span></a></li><li class="depth-3"><a href="#43-로트마르-사법-안의-노동계약-그러나-지시권은-징표가-아니다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 로트마르: 사법 안의 노동계약, 그러나 지시권은 징표가 아니다</span></a></li><li class="depth-3"><a href="#44-진츠하이머-타인의-처분권이라는-한-마디" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.4 진츠하이머: 타인의 처분권이라는 한 마디</span></a></li><li class="depth-3"><a href="#45-경제적-종속과-인격적-종속의-갈림길" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.5 경제적 종속과 인격적 종속의 갈림길</span></a></li><li class="depth-2"><a href="#5-독일에서의-전개-지시의-선은-정련되고-의존의-선은-별실로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 독일에서의 전개 — 지시의 선은 정련되고, 의존의 선은 별실로</span></a></li><li class="depth-3"><a href="#51-인격적-종속의-정착-오케스트라-단원에서-방송-종사자까지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 인격적 종속의 정착: 오케스트라 단원에서 방송 종사자까지</span></a></li><li class="depth-3"><a href="#52-반론-유형-개념과-기업가적-위험" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 반론: 유형 개념과 기업가적 위험</span></a></li><li class="depth-3"><a href="#53-2017년의-성문화-민법-제611a조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 2017년의 성문화: 민법 제611a조</span></a></li><li class="depth-3"><a href="#54-경제적-종속의-별실-유사근로자" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.4 경제적 종속의 별실: 유사근로자</span></a></li><li class="depth-3"><a href="#55-독일-계보의-요약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.5 독일 계보의 요약</span></a></li><li class="depth-2"><a href="#6-일본과-한국으로-문헌의-수용-기준의-정형화-영역별-분화" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 일본과 한국으로 — 문헌의 수용, 기준의 정형화, 영역별 분화</span></a></li><li class="depth-3"><a href="#61-다이쇼-데모크라시와-독일-노동법-단체협약-이론이-먼저-건너갔다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 다이쇼 데모크라시와 독일 노동법: 단체협약 이론이 먼저 건너갔다</span></a></li><li class="depth-3"><a href="#62-전후-일본-번역-학설의-분화-1985년의-정형화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 전후 일본: 번역, 학설의 분화, 1985년의 정형화</span></a></li><li class="depth-3"><a href="#63-한국-문헌의-수용과-판례의-종속" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 한국: 문헌의 수용과 판례의 종속</span></a></li><li class="depth-3"><a href="#64-수용-경로는-단정할-수-있는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.4 수용 경로는 단정할 수 있는가</span></a></li><li class="depth-2"><a href="#7-국제-동향-사실-우선-지표의-확장-추정" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 국제 동향 — 사실 우선, 지표의 확장, 추정</span></a></li><li class="depth-2"><a href="#8-플랫폼-시대의-쟁점-계보의-갈래들이-다시-불려-나오다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 플랫폼 시대의 쟁점 — 계보의 갈래들이 다시 불려 나오다</span></a></li><li class="depth-3"><a href="#81-인격적-종속의-선을-넓혀-쓰기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 인격적 종속의 선을 넓혀 쓰기</span></a></li><li class="depth-3"><a href="#82-밀려났던-경제적-종속의-귀환" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 밀려났던 경제적 종속의 귀환</span></a></li><li class="depth-3"><a href="#83-조직적-종속-곧-편입의-재발견" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.3 조직적 종속, 곧 편입의 재발견</span></a></li><li class="depth-3"><a href="#84-누구에게-종속되는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.4 누구에게 종속되는가</span></a></li><li class="depth-3"><a href="#85-추정-증명의-짐을-옮기기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.5 추정 — 증명의 짐을 옮기기</span></a></li><li class="depth-3"><a href="#86-진츠하이머로의-회귀" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.6 진츠하이머로의 회귀</span></a></li><li class="depth-2"><a href="#9-2026년-논문은-진츠하이머와-종속성을-어떻게-다루는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 2026년 논문은 진츠하이머와 종속성을 어떻게 다루는가</span></a></li><li class="depth-3"><a href="#91-논문의-자리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 논문의 자리</span></a></li><li class="depth-3"><a href="#92-진츠하이머가-등장하는-자리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 진츠하이머가 등장하는 자리</span></a></li><li class="depth-3"><a href="#93-계보와-맞아떨어지는-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.3 계보와 맞아떨어지는 것</span></a></li><li class="depth-3"><a href="#94-해석상-긴장-다섯-가지-읽는-법" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.4 해석상 긴장 — 다섯 가지 읽는 법</span></a></li><li class="depth-3"><a href="#95-사실관계에서-바로잡을-곳" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.5 사실관계에서 바로잡을 곳</span></a></li><li class="depth-3"><a href="#96-두-축으로-다시-읽기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.6 두 축으로 다시 읽기</span></a></li><li class="depth-2"><a href="#10-한눈에-보기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 한눈에 보기</span></a></li><li class="depth-3"><a href="#101-연표" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.1 연표</span></a></li><li class="depth-3"><a href="#102-간추린-설명과-실제" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.2 간추린 설명과 실제</span></a></li><li class="depth-2"><a href="#11-평가-계보가-말해-주는-것" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11. 평가 — 계보가 말해 주는 것</span></a></li><li class="depth-3"><a href="#111-종속은-처음부터-여러-겹이었다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.1 종속은 처음부터 여러 겹이었다</span></a></li><li class="depth-3"><a href="#112-좁힘에는-이유가-있었다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.2 좁힘에는 이유가 있었다</span></a></li><li class="depth-3"><a href="#113-밀려난-것들이-돌아온다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.3 밀려난 것들이 돌아온다</span></a></li><li class="depth-3"><a href="#114-두-축으로-진츠하이머-다시-읽기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.4 두 축으로 진츠하이머 다시 읽기</span></a></li><li class="depth-3"><a href="#115-계보의-약한-고리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.5 계보의 약한 고리</span></a></li><li class="depth-2"><a href="#12-맺음-경제적-신민에서-경제적-시민으로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">12. 맺음 — 경제적 신민에서 경제적 시민으로</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
     </div>
   </aside>
 
@@ -1203,7 +1684,7 @@
 <hr>
 <h2 id="1-테제-종속이라는-말은-어디서-와서-어디로-가는가"><a href="#1-테제-종속이라는-말은-어디서-와서-어디로-가는가" class="heading-anchor" aria-hidden="true">#</a> 1. 테제 — 종속이라는 말은 어디서 와서 어디로 가는가</h2><p>근로자인지 아닌지는 노동보호법의 거의 모든 보호가 적용되느냐를 가르는 입구다. 한국에서 그 입구를 지키는 말은 &#39;종속&#39;이고, 그 말은 법률이 아니라 판례가 들여왔다. 판례가 들여온 개념이라면 그것이 어디서 왔는지, 들어오는 길에 무엇이 덧붙고 무엇이 떨어져 나갔는지 묻는 일은 단순한 역사 공부가 아니다. 지금 그 개념을 고치자는 논의가 진츠하이머의 이름을 다시 부르고 있기 때문이다.</p>
 <p>이 글의 논지는 여섯 단계로 정리할 수 있다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>단계</th>
@@ -1264,7 +1745,7 @@
 <p>네덜란드에서 그가 맡은 교수직은 출처마다 대학, 분야, 연도가 조금씩 다르다. NDB와 프랑크푸르트 인물사전은 1933년 암스테르담대학교의 법사회학 교수, 1935년 레이던대학교의 노동법 정교수로 적는다. HSI 전기와 FES는 1933년 10월 암스테르담의 법사회학 원외교수, 1936년 레이던의 법사회학 원외교수로 적고, 사회정책사 인물사전은 암스테르담에서 노동법, 레이던(1935–1941)에서 법사회학 원외교수를 맡았다고 적는다. 프랑크푸르트 인물사전에 따르면 그는 1941년 2월 레이던에서 해임되었다. 1933년 암스테르담 취임 강연이 『Das Problem des Menschen im Recht(법에서의 인간의 문제)』다.</p>
 <p>1940년 독일군이 네덜란드를 점령한 뒤 그는 다시 잠시 체포되었고, 그 뒤 부인과 함께 숨어 지내며 전쟁을 넘겼다. 해방 직후인 1945년 9월 16일 블루멘달-오버베인(Bloemendaal-Overveen)에서 세상을 떠났다. FES는 그가 극도의 쇠약에 따른 후유증으로 숨졌다고 적는다. 오늘 그의 이름은 암스테르담대학교의 휴고진츠하이머연구소(Hugo Sinzheimer Instituut)와 독일 한스뵈클러재단의 휴고진츠하이머연구소(Hugo Sinzheimer Institut)에 남아 있다.</p>
 <p>생애의 사실 가운데 출처가 엇갈리는 것을 한곳에 모으면 다음과 같다. 대부분 사소해 보이지만, 학위 연도와 명예교수 연도는 그의 학문적 출발을 언제로 볼지와 연결되고, 『Lohn und Aufrechnung』의 성격은 그의 첫 저작을 어떻게 읽을지와 연결된다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>항목</th>
@@ -1571,7 +2052,7 @@
 <h3 id="93-계보와-맞아떨어지는-것"><a href="#93-계보와-맞아떨어지는-것" class="heading-anchor" aria-hidden="true">#</a> 9.3 계보와 맞아떨어지는 것</h3><p>논문의 큰 줄기는 이 글이 따라온 계보와 일치한다. 진츠하이머가 독일 노동법학의 창시자로서 종속노동을 노동법의 대상으로 규정했다는 점, 독일에서 경제적 종속에서 인격적 종속으로 중심이 옮겨 가고 연방노동법원이 다지표 유형론을 다듬었으며 경제적 종속이 유사근로자로 옮겨 갔다는 점, 2017년 민법 제611a조의 성문화와 2020년 크라우드워커 판결, 일본 1985년 보고의 사용종속성과 네 가지 판단 요소, 권고 제198호 제12항의 &quot;subordination or dependence&quot;와 EU 지침의 추정 방식, 그리고 한국에서 94다22859가 지표를 처음 체계화하고 2004다29736이 &#39;상당한 지휘·감독&#39;으로 완화했다는 점이 그렇다. 수용 경로를 단정하지 않는 신중함(75쪽)도 계보 연구의 태도로서 타당하다.</p>
 <p>논문은 계보를 보강하는 자료도 제공한다. 1953년 근로기준법 제14조의 문언과 1972년부터 1991년까지의 판례 연혁, 진츠하이머 종속노동 정의의 한국어 문언, 일본의 전전·전후 학설사, 1978년 연방노동법원 판결의 조직적 종속성, ICSE-18과 스페인 라이더법, 2007년 산재보험법의 특수형태근로종사자 특례가 그 예다.</p>
 <h3 id="94-해석상-긴장-다섯-가지-읽는-법"><a href="#94-해석상-긴장-다섯-가지-읽는-법" class="heading-anchor" aria-hidden="true">#</a> 9.4 해석상 긴장 — 다섯 가지 읽는 법</h3><p>다만 진츠하이머를 다루는 대목에는 계보에 비추어 비판적으로 읽어야 할 곳이 있다. 오류라기보다 해석의 선택이 드러나는 곳들이다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>쟁점</th>
@@ -1670,7 +2151,7 @@
 <p>왼쪽 축만 보면 논문의 호출은 자연스럽다. 진츠하이머의 &#39;타인의 처분권&#39;이 1920년대 이후 지시 구속으로 좁혀졌다가, 연방노동법원과 제611a조의 &#39;타인이 결정하는 노동&#39;을 거쳐 타인결정성으로 다시 넓어지는 흐름은 계보로서 설득력이 있다. 그러나 진츠하이머 자신에게 종속의 확인은 출발점이었을 뿐이다. 그는 종속을 확인한 다음 단체협약과 노동자의 집단적 자기결정으로 그 종속을 상쇄하는 법을 설계하는 데 더 많은 힘을 쏟았다. 개별 노동보호법제로 대상을 한정한 논문이 이 축을 다루지 않은 것은 정당한 선택이지만, 진츠하이머를 근거로 삼는 독자는 그가 두 축을 함께 세웠다는 점을 기억할 필요가 있다.</p>
 <hr>
 <h2 id="10-한눈에-보기"><a href="#10-한눈에-보기" class="heading-anchor" aria-hidden="true">#</a> 10. 한눈에 보기</h2><h3 id="101-연표"><a href="#101-연표" class="heading-anchor" aria-hidden="true">#</a> 10.1 연표</h3><p>출처끼리 엇갈리는 연도는 두 기록을 함께 적었다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>연도</th>
@@ -1993,7 +2474,7 @@
 </tr>
 </tbody></table>
 </div><h3 id="102-간추린-설명과-실제"><a href="#102-간추린-설명과-실제" class="heading-anchor" aria-hidden="true">#</a> 10.2 간추린 설명과 실제</h3><p>종속성의 계보를 짧게 설명하다 보면 흐름을 선명하게 하려다 사실이 앞서 나가기 쉽다. 아래 표는 흔히 쓰이는 간추린 설명을 원 자료에 비추어 정리한 것이다. 왼쪽 문장이 완전히 틀렸다는 뜻이 아니라, 그대로 인용하면 오해가 생길 수 있다는 뜻이다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>간추린 설명</th>
@@ -2369,6 +2850,49 @@
         closeDrawer();
       });
     });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
 
     // Copy Code Buttons
     document.querySelectorAll('.copy-btn').forEach(btn => {

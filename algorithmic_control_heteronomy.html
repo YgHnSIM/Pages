@@ -152,7 +152,7 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 75px;
+      scroll-padding-top: 80px;
     }
 
     body {
@@ -404,6 +404,10 @@
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
     }
 
     .content h1, .content h2, .content h3, .content h4 {
@@ -932,14 +936,145 @@
       }
     }
 
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
     .table-wrapper {
+      position: relative;
       width: 100%;
       overflow-x: auto;
-      margin: 1.6em 0;
+      margin: 1.8em 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       -webkit-overflow-scrolling: touch;
       box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     .content table {
@@ -952,16 +1087,17 @@
     .content th {
       background: var(--bg-surface);
       font-weight: 700;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .content td {
-      padding: 10px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
+      vertical-align: middle;
     }
 
     .content tr:last-child td {
@@ -970,6 +1106,273 @@
 
     .content tr:nth-child(even) td {
       background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #a78bfa; }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
     }
 
     /* TOC Drawer (Slide-in) */
@@ -993,8 +1396,8 @@
       position: fixed;
       top: 0;
       right: -320px;
-      width: 300px;
-      max-width: 85vw;
+      width: 320px;
+      max-width: 88vw;
       height: 100%;
       background: var(--drawer-bg);
       border-left: 1px solid var(--border);
@@ -1034,29 +1437,83 @@
     .toc-drawer-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px 40px;
+      padding: 16px 16px 40px;
     }
 
-    .toc-drawer-body ul {
+    .toc-drawer-body ul.toc-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
     .toc-drawer-body li {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .toc-drawer-body li.depth-2 { padding-left: 0; }
-    .toc-drawer-body li.depth-3 { padding-left: 14px; }
-    .toc-drawer-body li.depth-4 { padding-left: 24px; }
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
 
     .toc-link {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.45;
-      display: block;
+      display: flex;
+      align-items: baseline;
       padding: 4px 6px;
       border-radius: var(--radius-sm);
       transition: all 0.15s ease;
@@ -1065,7 +1522,31 @@
     .toc-link:hover, .toc-link.active {
       color: var(--primary);
       background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
       font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
     }
 
     /* Floating Back to Top */
@@ -1156,7 +1637,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#1-테제-지휘감독이-사라진-자리에서-무엇을-물을-것인가" class="toc-link">1. 테제 — 지휘·감독이 사라진 자리에서 무엇을 물을 것인가</a></li><li class="depth-2"><a href="#2-법문에-없는-말-종속성은-어떻게-근로자-개념의-중심이-되었나" class="toc-link">2. 법문에 없는 말 — 종속성은 어떻게 근로자 개념의 중심이 되었나</a></li><li class="depth-3"><a href="#21-한국-정의-규정과-판례가-덧붙인-종속적-관계" class="toc-link">2.1 한국: 정의 규정과 판례가 덧붙인 종속적 관계</a></li><li class="depth-3"><a href="#22-시민법의-공백과-타인의-처분권-아래의-노동" class="toc-link">2.2 시민법의 공백과 타인의 처분권 아래의 노동</a></li><li class="depth-3"><a href="#23-독일-경제적-종속에서-인격적-종속으로-그리고-민법-제611a조" class="toc-link">2.3 독일: 경제적 종속에서 인격적 종속으로, 그리고 민법 제611a조</a></li><li class="depth-3"><a href="#24-일본의-사용종속성과-한국-판례-닮았지만-계보는-단정할-수-없다" class="toc-link">2.4 일본의 사용종속성과 한국 판례 — 닮았지만 계보는 단정할 수 없다</a></li><li class="depth-2"><a href="#3-종속성-판단이-안에서부터-흔들리는-이유" class="toc-link">3. 종속성 판단이 안에서부터 흔들리는 이유</a></li><li class="depth-3"><a href="#31-공장-모델이라는-전제" class="toc-link">3.1 공장 모델이라는 전제</a></li><li class="depth-3"><a href="#32-세-가지-내재적-모순" class="toc-link">3.2 세 가지 내재적 모순</a></li><li class="depth-3"><a href="#33-보호의-필요조건도-충분조건도-아니다" class="toc-link">3.3 보호의 필요조건도 충분조건도 아니다</a></li><li class="depth-2"><a href="#4-알고리즘은-어떻게-일을-정하는가" class="toc-link">4. 알고리즘은 어떻게 일을 정하는가</a></li><li class="depth-3"><a href="#41-명령에서-코드로-감독자에서-네트워크로-계약에서-약관으로" class="toc-link">4.1 명령에서 코드로, 감독자에서 네트워크로, 계약에서 약관으로</a></li><li class="depth-3"><a href="#42-제조된-동의-그리고-세-가지-질적-차이" class="toc-link">4.2 제조된 동의, 그리고 세 가지 질적 차이</a></li><li class="depth-2"><a href="#5-법원은-어디까지-따라왔나" class="toc-link">5. 법원은 어디까지 따라왔나</a></li><li class="depth-3"><a href="#51-독일-연방노동법원의-크라우드워커-판결" class="toc-link">5.1 독일 연방노동법원의 크라우드워커 판결</a></li><li class="depth-3"><a href="#52-한국-대법원의-타다-판결" class="toc-link">5.2 한국 대법원의 타다 판결</a></li><li class="depth-3"><a href="#53-확장유추와-재구성의-차이" class="toc-link">5.3 확장·유추와 재구성의 차이</a></li><li class="depth-2"><a href="#6-통계가-먼저-다시-그린-지도" class="toc-link">6. 통계가 먼저 다시 그린 지도</a></li><li class="depth-2"><a href="#7-재구성인가-새-기준인가-타인결정성" class="toc-link">7. 재구성인가 새 기준인가 — 타인결정성</a></li><li class="depth-3"><a href="#71-먼저-검토된-세-대안이-멈춘-곳" class="toc-link">7.1 먼저 검토된 세 대안이 멈춘 곳</a></li><li class="depth-3"><a href="#72-발견되는-사실에서-규범적-개념으로" class="toc-link">7.2 발견되는 사실에서 규범적 개념으로</a></li><li class="depth-3"><a href="#73-틀은-유지하고-재구성하기" class="toc-link">7.3 틀은 유지하고 재구성하기</a></li><li class="depth-3"><a href="#74-타인결정성-정의와-세-측면" class="toc-link">7.4 타인결정성: 정의와 세 측면</a></li><li class="depth-3"><a href="#75-타인은-누구인가-알고리즘은-사용자가-될-수-없다" class="toc-link">7.5 타인은 누구인가 — 알고리즘은 사용자가 될 수 없다</a></li><li class="depth-2"><a href="#8-근로자-정의를-다시-쓰기-개정안과-근로자-추정" class="toc-link">8. 근로자 정의를 다시 쓰기 — 개정안과 근로자 추정</a></li><li class="depth-3"><a href="#81-해석만으로는-왜-부족한가" class="toc-link">8.1 해석만으로는 왜 부족한가</a></li><li class="depth-3"><a href="#82-개정안-읽기" class="toc-link">8.2 개정안 읽기</a></li><li class="depth-3"><a href="#83-추정이-하는-일과-하지-못하는-일" class="toc-link">8.3 추정이 하는 일과 하지 못하는 일</a></li><li class="depth-3"><a href="#84-다른-나라의-추정-규정과-한국의-입법-논의" class="toc-link">8.4 다른 나라의 추정 규정과 한국의 입법 논의</a></li><li class="depth-2"><a href="#9-한눈에-보기-간추린-설명과-실제-법" class="toc-link">9. 한눈에 보기 — 간추린 설명과 실제 법</a></li><li class="depth-2"><a href="#10-평가-타인결정성이-열어-주는-것과-남기는-것" class="toc-link">10. 평가 — 타인결정성이 열어 주는 것과 남기는 것</a></li><li class="depth-3"><a href="#101-열어-주는-것" class="toc-link">10.1 열어 주는 것</a></li><li class="depth-3"><a href="#102-남기는-것" class="toc-link">10.2 남기는 것</a></li><li class="depth-2"><a href="#11-맺음-누가-정하는가를-묻는-법" class="toc-link">11. 맺음 — 누가 정하는가를 묻는 법</a></li><li class="depth-2"><a href="#출처" class="toc-link">출처</a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#1-테제-지휘감독이-사라진-자리에서-무엇을-물을-것인가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 테제 — 지휘·감독이 사라진 자리에서 무엇을 물을 것인가</span></a></li><li class="depth-2"><a href="#2-법문에-없는-말-종속성은-어떻게-근로자-개념의-중심이-되었나" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 법문에 없는 말 — 종속성은 어떻게 근로자 개념의 중심이 되었나</span></a></li><li class="depth-3"><a href="#21-한국-정의-규정과-판례가-덧붙인-종속적-관계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 한국: 정의 규정과 판례가 덧붙인 종속적 관계</span></a></li><li class="depth-3"><a href="#22-시민법의-공백과-타인의-처분권-아래의-노동" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 시민법의 공백과 타인의 처분권 아래의 노동</span></a></li><li class="depth-3"><a href="#23-독일-경제적-종속에서-인격적-종속으로-그리고-민법-제611a조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 독일: 경제적 종속에서 인격적 종속으로, 그리고 민법 제611a조</span></a></li><li class="depth-3"><a href="#24-일본의-사용종속성과-한국-판례-닮았지만-계보는-단정할-수-없다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.4 일본의 사용종속성과 한국 판례 — 닮았지만 계보는 단정할 수 없다</span></a></li><li class="depth-2"><a href="#3-종속성-판단이-안에서부터-흔들리는-이유" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 종속성 판단이 안에서부터 흔들리는 이유</span></a></li><li class="depth-3"><a href="#31-공장-모델이라는-전제" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 공장 모델이라는 전제</span></a></li><li class="depth-3"><a href="#32-세-가지-내재적-모순" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 세 가지 내재적 모순</span></a></li><li class="depth-3"><a href="#33-보호의-필요조건도-충분조건도-아니다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 보호의 필요조건도 충분조건도 아니다</span></a></li><li class="depth-2"><a href="#4-알고리즘은-어떻게-일을-정하는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 알고리즘은 어떻게 일을 정하는가</span></a></li><li class="depth-3"><a href="#41-명령에서-코드로-감독자에서-네트워크로-계약에서-약관으로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 명령에서 코드로, 감독자에서 네트워크로, 계약에서 약관으로</span></a></li><li class="depth-3"><a href="#42-제조된-동의-그리고-세-가지-질적-차이" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 제조된 동의, 그리고 세 가지 질적 차이</span></a></li><li class="depth-2"><a href="#5-법원은-어디까지-따라왔나" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 법원은 어디까지 따라왔나</span></a></li><li class="depth-3"><a href="#51-독일-연방노동법원의-크라우드워커-판결" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 독일 연방노동법원의 크라우드워커 판결</span></a></li><li class="depth-3"><a href="#52-한국-대법원의-타다-판결" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 한국 대법원의 타다 판결</span></a></li><li class="depth-3"><a href="#53-확장유추와-재구성의-차이" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 확장·유추와 재구성의 차이</span></a></li><li class="depth-2"><a href="#6-통계가-먼저-다시-그린-지도" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 통계가 먼저 다시 그린 지도</span></a></li><li class="depth-2"><a href="#7-재구성인가-새-기준인가-타인결정성" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 재구성인가 새 기준인가 — 타인결정성</span></a></li><li class="depth-3"><a href="#71-먼저-검토된-세-대안이-멈춘-곳" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 먼저 검토된 세 대안이 멈춘 곳</span></a></li><li class="depth-3"><a href="#72-발견되는-사실에서-규범적-개념으로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 발견되는 사실에서 규범적 개념으로</span></a></li><li class="depth-3"><a href="#73-틀은-유지하고-재구성하기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 틀은 유지하고 재구성하기</span></a></li><li class="depth-3"><a href="#74-타인결정성-정의와-세-측면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.4 타인결정성: 정의와 세 측면</span></a></li><li class="depth-3"><a href="#75-타인은-누구인가-알고리즘은-사용자가-될-수-없다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.5 타인은 누구인가 — 알고리즘은 사용자가 될 수 없다</span></a></li><li class="depth-2"><a href="#8-근로자-정의를-다시-쓰기-개정안과-근로자-추정" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 근로자 정의를 다시 쓰기 — 개정안과 근로자 추정</span></a></li><li class="depth-3"><a href="#81-해석만으로는-왜-부족한가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 해석만으로는 왜 부족한가</span></a></li><li class="depth-3"><a href="#82-개정안-읽기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 개정안 읽기</span></a></li><li class="depth-3"><a href="#83-추정이-하는-일과-하지-못하는-일" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.3 추정이 하는 일과 하지 못하는 일</span></a></li><li class="depth-3"><a href="#84-다른-나라의-추정-규정과-한국의-입법-논의" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.4 다른 나라의 추정 규정과 한국의 입법 논의</span></a></li><li class="depth-2"><a href="#9-한눈에-보기-간추린-설명과-실제-법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 한눈에 보기 — 간추린 설명과 실제 법</span></a></li><li class="depth-2"><a href="#10-평가-타인결정성이-열어-주는-것과-남기는-것" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 평가 — 타인결정성이 열어 주는 것과 남기는 것</span></a></li><li class="depth-3"><a href="#101-열어-주는-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.1 열어 주는 것</span></a></li><li class="depth-3"><a href="#102-남기는-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.2 남기는 것</span></a></li><li class="depth-2"><a href="#11-맺음-누가-정하는가를-묻는-법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11. 맺음 — 누가 정하는가를 묻는 법</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
     </div>
   </aside>
 
@@ -1202,7 +1683,7 @@
 <hr>
 <h2 id="1-테제-지휘감독이-사라진-자리에서-무엇을-물을-것인가"><a href="#1-테제-지휘감독이-사라진-자리에서-무엇을-물을-것인가" class="heading-anchor" aria-hidden="true">#</a> 1. 테제 — 지휘·감독이 사라진 자리에서 무엇을 물을 것인가</h2><p>근로자인지 아닌지는 근로기준법의 거의 모든 보호가 적용되느냐를 가르는 입구다. 해고 제한, 최저임금, 근로시간, 퇴직금이 모두 이 입구 뒤에 있다. 그 입구를 지키는 기준이 종속성이고, 종속성은 오랫동안 공장의 장면을 모델로 삼아 왔다. 정해진 시간에 출근하고, 감독자가 지시하고, 회사의 도구로 일하고, 취업규칙을 따르는 사람이다. 알고리즘이 일을 배분하는 노동에서 이 장면의 요소들은 하나씩 흐려진다. 그러나 통제가 사라진 것은 아니다. 통제의 형식이 바뀌었을 뿐이다.</p>
 <p>이 글의 논지는 여섯 단계로 정리할 수 있다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>단계</th>
@@ -1443,7 +1924,7 @@
 <p>&quot;근로자&quot;란 직업의 종류와 관계없이 타인을 위하여 노동하고 그 대가로 보수를 받는 사람을 말한다. 계약의 형식이나 명칭을 불문하고, 노무제공의 방법·시간·장소·내용에 관한 본질적 사항이 노무수령자 또는 그가 설정·운영하는 규칙·기준·지침·알고리즘·시스템 등에 의하여 계속적·실질적으로 결정되거나 통제되는 경우에는 이 법에서 정한 근로자로 추정한다. 계약의 형식이나 명칭은 위 판단에 영향을 미치지 아니한다.</p>
 </blockquote>
 <p>현행 규정과 나란히 놓으면 바뀌는 것과 바뀌지 않는 것이 분명해진다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>구성 요소</th>
@@ -1546,7 +2027,7 @@
 </blockquote>
 <hr>
 <h2 id="9-한눈에-보기-간추린-설명과-실제-법"><a href="#9-한눈에-보기-간추린-설명과-실제-법" class="heading-anchor" aria-hidden="true">#</a> 9. 한눈에 보기 — 간추린 설명과 실제 법</h2><p>종속성과 플랫폼 노동을 짧게 설명하다 보면 대비를 선명하게 하려다 사실이 앞서 나가기 쉽다. 아래 표는 흔히 쓰이는 간추린 설명을 법령·판례와 논문의 실제 입장에 비추어 정리한 것이다. 왼쪽 문장이 완전히 틀렸다는 뜻이라기보다, 오른쪽의 조건을 붙여야 정확해진다는 뜻으로 읽으면 된다.</p>
-<div class="table-wrapper"><table>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
 <thead>
 <tr>
 <th>간추린 설명</th>
@@ -1854,6 +2335,49 @@
         closeDrawer();
       });
     });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
 
     // Copy Code Buttons
     document.querySelectorAll('.copy-btn').forEach(btn => {
