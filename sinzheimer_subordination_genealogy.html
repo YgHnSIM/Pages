@@ -7,6 +7,10 @@
   <meta name="description" content="한국 법원이 근로자성을 가릴 때 묻는 '종속적인 관계'는 어디서 왔는가. 독일 노동법학을 세운 휴고 진츠하이머의 생애와 사상에서 출발해, 로마법의 노무 임대차와 독일 민법의 형식적 대등성, 로트마르의 노동계약론을 거쳐 '타인의 처분권 아래의 노동'이라는 종속노동 개념이 나오고, 그것이 독일에서 인격적 종속과 경제적 종속으로 갈라져 일본과 한국으로 건너가는 경로를 따라간다. 국제 규범과 플랫폼 시대의 대응, 2026년 '종속성' 연구가 진츠하이머를 읽는 방식까지 계보 위에서 검토하고, 출처끼리 엇갈리는 사실은 한쪽을 고르지 않고 함께 적는다.">
   
   
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <!-- Pretendard Web Font -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -33,6 +37,16 @@
       display: none !important;
       user-select: none !important;
       -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
     }
 
     :root {
@@ -160,6 +174,7 @@
     html {
       scroll-behavior: smooth;
       scroll-padding-top: 80px;
+      overflow-x: hidden;
     }
 
     body {
@@ -174,6 +189,9 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
     }
 
     /* Top Sticky Header */
@@ -190,12 +208,26 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
-    .nav-left, .nav-right {
+    .nav-left {
       display: flex;
       align-items: center;
       gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .nav-btn {
@@ -478,7 +510,8 @@
       color: var(--primary);
       text-decoration: underline;
       text-underline-offset: 3px;
-      word-break: break-all;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
 
     .content a:hover {
@@ -1086,6 +1119,7 @@
 
     .content table {
       width: 100%;
+      min-width: 780px;
       border-collapse: collapse;
       font-size: 14.5px;
       text-align: left;
@@ -1105,6 +1139,7 @@
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
       vertical-align: middle;
+      word-break: keep-all;
     }
 
     .content tr:last-child td {
@@ -1569,7 +1604,8 @@
     .toc-drawer {
       position: fixed;
       top: 0;
-      right: -320px;
+      right: 0;
+      transform: translateX(100%);
       width: 320px;
       max-width: 88vw;
       height: 100%;
@@ -1579,11 +1615,11 @@
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-lg);
-      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .toc-drawer.active {
-      right: 0;
+      transform: translateX(0);
     }
 
     .toc-drawer-header {

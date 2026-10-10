@@ -7,6 +7,10 @@
   <meta name="description" content="멀티스텝 에이전트가 한 줄 사슬로 남는 이유를 풀고, 노드·간선·팬아웃·검증·모델 티어링으로 “함대”를 언제 띄울지 입문자가 바로 연습할 수 있게 정리한다.">
   
   
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <!-- Pretendard Web Font -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -33,6 +37,16 @@
       display: none !important;
       user-select: none !important;
       -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
     }
 
     :root {
@@ -160,6 +174,7 @@
     html {
       scroll-behavior: smooth;
       scroll-padding-top: 80px;
+      overflow-x: hidden;
     }
 
     body {
@@ -174,6 +189,9 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
     }
 
     /* Top Sticky Header */
@@ -190,12 +208,26 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
-    .nav-left, .nav-right {
+    .nav-left {
       display: flex;
       align-items: center;
       gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .nav-btn {
@@ -478,7 +510,8 @@
       color: var(--primary);
       text-decoration: underline;
       text-underline-offset: 3px;
-      word-break: break-all;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
 
     .content a:hover {
@@ -1086,6 +1119,7 @@
 
     .content table {
       width: 100%;
+      min-width: 780px;
       border-collapse: collapse;
       font-size: 14.5px;
       text-align: left;
@@ -1105,6 +1139,7 @@
       border-bottom: 1px solid var(--border);
       color: var(--text-main);
       vertical-align: middle;
+      word-break: keep-all;
     }
 
     .content tr:last-child td {
@@ -1569,7 +1604,8 @@
     .toc-drawer {
       position: fixed;
       top: 0;
-      right: -320px;
+      right: 0;
+      transform: translateX(100%);
       width: 320px;
       max-width: 88vw;
       height: 100%;
@@ -1579,11 +1615,11 @@
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-lg);
-      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .toc-drawer.active {
-      right: 0;
+      transform: translateX(0);
     }
 
     .toc-drawer-header {
