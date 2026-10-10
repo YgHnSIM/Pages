@@ -421,6 +421,7 @@ async function build() {
     const outFilePath = path.join(outDir, outFileName);
     const publicUrl = outSubdir ? `${outSubdir}/${outFileName}` : outFileName;
     const homeUrl = isPreview ? '../index.html' : 'index.html';
+    const rootPath = isPreview ? '../' : '';
     const robotsMeta = unlisted
       ? '<meta name="robots" content="noindex, nofollow">'
       : '';
@@ -436,6 +437,7 @@ async function build() {
       toc_html: tocHtml,
       content: contentHtml,
       home_url: homeUrl,
+      root_path: rootPath,
       robots_meta: robotsMeta
     });
 
