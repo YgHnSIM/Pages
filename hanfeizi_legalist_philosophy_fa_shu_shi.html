@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>중국의 법가(法家) 사상을 집대성한 『한비자』의 법철학 — 법·술·세 삼위일체와 현실주의 통치학</title>
+  <meta name="description" content="500년 춘추전국의 극심한 혼란을 종식시키고 진시황의 천하통일을 견인한 한비(韓非)의 법철학을 심층 해부한다. 노자의 '도(道)'를 냉혹한 현실의 '리(理)'와 '참험(參驗)'으로 변용한 인식론, 상앙의 법(法)·신불해의 술(術)·신도의 세(勢)를 하나로 엮은 '법·술·세 삼위일체' 거버넌스, 진나라의 천하통일과 15년 만의 조기 멸망이 남긴 구조적 교훈, 그리고 '법불아귀(法不阿貴)'가 21세기 민주적 법치국가에 던지는 준엄한 질문을 김효성(2019)의 연구를 바탕으로 다각도로 조명한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">중국의 법가(法家) 사상을 집대성한 『한비자』의 법철학 — 법·술·세 삼위일체와 현실주의 통치학</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-춘추전국의-종말과-한비의-비극적-생애" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 춘추전국의 종말과 한비(韓非)의 비극적 생애</span></a></li><li class="depth-3"><a href="#11-500년-난세와-유가의-무력함" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 500년 난세와 유가(儒家)의 무력함</span></a></li><li class="depth-3"><a href="#12-공자-한비와-진시황의-만남-그리고-이사의-모함" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 공자 한비와 진시황의 만남, 그리고 이사의 모함</span></a></li><li class="depth-2"><a href="#2-한비자의-철학사상-노자의-현실-권력학적-전복" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 한비자의 철학사상 — 노자(老子)의 현실 권력학적 전복</span></a></li><li class="depth-3"><a href="#21-첫째-방관적-무위에서-39냉혹한-이기주의39로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 첫째: 방관적 무위에서 &#39;냉혹한 이기주의&#39;로</span></a></li><li class="depth-3"><a href="#22-둘째-보편적-도에서-구체적-모순의-법칙-39리39와-39참험39으로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 둘째: 보편적 도(道)에서 구체적 모순의 법칙 &#39;리(理)&#39;와 &#39;참험(參驗)&#39;으로</span></a></li><li class="depth-3"><a href="#23-셋째-공리적-실효용과-부쟁의-거부" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 셋째: 공리적 실효용과 부쟁(不爭)의 거부</span></a></li><li class="depth-2"><a href="#3-통치-시스템의-완성-법술세의-삼위일체" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 통치 시스템의 완성 — 법(法)·술(術)·세(勢)의 삼위일체</span></a></li><li class="depth-3"><a href="#31-상앙의-법-백성의-행위-기준" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 상앙(商鞅)의 법(法) — 백성의 행위 기준</span></a></li><li class="depth-3"><a href="#32-신불해의-술-신하를-통어하는-은밀한-용인술" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 신불해(申不害)의 술(術) — 신하를 통어하는 은밀한 용인술</span></a></li><li class="depth-3"><a href="#33-신도의-세-복종을-이끌어내는-권력과-지위" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 신도(愼到)의 세(勢) — 복종을 이끌어내는 권력과 지위</span></a></li><li class="depth-3"><a href="#34-한비의-종합-법술세-삼위일체-아키텍처" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.4 한비의 종합: 법·술·세 삼위일체 아키텍처</span></a></li><li class="depth-4"><a href="#한비자가-규정한-법술세의-작동-원리" class="toc-link"><span class="toc-badge badge-h4">소주제</span><span class="toc-text">한비자가 규정한 법·술·세의 작동 원리</span></a></li><li class="depth-2"><a href="#4-진나라의-통일과-15년-만의-조기-멸망-도구적-이성의-파국" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 진나라의 통일과 15년 만의 조기 멸망 — 도구적 이성의 파국</span></a></li><li class="depth-3"><a href="#41-천하통일의-무적-엔진" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 천하통일의 무적 엔진</span></a></li><li class="depth-3"><a href="#42-왜-불과-15년-만에-무너졌는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 왜 불과 15년 만에 무너졌는가?</span></a></li><li class="depth-3"><a href="#43-한-제국의-타협-양유음법의-탄생" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 한(漢) 제국의 타협 — 양유음법(陽儒陰法)의 탄생</span></a></li><li class="depth-2"><a href="#5-비교사상사-한비자와-마키아벨리의-군주론" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 비교사상사 — 한비자와 마키아벨리의 『군주론』</span></a></li><li class="depth-2"><a href="#6-현대적-조명과-비판적-성찰-법치주의의-빛과-그림자" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 현대적 조명과 비판적 성찰 — 법치주의의 빛과 그림자</span></a></li><li class="depth-3"><a href="#61-한비자가-던지는-8대-현대적-교훈-빛" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 한비자가 던지는 8대 현대적 교훈 (빛)</span></a></li><li class="depth-3"><a href="#62-비판적-한계-39법을-통한-지배39의-함정-그림자" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 비판적 한계 — &#39;법을 통한 지배&#39;의 함정 (그림자)</span></a></li><li class="depth-2"><a href="#7-결론-덕의-나침반과-법의-수레바퀴" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 결론 — 덕(德)의 나침반과 법(法)의 수레바퀴</span></a></li><li class="depth-3"><a href="#참고문헌" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">📚 참고문헌</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-11</span>
+          <span class="meta-badge">⏱️ 약 45분</span>
+          <span class="meta-badge">✍️ 김효성 논문 분석 및 Pages 연구팀</span>
+        </div>
+        <h1 class="article-title">중국의 법가(法家) 사상을 집대성한 『한비자』의 법철학 — 법·술·세 삼위일체와 현실주의 통치학</h1>
+        <p class="article-subtitle">노자 변증법의 현실 개조, 법(法)·술(術)·세(勢)의 결합 메커니즘, 그리고 현대 법치주의의 빛과 그림자</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#동양철학</span>
+          
+          <span class="tag-pill">#법가사상</span>
+          
+          <span class="tag-pill">#한비자</span>
+          
+          <span class="tag-pill">#법철학</span>
+          
+          <span class="tag-pill">#정치철학</span>
+          
+          <span class="tag-pill">#리더십</span>
+          
+          <span class="tag-pill">#제도설계</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <p><strong>&quot;이 사람을 한 번 만나 이야기를 나눌 수 있다면 죽어도 여한이 없겠다.&quot;</strong></p>
+<p>기원전 230년대, 천하 통일을 목전에 둔 진(秦)나라의 젊은 왕 영정(嬴政, 훗날의 진시황)은 국경 너머 한(韓)나라에서 건너온 한 권의 책을 읽고 전율했다. 저자는 한나라의 왕족 출신 공자 <strong>한비(韓非, 기원전 약 280~233)</strong>였다. 말더듬이였던 탓에 조정에서 뜻을 펴지 못하고 변법(變法) 상소가 번번이 묵살당하자 피를 토하듯 저술했던 55편의 문장들은, 500여 년간 이어진 피비린내 나는 춘추전국시대의 혼란을 단숨에 베어버릴 가장 정교하고도 차가운 &#39;통치 기계의 설계도&#39;였다.</p>
+<p>진왕은 한나라를 압박하여 사신으로 온 한비를 손에 넣었다. 그러나 한비와 순자(荀子) 문하에서 동문수학했던 진나라 승상 이사(李斯)의 모함과 시기로 인해, 한비는 자신의 이론이 천하에 구현되는 광경을 보지 못한 채 옥중에서 독약을 마시고 비극적으로 생을 마감했다. 역사의 아이러니는 바로 여기에 있다. <strong>진나라는 한비의 학설을 전면 채용하여 중국 역사상 최초로 중앙집권적 대제국을 완성했으나, 그토록 막강했던 제국은 불과 15년 만에 농민 반란군(진승·오광의 난)과 제후들의 저항 속에 모래성처럼 무너져 내렸다.</strong></p>
+<p>이 글의 토대는 동양철학자 김효성 박사(유원대학교 교양융합학부 / 동국대학교 철학과)의 학술 논문 <strong>「중국의 법가(法家) 사상을 집대성한 한비(韓非)의 저서인 &#39;한비자&#39;(韓非子)에 나타난 법철학 사상에 관한 연구」</strong>(『사법행정』, 2019년 5월호, 41–59쪽)다.</p>
+<p>논문이 던지는 핵심 질문과 논점은 다음과 같다.</p>
+<ol>
+<li><strong>철학적 기초의 전복</strong>: 한비는 어떻게 도가(道家) 노자(老子)의 &#39;무위(無爲)&#39;와 &#39;도(道)&#39;를 차용하여, 인간의 위선과 사익을 가차 없이 발가벗기는 극단적 &#39;현실주의 이해관계학&#39;과 &#39;리(理)·참험(參驗)&#39;의 검증 철학으로 탈바꿈시켰는가?</li>
+<li><strong>법·술·세의 삼위일체 시스템</strong>: 상앙(商鞅)의 &#39;법(法)&#39;, 신불해(申不害)의 &#39;술(術)&#39;, 신도(愼到)의 &#39;세(勢)&#39;라는 전기 법가의 편협한 맹점을 한비는 어떻게 상호보완적 단일 거버넌스 아키텍처로 완성했는가?</li>
+<li><strong>진나라 멸망의 메커니즘과 사상사적 귀결</strong>: 도덕과 인정(人情)을 전면 거세하고 &#39;도구적 이성&#39;과 엄벌주의만으로 질주한 통치 체제는 왜 자멸할 수밖에 없었으며, 한(漢) 제국은 왜 겉으로는 유가, 속으로는 법가를 취하는 <strong>&#39;양유음법(陽儒陰法)&#39;</strong>으로 타협할 수밖에 없었는가?</li>
+<li><strong>현대적 법치주의와의 대화</strong>: 군주의 통치 도구에 불과했던 &#39;법을 통한 지배(Rule by Law)&#39;의 어두운 유산 속에서, 특권층을 용서하지 않는 <strong>&#39;법불아귀(法不阿貴)&#39;</strong>와 시스템 기반 관료제 거버넌스는 21세기 민주 법치국가에 어떤 살아있는 교훈을 건네는가?</li>
+</ol>
+<blockquote>
+<p><strong>읽는 법.</strong> 이 글은 ① 춘추전국 말기의 위기와 한비의 비극적 생애, ② 노자 형이상학을 현실 권력투쟁학으로 개조한 철학적 토대, ③ 법(法)·술(術)·세(勢)의 개념적 기원과 한비의 삼위일체 결합 메커니즘, ④ 진나라의 흥망과 전한(前漢)의 양유음법 타협, ⑤ 서양 마키아벨리 『군주론』과의 비교, ⑥ 현대 헌법적 법치주의(Rule of Law) 관점에서의 비판적 성찰을 체계적으로 추적한다.</p>
+</blockquote>
+<hr>
+<h2 id="1-춘추전국의-종말과-한비의-비극적-생애"><a href="#1-춘추전국의-종말과-한비의-비극적-생애" class="heading-anchor" aria-hidden="true">#</a> 1. 춘추전국의 종말과 한비(韓非)의 비극적 생애</h2><h3 id="11-500년-난세와-유가의-무력함"><a href="#11-500년-난세와-유가의-무력함" class="heading-anchor" aria-hidden="true">#</a> 1.1 500년 난세와 유가(儒家)의 무력함</h3><p>춘추전국시대(기원전 770~기원전 221)는 주(周)나라 봉건 질서가 붕괴하면서 하극상과 영토 전쟁이 쉼 없이 이어진 미증유의 대혼란기였다. 어제의 우방이 오늘의 적이 되고, 아들이 아비를 시해하며 신하가 군주를 내쫓는 생존 투쟁의 장에서 제자백가(諸子百家)는 저마다 천하를 안정시킬 구상의 보따리를 풀었다.</p>
+<p>공자(孔子)와 맹자(孟子)로 대표되는 유가(儒家)는 인간의 선한 본성과 도덕적 감마력에 기초한 <strong>&#39;덕치(德治)&#39;</strong>와 주나라 초기의 <strong>&#39;예치(禮治)&#39;</strong>로 돌아갈 것을 역설했다. 그러나 총력전이 일상화된 전국시대 말기의 군주들에게 &quot;도덕으로 나라를 다스리라&quot;는 유가의 유세는 한가로운 이상론이자 무기력한 공염불에 불과했다. 유가의 도덕 정치는 군주의 자의적 선의(善意)에 기댈 뿐, 조직화된 국가 기구를 작동시키고 국경을 방어하며 내부의 간신을 통제할 실질적 메커니즘을 제공하지 못했다.</p>
+<p>이러한 시대적 절박함 속에서 등장한 학파가 바로 <strong>법가(法家)</strong>였다. 법가는 국가의 유일한 생존 전략은 오직 부국강병(富國强兵)이며, 군주의 도덕적 인품이 아니라 <strong>명문화된 법률, 엄격한 상벌, 효율적인 관료 행정</strong>만이 사회 질서를 유지할 수 있다고 확신했다.</p>
+<h3 id="12-공자-한비와-진시황의-만남-그리고-이사의-모함"><a href="#12-공자-한비와-진시황의-만남-그리고-이사의-모함" class="heading-anchor" aria-hidden="true">#</a> 1.2 공자 한비와 진시황의 만남, 그리고 이사의 모함</h3><p>한비는 전국 7웅 중 가장 국력이 약했던 한(韓)나라의 왕족 출신 공자였다. 사마천의 『사기(史記)』 「노자 한비열전」에 따르면, 그는 선천적으로 말을 심하게 더듬어 능수능란한 말솜씨로 유세하기에는 적합하지 않았으나, 사물의 이치를 꿰뚫고 문장으로 논변하는 능력은 당대 최고였다.</p>
+<p>한비는 조국 한나라가 주변 강대국(진나라 등)의 침략으로 풍전등화의 위기에 처해 있음에도, 국왕과 귀족들이 무능하고 사리사욕에 눈이 멀어 나라를 망치고 있는 현실에 비분강개했다. 그는 한나라 왕 안(安)에게 부국강병을 위해 낡은 귀족제를 철폐하고 법치를 도입해야 한다는 변법(變法) 상소를 수차례 올렸다. 그러나 우유부단한 왕은 이를 번번이 묵살했다.</p>
+<p>조국에서 뜻을 펼 수 없었던 한비는 자신의 서재에서 울분을 삭이며 글을 썼다. 군주가 신하를 통어하는 기술을 다룬 「고분(孤憤)」, 「오두(五蠹)」, 「설란(說難)」, 「내외저설(內外儲說)」 등 55편에 달하는 방대한 저작들이 쏟아져 나왔다. 이 글들이 바로 훗날 『한비자(韓非子)』라는 불멸의 고전으로 묶이게 된 텍스트다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[사상적 동문수학]
+순자(荀子)의 문하 ──┬──&gt; 이사(李斯): 진나라 승상, 실천적 관료, 현실 권력욕
+                  └──&gt; 한비(韓非): 한나라 공자, 이론적 천재, 고독한 사상가
+                           │
+                           │ 『한비자』 저술 (기원전 230년대)
+                           ▼
+                  진왕 영정(嬴政, 진시황)의 탄복
+                  "이 사람을 만나 담판할 수 있다면 죽어도 여한이 없다!"
+                           │
+                           │ 한나라 사신으로 진나라 입국
+                           ▼
+                  이사의 질투와 참소 ("한비는 한나라 왕족이라 진나라를 위해 일하지 않을 것")
+                  옥중 투옥 ──&gt; 독약 강요에 의한 자살 (기원전 233년)</code></pre>
+</div><p>진왕 영정은 우연히 국경을 넘어온 한비의 글 「고분」과 「오두」를 읽고 무릎을 치며 감탄했다. 기원전 234년 진나라가 한나라를 침공하자, 벼랑 끝에 몰린 한나라 왕은 진왕이 그토록 흠모하던 한비를 강화 사신으로 파견했다. 진왕은 한비를 극진히 환대하며 곁에 두고자 했다.</p>
+<p>그러나 이 순간 비극이 싹텄다. 진나라에서 이미 승상의 자리에 올라 권력을 휘두르고 있던 이사(李斯)는 한비의 학문적 깊이와 천재성이 자신을 훨씬 능가한다는 사실을 누구보다 잘 알고 있었다. 한비가 진왕의 신임을 얻는 순간 자신의 지위가 위태로워질 것을 두려워한 이사는 요가(姚賈) 등과 결탁하여 진왕에게 참소했다.</p>
+<blockquote>
+<p>&quot;한비는 한나라의 왕족입니다. 지금 대왕께서 제후들을 병합하려 하시는데, 한비는 종국에는 한나라를 위하지 진나라를 위하지 않을 것입니다. 그를 오래 머물게 하다가 돌려보내는 것은 스스로 후환을 남기는 일입니다.&quot;</p>
+</blockquote>
+<p>의심 많은 진왕은 이사의 참소를 받아들여 한비를 옥에 가두고 옥리를 시켜 죄를 캐물었다. 이사는 진왕이 마음을 바꿀까 두려워 한비에게 몰래 독약을 보내 자살하도록 종용했다. 한비는 진왕을 직접 만나 자신의 진심을 밝히고자 했으나 알현이 허락되지 않았고, 결국 감옥 안에서 차가운 독약을 들이켜고 세상을 떠났다(기원전 233년). 진왕은 뒤늦게 후회하고 사면령을 내렸으나 한비는 이미 숨을 거둔 뒤였다.</p>
+<p>비록 한비 자신은 비참하게 살해당했으나, 그의 사상은 진왕 영정의 머릿속에 완벽히 각인되어 진나라의 제국 통치 철학으로 부활했다.</p>
+<hr>
+<h2 id="2-한비자의-철학사상-노자의-현실-권력학적-전복"><a href="#2-한비자의-철학사상-노자의-현실-권력학적-전복" class="heading-anchor" aria-hidden="true">#</a> 2. 한비자의 철학사상 — 노자(老子)의 현실 권력학적 전복</h2><p>많은 사람들이 한비자를 단순히 &quot;가혹한 형벌을 내리는 법률 기술서&quot;로 오해한다. 그러나 한비자의 법치는 대단히 깊은 철학적 형이상학과 인식론적 토대 위에 서 있다. 특히 한비자는 도가(道家)의 비조인 <strong>노자(老子)</strong>의 철학을 적극적으로 주석하고 계승하면서(『한비자』의 「해로(解老)」, 「유로(喻老)」 편), 이를 춘추전국의 피비린내 나는 권력투쟁에 맞게 완전히 뜯어고쳤다.</p>
+<p>김효성(2019)은 한비가 노자의 철학을 수용·발전시킨 기본 방향을 <strong>세 가지 핵심 특징</strong>으로 정리한다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">┌────────────────────────────────────────────────────────────────────────┐
+│             한비자의 철학적 계승 및 전복 (김효성, 2019)                   │
+├────────────────────────────────────────────────────────────────────────┤
+│ 1. 무관심한 방관(노자)  ───&gt; 극단적으로 냉혹한 이기주의·이해관계학(법가)   │
+│ 2. 형이상학적 도(道)    ───&gt; 구체적 모순 법칙 '리(理)'와 검증 '참험(參驗)' │
+│ 3. 무위·부쟁(不爭)     ───&gt; 공리적 실효용, 불병용(不併用), 강력한 무력 통일 │
+└────────────────────────────────────────────────────────────────────────┘</code></pre>
+</div><h3 id="21-첫째-방관적-무위에서-39냉혹한-이기주의39로"><a href="#21-첫째-방관적-무위에서-39냉혹한-이기주의39로" class="heading-anchor" aria-hidden="true">#</a> 2.1 첫째: 방관적 무위에서 &#39;냉혹한 이기주의&#39;로</h3><p>노자는 세속의 가치와 욕망을 덧없는 것으로 보고, 자연의 순리에 맡기는 초연하고 방관적인 무위자연(無爲自然)을 역설했다. 그러나 한비는 이 초연한 시선을 지극히 차갑고 비정한 <strong>&#39;인간의 적나라한 이해관계 계산&#39;</strong>으로 끌어내렸다.</p>
+<p>한비는 인간 사회의 모든 도덕, 윤리, 사랑, 충성이라는 외피를 무자비하게 벗겨냈다. 그에게 인간은 오직 <strong>자신의 이익(利)을 추구하고 손해(害)를 피하려는 철저한 이기적 동물</strong>에 불과했다. 유가가 칭송하는 숭고한 가족애조차 한비의 눈에는 냉정한 손익계산서의 결과물일 뿐이었다.</p>
+<ul>
+<li><strong>부모와 자식 간의 득실 계산</strong>:<blockquote>
+<p>&quot;자식은 부모가 낳았는데, 아들을 낳으면 서로 축하하고 딸을 낳으면 죽여 버린다. 이것은 부모가 자신의 이익을 고려하고 자신의 사후 이익을 따졌기 때문이다. 그러므로 부모와 자식 간에도 항상 계산하며 자신에게 이익이 있는가 없는가라는 관점을 가지고 대한다. 하물며 부모와 자식 간의 은혜로운 관계가 없는 군신 간의 관계에 대해서는 어떠하겠는가!&quot; (『한비자』 「육반(六反)」)</p>
+</blockquote>
+</li>
+<li><strong>의사와 환자, 수레 장인과 관(棺) 장인</strong>:<blockquote>
+<p>&quot;의사가 환자의 상처 난 곳을 열심히 빨아서 입안에 피를 머금으면서까지 치료하는 것은 결코 환자와 뜨거운 정이 있어서가 아니다. 단지 그렇게 해야만 이익을 얻을 수 있기 때문이다. 수레를 만드는 사람이 다른 사람들이 부귀해지기를 바란다면, 관을 만드는 장인은 사람들이 빨리 죽기를 바랄 것이다. 그러나 수레를 만드는 사람이 어질고 관 만드는 목수가 잔인해서가 아니다. 다른 사람이 죽지 않으면 관을 사가는 사람이 없기 때문이다. 목수의 본의는 결코 다른 사람을 증오하는 것이 아니라, 그의 이익이 다른 사람의 사망에 달려 있기 때문이다.&quot; (『한비자』 「비내(備內)」)</p>
+</blockquote>
+</li>
+<li><strong>지주와 고용 농부의 계약</strong>:<blockquote>
+<p>&quot;돈을 써서 인부를 고용하여 농사를 지으면 주인은 집안의 자산을 이용해 그들에게 풍성한 식사를 제공하고 대가를 지불한다. 이것은 인부를 사랑해서가 아니라, 이렇게 해야 밭을 깊이 갈고 김을 바르게 매주기 때문이다. 인부가 온갖 기술을 다해 일하는 것 또한 주인을 사랑해서가 아니라 밥과 반찬이 풍성해지고 품삯을 얻을 수 있기 때문이다.&quot; (『한비자』 「외저설좌상(外儲說左上)」)</p>
+</blockquote>
+</li>
+</ul>
+<p>한비에게 사회는 &#39;사랑과 인정의 공동체&#39;가 아니라 <strong>&#39;서로의 이익을 교환하고 거래하며 쟁탈하는 시장이자 전쟁터&#39;</strong>다. 따라서 군주가 신하의 충성심이나 신뢰에 의존하는 것은 자살행위나 다름없다.</p>
+<blockquote>
+<p>&quot;성인이 나라를 다스리는 데는 본래 다른 사람이 나를 아끼지 않을 수 없도록 만들고, 다른 사람에게 기대지 않고 나를 좋아하도록 만드는 것은 위험스럽다. 나에게 의지하여 다른 사람들이 나를 위하여 온 힘을 쓰도록 만드는 것으로 그렇게 했을 때 안정된다. 영명한 군주는 이 도리를 알고 있어서 이익을 얻고 손해를 보는 방법(상벌제도)을 설치하여 천하에 공포할 뿐이다.&quot; (『한비자』 「간겁시신(姦劫弑臣)」)</p>
+</blockquote>
+<h3 id="22-둘째-보편적-도에서-구체적-모순의-법칙-39리39와-39참험39으로"><a href="#22-둘째-보편적-도에서-구체적-모순의-법칙-39리39와-39참험39으로" class="heading-anchor" aria-hidden="true">#</a> 2.2 둘째: 보편적 도(道)에서 구체적 모순의 법칙 &#39;리(理)&#39;와 &#39;참험(參驗)&#39;으로</h3><p>노자의 &#39;도(道)&#39;는 형체가 없고 규정할 수 없는 우주의 근원이다. 한비자는 이 막연한 도를 현실 세계의 구체적 사물과 정치 질서에 작동하는 <strong>&#39;리(理, 이치·법칙)&#39;</strong>의 개념으로 구체화했다.</p>
+<ul>
+<li><strong>도(道)와 리(理)의 관계</strong>:<blockquote>
+<p>&quot;무릇 리(理)라는 것은 모나거나 둥근 것, 짧거나 긴 것, 거칠거나 미세한 것, 단단하거나 무른 것의 분별이다. 그러므로 리가 확정된 후에야 사물은 말할 수 있게 된다. ... 오직 도와 이에 따라 일을 하는 자는 이루지 못할 것이 없다.&quot; (『한비자』 「해로(解老)」)</p>
+</blockquote>
+</li>
+<li><strong>모순의 대립과 충돌 파악</strong>: 사물마다 고유한 구체적 규율(리)이 존재하며, 현실 정치는 언제나 상반된 이해관계의 대립과 충돌(모순)로 가득 차 있다. 군주는 환상이나 이상주의를 버리고, 사물의 구체적 모순을 차갑게 분석해야 한다.</li>
+<li><strong>마음을 비우는 허정(虛靜)의 목적 변화</strong>: 노자에게 마음을 비우는 것은 자연과의 합일이었으나, 한비에게 군주가 마음을 비우는 것은 <strong>자신의 주관적 감정(좋고 싫음, 기쁨과 분노)을 철저히 숨겨 신하들에게 약점을 잡히지 않고 객관적 사태를 있는 그대로 꿰뚫어 보기 위함</strong>이다.</li>
+<li><strong>참험(參驗)의 검증 방법론</strong>:
+한비는 말과 주장이 난무하는 정치판에서 진위를 가리는 방법으로 &#39;참험(비교하고 대조하여 검증함)&#39;을 제시했다.<blockquote>
+<p>&quot;실제 내용과 검증 없이 그렇게 하려는 것은 어리석음이다.&quot; (『한비자』 「현학(顯學)」)
+단순한 명분이나 아름다운 언설에 속지 않고, 다양한 징후(微驗)를 수집하여 신하가 한 말과 실제 결과가 부합하는지를 과학적·실증적으로 대조해야 한다는 것이다.</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="23-셋째-공리적-실효용과-부쟁의-거부"><a href="#23-셋째-공리적-실효용과-부쟁의-거부" class="heading-anchor" aria-hidden="true">#</a> 2.3 셋째: 공리적 실효용과 부쟁(不爭)의 거부</h3><p>공손룡(公孫龍)이나 혜시(惠施) 같은 명가(名家) 논리학자들은 &quot;흰 말은 말이 아니다(백마비마)&quot; 같은 추상적 개념 논쟁에 몰두했다. 한비는 이러한 사변적 유희를 철저히 경멸했다.</p>
+<blockquote>
+<p>&quot;동물을 잡는 날카로운 화살을 새롭게 갈아 만들고 제멋대로 발사한다면, 화살의 뾰족한 부분이 가는 짐승의 털과 같은 작은 물건을 맞추지 못하더라도 법도에 맞지 않는다. 왜냐하면 그것은 고정불변한 표적을 목표로 하고 있지 않기 때문이다. 지금 만약 언론을 청취하고 행위를 관찰할 때 판단의 표준을 실제 효용(實效用)으로 삼지 않으면, 말이 아무리 명쾌하고 관찰한 행위가 분명하다 하더라도 표적 없이 날아가는 화살과 같이 공담일 뿐이다.&quot; (『한비자』 「문변(問辯)」)</p>
+</blockquote>
+<p>말과 행동의 유일한 판단 기준은 <strong>&#39;실제 효용(국가 부국강병과 질서 유지에 실질적 도움이 되는가)&#39;</strong>이다.</p>
+<p>또한 한비는 송나라 부자의 우화(『한비자』 「세란/설란」)를 통해 유세의 어려움을 논파했다. 담장이 무너졌을 때 아들과 이웃 사람이 똑같이 &quot;도둑을 조심하라&quot;고 말했음에도, 집주인은 아들을 똑똑하다고 칭찬하고 이웃집 사람을 도둑으로 의심했다. 이는 <strong>사리를 아는 것보다 지식을 현실 속에서 이해관계에 맞게 어떻게 처리하고 응용하느냐가 본질</strong>임을 보여준다.</p>
+<p>한비는 노자의 &#39;소국과민(小國寡民)&#39;과 &#39;부쟁(不爭, 다투지 않음)&#39;을 전면 거부했다. 국가 간의 생존 경쟁에서 대립하는 두 세력은 영원히 공존할 수 없으며(불병용 不併用, 불양립 不兩立), 오직 <strong>국력을 결집한 군대와 힘(武力)</strong>만이 평화를 보장한다고 역설했다.</p>
+<hr>
+<h2 id="3-통치-시스템의-완성-법술세의-삼위일체"><a href="#3-통치-시스템의-완성-법술세의-삼위일체" class="heading-anchor" aria-hidden="true">#</a> 3. 통치 시스템의 완성 — 법(法)·술(術)·세(勢)의 삼위일체</h2><p>한비 이전에도 법가 사상가들은 존재했다. 그러나 이들은 통치 기제의 특정 요소만을 극단적으로 강조하는 편협함을 드러냈다. 한비는 전기 법가 3인의 이론적 공헌과 맹점을 냉철하게 비판적으로 검토한 뒤, 이를 하나의 유기적 시스템으로 통합했다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">┌────────────────────────────────────────────────────────────────────────┐
+│                   전기 법가 3인의 분립과 한비의 비판                     │
+├────────────────────────────────────────────────────────────────────────┤
+│  상앙(商鞅)    │ 法 (성문 규범)  │ 맹점: 술(術)이 없어 간신에게 농락당함      │
+│  신불해(申不害)│ 術 (관료 용인술)│ 맹점: 법(法)이 없어 규범의 통일성 결여     │
+│  신도(愼到)    │ 勢 (권력과 지위)│ 맹점: 법에 근거하지 않은 맹목적 권력 숭배  │
+├────────────────────────────────────────────────────────────────────────┤
+│  한비자(韓非子)│ 법·술·세 삼위일체 ("법을 안고 세에 처하며, 술로써 부린다")  │
+└────────────────────────────────────────────────────────────────────────┘</code></pre>
+</div><h3 id="31-상앙의-법-백성의-행위-기준"><a href="#31-상앙의-법-백성의-행위-기준" class="heading-anchor" aria-hidden="true">#</a> 3.1 상앙(商鞅)의 법(法) — 백성의 행위 기준</h3><p>상앙(기원전 약 390~338)은 진 효공(秦孝公)을 도와 20여 년간 강력한 변법을 단행함으로써 변방의 약소국 진나라를 일약 최강국으로 도약시킨 장본인이다.</p>
+<ul>
+<li><strong>변법의 주요 조치</strong>:<ol>
+<li><strong>오가연좌제(五家連坐制)</strong>: 5가구를 1보(保)로 묶어 상호 감시하게 하고 범죄를 고발하지 않으면 연좌형에 처함.</li>
+<li><strong>농전(農戰) 체제</strong>: 농업 생산을 장려하여 곡식과 비단을 많이 바친 자는 부역을 면제하고 상업을 억제함.</li>
+<li><strong>군공수작제(軍功授爵制)</strong>: 귀족의 세습 특권을 폐지하고, 오직 적의 목을 벤 군공(軍功)에 따라서만 관직과 토지·노비를 하사함.</li>
+<li><strong>군현제(郡縣制)</strong>와 도량형(度量衡) 통일.</li>
+</ol>
+</li>
+<li><strong>법(法)의 본질</strong>: 법은 <strong>군주가 제정하여 백성에게 널리 반포하는 명문화된 성문 규범</strong>이다. 상앙은 인간이 이익을 좇고 처벌을 두려워한다는 본성에 착안하여, 법을 명확히 공표하고 엄격하게 집행함으로써 백성들이 무엇을 해야 하고 무엇을 하지 말아야 하는지 분명한 기준을 세웠다.</li>
+</ul>
+<h3 id="32-신불해의-술-신하를-통어하는-은밀한-용인술"><a href="#32-신불해의-술-신하를-통어하는-은밀한-용인술" class="heading-anchor" aria-hidden="true">#</a> 3.2 신불해(申不害)의 술(術) — 신하를 통어하는 은밀한 용인술</h3><p>신불해(기원전 약 385~337)는 한(韓)나라 소후(昭侯) 때 15년간 재상으로 재직하며 한나라를 강국으로 육성했다.</p>
+<ul>
+<li><strong>술(術)의 본질</strong>: 술은 백성을 대상으로 하는 법과 달리, <strong>군주가 가슴속에 은밀히 감추어 두고 관료(신하)들을 통제·조종하는 인사 관리 및 통치 기술</strong>이다.</li>
+<li><strong>군주의 무위(無爲)와 허정(虛靜)</strong>: 신하들은 저마다 사익을 추구하며 군주의 눈과 귀를 가리려 든다. 따라서 군주는 자신의 지혜나 호불호를 절대로 겉으로 드러내서는 안 된다(무위). 군주가 멍청한 척, 아무것도 모르는 척 감정을 숨겨야 신하들이 방심하고 본심을 드러낸다.</li>
+<li><strong>순명책실(循名責實)과 형명참동(刑名參同)</strong>: 군주는 신하가 맡은 직책(명, 名)과 그가 실제로 거둔 실적(실, 實)을 대조하여, 말이 행동에 미치지 못하거나 월권행위를 하면 가차 없이 책임을 묻고 처벌해야 한다.</li>
+</ul>
+<h3 id="33-신도의-세-복종을-이끌어내는-권력과-지위"><a href="#33-신도의-세-복종을-이끌어내는-권력과-지위" class="heading-anchor" aria-hidden="true">#</a> 3.3 신도(愼到)의 세(勢) — 복종을 이끌어내는 권력과 지위</h3><p>신도(기원전 약 390~315)는 조(趙)나라 출신 사상가로, 통치의 핵심은 통치자 개인의 덕망이나 지혜가 아니라 그가 차지하고 있는 <strong>&#39;자리와 권력(세, 勢)&#39;</strong>에 있다고 보았다.</p>
+<blockquote>
+<p>&quot;날아다니는 용은 구름을 타고, 뛰어다니는 뱀은 안개 속에서 노닌다. 그러나 구름이 걷히고 안개가 개이면, 용과 뱀은 지렁이나 개미 같은 존재가 되고 만다. 이것은 그들이 타고 있던 구름과 안개를 잃었기 때문이다. 현명한 사람이 못난 사람에게 굽히는 것은 권세가 가볍고 지위가 낮기 때문이며, 못났으면서도 현명한 사람을 굴복시킬 수 있는 것은 권세가 무겁고 지위가 높기 때문이다. 성인 요(堯) 임금이 보통 사람이었다면 두 사람도 다스릴 수 없었을 것이지만, 폭군 걸(桀) 임금은 천자가 되었기 때문에 천하를 어지럽힐 수 있었다. 나는 이로써 권세와 지위는 의지할 만한 것이지만, 현명함과 슬기로움은 부러워할 만한 것이 못 된다는 점을 알았다.&quot; (『한비자』 「난세(難勢)」 인용)</p>
+</blockquote>
+<p>통치 권력은 도덕적 존경에서 나오는 것이 아니라, 생사여탈권을 쥔 군주의 압도적인 지위(勢)에서 나온다.</p>
+<h3 id="34-한비의-종합-법술세-삼위일체-아키텍처"><a href="#34-한비의-종합-법술세-삼위일체-아키텍처" class="heading-anchor" aria-hidden="true">#</a> 3.4 한비의 종합: 법·술·세 삼위일체 아키텍처</h3><p>한비는 세 사람의 학설을 결합하여 완벽한 &#39;군주 독재 거버넌스&#39;를 수립했다.</p>
+<ol>
+<li><strong>상앙의 한계 극복</strong>: 상앙은 법률만 정비하고 군주가 간신을 제어하는 &#39;술&#39;이 없었기에, 진 효공 사후 귀족들의 모함에 걸려 자신이 만든 거열형(車裂刑, 사지를 찢는 형벌)에 처해지는 참극을 겪었다.</li>
+<li><strong>신불해의 한계 극복</strong>: 신불해는 군주의 용인술에만 치중하고 온 나라에 통일적으로 적용되는 명문화된 &#39;법&#39;을 세우지 못했기에, 한나라 법망은 누더기가 되었고 군주가 바뀌자마자 혼란에 빠졌다.</li>
+<li><strong>신도의 한계 극복</strong>: 신도는 군주의 지위(세)만 맹신했으나, 군주가 법의 테두리를 벗어나 자의적으로 권력을 휘두르면 걸주(桀紂) 같은 폭군이 나와 나라를 말아먹게 된다. 따라서 군주의 권력은 반드시 <strong>&#39;법을 안고 세에 처해야(抱法處勢)&#39;</strong> 한다.</li>
+</ol>
+<div class="table-wrapper" style="margin:2.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 480" role="img" aria-label="한비자의 법·술·세 삼위일체 통치 시스템 아키텍처" style="width:100%; height:auto; max-width:860px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs>
+    <style>
+      .t-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 18px; fill: var(--text-main); }
+      .t-sub { font-family: Pretendard, -apple-system, sans-serif; font-size: 13px; fill: var(--text-muted); }
+      .box-head { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 16px; }
+      .box-text { font-family: Pretendard, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); line-height: 1.5; }
+      .core-head { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 18px; fill: #ffffff; }
+      .core-sub { font-family: Pretendard, -apple-system, sans-serif; font-size: 12px; fill: rgba(255,255,255,0.9); }
+      .flow-line { stroke: var(--primary, #3b82f6); stroke-width: 2.5; stroke-dasharray: 6,4; fill: none; }
+      .arrow { fill: var(--primary, #3b82f6); }
+    </style>
+  </defs>
+
+  <!-- Background Card -->
+  <rect x="0" y="0" width="860" height="480" rx="14" fill="var(--bg-card)"/>
+
+  <!-- Title -->
+<p>  <text x="430" y="38" text-anchor="middle" class="t-title">한비자(韓非子)의 법·술·세(法·術·勢) 삼위일체 거버넌스 아키텍처</text>
+  <text x="430" y="58" text-anchor="middle" class="t-sub">상앙의 법 + 신불해의 술 + 신도의 세 융합 (抱法處勢, 循名責實, 以法爲敎)</text></p>
+  <!-- Outer Linking Triangle / Circles -->
+  <circle cx="430" cy="270" r="170" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+  <!-- 1. Top Vertex: 勢 (세) -->
+  <g transform="translate(310, 85)">
+    <rect x="0" y="0" width="240" height="105" rx="10" fill="var(--bg-surface)" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="120" y="28" text-anchor="middle" fill="#8b5cf6" class="box-head">勢 (세) — 권력의 물리적 기반</text>
+    <text x="15" y="52" class="box-text">• 기원: 신도(愼到)의 사상 (용과 구름의 비유)</text>
+    <text x="15" y="70" class="box-text">• 본질: 군주의 절대적 지위와 생사여탈권</text>
+    <text x="15" y="88" class="box-text">• 역할: 법의 집행력과 술의 구속력을 담보</text>
+  </g>
+
+  <!-- 2. Bottom Left Vertex: 法 (법) -->
+  <g transform="translate(45, 305)">
+    <rect x="0" y="0" width="250" height="135" rx="10" fill="var(--bg-surface)" stroke="#10b981" stroke-width="2"/>
+    <text x="125" y="28" text-anchor="middle" fill="#10b981" class="box-head">法 (법) — 객관적 제도 규범</text>
+    <text x="15" y="52" class="box-text">• 기원: 상앙(商鞅)의 변법 (군공수작, 연좌제)</text>
+    <text x="15" y="70" class="box-text">• 적용 대상: 백성과 만민 (명문화된 공포)</text>
+    <text x="15" y="88" class="box-text">• 성격: 명확성, 공평무사(法不阿貴), 강제성</text>
+    <text x="15" y="106" class="box-text">• 슬로건: 以法爲敎 以吏爲師 (법으로 가르침)</text>
+    <text x="15" y="122" class="box-text">• 기능: 군주의 자의적 권력 남용 견제 기준</text>
+  </g>
+
+  <!-- 3. Bottom Right Vertex: 術 (술) -->
+  <g transform="translate(565, 305)">
+    <rect x="0" y="0" width="250" height="135" rx="10" fill="var(--bg-surface)" stroke="#ef4444" stroke-width="2"/>
+    <text x="125" y="28" text-anchor="middle" fill="#ef4444" class="box-head">術 (술) — 은밀한 관료 통제술</text>
+    <text x="15" y="52" class="box-text">• 기원: 신불해(申不害)의 형명학(刑名學)</text>
+    <text x="15" y="70" class="box-text">• 적용 대상: 신하와 관료 (군주의 가슴속 비장)</text>
+    <text x="15" y="88" class="box-text">• 핵심 원리: 허정무위(虛靜無爲)로 감정 은폐</text>
+    <text x="15" y="106" class="box-text">• 평가 방식: 循名責實 (명칭과 실적 엄격 대조)</text>
+    <text x="15" y="122" class="box-text">• 이병(二柄): 상(賞·德)과 벌(刑) 독점 행사</text>
+  </g>
+
+  <!-- Center: The Core Synthesis -->
+  <g transform="translate(320, 215)">
+    <rect x="0" y="0" width="220" height="110" rx="14" fill="var(--primary, #3b82f6)" stroke="var(--primary-dark, #1d4ed8)" stroke-width="2"/>
+    <text x="110" y="34" text-anchor="middle" class="core-head">삼위일체(三位一體)</text>
+    <text x="110" y="58" text-anchor="middle" class="core-sub">"법을 안고 세에 처한다"</text>
+    <text x="110" y="78" text-anchor="middle" class="core-sub">(抱法處勢)</text>
+    <text x="110" y="98" text-anchor="middle" style="font-family:Pretendard; font-size:11px; fill:#e0e7ff;">도구적 이성의 완전한 시스템화</text>
+  </g>
+
+  <!-- Connecting Lines -->
+  <line x1="430" y1="190" x2="430" y2="215" stroke="#8b5cf6" stroke-width="2.5"/>
+  <line x1="295" y1="340" x2="320" y2="300" stroke="#10b981" stroke-width="2.5"/>
+  <line x1="565" y1="340" x2="540" y2="300" stroke="#ef4444" stroke-width="2.5"/>
+</svg>
+</div>
+
+<h4 id="한비자가-규정한-법술세의-작동-원리"><a href="#한비자가-규정한-법술세의-작동-원리" class="heading-anchor" aria-hidden="true">#</a> 한비자가 규정한 법·술·세의 작동 원리</h4><ol>
+<li><strong>법(法)의 원칙</strong>:<ul>
+<li><strong>공포(公布)</strong>: 누구나 명백히 알 수 있도록 성문화되어 세상에 널리 알려져야 한다. 백성을 속여서는 안 되며, &quot;법으로 가르침을 삼고 관리로 스승을 삼는다(以法爲敎, 以吏爲師)&quot;.</li>
+<li><strong>통일성과 공평성</strong>: &quot;형벌은 대부에게 올라가지 않고 예는 서민에게 내려가지 않는다&quot;는 주나라 이래의 귀족주의적 신분 규범을 폐지하고, 신분 고하를 막론하고 만인에게 평등하게 적용되어야 한다.</li>
+<li><strong>강제성</strong>: 엄격한 형벌로 뒷받침되어 백성이 법을 두려워하고 감히 위반할 엄두를 내지 못하게 한다.</li>
+</ul>
+</li>
+<li><strong>술(術)의 핵심 삼박자</strong>:<ul>
+<li><strong>마음을 허정(虛靜)하게 비운다</strong>: 군주가 좋아하는 것과 싫어하는 것을 드러내면, 신하는 즉시 가식을 꾸미고 아첨한다. 따라서 군주는 표정을 지우고 침묵해야 한다.</li>
+<li><strong>명(名)에 따라 실(實)을 따진다 (순명책실 循名責實)</strong>: 신하가 맡은 직책의 권한을 넘어서도 벌을 주고(월권죄), 책임을 다하지 못해도 벌을 준다(불충죄). 오직 말한 바와 행동한 결과가 일치할 때만 상을 준다.</li>
+<li><strong>두 자루의 칼자루를 절대 놓지 않는다 (이병 二柄)</strong>: 상을 주는 권한(덕, 德)과 벌을 주는 권한(형, 刑)은 오직 군주만의 독점물이다. 이 두 칼자루 중 하나라도 신하에게 위임하는 순간, 신하가 권력을 휘두르고 군주는 허수아비로 전락한다.</li>
+</ul>
+</li>
+<li><strong>세(勢)의 결합</strong>:<ul>
+<li>절대적 권력(세)이 없으면 법은 종이쪽지에 불과하고 술은 공허한 재주가 된다.</li>
+<li>그러나 세력에만 의존해 법을 무시하고 날뛰면 폭군이 되어 파멸한다. 따라서 권력은 반드시 &#39;법의 테두리 안에서 시스템으로 행사&#39;되어야 한다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="4-진나라의-통일과-15년-만의-조기-멸망-도구적-이성의-파국"><a href="#4-진나라의-통일과-15년-만의-조기-멸망-도구적-이성의-파국" class="heading-anchor" aria-hidden="true">#</a> 4. 진나라의 통일과 15년 만의 조기 멸망 — 도구적 이성의 파국</h2><h3 id="41-천하통일의-무적-엔진"><a href="#41-천하통일의-무적-엔진" class="heading-anchor" aria-hidden="true">#</a> 4.1 천하통일의 무적 엔진</h3><p>한비의 법철학을 전면적으로 장착한 진나라는 당대 최강의 전쟁 머신이자 고도로 효율적인 관료제 국가로 변모했다.</p>
+<ul>
+<li><strong>세습 귀족층의 완전한 해체</strong>: 태어나면서부터 신분을 보장받던 귀족들이 몰락하고, 전쟁터에서 공을 세운 평민과 능력 있는 관료들이 발탁되었다.</li>
+<li><strong>국가 총동원 체제</strong>: 농업과 군사(농전)에 국가 자원을 100% 집중시킴으로써 엄청난 보급 능력과 상비군을 유지했다.</li>
+<li><strong>군현제를 통한 중앙집권화</strong>: 정복한 영토를 봉토로 나눠주지 않고 황제가 직접 관리를 파견하는 36군(郡) 체제를 확립했다.</li>
+</ul>
+<p>기원전 221년, 진시황은 한, 조, 위, 초, 연, 제 6국을 차례로 집어삼키고 마침내 500년 난세를 종식하며 중국 최초의 통일 제국을 건설했다. 한비의 법가 사상이 난세의 종식에 결정적 기여를 했음은 부인할 수 없는 역사적 사실이다.</p>
+<h3 id="42-왜-불과-15년-만에-무너졌는가"><a href="#42-왜-불과-15년-만에-무너졌는가" class="heading-anchor" aria-hidden="true">#</a> 4.2 왜 불과 15년 만에 무너졌는가?</h3><p>그러나 진나라는 기원전 221년 천하를 통일한 지 불과 15년 만인 기원전 206년, 시황제 사후 2세 황제 호해(胡亥) 때 비참하게 멸망했다. 만리장성과 아방궁을 쌓고 천하를 호령하던 거대 제국이 어째서 하룻밤 사이에 무너져 내렸는가?</p>
+<p>김효성(2019)은 진나라 멸망의 원인을 <strong>법가 철학 자체에 내재된 치명적인 결함과 도구적 이성의 폭주</strong>에서 찾는다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">┌────────────────────────────────────────────────────────────────────────┐
+│                   진나라 초고속 멸망의 구조적 메커니즘                   │
+├────────────────────────────────────────────────────────────────────────┤
+│ 1. 인간성의 전면 부정: 공포와 형벌만으로 통치 → 신뢰와 연대감 결여    │
+│ 2. 극단적 엄벌주의의 덫: "기일을 어기면 참형" → 진승·오광의 난 촉발    │
+│ 3. 대형 토목공사와 국력 소진: 만리장성, 아방궁, 여산묘 축조로 민생 파탄│
+│ 4. 군주 1인 독재의 아킬레스건: 환관 조고(趙高)의 농락으로 단숨에 마비  │
+└────────────────────────────────────────────────────────────────────────┘</code></pre>
+</div><ol>
+<li><strong>인간성과 도덕의 전면 부정이 낳은 반작용</strong>:
+법가는 인간을 오직 이익과 공포에 반응하는 동물로만 보았다. 사회를 지탱하는 신뢰, 도덕, 인정, 양심을 모두 배제하고 오직 통일된 법률과 가혹한 형벌로만 짓누르려 했다. 백성들은 법을 존중해서 지킨 것이 아니라 숨이 막히는 공포 때문에 떨었을 뿐이었다.</li>
+<li><strong>도구적 이성의 자충수 — &quot;가도 죽고, 안 가도 죽는다&quot;</strong>:
+진승과 오광은 징집된 농민 900명을 이끌고 북쪽 국경 수비대로 향하던 중 큰비로 도로가 끊겨 도착 기일을 맞출 수 없게 되었다. 진나라 법률은 기일을 하루라도 어기면 무조건 사형(참형)이었다.<blockquote>
+<p>&quot;지금 도망쳐도 잡히면 죽고, 반란을 일으켜도 죽는다. 어차피 죽을 바에야 나라를 위해 목숨을 바치는 것이 낫지 않겠는가!&quot;
+법률이 최소한의 자비나 유연성조차 허용하지 않는 극단적 엄벌주의로 치닫자, 백성들에게는 반란 외에 다른 선택지가 남지 않았다.</p>
+</blockquote>
+</li>
+<li><strong>군주 1인에게 집중된 취약성</strong>:
+한비의 통치 시스템은 &#39;탁월하고 냉철한 군주&#39;가 군림할 때만 작동한다. 그러나 진시황이라는 절대권력자가 사망하자마자, 어리석은 2세 황제 호해와 교활한 환관 조고(趙高)가 결탁하여 승상 이사를 죽이고 권력을 농단했다. 군주 1인의 권력을 견제할 제도적 장치가 전무했기에, 상층부가 부패하자 국가 전체가 하룻밤 사이에 마비되었다.</li>
+</ol>
+<h3 id="43-한-제국의-타협-양유음법의-탄생"><a href="#43-한-제국의-타협-양유음법의-탄생" class="heading-anchor" aria-hidden="true">#</a> 4.3 한(漢) 제국의 타협 — 양유음법(陽儒陰法)의 탄생</h3><p>진나라의 몰락을 목격한 후속 왕조 한(漢)나라는 중대한 교훈을 얻었다. &quot;법가만으로는 제국을 유지할 수 없다.&quot;</p>
+<p>그렇다고 이상주의적인 유가로만 돌아갈 수도 없었다. 광활한 제국을 통치하려면 관료제, 조세 제도, 통일된 법률이라는 법가의 하드웨어가 반드시 필요했다.</p>
+<p>여기서 탄생한 동양 정치의 거대한 절충안이 바로 <strong>&#39;양유음법(陽儒陰法)&#39;</strong>, 혹은 <strong>&#39;왕패병용(王覇並用)&#39;</strong>이다.</p>
+<ul>
+<li><strong>겉(陽)</strong>: 유가의 인의(仁義), 효제(孝悌), 도덕 윤리를 국가 이데올로기로 내세워 백성을 교화하고 통치의 정당성을 확보한다.</li>
+<li><strong>속(陰)</strong>: 군현제 관료제, 성문 법전, 엄격한 형벌이라는 법가의 실질적 통치 기술을 그대로 가동한다.</li>
+</ul>
+<p>전한의 한무제(漢武帝) 때 유학자 동중서(董仲舒)의 건의로 유교가 국교화되면서, 한비자의 냉혹한 이기주의는 폐기된 듯 보였으나 실상은 유가적 외피 속에 영리하게 흡수되어 2,000년간 제국 중국의 뼈대를 이루었다.</p>
+<hr>
+<h2 id="5-비교사상사-한비자와-마키아벨리의-군주론"><a href="#5-비교사상사-한비자와-마키아벨리의-군주론" class="heading-anchor" aria-hidden="true">#</a> 5. 비교사상사 — 한비자와 마키아벨리의 『군주론』</h2><p>동서양의 정치사상사에서 한비자와 필연적으로 비교되는 인물이 바로 16세기 르네상스 이탈리아의 <strong>니콜로 마키아벨리(Niccolò Machiavelli, 1469~1527)</strong>다. 한비자는 마키아벨리보다 무려 <strong>1,700여 년 앞서</strong> 서구의 현실주의 정치학을 완성했다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>비교 항목</th>
+<th>한비자 (韓非子, 기원전 3세기)</th>
+<th>마키아벨리 (Machiavelli, 16세기)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>시대적 배경</strong></td>
+<td>춘추전국 말기 영토 쟁탈전, 500년 난세</td>
+<td>이탈리아 도시국가 분열, 프랑스·스페인의 외세 침략</td>
+</tr>
+<tr>
+<td><strong>인간관</strong></td>
+<td>철저한 이기주의, 이익 추구와 손해 회피</td>
+<td>배은망덕하고 변덕스러우며 위선적이고 탐욕스러움</td>
+</tr>
+<tr>
+<td><strong>도덕과의 관계</strong></td>
+<td>정치와 도덕의 완전한 분리, 유가의 덕치 배격</td>
+<td>정치의 자율성 확립, 기독교적 전통 미덕 비판</td>
+</tr>
+<tr>
+<td><strong>군주의 덕목</strong></td>
+<td>허정무위(虛靜無爲), 냉철한 이성, 감정 은폐</td>
+<td>비르투(Virtù, 결단력과 역량), 포르투나(운명) 극복</td>
+</tr>
+<tr>
+<td><strong>동물의 비유</strong></td>
+<td>용과 뱀(권세), 표적을 맞추는 화살</td>
+<td>여우(간계와 지혜)와 사자(무력과 용기)</td>
+</tr>
+<tr>
+<td><strong>통치 핵심 수단</strong></td>
+<td><strong>법(法)·술(術)·세(勢)의 객관적 시스템</strong></td>
+<td><strong>군주 개인의 카리스마와 결단력, 시민 군대</strong></td>
+</tr>
+<tr>
+<td><strong>최종 목표</strong></td>
+<td>부국강병, 천하통일, 안정된 법치 질서</td>
+<td>이탈리아의 통일과 외세 격퇴, 공화국의 방어</td>
+</tr>
+</tbody></table>
+</div><p>한비자와 마키아벨리는 모두 &quot;인간이 어떻게 살아야 하는가&quot;라는 당위(도덕)를 버리고, <strong>&quot;인간이 현실에서 실제로 어떻게 행동하는가&quot;</strong>라는 냉혹한 사실(fact)에서 출발했다는 점에서 일치한다.</p>
+<p>그러나 결정적인 차이점이 존재한다. 마키아벨리가 탁월한 군주 개인의 비르투(역량과 카리스마)에 크게 의존했다면, <strong>한비자는 군주 개인의 도덕성이나 천재성을 믿지 않았다.</strong> 한비자는 평범한 군주라도 작동시킬 수 있는 <strong>&#39;비인격적이고 객관적인 시스템(법과 술)&#39;</strong>을 구축하고자 했다는 점에서 오히려 현대적 제도 설계론에 더 가까웠다.</p>
+<hr>
+<h2 id="6-현대적-조명과-비판적-성찰-법치주의의-빛과-그림자"><a href="#6-현대적-조명과-비판적-성찰-법치주의의-빛과-그림자" class="heading-anchor" aria-hidden="true">#</a> 6. 현대적 조명과 비판적 성찰 — 법치주의의 빛과 그림자</h2><p>2,300여 년 전 한비자의 법철학은 오늘날 우리에게 무엇을 묻고 있는가? 김효성(2019)은 한비자의 사상을 현대 한국 사회의 현실과 결부하여 <strong>빛(현대적 교훈)</strong>과 <strong>그림자(비판적 한계)</strong>라는 양면에서 엄밀하게 평가한다.</p>
+<h3 id="61-한비자가-던지는-8대-현대적-교훈-빛"><a href="#61-한비자가-던지는-8대-현대적-교훈-빛" class="heading-anchor" aria-hidden="true">#</a> 6.1 한비자가 던지는 8대 현대적 교훈 (빛)</h3><p>논문은 오늘날의 정치·사회적 난맥상 속에서 한비자로부터 배울 수 있는 핵심 가치들을 다음과 같이 정리한다.</p>
+<ol>
+<li><strong>지도자의 냉철한 현실 통찰</strong>: 명분론이나 감성적 포퓰리즘에 휘둘리지 않고, 국가와 조직의 냉혹한 현실을 직시하는 이성적 판단력.</li>
+<li><strong>노블레스 오블리주와 특권 철폐</strong>: 군공수작제처럼 출신이나 가문이 아니라 실질적 공헌과 능력에 따라 대우하는 공정성.</li>
+<li><strong>무분별한 국책 토목공사의 폐해 경계</strong>: 국가 재정과 민생을 파탄 내는 무리한 과시성 사업의 위험성 경고.</li>
+<li><strong>아첨꾼 배격과 직언 수용</strong>: 군주의 귀를 즐겁게 하는 간신을 솎아내고, 뼈아픈 직언을 제도적으로 보호하는 리더십.</li>
+<li><strong>능력주의 탕평 인사 (순명책실)</strong>: 파벌이나 친소관계가 아니라, 직무(名)에 걸맞은 실적(實)을 엄정하게 평가하여 발탁하는 시스템.</li>
+<li><strong>법불아귀(法不阿貴)의 실현</strong>:<blockquote>
+<p><strong>&quot;법은 신분이 귀한 자에게 아부하지 않고, 먹줄은 굽은 나무를 봐주지 않는다(法不阿貴 繩不撓曲).&quot;</strong> (『한비자』 「유도(有度)」)
+권력자, 재벌, 정치 실세라 하더라도 법망 앞에서 어떠한 예외도 인정하지 않는 성역 없는 법 집행.</p>
+</blockquote>
+</li>
+<li><strong>측근 비리와 비선 권력 척결</strong>: 군주를 둘러싼 환관, 외척, 측근들이 권력을 사유화하는 순간 나라가 망한다는 처절한 경고.</li>
+<li><strong>시스템에 의한 조직 거버넌스</strong>: 리더 한 사람의 선의나 도덕성에 기대지 않고, 정교하게 짜인 규범과 제도로 조직이 굴러가게 만드는 경영학적 설계.</li>
+</ol>
+<h3 id="62-비판적-한계-39법을-통한-지배39의-함정-그림자"><a href="#62-비판적-한계-39법을-통한-지배39의-함정-그림자" class="heading-anchor" aria-hidden="true">#</a> 6.2 비판적 한계 — &#39;법을 통한 지배&#39;의 함정 (그림자)</h3><p>그러나 한비자의 법철학을 현대 민주주의 국가에 그대로 대입하는 것은 대단히 위험천만한 착각이다. 현대 법철학계가 한비자에게 던지는 근본적인 비판은 명확하다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">┌────────────────────────────────────────────────────────────────────────┐
+│                   법철학적 대비: 통치의 도구인가, 정의의 보루인가        │
+├────────────────────────────────────────────────────────────────────────┤
+│  한비자의 법치  │ Rule by Law (법을 통한 지배 / 형식적 법치주의)         │
+│                 │ • 법은 군주 1인의 권력을 관철하는 도구                 │
+│                 │ • 국민은 통제의 대상, 권리의 주체가 아님               │
+│                 │ • 국가만능주의, 형벌만능주의, 전체주의적 위험          │
+├────────────────────────────────────────────────────────────────────────┤
+│  현대 헌법 법치 │ Rule of Law (법의 지배 / 실질적 법치주의)              │
+│                 │ • 법은 국가권력의 남용을 제한하여 국민의 기본권을 보호 │
+│                 │ • 국민이 주권자로서 민주적 절차를 통해 법을 제정      │
+│                 │ • 인간의 존엄성, 정의, 비례의 원칙이 법의 정당성 기준 │
+└────────────────────────────────────────────────────────────────────────┘</code></pre>
+</div><ol>
+<li><strong>실질적 법치주의가 아닌 &#39;형식적 법치주의&#39;</strong>:
+한비자에게 법은 &quot;인간의 기본권과 존엄성을 보호하기 위한 규범&quot;이 아니라, <strong>&quot;군주가 백성과 신하를 효율적으로 통제하고 복종시키기 위한 강제적 수단&quot;</strong>에 불과했다. 법의 내용이 아무리 가혹하고 비인간적이어도 군주가 제정하여 반포하면 지켜야 한다는 &#39;악법도 법이다&#39; 식의 법실증주의적 도구관이다.</li>
+<li><strong>법 위에 군림하는 군주 (실질적 인치주의)</strong>:
+백성과 신하는 법을 어기면 목이 날아가지만, 법을 만드는 군주 본인은 법의 바깥, 즉 <strong>법 위에 초연하게 군림</strong>한다. 군주를 통제할 수 있는 헌법적 장치나 민주적 통제 기제가 전무하다. 따라서 한비자의 법치는 겉으로는 법치주의를 표방하지만, 실질적으로는 <strong>&#39;가장 세련되게 정제된 군주 독재이자 인치(人治)&#39;</strong>였다.</li>
+<li><strong>국가만능주의와 형벌의 폭력성</strong>:
+사회의 다양한 다원적 가치, 자율성, 인권, 도덕적 자각을 모조리 질식시키고 오직 국가 권력과 형벌의 공포로만 사회를 통괄하려 했다. 이는 필연적으로 시민사회의 저항을 부르고 체제를 파멸로 이끈다.</li>
+</ol>
+<hr>
+<h2 id="7-결론-덕의-나침반과-법의-수레바퀴"><a href="#7-결론-덕의-나침반과-법의-수레바퀴" class="heading-anchor" aria-hidden="true">#</a> 7. 결론 — 덕(德)의 나침반과 법(法)의 수레바퀴</h2><p>한비자는 인간의 추악한 이기심과 위선을 그 어떤 사상가보다 냉철하게 투시했다. 도덕적 이상주의에 취해 있던 춘추전국의 지식인들에게 그가 던진 직설은 차가운 얼음물과 같았다. 신분과 가문을 뛰어넘어 모든 사람에게 균등하게 적용되는 성문법의 원칙, 사리사욕을 채우는 간신과 측근을 솎아내는 인사 검증 시스템, 그리고 &quot;법은 귀한 자에게 아부하지 않는다&quot;는 <strong>&#39;법불아귀&#39;</strong>의 일갈은 오늘날에도 여전히 유효한 제도 개혁의 금과옥조다.</p>
+<p>그러나 법과 제도, 시스템이라는 하드웨어만으로는 인간 사회를 온전히 지탱할 수 없다. 진나라의 15년 만의 멸망이 웅변하듯, <strong>인간에 대한 존중, 구성원 간의 신뢰, 도덕적 연대감이라는 소프트웨어가 결여된 법치는 결국 구성원을 억압하는 폭력적 감옥으로 전락할 뿐이다.</strong></p>
+<p>오늘날 우리가 도달해야 할 지점은 맹목적인 유가적 도덕주의도, 비정한 법가적 엄벌주의도 아니다.</p>
+<ul>
+<li><strong>유가의 덕(德)</strong>이 사회가 나아가야 할 궁극적인 인간 존엄과 정의의 <strong>나침반</strong>이라면,</li>
+<li><strong>한비자의 법(法)</strong>은 그 이상을 현실 속에서 흔들림 없이 굴러가게 만드는 단단한 <strong>수레바퀴</strong>다.</li>
+</ul>
+<p>사리사욕과 특권이 판치는 난세일수록 시스템을 바로 세우는 한비자의 서늘한 지혜가 절실하지만, 그 시스템의 종착역은 결코 군주 1인의 권력이 아니라 <strong>만인의 자유와 존엄이어야 한다는 점</strong> — 이것이 바로 2,300년 전 비운의 천재 사상가 한비가 오늘을 살아가는 우리에게 남긴 가장 무거운 화두일 것이다.</p>
+<hr>
+<h3 id="참고문헌"><a href="#참고문헌" class="heading-anchor" aria-hidden="true">#</a> 📚 참고문헌</h3><ul>
+<li><strong>김효성</strong>, 「중국의 법가(法家) 사상을 집대성한 한비(韓非)의 저서인 &#39;한비자&#39;(韓非子)에 나타난 법철학 사상에 관한 연구」, 『사법행정』, 2019년 5월호 (통권 제701호), pp. 41–59.</li>
+<li><strong>김예호</strong>, 『한비자정독』, 서울: 삼양미디어, 2014.</li>
+<li><strong>김백현 편저</strong>, 『중국철학사상사』, 서울: 차이나하우스, 2006.</li>
+<li><strong>풍우란 저 / 박성규 역</strong>, 『중국 철학사 (상)』, 서울: 까치글방, 1999.</li>
+<li><strong>리쩌허우 저 / 정병석 역</strong>, 『중국고대사상사론』, 서울: 한길사, 2012.</li>
+<li><strong>사마천</strong>, 『사기(史記)』 권63 「노자한비열전(老子韓非列傳)」.</li>
+<li><strong>진희권</strong>, 「한비자의 법치의 재해석」, 『법철학연구』, 한국법철학회, 2006.</li>
+<li><strong>이규종</strong>, 「한비자와 마키아벨리의 통치사상 비교연구」, 성균관대학교 대학원 석사학위논문, 2014.</li>
+<li><strong>조천수</strong>, 「한비자의 법사상연구」, 『법철학연구』, 한국법철학회, 2006.</li>
+</ul>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
