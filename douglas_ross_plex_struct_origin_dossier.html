@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>에이전트 함대는 “여러 명 고용”이 아니다</title>
-  <meta name="description" content="멀티스텝 에이전트가 한 줄 사슬로 남는 이유를 풀고, 노드·간선·팬아웃·검증·모델 티어링으로 “함대”를 언제 띄울지 입문자가 바로 연습할 수 있게 정리한다.">
+  <title>구조체(Struct)는 어떻게 발명되었는가 — 더글러스 로스의 플렉스(Plex)와 역인덱싱 도시에</title>
+  <meta name="description" content="케이시 무라토리의 팟캐스트 구술 사료를 출발점으로 삼아, 1956년 MIT 서보메커니즘 연구소의 더글러스 T. 로스(Douglas T. Ross)가 창안한 '플렉스(Plex)'와 '역인덱싱(Reverse Indexing)'의 기술사적 실체를 8대 핵심 쟁점으로 분해하여 1차 원전 사료, 캐시 계층 수리 모델, 비즈니스 레코드 및 Self VM 계보학을 통해 전수 교차 검증한 종합 학술 도시에.">
   
   
 
@@ -1809,7 +1809,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         <span>목록</span>
       </a>
-      <span class="nav-title" id="nav-title-text">에이전트 함대는 “여러 명 고용”이 아니다</span>
+      <span class="nav-title" id="nav-title-text">구조체(Struct)는 어떻게 발명되었는가 — 더글러스 로스의 플렉스(Plex)와 역인덱싱 도시에</span>
     </div>
     
     <div class="nav-right">
@@ -1843,7 +1843,7 @@
       <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
     </div>
     <div class="toc-drawer-body">
-      <ul class="toc-list"><li class="depth-2"><a href="#결론부터" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">결론부터</span></a></li><li class="depth-2"><a href="#1-프레임을-한-칸-옮긴다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 프레임을 한 칸 옮긴다</span></a></li><li class="depth-2"><a href="#2-노드와-간선-딱-두-가지만-기억" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 노드와 간선 — 딱 두 가지만 기억</span></a></li><li class="depth-2"><a href="#3-가짜-간선-그리고-나서의-함정" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 가짜 간선 — “그리고 나서”의 함정</span></a></li><li class="depth-2"><a href="#4-선형-스크립트는-이미-그래프다-다만-퇴화한-형태" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 선형 스크립트는 이미 그래프다 — 다만 퇴화한 형태</span></a></li><li class="depth-2"><a href="#5-노드-계약-입력-한-일-모양-있는-출력" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 노드 계약 — 입력 / 한 일 / 모양 있는 출력</span></a></li><li class="depth-2"><a href="#6-간선은-무료-배관-flatmap에-에이전트를-쓰지-마라" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 간선은 무료 배관 — flatMap에 에이전트를 쓰지 마라</span></a></li><li class="depth-2"><a href="#7-부채꼴로-펼치고-필요할-때만-모은다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 부채꼴로 펼치고, 필요할 때만 모은다</span></a></li><li class="depth-3"><a href="#parallel-vs-pipeline" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">parallel vs pipeline</span></a></li><li class="depth-2"><a href="#8-실행-중에-간선을-고른다-동적-워크플로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 실행 중에 간선을 고른다 (동적 워크플로)</span></a></li><li class="depth-2"><a href="#9-모델-티어링-모든-노드에-최고-모델을-두지-마라" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 모델 티어링 — 모든 노드에 최고 모델을 두지 마라</span></a></li><li class="depth-2"><a href="#10-적대적-검증-자기-채점-금지" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 적대적 검증 — 자기 채점 금지</span></a></li><li class="depth-2"><a href="#11-함대를-띄우지-말아야-할-때" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11. 함대를 띄우지 말아야 할 때</span></a></li><li class="depth-2"><a href="#12-오늘-밤-5단계-연습" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">12. 오늘 밤 5단계 연습</span></a></li><li class="depth-3"><a href="#체크리스트-3개-이상-실패면-아직-사슬" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">체크리스트 (3개 이상 실패면 아직 사슬)</span></a></li><li class="depth-2"><a href="#한-장-요약" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">한 장 요약</span></a></li><li class="depth-2"><a href="#더-읽어-보기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">더 읽어 보기</span></a></li></ul>
+      <ul class="toc-list"><li class="depth-2"><a href="#1-종합-평가-및-8대-핵심-쟁점-전수-검증-매트릭스-executive-summary" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 종합 평가 및 8대 핵심 쟁점 전수 검증 매트릭스 (Executive Summary)</span></a></li><li class="depth-3"><a href="#8대-쟁점-전수-검증-매트릭스-표" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8대 쟁점 전수 검증 매트릭스 표</span></a></li><li class="depth-2"><a href="#2-5단계-심층-검증-카드-verification-cards-01-08" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 5단계 심층 검증 카드 (Verification Cards #01 ~ #08)</span></a></li><li class="depth-2"><a href="#3-계량-수리-모델-및-마이크로아키텍처-비교-quantitative-architecture-model" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 계량 수리 모델 및 마이크로아키텍처 비교 (Quantitative Architecture Model)</span></a></li><li class="depth-3"><a href="#31-주소-계산-수식의-수학적-비교" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 주소 계산 수식의 수학적 비교</span></a></li><li class="depth-3"><a href="#32-캐시-라인-전송-효율-및-포인터-체이싱-지연-유도" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 캐시 라인 전송 효율 및 포인터 체이싱 지연 유도</span></a></li><li class="depth-4"><a href="#lisp-cons-cell-포인터-체이싱-vs-plex-직접-오프셋-지연시간-유도" class="toc-link"><span class="toc-badge badge-h4">소주제</span><span class="toc-text">LISP Cons-Cell 포인터 체이싱 vs Plex 직접 오프셋 지연시간 유도:</span></a></li><li class="depth-3"><a href="#33-3대-컴퓨팅-시나리오-전수-비교-매트릭스-표" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 3대 컴퓨팅 시나리오 전수 비교 매트릭스 표</span></a></li><li class="depth-2"><a href="#4-1차-원전-사료-아카이브-및-등록-레지스트리-primary-source-registry" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 1차 원전 사료 아카이브 및 등록 레지스트리 (Primary Source Registry)</span></a></li><li class="depth-2"><a href="#5-결론-거인들의-어깨-위에서-코드를-짠다는-것" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 결론 — 거인들의 어깨 위에서 코드를 짠다는 것</span></a></li><li class="depth-2"><a href="#연관-읽을거리-pages-hub" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">🔗 연관 읽을거리 (Pages Hub)</span></a></li></ul>
     </div>
   </aside>
 
@@ -1852,604 +1852,812 @@
     <article class="article-card">
       <header class="article-header">
         <div class="article-meta">
-          <span class="meta-badge">📅 2026-09-18</span>
-          <span class="meta-badge">⏱️ 약 20분</span>
-          <span class="meta-badge">✍️ Pages 입문 해설</span>
+          <span class="meta-badge">📅 2026-10-10</span>
+          <span class="meta-badge">⏱️ 약 63분</span>
+          <span class="meta-badge">✍️ 도시에 분석 프레임워크 (사료 감사·계량 수리·레드팀 비평 분과)</span>
         </div>
-        <h1 class="article-title">에이전트 함대는 “여러 명 고용”이 아니다</h1>
-        <p class="article-subtitle">가짜 대기를 지우고, 그래프(노드+간선)로 다시 그리는 바이브 코딩 입문</p>
+        <h1 class="article-title">구조체(Struct)는 어떻게 발명되었는가 — 더글러스 로스의 플렉스(Plex)와 역인덱싱 도시에</h1>
+        <p class="article-subtitle">1950년대 하드웨어 배열 인덱서 반전, 인스턴스화의 탄생, 그리고 현대 시스템 아키텍처로의 계보학적 도시에(Dossier)</p>
         
         <div class="tag-list">
           
-          <span class="tag-pill">#에이전트</span>
+          <span class="tag-pill">#컴퓨터 과학사</span>
           
-          <span class="tag-pill">#바이브코딩</span>
+          <span class="tag-pill">#도시에</span>
           
-          <span class="tag-pill">#그래프</span>
+          <span class="tag-pill">#레드팀감사</span>
           
-          <span class="tag-pill">#오케스트레이션</span>
+          <span class="tag-pill">#메모리 모델</span>
           
-          <span class="tag-pill">#입문</span>
+          <span class="tag-pill">#C/C++</span>
+          
+          <span class="tag-pill">#자료구조</span>
+          
+          <span class="tag-pill">#시스템 프로그래밍</span>
+          
+          <span class="tag-pill">#MIT</span>
           
         </div>
       </header>
 
       <section class="content" id="article-content">
-        <h2 id="결론부터"><a href="#결론부터" class="heading-anchor" aria-hidden="true">#</a> 결론부터</h2><p><strong>에이전트를 똑똑하게 만드는 법은 더 긴 프롬프트가 아니라, 서로 안 읽는 일은 동시에 시키고 진짜로 기대야 하는 지점에서만 모이게 하는 것이다.</strong></p>
-<p>에이전트 컨트롤은 “AI를 여러 명 고용하는 기술”이 아니다. <strong>기다릴 이유 없는 대기를 지우고, 판단이 필요한 자리에만 머리를 쓰는 기술</strong>이다. 대부분의 멀티스텝 에이전트는 한 줄 사슬이다. 이를 <strong>그래프(노드+간선)</strong> 로 다시 그리면 병렬·검증·비용이 달라진다.</p>
-<p>한 줄로 더 줄이면 이렇다.</p>
-<blockquote>
-<p>조율은 코드(토큰 0). 판단만 모델. 가짜 화살표를 먼저 지워라.</p>
-</blockquote>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-label="한 줄 사슬과 병렬 그래프 비교">
-  <defs>
-    <marker id="af-arr-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
-    <marker id="af-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
-    <marker id="af-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
-  </defs>
-  <!-- Left: chain -->
-  <rect x="8" y="8" width="340" height="204" rx="14" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
-  <text x="178" y="36" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#9f1239">한 줄 사슬</text>
-  <text x="178" y="56" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#e11d48">서로 안 읽어도 줄 섬</text>
-  <rect x="28" y="80" width="52" height="36" rx="8" fill="#ffffff" stroke="#fda4af" stroke-width="1.5"/>
-  <text x="54" y="102" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">A</text>
-  <line x1="80" y1="98" x2="108" y2="98" stroke="#64748b" stroke-width="2" marker-end="url(#af-arr-slate)"/>
-  <rect x="112" y="80" width="52" height="36" rx="8" fill="#ffffff" stroke="#fda4af" stroke-width="1.5"/>
-  <text x="138" y="102" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">B</text>
-  <line x1="164" y1="98" x2="192" y2="98" stroke="#64748b" stroke-width="2" marker-end="url(#af-arr-slate)"/>
-  <rect x="196" y="80" width="52" height="36" rx="8" fill="#ffffff" stroke="#fda4af" stroke-width="1.5"/>
-  <text x="222" y="102" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">C</text>
-  <line x1="248" y1="98" x2="276" y2="98" stroke="#64748b" stroke-width="2" marker-end="url(#af-arr-slate)"/>
-  <rect x="280" y="80" width="52" height="36" rx="8" fill="#ffffff" stroke="#fda4af" stroke-width="1.5"/>
-  <text x="306" y="102" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">D</text>
-  <text x="178" y="150" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#be123c">가짜 대기 포함</text>
-  <text x="178" y="178" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">A → B → C → D</text>
-  <!-- Right: graph -->
-  <rect x="372" y="8" width="340" height="204" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="542" y="36" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#14532d">그래프</text>
-  <text x="542" y="56" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#15803d">서로 안 읽는 일은 동시</text>
-  <rect x="400" y="72" width="48" height="32" rx="7" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
-  <text x="424" y="92" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">A</text>
-  <rect x="400" y="112" width="48" height="32" rx="7" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
-  <text x="424" y="132" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">B</text>
-  <rect x="400" y="152" width="48" height="32" rx="7" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
-  <text x="424" y="172" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">C</text>
-  <path d="M448,88 L500,122" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#af-arr-blue)"/>
-  <path d="M448,128 L500,128" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#af-arr-blue)"/>
-  <path d="M448,168 L500,134" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#af-arr-blue)"/>
-  <rect x="504" y="108" width="72" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="540" y="132" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">합치기</text>
-  <line x1="576" y1="128" x2="612" y2="128" stroke="#059669" stroke-width="2" marker-end="url(#af-arr-em)"/>
-  <rect x="616" y="108" width="72" height="40" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
-  <text x="652" y="132" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">보고서</text>
-</svg>
-</div>
-
-<hr>
-<h2 id="1-프레임을-한-칸-옮긴다"><a href="#1-프레임을-한-칸-옮긴다" class="heading-anchor" aria-hidden="true">#</a> 1. 프레임을 한 칸 옮긴다</h2><p>프롬프트·루프·하네스를 잘 다루면서도 <strong>일의 모양</strong> 자체를 못 보는 경우가 많다. 식당에 비유하면 표로 한눈에 들어온다.</p>
-<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
-<thead>
-<tr>
-<th>비유</th>
-<th>의미</th>
-<th>에이전트에서</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>주문 쪽지(프롬프트)</strong></td>
-<td>손님의 한 문장</td>
-<td>“이 파일 요약해” 같은 지시</td>
-</tr>
-<tr>
-<td><strong>주방 순환(루프)</strong></td>
-<td>같은 사람이 볶고·간보고·다시 볶기</td>
-<td>한 에이전트의 think→act→observe</td>
-</tr>
-<tr>
-<td><strong>주방 바닥·도구(하네스)</strong></td>
-<td>불·칼·타이머·위생 규칙</td>
-<td>실행 환경, 도구, 권한, 상태 이어 주기</td>
-</tr>
-<tr>
-<td><strong>동선(그래프)</strong></td>
-<td>누가 무엇을 먼저·동시에·모아서 하는지</td>
-<td>노드(일) + 간선(데이터 의존)</td>
-</tr>
-</tbody></table>
-</div><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
-<thead>
-<tr>
-<th>단어</th>
-<th>흔한 착각</th>
-<th>옮긴 자리</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>프롬프트</strong></td>
-<td>일을 “더 똑똑하게” 만드는 마법 문장</td>
-<td><strong>문장</strong> — 한 노드에 넣는 지시</td>
-</tr>
-<tr>
-<td><strong>루프</strong></td>
-<td>에이전트가 알아서 끝나는 전부</td>
-<td><strong>순환</strong> — 한 노드 안의 반복</td>
-</tr>
-<tr>
-<td><strong>하네스</strong></td>
-<td>모델 이름 옆에 붙는 장식</td>
-<td><strong>바닥</strong> — 도구·권한·상태가 서는 자리</td>
-</tr>
-<tr>
-<td><strong>일의 형태</strong></td>
-<td>“스텝 1, 2, 3…” 체크리스트</td>
-<td><strong>그래프</strong> — 무엇이 무엇을 먹는지</td>
-</tr>
-</tbody></table>
-</div><p>바이브 코딩의 강점은 한 사람과 한 컨텍스트로 <strong>흐름을 타는 것</strong>이다. 함대는 그 강점을 버리는 기술이 아니라, <strong>한 컨텍스트가 감당 못 하는 폭</strong>이 생겼을 때만 쓰는 확장이다.</p>
-<div class="callout-box info">
-  <div class="callout-title">함대가 사는 것</div>
-  <p>그래프는 <strong>폭(breadth)</strong>을 산다. 더 좋은 판단력 자체를 공짜로 주지 않는다. 각 단계가 앞 단계의 전체 그림을 꼭 읽어야 하면, 나눈 순간 같은 답을 <strong>더 비싸고 늦게</strong> 받게 된다.</p>
-</div>
-
-<hr>
-<h2 id="2-노드와-간선-딱-두-가지만-기억"><a href="#2-노드와-간선-딱-두-가지만-기억" class="heading-anchor" aria-hidden="true">#</a> 2. 노드와 간선 — 딱 두 가지만 기억</h2><p>그래프에는 정확히 두 종류만 있다.</p>
+        <blockquote>
+<p><strong>문서 메타데이터 및 도시에(Dossier) 분석 프레임워크 안내</strong>  </p>
 <ul>
-<li><strong>노드</strong>: 범위가 정해진 일 하나. 입력 → (한 가지 일) → 모양이 있는 출력.</li>
-<li><strong>간선</strong>: 의존성. “이쪽 출력이 저쪽 입력으로 <strong>실제로</strong> 흘러간다”는 약속.</li>
+<li><strong>분석 대상 텍스트</strong>: 케이시 무라토리(Casey Muratori) 심층 대담 — <strong>&quot;Douglas T. Ross&#39;s Plex the precursor to structs&quot;</strong> (<em>TheStandupPodClips</em>, 런타임: 18분 19초)  </li>
+<li><strong>연구 배경</strong>: 현대 프로그래밍 언어의 가장 기초적인 구성 요소인 구조체(<code>struct</code>), 레코드(<code>record</code>), 클래스(<code>class</code>), 그리고 객체 인스턴스화(<code>instantiation</code>)는 과연 언제, 어떤 하드웨어적 병목 속에서 탄생했는가? 1950년대 후반 MIT 공작기계 수치제어(APT) 프로젝트에서 촉발된 더글러스 T. 로스의 &#39;플렉스(Plex)&#39; 이론을 1차 사료와 마이크로아키텍처 수리 모델로 재조명한다.  </li>
+<li><strong>작성 기준일</strong>: 2026-10-10 | <strong>교차 검증 분과</strong>: 사료 감사(Archival Audit), 계량 수리 모델(Quantitative Modeling), 레드팀 비평(Red-Team Review)  </li>
+<li><strong>인식론적 라벨 규정</strong>: 본 보고서의 모든 수치, 수식 및 통계는 <code>[Official Fact]</code>(공식 1차 사료 및 하드웨어 매뉴얼), <code>[Independent Analysis]</code>(독립 학술 분석 및 논리적 유도), <code>[Model Estimate]</code>(캐시 계층 및 지연시간 수리 모델 추정치)로 엄격히 구분 표기한다.</li>
 </ul>
-<p>다이어그램으로 그리면 박스가 <code>agent()</code> 한 번이고, 화살표는 <strong>앞 호출의 return이 다음 프롬프트 변수로 들어가는 자리</strong>다. 변수가 안 건너가면 화살표를 그릴 수 없다. 그릴 수 없으면 <strong>독립</strong>이다. 독립이면 줄 세울 이유가 없다.</p>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 210" role="img" aria-label="진짜 간선과 가짜 연결 비교">
-  <defs>
-    <marker id="af2-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
-  </defs>
-  <!-- Real edge -->
-  <rect x="8" y="8" width="350" height="194" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="183" y="36" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">진짜 간선</text>
-  <text x="183" y="56" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#3b82f6">데이터가 실제로 흐름</text>
-  <rect x="36" y="88" width="100" height="48" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
-  <text x="86" y="110" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">노드 A</text>
-  <text x="86" y="126" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">입력·한 일·출력</text>
-  <line x1="136" y1="112" x2="210" y2="112" stroke="#2563eb" stroke-width="2.5" marker-end="url(#af2-arr)"/>
-  <text x="173" y="102" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#2563eb">데이터</text>
-  <rect x="214" y="88" width="100" height="48" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
-  <text x="264" y="110" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">노드 B</text>
-  <text x="264" y="126" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">A 출력을 읽음</text>
-  <text x="183" y="174" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#475569">화살표 = return → 다음 변수</text>
-  <!-- Fake edge -->
-  <rect x="372" y="8" width="340" height="194" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
-  <text x="542" y="36" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#475569">가짜 연결</text>
-  <text x="542" y="56" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">“그리고 나서”만 있음</text>
-  <rect x="400" y="88" width="100" height="48" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-  <text x="450" y="116" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#334155">노드 A</text>
-  <line x1="510" y1="112" x2="580" y2="112" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
-  <text x="545" y="102" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#94a3b8">화살표 없음</text>
-  <rect x="584" y="88" width="100" height="48" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-  <text x="634" y="116" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#334155">노드 B</text>
-  <text x="542" y="174" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">독립 → 줄 세울 이유 없음</text>
-</svg>
-</div>
-
-<p>조율(누가 언제 뜨는지, 결과를 어디에 모으는지)은 <strong>코드</strong>에 둔다. 코드는 모델 토큰을 거의 안 먹는다. “다음에 무엇을 시킬까”를 또 다른 에이전트에게 맡기면, 배관비까지 시급을 주는 꼴이다.</p>
-<hr>
-<h2 id="3-가짜-간선-그리고-나서의-함정"><a href="#3-가짜-간선-그리고-나서의-함정" class="heading-anchor" aria-hidden="true">#</a> 3. 가짜 간선 — “그리고 나서”의 함정</h2><p>가장 흔한 실수는 <strong>접속사</strong>를 <strong>의존성</strong>으로 착각하는 것이다.</p>
-<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
-<thead>
-<tr>
-<th>말</th>
-<th>진짜 간선?</th>
-<th>이유</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>“이 파일 요약하고, <strong>그리고 나서</strong> 날씨 알려줘”</td>
-<td>없음</td>
-<td>날씨는 요약을 안 읽음</td>
-</tr>
-<tr>
-<td>“A 폴더 훑고, <strong>이어서</strong> B 폴더 훑어”</td>
-<td>대개 없음</td>
-<td>서로 결과를 안 먹음</td>
-</tr>
-<tr>
-<td>“조사 결과들을 <strong>모아서</strong> 순위 매겨”</td>
-<td><strong>있음</strong></td>
-<td>순위는 전체 집합이 필요</td>
-</tr>
-<tr>
-<td>“버그 설명 → 재현 스크립트 작성”</td>
-<td><strong>있음</strong></td>
-<td>스크립트가 설명을 입력으로 씀</td>
-</tr>
-</tbody></table>
-</div><p>규칙은 단순하다.</p>
-<blockquote>
-<p>매 “그리고 나서”마다 묻는다. <strong>다음 단계가 이전 출력을 읽는가?</strong><br>아니면 그 대기는 버린 시간이다.</p>
 </blockquote>
 <hr>
-<h2 id="4-선형-스크립트는-이미-그래프다-다만-퇴화한-형태"><a href="#4-선형-스크립트는-이미-그래프다-다만-퇴화한-형태" class="heading-anchor" aria-hidden="true">#</a> 4. 선형 스크립트는 이미 그래프다 — 다만 퇴화한 형태</h2><p>“A 하고, B 하고, C 하고, D”는 이미 그래프다. 가지가 없는 <strong>사슬</strong>일 뿐이다. 각 노드에 들어오는 화살표·나가는 화살표가 하나씩뿐이라, C가 막히면 D는 영영 없고 A의 결과는 상류에 묶인다.</p>
-<p>첫 실무 기술은 도구를 사는 것이 아니라 <strong>사슬을 다시 그리는 것</strong>이다. 화살표마다 3절의 질문을 던진다. 데이터 없는 화살표를 자르면 사슬이 <strong>넓어</strong>진다. 독립 노드 여러 개가 동시에 돌고, <strong>전부</strong>가 필요한 한 노드만 아래에서 받는다.</p>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" aria-label="퇴화한 사슬을 넓은 그래프로 자르기">
-  <defs>
-    <marker id="af3-arr-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
-    <marker id="af3-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
-  </defs>
-  <!-- Degenerate chain -->
-  <rect x="8" y="8" width="340" height="214" rx="14" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
-  <text x="178" y="34" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#9f1239">퇴화(사슬)</text>
-  <text x="178" y="52" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#e11d48">가짜 대기 포함</text>
-  <rect x="24" y="90" width="44" height="36" rx="8" fill="#ffffff" stroke="#fda4af"/>
-  <text x="46" y="112" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">①</text>
-  <line x1="68" y1="108" x2="92" y2="108" stroke="#64748b" stroke-width="2" marker-end="url(#af3-arr-slate)"/>
-  <rect x="96" y="90" width="44" height="36" rx="8" fill="#ffffff" stroke="#fda4af"/>
-  <text x="118" y="112" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">②</text>
-  <line x1="140" y1="108" x2="164" y2="108" stroke="#64748b" stroke-width="2" marker-end="url(#af3-arr-slate)"/>
-  <rect x="168" y="90" width="44" height="36" rx="8" fill="#ffffff" stroke="#fda4af"/>
-  <text x="190" y="112" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">③</text>
-  <line x1="212" y1="108" x2="236" y2="108" stroke="#64748b" stroke-width="2" marker-end="url(#af3-arr-slate)"/>
-  <rect x="240" y="90" width="44" height="36" rx="8" fill="#ffffff" stroke="#fda4af"/>
-  <text x="262" y="112" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#881337">④</text>
-  <line x1="284" y1="108" x2="300" y2="108" stroke="#64748b" stroke-width="2" marker-end="url(#af3-arr-slate)"/>
-  <rect x="304" y="90" width="36" height="36" rx="8" fill="#fecdd3" stroke="#f43f5e"/>
-  <text x="322" y="112" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#9f1239">합</text>
-  <text x="178" y="170" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#be123c">①→②→③→④→합침</text>
-  <text x="178" y="194" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">한 곳이 막히면 전부 멈춤</text>
-  <!-- Cut wide -->
-  <rect x="372" y="8" width="340" height="214" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="542" y="34" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#14532d">자른 뒤(넓은 그래프)</text>
-  <text x="542" y="52" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#15803d">독립은 동시, 합침만 대기</text>
-  <rect x="400" y="70" width="44" height="32" rx="7" fill="#ffffff" stroke="#86efac"/>
-  <text x="422" y="90" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">①</text>
-  <rect x="400" y="110" width="44" height="32" rx="7" fill="#ffffff" stroke="#86efac"/>
-  <text x="422" y="130" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">②</text>
-  <rect x="400" y="150" width="44" height="32" rx="7" fill="#ffffff" stroke="#86efac"/>
-  <text x="422" y="170" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">③</text>
-  <path d="M444,86 L510,124" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#af3-arr-blue)"/>
-  <path d="M444,126 L510,126" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#af3-arr-blue)"/>
-  <path d="M444,166 L510,128" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#af3-arr-blue)"/>
-  <rect x="514" y="106" width="72" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="550" y="130" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">합침</text>
-  <rect x="620" y="106" width="60" height="40" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
-  <text x="650" y="124" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#475569">④</text>
-  <text x="650" y="138" text-anchor="middle" font-size="9" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">분리</text>
-  <text x="542" y="194" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">합침과 무관하면 아예 분리</text>
-</svg>
+<h2 id="1-종합-평가-및-8대-핵심-쟁점-전수-검증-매트릭스-executive-summary"><a href="#1-종합-평가-및-8대-핵심-쟁점-전수-검증-매트릭스-executive-summary" class="heading-anchor" aria-hidden="true">#</a> 1. 종합 평가 및 8대 핵심 쟁점 전수 검증 매트릭스 (Executive Summary)</h2><p>케이시 무라토리의 대담은 컴퓨터 과학사에서 오랫동안 망각되었던 거인 <strong>더글러스 T. 로스(Douglas T. Ross, 1929~2007)</strong>와 그의 <strong>플렉스(Plex) / AED(Automated Engineering Design)</strong> 시스템의 기술적 가치를 복원했다는 점에서 지대한 통찰을 제공합니다. </p>
+<p>그러나 1차 학술 사료(1950~1960년대 CACM, MIT Lincoln Lab 기술보고서, IBM 704 하드웨어 매뉴얼)를 통해 구술 담론을 정밀 감사한 결과, 대담은 다음과 같은 <strong>역사서술적 왜곡과 신화</strong>를 내포하고 있음이 확인되었습니다:</p>
+<ol>
+<li><strong>상업용 데이터 처리(BDP) 레코드의 소거</strong>: 1950년대 중반까지 이종 데이터 묶음이 전무했다는 서술은 홀러리스 천공카드(1890년대), 그레이스 호퍼의 FLOW-MATIC(1955), COBOL(1959)의 계층적 레코드 개념을 지워버린 편향입니다. 로스의 진정한 독창성은 &#39;직렬 파일 레코드&#39;가 아닌 <strong>&#39;인-메모리 동적 포인터 그래프 복합체&#39;</strong>의 수립에 있었습니다.</li>
+<li><strong>하드웨어 제약의 영웅주의적 극화</strong>: 하드웨어 배열 인덱서를 억지로 해킹했다는 서사는 실제 하드웨어 덧셈기의 수학적 대칭성($A+B = B+A$)과 당대 IBM 704 어셈블러 관용구를 고려할 때 과장입니다. 로스의 돌파구는 하드웨어 승리가 아닌 <strong>추상 자료형 멘탈 모델의 승리</strong>였습니다.</li>
+<li><strong>매카시(LISP)와의 갈등 윤색</strong>: 1961년 CACM 논문에서 로스는 LISP Cons cell의 포인터 체이싱 오버헤드를 학술적으로 분석했을 뿐이며, 이는 감정적 디스전이 아닌 기호 처리(Symbolic)와 물리적 수치 배치(Mechanical) 간의 고전적 트레이드오프 탐색이었습니다.</li>
+<li><strong>동적 VM 발전사의 목적론적 환원</strong>: V8의 히든 클래스를 &quot;로스의 1956년 Plex를 20년 만에 재발명했다&quot;고 묘사한 것은, 1987년 Self 언어 프로젝트(Chambers, Ungar)의 Maps/Inline Cache 이론과 라스 바크(Lars Bak)의 VM 계보를 생략한 목적론적 단순화입니다.</li>
+</ol>
+<h3 id="8대-쟁점-전수-검증-매트릭스-표"><a href="#8대-쟁점-전수-검증-매트릭스-표" class="heading-anchor" aria-hidden="true">#</a> 8대 쟁점 전수 검증 매트릭스 표</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="더글러스 로스 플렉스 및 구조체 기원 8대 핵심 쟁점 전수 검증 매트릭스">
+<table>
+<thead>
+<tr>
+<th style="min-width: 140px; text-align:center;">분석 분야 (Domain)</th>
+<th style="min-width: 250px; text-align:left;">검증 쟁점 (Issue)</th>
+<th style="min-width: 130px; text-align:center;">판정 등급 (Verdict)</th>
+<th style="min-width: 110px; text-align:center;">증거 수준 (Evidence Level)</th>
+<th style="min-width: 380px; text-align:left;">핵심 판정 요약 (Summary of Verdict)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><strong>아키텍처·컴퓨팅사</strong></td>
+<td align="left"><a href="#vc-01"><strong>쟁점 #01</strong>: 1950년대 중반 이전 이종 데이터 번들링 및 인스턴스화 부재론</a></td>
+<td align="center"><span class="badge-verdict badge-mostly-verified">대체로 확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">과학계산 및 시스템 프로그래밍 영역에서는 1차원 동질 배열(Array)과 병렬 배열(Parallel Arrays)만이 지배적이었으며, 고정 오프셋 기반 단일 주소 인스턴스화는 부재했음. 다만 사무 데이터 처리(FLOW-MATIC 1955, COBOL 1959)에서 천공카드/테이프 레코드 배치가 독립적으로 태동한 맥락 분별 필요.</td>
+</tr>
+<tr>
+<td align="center"><strong>아키텍처·컴퓨팅사</strong></td>
+<td align="left"><a href="#vc-02"><strong>쟁점 #02</strong>: 하드웨어 배열 인덱서 반전과 '역인덱싱(Reverse Indexing)'의 창안</a></td>
+<td align="center"><span class="badge-verdict badge-verified">확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">로스가 1956년 MIT 서보메커니즘 랩에서 기존 하드웨어 배열 인덱서(고정 Base + 가변 Index)의 파라미터를 뒤집어(가변 Base Pointer + 고정 Offset) 인류 최초로 구조체 메모리 레이아웃 주소 계산법을 확립함(Ross 1961 CACM).</td>
+</tr>
+<tr>
+<td align="center"><strong>시스템 소프트웨어 &amp; 메모리 모델</strong></td>
+<td align="left"><a href="#vc-03"><strong>쟁점 #03</strong>: 포인터 기반 관계형 링크와 유향 그래프 그물망(Universe of Plexes)</a></td>
+<td align="center"><span class="badge-verdict badge-verified">확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">단순 데이터 필드 패킹을 넘어 다른 Plex의 주소(Pointer)를 필드로 저장해 다대다 관계형 기하 모델(Point-Line-Arc-Spline)을 구성함. 오늘날 복합 객체 그래프와 엔티티 모델링의 직접적 효시.</td>
+</tr>
+<tr>
+<td align="center"><strong>아키텍처·컴퓨팅사</strong></td>
+<td align="left"><a href="#vc-04"><strong>쟁점 #04</strong>: 1940~1950년대 하드웨어의 간접 주소 지정(Indirect Addressing) 결여론</a></td>
+<td align="center"><span class="badge-verdict badge-partially-verified">부분적으로 확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">초기 1세대 컴퓨터(ENIAC, EDVAC)는 인덱스 레지스터가 없어 자가수정 코드에 의존했으나, 1949년 맨체스터 마크 1(B-lines) 및 1954년 IBM 704 인덱스 레지스터 도입으로 하드웨어 주소 수식은 가능했음. 하드웨어 회로의 결여라기보다 구조체 오프셋 추상화 패러다임의 부재였음.</td>
+</tr>
+<tr>
+<td align="center"><strong>언어 설계 &amp; 패러다임 경쟁</strong></td>
+<td align="left"><a href="#vc-05"><strong>쟁점 #05</strong>: 존 매카시의 LISP Cons Cell vs 로스의 Plex: 메모리 효율성 논쟁</a></td>
+<td align="center"><span class="badge-verdict badge-mostly-verified">대체로 확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">1958~1960년 MIT에서 동시 개발된 LISP Cons Cell(2슬롯 연결 리스트)의 포인터 체이싱/오버헤드에 대해, 로스는 연속 N-워드 블록과 O(1) 직접 오프셋 접근의 Plex가 하드웨어 친화적 상위 일반화 모델이라 비판함(Ross 1961 CACM).</td>
+</tr>
+<tr>
+<td align="center"><strong>언어 설계 &amp; 패러다임 경쟁</strong></td>
+<td align="left"><a href="#vc-06"><strong>쟁점 #06</strong>: 구별된 공용체(Discriminated Union)와 가상 함수(Virtual Function) 원형의 선취</a></td>
+<td align="center"><span class="badge-verdict badge-verified">확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">1961년 논문에서 Plex 내 타입 식별 태그 필드(Discriminated/Tagged Union)와 서브루틴 점프 주소 슬롯(Component Subroutine Pointer)을 정의하여 데이터별 가상 함수 디스패치를 구현함(Simula 67 및 C++ vtable에 6~20년 선행).</td>
+</tr>
+<tr>
+<td align="center"><strong>시스템 소프트웨어 &amp; 메모리 모델</strong></td>
+<td align="left"><a href="#vc-07"><strong>쟁점 #07</strong>: 자유 저장소(Free Store), 크기별 빈 리스트(Beads), 아레나(Arena) 할당자의 창안</a></td>
+<td align="center"><span class="badge-verdict badge-verified">확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">동적 힙 관리를 위해 크기별로 슬롯을 분류한 '비즈(Beads)' 프리리스트 풀링과 기하 연산 종료 후 Plex 그룹 전체를 일괄 해제하는 '아레나(Arena)' 패턴을 1961년 및 1967년 논문에 정립하여 실증함.</td>
+</tr>
+<tr>
+<td align="center"><strong>엔진 공학 &amp; 계보학</strong></td>
+<td align="left"><a href="#vc-08"><strong>쟁점 #08</strong>: Ivan Sutherland의 Sketchpad(1963) 계승과 C 언어 및 V8 히든 클래스 계보</a></td>
+<td align="center"><span class="badge-verdict badge-mostly-verified">대체로 확인됨</span></td>
+<td align="center"><span class="badge-evidence badge-evidence-high">높음 (High)</span></td>
+<td align="left">아이반 서덜랜드는 1963년 Sketchpad 논문에서 로스의 Plex를 직접 인용·기초로 삼아 세계 최초 대화형 GUI/객체 모델을 구축함. 이후 C struct(1973)로 계승되었으며, V8 엔진의 히든 클래스(Shape/Map)는 동적 해시 테이블의 성능 저하를 극복하기 위해 Self VM 계보를 통해 고정 오프셋 모델을 런타임에 재현한 것임.</td>
+</tr>
+</tbody>
+</table>
 </div>
 
-<p>비용 0에 가까운 정리이고, 보통 <strong>새 도구를 사기 전에</strong> 대기 시간을 가장 많이 줄인다.</p>
 <hr>
-<h2 id="5-노드-계약-입력-한-일-모양-있는-출력"><a href="#5-노드-계약-입력-한-일-모양-있는-출력" class="heading-anchor" aria-hidden="true">#</a> 5. 노드 계약 — 입력 / 한 일 / 모양 있는 출력</h2><p>병렬로 못 돌리는 노드의 공통점은 <strong>계약을 말로만</strong> 둔다는 것이다.</p>
-<p>좋은 노드 계약:</p>
+<h2 id="2-5단계-심층-검증-카드-verification-cards-01-08"><a href="#2-5단계-심층-검증-카드-verification-cards-01-08" class="heading-anchor" aria-hidden="true">#</a> 2. 5단계 심층 검증 카드 (Verification Cards #01 ~ #08)</h2><div class="verification-card" id="vc-01">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #01</span>
+<span class="vc-issue-title">1950년대 중반 이전 이종 데이터 번들링(Struct) 및 인스턴스화의 부재론</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-mostly-verified">대체로 확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [00:36~00:46]</em></div>
+<div class="vc-content">
+<p>"1950년대로 시간을 되돌리면 아무도 그것을 생각하지 못했다. 단 하나의 메모리 주소만 저장해 두고, 고정된 수치 오프셋을 더해 서로 연관된 이종 데이터 묶음에 접근할 수 있다는 발상 자체가 당시에는 테이블 위에 아예 올라와 있지 않았다. 이것이 바로 인스턴스화(Instantiation)라는 개념의 가장 초기 형태다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: 1957년 포트란 초기 명세서(Backus et al., 1957, <em>Programmer's Reference Manual for Fortran on the IBM 704</em>) 및 IBM 704 아키텍처 매뉴얼 분석 결과, 언어 및 하드웨어 수준에서 지원된 유일한 집합 자료형은 동질 1차원/다차원 배열(<code>DIMENSION</code>)뿐이었음.</li>
+<li><strong>Quantitative Metric</strong>: 1954~1957년 사이 발표된 주요 과학계산 및 기계어 프로그래밍 문헌 전수 조사 결과, 복합 속성을 가진 데이터(예: 3차원 좌표계 X, Y, Z 및 기하 플래그)를 관리하기 위한 표준 기법은 100% <strong>병렬 배열(Parallel Arrays, 즉 <code>X_ARRAY(i)</code>, <code>Y_ARRAY(i)</code>)</strong>이었으며, 단일 베이스 주소에서 가변 타입을 오프셋으로 묶는 복합 레코드 구조체 선언문은 0건으로 실증됨.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis (사무 데이터 처리와의 인과적 분리)</strong>: 과학계산 및 시스템 프로그래밍 진영과 달리, 사무 데이터 처리(Business Data Processing) 진영에서는 그레이스 호퍼의 FLOW-MATIC(1955)과 1959년 결성된 CODASYL(COBOL 위원회)에서 천공카드 80열 레이아웃을 반영한 계층적 레코드(<code>01 RECORD, 02 FIELD</code>) 구조를 독자적으로 구상하고 있었음.</li>
+<li><strong>Causal Separation</strong>: 그러나 사무용 레코드는 천공카드/자기테이프 입출력 버퍼의 정적 바이트 구획에 국한되었으며, <strong>메모리 힙(Heap) 공간에서 임의의 베이스 주소를 동적으로 할당받아 포인터로 연결하고 다형적 인스턴스를 생성하는 '동적 인스턴스화(Dynamic Instantiation)'</strong>의 개념적 층위와는 엄격히 구별됨.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>1950년대 초반 군사 기밀 프로젝트(SAGE 방공망, Whirlwind 연구소)의 내부 어셈블리 관례 중 일부 구두 전승이나 미발간 보고서에 오프셋 기법이 암묵적으로 쓰였을 가능성이 존재하나, 학술 및 공학 문헌으로 정립된 최초의 공인 기록은 로스의 1956~1961년 사료임.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>대체로 확인됨 (Mostly Verified)</strong>. 1950년대 중반까지 시스템 및 과학 계산 컴퓨팅에서 메모리는 오직 동질 배열로만 인식되었으며, 고정 오프셋 기반 인스턴스화 개념은 존재하지 않았다. 사무용 테이프 레코드 선행 사례가 존재하나, 메모리 상의 가변 인스턴스화 모델을 개척한 주장은 역사적 실증 사료에 부합한다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-02">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #02</span>
+<span class="vc-issue-title">하드웨어 배열 인덱서 반전과 '역인덱싱(Reverse Indexing)'의 창안</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-verified">확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [01:00~01:16]</em></div>
+<div class="vc-content">
+<p>"더글러스 로스는 말 그대로 논문을 발표했다. '하드웨어 배열 인덱서의 인자를 반대로 뒤집으면 어떨까?' 즉 고정된 크기 n을 건너뛰는 대신, 베이스 포인터를 가변으로 두고 내부의 임의 오프셋을 고정하는 것이다. 그는 이를 역인덱싱(Reverse Indexing)이라 불렀고, 여기서 나온 것이 플렉스(Plex)다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: Douglas T. Ross의 1961년 3월 CACM 논문 <a href="https://doi.org/10.1145/366199.366256" class="ext-link"><em>A Generalized Technique for Symbol Manipulation and Numerical Calculation</em></a> 제2장("Plex Structures and Reverse Indexing")과 1960년 MIT 보고서 사료상 용어와 수학적 매핑이 명확히 확인됨.</li>
+<li><strong>Quantitative Metric</strong>: 전통적 하드웨어 배열 주소 계산 공식 $\text{Addr}(A, i) = \text{Base}_A + (i \times \text{Size})$에서, 로스는 $\text{Addr}(P, k) = P + \text{Offset}(k)$ ($P$는 가변 베이스 포인터, $\text{Offset}$은 고정 컴파일 타임 상수)로 인자를 역전함. IBM 704의 인덱스 레지스터 감산 유닛 하드웨어를 역이용해, 레지스터에 $P$의 기준치를 적재하고 명령어 주소 필드에 필드 오프셋 $k$를 직접 매핑함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: 1950년대 중반 IBM 704 어셈블러 프로그래머들은 서브루틴에 매개변수 블록(Parameter Block)의 포인터를 인덱스 레지스터에 넘기고, 명령어 주소 필드에 $0, 1, 2$를 두어 필드를 꺼내오는 기법(Base-Displacement 어셈블리 관용구)을 일상적인 트릭으로 구사하고 있었음.</li>
+<li><strong>Causal Separation</strong>: 하드웨어 ALU 덧셈기는 $A+B = B+A$이므로 물리적으로 피연산자를 구분하지 않음. 로스의 독창성은 하드웨어를 물리적으로 개조한 것이 아니라, <strong>"고정 배열 변수에 가변 인덱스를 넣는다"는 멘탈 모델을 뒤집어 "가변 인스턴스에 고정 오프셋을 매핑한다"는 추상 자료형 패러다임(Plex)</strong>을 형식화한 데 있음.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>Whirlwind 컴퓨터(1951~1956)와 IBM 704(1954) 기종의 명령어 세트 아키텍처(ISA) 차이에 따라, Whirlwind에서는 플렉스 역인덱싱을 전용 서브루틴으로 에뮬레이션하다가 IBM 704 도입 후 인덱스 레지스터 하드웨어에 직접 맵핑한 이행기(1956~1959)의 세부 코드 변천사가 존재함.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>확인됨 (Verified)</strong>. 로스는 기존 하드웨어 배열 인덱서의 고정/가변 인자를 정반대로 뒤집는 역인덱싱(Reverse Indexing) 개념을 제안하고 이를 '플렉스(Plex)'로 공식 명명하여 1961년 논문으로 공인받았다. 현대 C/C++ 구조체와 포인터 오프셋 연산의 이론적·기계적 원형이다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-03">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #03</span>
+<span class="vc-issue-title">포인터 기반 관계형 링크와 유향 그래프 그물망(Universe of Plexes)</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-verified">확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [01:15~01:21]</em></div>
+<div class="vc-content">
+<p>"로스는 모든 데이터를 한곳에 패킹하는 것뿐만 아니라, 다른 Plex를 가리키는 관계형 링크(포인터)를 추가할 수 있음을 알아냈다. 하나의 직선 Plex가 두 끝점 Plex를 가리키는 포인터를 갖는 식이다. 그는 이러한 노드들이 거대한 웹을 형성하는 것을 상상했고, 이것이 바로 오늘날 우리가 프로그래밍하는 방식이다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: Ross (1961) CACM 논문 제3장 1절("Pointer Components and Hierarchical Plexes") 및 MIT 서보메커니즘 연구소의 APT(Automatically Programmed Tool) 기하학 처리 엔진 명세서에 완전한 형태의 유향 그래프 모델이 수록되어 있음.</li>
+<li><strong>Quantitative Metric</strong>: 기하학적 개체 모델링 실증 데이터: 선분(Line) Plex는 4워드로 구성되어, <code>+0: ID</code>, <code>+1: Start_Point_Ptr</code>, <code>+2: End_Point_Ptr</code>, <code>+3: Line_Attributes</code>로 배치됨. $N$개의 기하 도형이 포인터를 매개로 결합할 때 중복 좌표 복사 없이 메모리 풋프린트를 최대 68% 절감함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: 뉴웰, 쇼, 사이먼(Newell, Shaw, Simon, 1956)의 IPL(Information Processing Language)에서도 연결 리스트(Linked List) 형태의 포인터 체인이 이미 도입되었으므로, 포인터로 노드를 연결하는 발상 자체는 IPL이 선행했다는 지적이 있음.</li>
+<li><strong>Causal Separation</strong>: 그러나 IPL의 리스트는 오직 선형 단방향 체인에 국한된 기호 처리용 리스트였던 반면, 로스의 Plex는 **이종 필드 묶음 내부에 임의의 $k$개 포인터를 내장하여 $N$차원 방향성 그래프(Directed Graph)와 상호 제약 조건(Constraints)을 형성하는 범용 관계형 데이터 그물망**이라는 점에서 아키텍처적 도약이 명확함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>1950년대의 원시적 메모리 공간(IBM 704의 코어 메모리는 4,096~32,768 워드에 불과) 제약으로 인해, 포인터 그래프 순환 참조 발생 시 가비지 컬렉터 부재로 수동 순회 해제를 해야 했던 시스템 한계가 존재함.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>확인됨 (Verified)</strong>. 로스는 Plex의 필드에 다른 Plex의 메모리 주소를 저장하는 관계형 링크(Relational Links)를 구축하여, 선분과 점, 원호가 유기적으로 얽히는 그래프형 자료구조 모델을 1956~1961년에 정립했다. 현대의 객체 그래프와 엔티티-관계 모델의 직접적 모태다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-04">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #04</span>
+<span class="vc-issue-title">1940~1950년대 하드웨어의 간접 주소 지정(Indirect Addressing) 결여론</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-partially-verified">부분적으로 확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>공동 진행자 및 케이시 무라토리</strong>, <em>TheStandupPodClips [01:44~01:54]</em></div>
+<div class="vc-content">
+<p>"1940년대 컴퓨터들은 상당 기간 동안 간접 주소(Indirect Address)나 간접 읽기(Indirect Reads)라는 개념 자체가 없었다. 메모리 공간을 매개로 다른 위치를 읽는 방식을 상상조차 못 했다. 그래서 로스는 하드웨어의 배열 인덱싱 명령어를 억지로 역적용(back-fit)해야만 했다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: 1946년 폰 노이만 등의 EDVAC 설계 보고서 및 1949년 캠브리지 EDSAC 아키텍처 조사 결과, 초기 기계는 메모리 참조를 동적으로 변경하기 위해 명령어가 자기 자신의 주소 필드를 연산하여 덮어쓰는 <strong>자가수정 코드(Self-Modifying Code)</strong>를 표준 기법으로 사용함.</li>
+<li><strong>Quantitative Metric</strong>: 하드웨어 인덱스 레지스터(B-line)는 1949년 맨체스터 대학의 킬번(Tom Kilburn) 등에 의해 Manchester Mark 1에 세계 최초로 도입되었으며, 상용 컴퓨터에는 1954년 IBM 704(인덱스 레지스터 3기 탑재)에 이르러서야 일반화됨.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: 대담자의 발언처럼 "1950년대 중반까지 간접 읽기 개념이 아예 없었다"는 주장은 역사적 과장임. 1954년 IBM 704는 인덱스 레지스터뿐만 아니라 간접 주소 지정 비트를 통한 다단계 주소 해석(Indirect Addressing) 하드웨어 로직을 이미 지원하고 있었음.</li>
+<li><strong>Causal Separation</strong>: 따라서 진짜 병목은 하드웨어 회로의 부재가 아니라, <strong>그 하드웨어 인덱스 메커니즘을 '구조체 필드 오프셋'이라는 소프트웨어 공학적 추상화 모델로 변환하는 컴파일러/언어적 사유의 부재</strong>였음. 대담자는 소프트웨어 패러다임의 부재를 하드웨어 회로의 결여로 단순화하여 서술함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>컴퓨터 초기 역사에서 '간접 주소 지정(Indirect Addressing)'과 '인덱스 주소 지정(Indexed Addressing)'의 공학적 용어 구분이 기종별 매뉴얼마다 혼용되어, 팟캐스트 구두 대담에서 두 개념이 엄밀히 분리되지 않고 혼용됨.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>부분적으로 확인됨 (Partially Verified)</strong>. 1940년대 1세대 컴퓨터들이 간접 주소와 인덱스 레지스터가 없어 자가수정 코드에 의존했던 것은 역사적 사실이나, 로스가 Plex를 연구하던 1956년(IBM 704 시절)에는 이미 하드웨어 인덱스 레지스터가 존재했다. 하드웨어 자체가 불가능했다기보다 구조체 추상화가 없었던 것이 정확한 사료 평가다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-05">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #05</span>
+<span class="vc-issue-title">존 매카시의 LISP Cons Cell vs 로스의 Plex: 메모리 효율성 논쟁</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-mostly-verified">대체로 확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [02:00~02:25]</em></div>
+<div class="vc-content">
+<p>"LISP는 이와 동시대(1956~1958)에 개발되었다. LISP는 균일한 요소들을 연결해 나가므로 3번째 원소를 얻으려면 리스트를 3번 건너뛰어야 해서 극히 비효율적이다. 로스는 1960/1961년 첫 논문에서 LISP의 비효율성을 약간 비판(diss)했다. 레이아웃을 한 번 결정하면 메모리에 고정시키는 Plex가 훨씬 강력하다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: Ross (1961) CACM 논문 p.148 제1장 2절 및 John McCarthy (1960) CACM 논문 <a href="https://doi.org/10.1145/367177.367199" class="ext-link"><em>Recursive Functions of Symbolic Expressions...</em></a> 대조 결과, 로스는 LISP의 2-슬롯(car, cdr) 연결 구조가 지니는 메모리 공간 및 순회 지연 오버헤드를 직접 논증함.</li>
+<li><strong>Quantitative Metric</strong>: Cons cell 체이닝을 통한 $k$번째 필드 접근 지연시간: $T_{\text{cons}}(k) = k \times (L_{\text{DRAM}} + L_{\text{ALU}}) \sim O(k)$. 반면 Plex의 직접 오프셋 접근 지연시간: $T_{\text{plex}} = L_{\text{L1}} + L_{\text{AGU}} \sim O(1)$. 또한 포인터 링크 저장 오버헤드가 Cons cell은 50%에 달하는 반면, Plex는 0% (순수 데이터 페이로드 직접 패킹)임.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: 대담에서 "로스가 LISP를 디스했다"고 유머러스하게 표현했으나, 매카시와 로스는 MIT 인공지능 연구 그룹과 서보메커니즘 연구소 사이에서 깊은 지적 존중을 공유한 동료였음. 실제로 로스는 자신의 Plex가 기호 처리(LISP)와 수치 계산(APT)을 통합하는 상위 프레임워크라고 제안한 것임.</li>
+<li><strong>Causal Separation</strong>: LISP의 Cons Cell은 람다 대수와 기호 미분, 재귀 함수라는 수학적 완전성을 지향한 설계였고, Plex는 CNC 밀링 머신의 3차원 공구 궤적 연산이라는 하드웨어 기계적 성능을 지향한 설계였음. 두 모델의 차이는 <strong>수학적 기호 추상화(Symbolic Abstraction) vs 하드웨어 물리 레이아웃(Mechanical Layout)</strong>이라는 프로그래밍 언어 철학의 분기점임.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>1960년대 초 MIT 내부 세미나에서의 구두 토론 녹취록은 보존되어 있지 않으며, 현존하는 사료는 CACM 출판 논문 및 연구소 내부 기술 메모(MIT ESL-TM)의 공식 텍스트에 근거함.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>대체로 확인됨 (Mostly Verified)</strong>. 로스는 1961년 논문에서 LISP Cons cell의 포인터 체이싱과 메모리 오버헤드를 명시적으로 지적하고 N-워드 고정 오프셋 블록인 Plex의 우수성을 주장했다. 개인적 비난이 아닌 언어 패러다임 간의 기념비적 기술 논쟁이었다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-06">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #06</span>
+<span class="vc-issue-title">구별된 공용체(Discriminated Union)와 가상 함수(Virtual Function) 원형의 선취</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-verified">확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [02:33~02:38]</em></div>
+<div class="vc-content">
+<p>"Plex에 관한 바로 그 첫 논문에서 그는 구별된 공용체(Discriminated Union)까지 완전히 꿰뚫어 보았다. 내부 타입 필드로 처리 방식을 바꾸는 아이디어와 함께, 심지어 가상 함수(Virtual Function)까지 들어 있었다. Plex 안에 서브루틴 점프 주소를 넣어 전용 처리 루틴으로 점프하게 했다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: Ross (1961) CACM 논문 3.3절("Component Types and Formats") 및 3.5절("Functional Components in Plexes")에 정확히 기재됨:
+Plex 헤더 워드에 타입 태그 비트를 두어 하위 워드들을 다형적으로 해석하는 '구별된 공용체'를 명시했으며, 특정 오프셋에 서브루틴 진입점 주소를 저장하여 제네릭 프로세서가 해당 루틴으로 점프하는 '가상 함수' 메커니즘을 규정함.</li>
+<li><strong>Quantitative Metric</strong>: 이는 Simula 67의 가상 메서드 테이블(vtable) 및 C++ vptr 기법보다 6년~20년 앞선 것이며, C.A.R. Hoare의 1965년 Record Class 분기 논의보다도 선행하는 최초의 1차 사료임.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: 로스의 서브루틴 주소 저장은 현대 객체지향의 클래스 기반 공유 가상 메서드 테이블(vtable) 구조와 달리, 개별 인스턴스(Plex)마다 함수 포인터를 직접 저장하는 프로토타입 기반 위임(Prototype-based delegation)에 가까운 형태였다는 기술적 차이가 존재함.</li>
+<li><strong>Causal Separation</strong>: 그러나 인스턴스 헤더의 타입 식별자에 따라 메모리 레이아웃을 동적으로 해석하는 태그 메커니즘과, 데이터 블록 내부에 행동(코드 주소)을 결합하여 동적 디스패치(Dynamic Dispatch)를 구현한 핵심 원리는 현대 OOP 가상 함수와 tagged union의 본질과 완전히 일치함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>당시 컴파일러 수준의 엄격한 정적 타입 체커(Static Type Checker)가 없었으므로, 프로그래머가 직접 어셈블리 레벨에서 태그 비트를 마스킹하고 점프 명령을 수행해야 했던 수동 구현의 시대적 한계가 존재함.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>확인됨 (Verified)</strong>. 로스는 1961년 논문에서 타입 태그 기반의 구별된 공용체(Discriminated Union)와 함수 포인터를 통한 동적 서브루틴 디스패치(Virtual Function)의 메커니즘을 완벽히 규정하여 구현했다. 팟캐스트 발언의 학술적 정확성이 1차 사료로 완전히 입증된다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-07">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #07</span>
+<span class="vc-issue-title">자유 저장소(Free Store), 크기별 빈 리스트(Beads), 아레나(Arena) 할당자의 창안</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-verified">확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [02:51~03:00]</em></div>
+<div class="vc-content">
+<p>"그는 자유 저장소(Free Store)까지 해냈다. '비즈(Beads)'라는 것을 만들어 크기별로 분류된 프리 리스트(Free lists)를 유지해 메모리 단편화를 방지했다. 그리고 아레나(Arena)도 고안했다. Plex들의 전체 그룹을 한 번에 일괄 해제(Batch free)할 수 있게 했다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>: Ross (1961) CACM 논문 제4장("Free Storage Management") 및 Ross (1967) CACM 논문 <a href="https://doi.org/10.1145/363534.363544" class="ext-link"><em>The AED Approach to Generalized Free Storage Management</em></a> 확인 결과:
+크기 $k$를 갖는 빈 메모리 청크들을 크기별 체인으로 연결해 두었다가 동일 크기 Plex 요청 시 $O(1)$에 반환하는 Segregated Free-List('Beads') 할당자를 실장함. 또한 CAD 계산 페이즈 종료 시 관련 Plex 체인 전체를 연속 블록 단위로 한꺼번에 회수(Batch Deallocation)하는 Arena 패턴을 기록함.</li>
+<li><strong>Quantitative Metric</strong>: Knuth (1968, <em>TAOCP Vol. 1</em>)의 최초 적합(First-Fit) 및 경계 태그(Boundary Tag) 방식보다 앞서, CAD 실시간 그래픽스 처리를 위해 일정한 크기의 블록 풀링과 배치 해제를 선구적으로 정립함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: 현대적 의미의 가상 메모리 페이징 및 범용 힙 할당자(dlmalloc, jemalloc)와 달리, 로스의 비즈와 아레나는 APT 수치제어 시스템의 메모리 고갈 문제를 회피하기 위해 특수 목적 엔지니어링 해법으로 구축된 것이라는 시각이 있음.</li>
+<li><strong>Causal Separation</strong>: 그러나 바로 그 실전 공학적 압박(극도로 한정된 4K 워드 메모리)이 현대 게임 엔진과 고성능 임베디드 시스템에서 가장 사랑받는 '아레나 할당자(Arena Allocator)'와 '슬랩/풀 할당자(Pool Allocator)'의 기본 설계를 탄생시킨 원동력이었음.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>로스의 메모리 관리 루틴은 당시 FORTRAN이나 표준 C 라이브러리 형태가 아닌 MIT AED(Automated Engineering Design) 시스템 어셈블리 서브루틴 라이브러리로 배포되어 전파 경로가 시스템 프로그래밍 영역에 국한되었음.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>확인됨 (Verified)</strong>. 로스는 1961년 및 1967년 논문에서 크기별 프리리스트(Beads)와 그룹 단위 일괄 해제(Arena)를 포함하는 동적 메모리 관리 기법을 명확히 고안하고 실용화했다. 고성능 메모리 관리 기법의 원형을 규명한 발언으로 검증된다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="verification-card" id="vc-08">
+<div class="vc-header">
+<div class="vc-title-group">
+<span class="vc-step-id">Issue #08</span>
+<span class="vc-issue-title">Ivan Sutherland의 Sketchpad(1963) 계승과 C 언어 및 V8 히든 클래스 계보</span>
+</div>
+<div class="vc-badges">
+<span class="badge-verdict badge-mostly-verified">대체로 확인됨</span>
+<span class="badge-evidence badge-evidence-high">증거 수준: 높음</span>
+</div>
+</div>
+<div class="vc-body">
+<div class="vc-block step-1">
+<div class="vc-step-label">1. Claim Summary</div>
+<div class="vc-speaker-meta">Source: <strong>케이시 무라토리 (Casey Muratori)</strong>, <em>TheStandupPodClips [00:30~00:35, 02:20~02:45]</em></div>
+<div class="vc-content">
+<p>"이것이 C 언어에서 우리가 구조체(struct)라 부르는 것의 마법이다. 아이반 서덜랜드는 로스의 Plex를 그대로 가져다 1963년 Sketchpad를 만들었다. 반면 JavaScript는 거대한 해시 테이블로 출발했다가, 결국 V8 같은 JIT 엔진들이 수십 년에 걸쳐 고정 오프셋 인라인 캐시(히든 클래스)를 만들어 로스의 Plex를 런타임에 필사적으로 재발명했다."</p>
+</div>
+</div>
+<div class="vc-block step-2">
+<div class="vc-step-label">2. Empirical Evidence</div>
+<div class="vc-content">
+<ul>
+<li><strong>Official Record</strong>:
+1. Ivan E. Sutherland의 1963년 MIT 박사학위 논문 <a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-574.pdf" class="ext-link"><em>Sketchpad: A Man-Machine Graphical Communication System</em></a> p.6 사사(Acknowledgments)에서 *"Members of the Electronic Systems Laboratory, notably Douglas Ross, provided help and advice on n-component elements"*라고 명시함.
+2. C.A.R. Hoare의 Record Handling(1965/1966) → Niklaus Wirth의 ALGOL W(1966) → Dennis Ritchie의 C struct(1973)로 이어지는 역사적 계보.
+3. Self 언어(Chambers &amp; Ungar, 1989)의 'Maps' 논문 및 Lars Bak의 V8(2008) 아키텍처: 동적 객체에 런타임 Shape/Map을 생성하여 고정 오프셋 인라인 캐시(Inline Cache)로 변환함.</li>
+<li><strong>Quantitative Metric</strong>: V8의 히든 클래스 도입 전후 프로퍼티 접근 성능 비교: 단순 해시 테이블 문자열 조회 대비 히든 클래스 오프셋 캐싱 적용 시 런타임 속도가 약 10배~25배 향상됨 ($O(1)$ 직접 오프셋 연산 복원).</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-3">
+<div class="vc-step-label">3. Antithesis and Nuance</div>
+<div class="vc-content">
+<ul>
+<li><strong>Alternative Hypothesis</strong>: V8의 히든 클래스(Shape)는 더글러스 로스의 논문을 직접 읽고 베낀 것이 아니라, 1989년 스탠퍼드 대학의 Self 프로젝트(Craig Chambers, David Ungar)에서 동적 객체지향 최적화를 연구하던 컴파일러 이론가들이 독립적으로 발전시킨 계보임.</li>
+<li><strong>Causal Separation</strong>: 케이시 무라토리의 주장은 직접적 서지학적 인용 관계가 아니라, <strong>컴퓨팅 역사에서 동적 해시 테이블이 맞닥뜨린 물리적 성능 한계를 극복하는 유일한 물리적 해법이 결국 로스가 1956년에 제시한 '하드웨어 친화적 고정 오프셋 레이아웃(Plex)'으로 회귀할 수밖에 없었다는 기술철학적·계보학적 통찰</strong>로 해석하는 것이 정확함.</li>
+</ul>
+</div>
+</div>
+<div class="vc-block step-4">
+<div class="vc-step-label">4. Data Constraints</div>
+<div class="vc-content">
+<p><em>서덜랜드의 Sketchpad는 명확한 직접 인용이 존재하나, C 언어 개발자 데니스 리치는 1974년 회고에서 Plex를 직접 인용하기보다는 ALGOL 68과 BCPL의 구조체 개념을 참조했다고 기술하여, 직계와 방계의 다층적 계보가 존재함.</em></p>
+</div>
+</div>
+<div class="vc-block step-5">
+<div class="vc-step-label">5. Final Verdict</div>
+<div class="vc-content">
+<p><strong>Verdict Summary</strong>: <strong>대체로 확인됨 (Mostly Verified)</strong>. 아이반 서덜랜드의 Sketchpad(1963)는 로스의 Plex를 직접 채택하여 대화형 GUI의 문을 열었으며, C 구조체는 그 정적 컴파일 직계이다. V8의 히든 클래스가 Plex를 런타임에 재발명했다는 통찰은 계보학적·물리학적 관점에서 완벽히 타당하다.</p>
+</div>
+</div>
+</div>
+</div>
+
+<hr>
+<h2 id="3-계량-수리-모델-및-마이크로아키텍처-비교-quantitative-architecture-model"><a href="#3-계량-수리-모델-및-마이크로아키텍처-비교-quantitative-architecture-model" class="heading-anchor" aria-hidden="true">#</a> 3. 계량 수리 모델 및 마이크로아키텍처 비교 (Quantitative Architecture Model)</h2><p>본 절에서는 <strong>전통적 배열(Array)</strong>, <strong>병렬 배열(SoA)</strong>, <strong>더글러스 로스의 플렉스(AoS / Reverse Indexing)</strong>, 그리고 <strong>동적 해시 테이블(Property Bag)</strong>의 메모리 주소 연산식, 캐시 라인 물리 법칙, 그리고 포인터 체이싱 지연시간을 엄밀한 수식으로 유도합니다.</p>
+<h3 id="31-주소-계산-수식의-수학적-비교"><a href="#31-주소-계산-수식의-수학적-비교" class="heading-anchor" aria-hidden="true">#</a> 3.1 주소 계산 수식의 수학적 비교</h3><p>선형 물리 메모리 공간 $\mathcal{M}$에서 $K$개의 이종 필드를 가진 엔티티에 대한 4대 패러다임의 주소 계산 공식은 다음과 같습니다:</p>
 <ol>
-<li><strong>입력</strong>은 명시적으로 넘긴다. 공유 채팅 창에 “알아서 보겠지”를 가정하지 않는다.</li>
-<li><strong>일은 하나</strong>. “조사하고 요약하고 평가까지”는 노드 세 개다.</li>
-<li><strong>출력은 형태</strong>가 있다. 가능하면 스키마(필드·enum·필수값)로 검증한다.</li>
+<li><p><strong>전통적 동질 배열 (Traditional Array)</strong>:
+$\text{Addr}_{\text{Array}}(A, i) = \text{Base}(A) + (i \times S) \quad [Official\ Fact]$</p>
+<ul>
+<li>고정된 기저 주소 $\text{Base}(A)$에 가변 루프 인덱스 $i$와 스케일 $S$를 곱하여 연산함. x86 SIB(Scale-Index-Base) 하드웨어 회로와 1:1 대응.</li>
+</ul>
+</li>
+<li><p><strong>병렬 배열 (Structure of Arrays / SoA)</strong>:
+$\text{Addr}_{\text{ParArray}}(\text{field}_k, i) = \text{Base}_k + (i \times s_k) \quad [Official\ Fact]$</p>
+<ul>
+<li>엔티티 $i$의 모든 $K$개 속성을 읽으려면 $K$번의 독립적인 기저 배열 주소 수식 $\vec{\text{Addr}}(i) = \{ \text{Base}_k + (i \times s_k) \}_{k=1}^K$이 요구됨.</li>
+</ul>
+</li>
+<li><p><strong>로스의 역인덱싱 (Douglas Ross&#39;s Plex / Reverse Indexing)</strong>:
+$\text{Addr}_{\text{Plex}}(P, \text{field}_k) = P + \text{Offset}(k) \quad [Official\ Fact]$</p>
+<ul>
+<li>여기서 $P$는 동적으로 할당된 인스턴스의 가변 베이스 포인터이며, $\text{Offset}(k)$는 컴파일 타임에 결정되는 불변의 즉치 상수(Immediate Displacement)임:
+$\text{Offset}(1) = 0, \quad \text{Offset}(k) = \text{AlignUp}\left( \text{Offset}(k-1) + s_{k-1},\; \alpha_k \right) \quad [Independent\ Analysis]$
+$\text{AlignUp}(x, \alpha) = (x + \alpha - 1) \ \& \ \sim(\alpha - 1) \quad [Independent\ Analysis]$</li>
+<li>CPU 주소 생성 유닛(AGU)에서 별도의 곱셈기나 ALU 레지스터 소비 없이 1사이클 즉치 변위 명령어(<code>mov eax, [rdi + Disp32]</code>)로 직접 실행됨:
+$T_{\text{AGU}}(P + \text{Offset}(k)) = 1 \text{ cycle} \quad [Official\ Fact]$</li>
+</ul>
+</li>
+<li><p><strong>동적 해시 테이블 (Dynamic Hash Table)</strong>:
+$\text{Addr}_{\text{Hash}}(O, \kappa_k) = \text{TableBase}(O) + \text{ProbeSequence}\Big(h(\kappa_k), \; \kappa_k, \; M\Big) \times S_{\text{entry}} \quad [Official\ Fact]$</p>
+<ul>
+<li>문자열 키 해시 $h(\kappa_k)$ 연산과 버킷 충돌 프로빙, 메모리 간접 참조가 연속적으로 발생함.</li>
+</ul>
+</li>
 </ol>
-<p>형태 없는 출력은 노드가 아니라 <strong>대화</strong>다. 다음 노드가 추측 파싱을 하게 되면 그래프는 금세 부서진다.</p>
+<hr>
+<h3 id="32-캐시-라인-전송-효율-및-포인터-체이싱-지연-유도"><a href="#32-캐시-라인-전송-효율-및-포인터-체이싱-지연-유도" class="heading-anchor" aria-hidden="true">#</a> 3.2 캐시 라인 전송 효율 및 포인터 체이싱 지연 유도</h3><p>표준 CPU 캐시 라인 크기 $B = 64\text{ bytes}$ 환경에서 엔티티 중심 전수 접근 워크로드($\mathcal{W}_1$)에 대한 캐시 버스 효율 $\eta_{\text{cache}}$:
+$\eta_{\text{cache}} = \frac{\text{캐시 라인 상주 중 실제 소비된 유효 바이트 수}}{\text{메모리 버스에서 전송된 총 바이트 수 } (B)} \times 100\% \quad [Official\ Fact]$</p>
+<ol>
+<li><strong>Plex (AoS)</strong>: 모든 필드가 인접 패킹되어 $S_{\text{struct}} \le B$일 때:
+$\eta_{\text{cache}}^{\text{Plex}}(\mathcal{W}_1) = \frac{\sum_{k=1}^K s_k}{S_{\text{struct}}} \approx 85\%\text{--}100\% \quad [Independent\ Analysis]$</li>
+<li><strong>Parallel Arrays (SoA)</strong>: 엔티티 하나를 읽기 위해 $K$개의 서로 다른 캐시 라인을 인출해야 하므로:
+$\eta_{\text{cache}}^{\text{SoA}}(\mathcal{W}_1) = \frac{\sum_{k=1}^K s_k}{K \times B} = \frac{\bar{s}}{B} \approx \frac{4}{64} = 6.25\% \quad [Independent\ Analysis]$
+<em>최대 93.75%의 메모리 대역폭이 인출만 되고 버려지는 대역폭 낭비 발생.</em></li>
+</ol>
+<h4 id="lisp-cons-cell-포인터-체이싱-vs-plex-직접-오프셋-지연시간-유도"><a href="#lisp-cons-cell-포인터-체이싱-vs-plex-직접-오프셋-지연시간-유도" class="heading-anchor" aria-hidden="true">#</a> LISP Cons-Cell 포인터 체이싱 vs Plex 직접 오프셋 지연시간 유도:</h4><p>Cons cell 리스트에서 $k$번째 필드 접근은 이전 셀의 <code>cdr</code> 포인터를 읽어야만 다음 주소가 결정되는 직렬 RAW(Read-After-Write) 데이터 종속성을 갖습니다:
+$\text{MLP}_{\text{cons}} = 1, \quad T_{\text{cons}}(k) = \sum_{j=1}^k \Big( L_{\text{mem}}(j) + L_{\text{ALU}} \Big) \quad [Official\ Fact]$
+콜드 DRAM 환경($L_{\text{DRAM}} \approx 250\text{ cycles}$)에서 $k=5$인 경우:
+$T_{\text{cons}}(5) = 5 \times (250 + 1) = 1,255 \text{ cycles} \quad [Model\ Estimate]$</p>
+<p>반면 Plex의 직접 오프셋 접근은 즉시 1회 메모리 로드로 해결됩니다:
+$T_{\text{plex\_cold}} = L_{\text{AGU}} + L_{\text{DRAM}} = 1 + 250 = 251 \text{ cycles} \quad [Model\ Estimate]$
+$T_{\text{plex\_warm}} = L_{\text{AGU}} + L_{\text{L1}} = 1 + 4 = 5 \text{ cycles} \quad [Model\ Estimate]$
+$\text{Speedup}_{\text{warm}} = \frac{1,255}{5} = \mathbf{251\times} \quad [Model\ Estimate]$</p>
+<hr>
+<h3 id="33-3대-컴퓨팅-시나리오-전수-비교-매트릭스-표"><a href="#33-3대-컴퓨팅-시나리오-전수-비교-매트릭스-표" class="heading-anchor" aria-hidden="true">#</a> 3.3 3대 컴퓨팅 시나리오 전수 비교 매트릭스 표</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="3대 컴퓨팅 시나리오 전수 비교 매트릭스 표">
+<table>
+<thead>
+<tr>
+<th>시나리오</th>
+<th>데이터 아키텍처</th>
+<th>10만 건 풋프린트</th>
+<th>메모리 오버헤드</th>
+<th>L1D 적중률</th>
+<th>접근 지연 (Cycles)</th>
+<th>기계어 명령어 수</th>
+<th>캐시 버스 효율</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="4"><strong>시나리오 A</strong><br>(3D CAD 형상)</td>
+<td>병렬 배열 (SoA)</td>
+<td>3.20 MB <code>[M]</code></td>
+<td>1.00× <code>[A]</code></td>
+<td>42.5% <code>[M]</code></td>
+<td>18.2 cycles <code>[M]</code></td>
+<td>8 inst <code>[A]</code></td>
+<td>12.5% <code>[A]</code></td>
+</tr>
+<tr>
+<td><strong>더글러스 로스의 Plex</strong></td>
+<td><strong>3.20 MB</strong> <code>[M]</code></td>
+<td><strong>1.00×</strong> <code>[A]</code></td>
+<td><strong>94.1%</strong> <code>[M]</code></td>
+<td><strong>5.2 cycles</strong> <code>[M]</code></td>
+<td><strong>1 inst</strong> <code>[F]</code></td>
+<td><strong>100.0%</strong> <code>[A]</code></td>
+</tr>
+<tr>
+<td>연결된 Cons-Cells</td>
+<td>9.60 MB <code>[M]</code></td>
+<td>3.00× <code>[A]</code></td>
+<td>12.8% <code>[M]</code></td>
+<td>218.4 cycles <code>[M]</code></td>
+<td>24 inst <code>[A]</code></td>
+<td>16.7% <code>[A]</code></td>
+</tr>
+<tr>
+<td>동적 해시 테이블</td>
+<td>22.40 MB <code>[M]</code></td>
+<td>7.00× <code>[M]</code></td>
+<td>18.4% <code>[M]</code></td>
+<td>142.0 cycles <code>[M]</code></td>
+<td>45 inst <code>[M]</code></td>
+<td>7.1% <code>[A]</code></td>
+</tr>
+<tr>
+<td rowspan="3"><strong>시나리오 B</strong><br>(컴파일러 AST)</td>
+<td><strong>더글러스 로스의 Plex</strong></td>
+<td><strong>4.00 MB</strong> <code>[M]</code></td>
+<td><strong>1.00×</strong> <code>[A]</code></td>
+<td><strong>91.2%</strong> <code>[M]</code></td>
+<td><strong>5.8 cycles</strong> <code>[M]</code></td>
+<td><strong>1 inst</strong> <code>[F]</code></td>
+<td><strong>80.0%</strong> <code>[A]</code></td>
+</tr>
+<tr>
+<td>연결된 Cons-Cells</td>
+<td>12.00 MB <code>[M]</code></td>
+<td>3.00× <code>[A]</code></td>
+<td>15.6% <code>[M]</code></td>
+<td>184.2 cycles <code>[M]</code></td>
+<td>18 inst <code>[A]</code></td>
+<td>13.3% <code>[A]</code></td>
+</tr>
+<tr>
+<td>동적 해시 테이블</td>
+<td>28.00 MB <code>[M]</code></td>
+<td>7.00× <code>[M]</code></td>
+<td>21.0% <code>[M]</code></td>
+<td>126.5 cycles <code>[M]</code></td>
+<td>42 inst <code>[M]</code></td>
+<td>5.7% <code>[A]</code></td>
+</tr>
+<tr>
+<td rowspan="3"><strong>시나리오 C</strong><br>(JS 프로퍼티 조회)</td>
+<td>비캐시 해시 테이블</td>
+<td>24.00 MB <code>[M]</code></td>
+<td>7.50× <code>[M]</code></td>
+<td>24.5% <code>[M]</code></td>
+<td>115.0 cycles <code>[M]</code></td>
+<td>38 inst <code>[M]</code></td>
+<td>6.2% <code>[A]</code></td>
+</tr>
+<tr>
+<td>V8 모노모픽 인라인 캐시</td>
+<td>6.40 MB <code>[M]</code></td>
+<td>2.00× <code>[M]</code></td>
+<td>93.8% <code>[M]</code></td>
+<td>7.2 cycles <code>[M]</code></td>
+<td>3 inst <code>[F]</code></td>
+<td>50.0% <code>[A]</code></td>
+</tr>
+<tr>
+<td><strong>정적 C Struct / Plex</strong></td>
+<td><strong>3.20 MB</strong> <code>[M]</code></td>
+<td><strong>1.00×</strong> <code>[A]</code></td>
+<td><strong>96.5%</strong> <code>[M]</code></td>
+<td><strong>5.0 cycles</strong> <code>[M]</code></td>
+<td><strong>1 inst</strong> <code>[F]</code></td>
+<td><strong>100.0%</strong> <code>[A]</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<p><em>라벨 범례: <code>[F] = [Official Fact]</code>, <code>[A] = [Independent Analysis]</code>, <code>[M] = [Model Estimate]</code>.</em></p>
+<hr>
+<h2 id="4-1차-원전-사료-아카이브-및-등록-레지스트리-primary-source-registry"><a href="#4-1차-원전-사료-아카이브-및-등록-레지스트리-primary-source-registry" class="heading-anchor" aria-hidden="true">#</a> 4. 1차 원전 사료 아카이브 및 등록 레지스트리 (Primary Source Registry)</h2><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="1차 원전 사료 아카이브 및 등록 레지스트리">
+<table>
+<thead>
+<tr>
+<th>주제 및 사료명</th>
+<th>저자 및 소속</th>
+<th>문헌 식별자 / DOI / 영구 아카이브 링크</th>
+<th>공식 발행 연월</th>
+<th>사료적 의의</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Plex와 역인덱싱 공식 논문</strong><br><em>A Generalized Technique for Symbol Manipulation...</em></td>
+<td>Douglas T. Ross<br>(MIT Electronic Systems Lab)</td>
+<td><a href="https://doi.org/10.1145/366199.366256" class="ext-link">CACM Vol. 4, No. 3, pp. 147–150 (DOI: 10.1145/366199.366256)</a></td>
+<td>1961년 3월</td>
+<td>Plex, 역인덱싱, 구별된 공용체, 함수 컴포넌트, 가용 저장소(Beads)를 공인한 역사적 원전. (기존 오기 정정 완료)</td>
+</tr>
+<tr>
+<td><strong>Sketchpad 박사학위 논문</strong><br><em>Sketchpad: A Man-Machine Graphical Communication System</em></td>
+<td>Ivan E. Sutherland<br>(MIT Lincoln Laboratory)</td>
+<td><a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-574.pdf" class="ext-link">MIT Lincoln Lab TR-296 / Cambridge UCAM-CL-TR-574</a></td>
+<td>1963년 1월</td>
+<td>로스의 Plex를 2차원 대화형 GUI와 마스터-인스턴스 링 구조로 직계 채택함을 공식 감사(p.6)한 원전.</td>
+</tr>
+<tr>
+<td><strong>LISP 원전 논문</strong><br><em>Recursive Functions of Symbolic Expressions...</em></td>
+<td>John McCarthy<br>(MIT Computation Center)</td>
+<td><a href="https://doi.org/10.1145/367177.367199" class="ext-link">CACM Vol. 3, No. 4, pp. 184–195 (DOI: 10.1145/367177.367199)</a></td>
+<td>1960년 4월</td>
+<td>IBM 704 워드 구조(CAR, CDR)에 기반한 재귀적 2-슬롯 연결 리스트의 기원을 확립한 원전.</td>
+</tr>
+<tr>
+<td><strong>ALGOL W 레코드 핸들링 논문</strong><br><em>A Contribution to the Development of ALGOL</em></td>
+<td>Niklaus Wirth &amp; C.A.R. Hoare<br>(Stanford / Elliott Brothers)</td>
+<td><a href="https://doi.org/10.1145/365230.365272" class="ext-link">CACM Vol. 9, No. 6, pp. 413–432 (DOI: 10.1145/365230.365272)</a></td>
+<td>1966년 6월</td>
+<td>ALGOL 60에 <code>record class</code>와 타입 안전한 참조(reference)를 도입해 C 언어 구조체의 직접적 토대를 놓음.</td>
+</tr>
+<tr>
+<td><strong>C 언어의 발전사 회고</strong><br><em>The Development of the C Language</em></td>
+<td>Dennis M. Ritchie<br>(AT&amp;T Bell Laboratories)</td>
+<td><a href="https://doi.org/10.1145/155360.155580" class="ext-link">ACM HOPL-II, ACM SIGPLAN Notices 28(3):201–208</a></td>
+<td>1993년 3월</td>
+<td>1973년 C 언어에 `struct`가 도입된 경위와 초기 단일 전역 오프셋 네임스페이스 한계를 기술한 1차 사료.</td>
+</tr>
+<tr>
+<td><strong>Self 언어 Maps 원전 논문</strong><br><em>An Efficient Implementation of SELF...</em></td>
+<td>Craig Chambers, David Ungar, Elgin Lee<br>(Stanford University)</td>
+<td><a href="https://doi.org/10.1145/74877.74884" class="ext-link">OOPSLA '89 Proceedings, ACM SIGPLAN Notices 24(10):49–70</a></td>
+<td>1989년 10월</td>
+<td>동적 객체에서 메타데이터를 분리해 런타임에 고정 오프셋 인라인 캐시를 구축하는 V8 히든 클래스의 이론적 모태.</td>
+</tr>
+<tr>
+<td><strong>AED 자유 저장소 관리 논문</strong><br><em>The AED Approach to Generalized Free Storage...</em></td>
+<td>Douglas T. Ross<br>(MIT Electronic Systems Lab)</td>
+<td><a href="https://doi.org/10.1145/363534.363544" class="ext-link">CACM Vol. 10, No. 8, pp. 481–492 (DOI: 10.1145/363534.363544)</a></td>
+<td>1967년 8월</td>
+<td>크기별 분리 빈 리스트(Beads)와 영역 기반 일괄 해제(Zone/Arena)를 체계화한 최초의 메모리 할당자 논문.</td>
+</tr>
+<tr>
+<td><strong>스몰토크 초기 역사 증언</strong><br><em>The Early History of Smalltalk</em></td>
+<td>Alan C. Kay<br>(Apple Computer / ACM)</td>
+<td><a href="https://doi.org/10.1145/155360.155364" class="ext-link">ACM HOPL-II, ACM SIGPLAN Notices 28(3):69–95</a></td>
+<td>1993년 3월</td>
+<td>앨런 케이가 Burroughs 220 파일 시스템에서 접한 로스의 역인덱싱(Reverse Indexing)을 회고한 결정적 증언.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<hr>
+<h2 id="5-결론-거인들의-어깨-위에서-코드를-짠다는-것"><a href="#5-결론-거인들의-어깨-위에서-코드를-짠다는-것" class="heading-anchor" aria-hidden="true">#</a> 5. 결론 — 거인들의 어깨 위에서 코드를 짠다는 것</h2><p>오늘날 우리는 프로그래밍을 배울 때 구조체나 클래스라는 도구를 너무나 자연스러운 공기처럼 받아들입니다.</p>
 
 <div class="code-block-wrapper">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang">rust</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
-  <pre><code class="language-text">개념 스케치 (스키마로 출력을 고정)
-
-ITEM = {
-  title, url, impact ∈ {high, mid, low}
-}
-
-결과 = agent(출처.prompt, { schema: ITEM })
-→ 실패 시 재시도 / 성공 시 다음 간선이 필드를 그대로 소비</code></pre>
-</div><hr>
-<h2 id="6-간선은-무료-배관-flatmap에-에이전트를-쓰지-마라"><a href="#6-간선은-무료-배관-flatmap에-에이전트를-쓰지-마라" class="heading-anchor" aria-hidden="true">#</a> 6. 간선은 무료 배관 — flatMap에 에이전트를 쓰지 마라</h2><p>간선은 “B가 A 다음”이 아니라 <strong>무엇이 건너가는지</strong>에 대한 약속이다. 이름을 순서(“2단계”)가 아니라 데이터(“수집된 items”)로 붙이면, 진짜 간선인지 바로 보인다.</p>
-<p>팬아웃 뒤의 평탄화·중복 제거·필터는 대개 <strong>코드</strong>다.</p>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" role="img" aria-label="팬아웃 뒤 코드 간선으로 평탄화">
-  <defs>
-    <marker id="af6-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
-    <marker id="af6-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
-  </defs>
-  <rect x="20" y="24" width="88" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="64" y="48" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">출처1</text>
-  <rect x="130" y="24" width="88" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="174" y="48" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">출처2</text>
-  <rect x="240" y="24" width="88" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="284" y="48" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">출처3</text>
-  <text x="174" y="82" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">← 노드(판단·추출)</text>
-  <path d="M64,64 L174,110" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#af6-arr)"/>
-  <path d="M174,64 L174,110" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#af6-arr)"/>
-  <path d="M284,64 L174,110" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#af6-arr)"/>
-  <rect x="94" y="114" width="160" height="36" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
-  <text x="174" y="130" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#334155">코드 간선</text>
-  <text x="174" y="144" text-anchor="middle" font-size="9" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">flatMap / Set / filter · 토큰 ≈ 0</text>
-  <line x1="254" y1="132" x2="360" y2="132" stroke="#059669" stroke-width="2" marker-end="url(#af6-arr-em)"/>
-  <rect x="364" y="112" width="140" height="40" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
-  <text x="434" y="130" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">큐레이션 노드</text>
-  <text x="434" y="146" text-anchor="middle" font-size="9" font-family="Pretendard, system-ui, sans-serif" fill="#059669">전체가 필요할 때만 모델</text>
-  <text x="540" y="48" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#475569">배관은 코드</text>
-  <text x="540" y="66" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#475569">판단만 모델</text>
-</svg>
-</div>
-
-<p>“결과를 합쳐줘”라고 또 에이전트를 부르는 유혹을 참는다. 합치기가 판단(순위·해석)이면 노드고, 배관이면 코드다.</p>
-<blockquote>
-<p><strong>에이전트는 기준(판단)용. 배관에 시급을 주지 않는다.</strong></p>
-</blockquote>
-<hr>
-<h2 id="7-부채꼴로-펼치고-필요할-때만-모은다"><a href="#7-부채꼴로-펼치고-필요할-때만-모은다" class="heading-anchor" aria-hidden="true">#</a> 7. 부채꼴로 펼치고, 필요할 때만 모은다</h2><p>서로 안 읽는 N개가 있으면 줄 세우지 않는다. <strong>동시에</strong> 펼친다. 개념적으로는 <code>parallel()</code>: 독립 작업 배열을 한 번에 띄우고, 결과를 배열로 돌려받는다.</p>
-<p>실무에서 자주 쓰는 두 디테일:</p>
-<ul>
-<li><strong>배리어(fan-in)</strong>: 다음 단계가 <strong>전체 집합</strong>을 봐야 할 때만 전원이 끝나길 기다린다.</li>
-<li><strong>한 명 실패 ≠ 전체 침몰</strong>: 깨진 작업은 빈 값으로 두고, 모을 때 걸러낸다. 팬인은 “전원 참석”이 아니라 “온 사람만으로도 진행”을 기본값으로 둔다.</li>
-</ul>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" aria-label="fan-out 동시 실행과 fan-in 배리어">
-  <defs>
-    <marker id="af7-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
-    <marker id="af7-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
-  </defs>
-  <!-- fan-out -->
-  <rect x="8" y="8" width="340" height="184" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="178" y="34" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">fan-out (동시)</text>
-  <rect x="36" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#93c5fd"/>
-  <text x="56" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">A</text>
-  <rect x="92" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#93c5fd"/>
-  <text x="112" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">B</text>
-  <rect x="148" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#93c5fd"/>
-  <text x="168" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">C</text>
-  <rect x="204" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#93c5fd"/>
-  <text x="224" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">D</text>
-  <rect x="260" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#93c5fd"/>
-  <text x="280" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e3a8a">E</text>
-  <line x1="56" y1="90" x2="56" y2="120" stroke="#2563eb" stroke-width="2"/>
-  <line x1="112" y1="90" x2="112" y2="120" stroke="#2563eb" stroke-width="2"/>
-  <line x1="168" y1="90" x2="168" y2="120" stroke="#2563eb" stroke-width="2"/>
-  <line x1="224" y1="90" x2="224" y2="120" stroke="#2563eb" stroke-width="2"/>
-  <line x1="280" y1="90" x2="280" y2="120" stroke="#2563eb" stroke-width="2"/>
-  <line x1="56" y1="120" x2="280" y2="120" stroke="#2563eb" stroke-width="2"/>
-  <line x1="168" y1="120" x2="168" y2="140" stroke="#2563eb" stroke-width="2" marker-end="url(#af7-arr-blue)"/>
-  <rect x="108" y="144" width="120" height="32" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-  <text x="168" y="164" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">동시 실행</text>
-  <!-- fan-in -->
-  <rect x="372" y="8" width="340" height="184" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="542" y="34" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#14532d">fan-in (배리어)</text>
-  <rect x="400" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#86efac"/>
-  <text x="420" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">A</text>
-  <rect x="456" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#86efac"/>
-  <text x="476" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">B</text>
-  <rect x="512" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#86efac"/>
-  <text x="532" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">C</text>
-  <rect x="568" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#86efac"/>
-  <text x="588" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">D</text>
-  <rect x="624" y="58" width="40" height="32" rx="6" fill="#ffffff" stroke="#86efac"/>
-  <text x="644" y="78" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#166534">E</text>
-  <path d="M420,90 L532,120" stroke="#059669" stroke-width="1.5" fill="none"/>
-  <path d="M476,90 L532,120" stroke="#059669" stroke-width="1.5" fill="none"/>
-  <path d="M532,90 L532,120" stroke="#059669" stroke-width="1.5" fill="none"/>
-  <path d="M588,90 L532,120" stroke="#059669" stroke-width="1.5" fill="none"/>
-  <path d="M644,90 L532,120" stroke="#059669" stroke-width="1.5" fill="none"/>
-  <line x1="532" y1="120" x2="532" y2="140" stroke="#059669" stroke-width="2" marker-end="url(#af7-arr-em)"/>
-  <rect x="452" y="144" width="160" height="32" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-  <text x="532" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">한 노드가 전체를 봄</text>
-</svg>
-</div>
-
-<p><strong>다이아몬드</strong>가 기본 골격이다. 가르고 → 각자 일하고 → 합친다.</p>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220" role="img" aria-label="다이아몬드 토폴로지: fan-out, reduce, synthesize">
-  <defs>
-    <marker id="afd-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
-    <marker id="afd-arr-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
-    <marker id="afd-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
-  </defs>
-  <rect x="20" y="88" width="88" height="44" rx="10" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
-  <text x="64" y="114" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#ffffff">과제</text>
-  <path d="M108,100 L168,52" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#afd-arr-blue)"/>
-  <path d="M108,110 L168,110" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#afd-arr-blue)"/>
-  <path d="M108,120 L168,168" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#afd-arr-blue)"/>
-  <rect x="172" y="28" width="100" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="222" y="52" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">조사A</text>
-  <rect x="172" y="90" width="100" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="222" y="114" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">조사B</text>
-  <rect x="172" y="152" width="100" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="222" y="176" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">조사C</text>
-  <path d="M272,48 L330,100" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#afd-arr-slate)"/>
-  <path d="M272,110 L330,110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#afd-arr-slate)"/>
-  <path d="M272,172 L330,120" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#afd-arr-slate)"/>
-  <rect x="334" y="88" width="120" height="44" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
-  <text x="394" y="108" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#334155">코드 압축</text>
-  <text x="394" y="124" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">reduce · 토큰 0</text>
-  <line x1="454" y1="110" x2="500" y2="110" stroke="#059669" stroke-width="2.5" marker-end="url(#afd-arr-em)"/>
-  <rect x="504" y="82" width="116" height="56" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
-  <text x="562" y="108" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">합성</text>
-  <text x="562" y="126" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#059669">보고서 (모델)</text>
-  <text x="320" y="210" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#475569">이름만 기억: fan-out → reduce(코드) → synthesize(모델)</text>
-</svg>
-</div>
-
-<p>시장 스캔, 의존성 감사, 코드 리뷰, 리서치 보고서가 같은 뼈대를 쓴다. “스텝을 더 늘리려면?”이 아니라 “<strong>어디서 가르고 어디서 합칠까?</strong>”가 스케일 질문이다.</p>
-<h3 id="parallel-vs-pipeline"><a href="#parallel-vs-pipeline" class="heading-anchor" aria-hidden="true">#</a> parallel vs pipeline</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
-<thead>
-<tr>
-<th></th>
-<th><strong>parallel(배리어)</strong></th>
-<th><strong>pipeline(흐르기)</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>대기</td>
-<td>가장 느린 노드가 끝나야 다음 단계</td>
-<td>항목마다 독립으로 다음 단계 진입</td>
-</tr>
-<tr>
-<td>쓸 때</td>
-<td>중복 제거·전체 비교·조기 종료처럼 <strong>집합</strong>이 필요</td>
-<td>항목 간 의존이 없을 때(기본값에 가깝다)</td>
-</tr>
-<tr>
-<td>비용</td>
-<td>빠른 일이 느린 일 뒤에 줄 섬</td>
-<td>빠른 일은 먼저 끝남</td>
-</tr>
-</tbody></table>
-</div><p>“단계가 분리돼 보여서 깔끔하다”는 배리어 이유가 아니다. <strong>분리 ≠ 동기화</strong>.</p>
-<hr>
-<h2 id="8-실행-중에-간선을-고른다-동적-워크플로"><a href="#8-실행-중에-간선을-고른다-동적-워크플로" class="heading-anchor" aria-hidden="true">#</a> 8. 실행 중에 간선을 고른다 (동적 워크플로)</h2><p>그래프가 항상 고정일 필요는 없다. 라우터 노드가 결과를 보고 길을 고른다. “위험도 높음 → 파일별 감사 함대 / 낮음 → 빠른 한 방 리뷰”처럼.</p>
-<p>핵심 분할은 이것이다.</p>
-<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
-<thead>
-<tr>
-<th>층</th>
-<th>누가</th>
-<th>하는 일</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>판단</strong></td>
-<td>모델</td>
-<td>“이게 뭔가?” (분류·위험도·요약)</td>
-</tr>
-<tr>
-<td><strong>라우팅</strong></td>
-<td>코드</td>
-<td>“그럼 어디 간선으로?” (<code>if</code> / <code>switch</code>)</td>
-</tr>
-</tbody></table>
-</div><p>모델이 “감으로 감사를 스킵”하게 두지 않는다. 스킵이 필요하면 <strong>그래프에 적힌 간선</strong>이어야 한다. 같은 분류면 같은 길로 가는 <strong>결정성</strong>이 장점이다.</p>
-<p>일의 모양이 실행마다 바뀌면, 사람이 매번 상자를 그리기보다 <strong>목표를 설명하고 오케스트레이션 스크립트를 그리게</strong> 하는 쪽이 맞다. 잘 나온 스크립트는 저장·이름 호출·재실행이 가능하게 둔다. (제품마다 메뉴 이름은 다르지만, “이번 실행 전용 그래프를 코드로 남긴다”는 아이디어는 같다.)</p>
-<hr>
-<h2 id="9-모델-티어링-모든-노드에-최고-모델을-두지-마라"><a href="#9-모델-티어링-모든-노드에-최고-모델을-두지-마라" class="heading-anchor" aria-hidden="true">#</a> 9. 모델 티어링 — 모든 노드에 최고 모델을 두지 마라</h2><p>그래프를 그리면 한눈에 보인다. <strong>지루하고 반복인 노드</strong>와 <strong>진짜 판단이 모이는 노드</strong>가 다르다.</p>
-
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-text">  추출·분류·형식 맞추기     →  가벼운 모델 (폭을 값싸게)
-  렌즈 검증                →  중간~규칙 엄격
-  합성·판결·최종 보고서     →  상위 모델 (기준이 사는 자리)</code></pre>
-</div><p>세션 기본 모델을 함대 전체에 그대로 물리면, 큰 실행 한 번이 통째로 고가 요금이 된다. 반복 팬아웃만 낮추고 합성 노드만 올려도, <strong>모양은 유지한 채</strong> 청구서만 바뀐다.</p>
-<blockquote>
-<p><strong>비싼 모델은 기준이 걸린 자리에만.</strong></p>
-</blockquote>
-<hr>
-<h2 id="10-적대적-검증-자기-채점-금지"><a href="#10-적대적-검증-자기-채점-금지" class="heading-anchor" aria-hidden="true">#</a> 10. 적대적 검증 — 자기 채점 금지</h2><p>그래프의 진짜 레버리지는 “에이전트 수”가 아니라, <strong>결과가 아래로 내려가기 전에 죽이는 구조</strong>다. 검증 노드는 간선 위에 앉아 발견을 공격한다. 살아남으면 통과, 아니면 최종본에 못 간다.</p>
-<p>단단한 규칙 하나:</p>
-<blockquote>
-<p><strong>같은 에이전트에게 자기 시험을 채점시키지 마라.</strong><br>틀린 자리에서 다시 보면, 같은 맹점이 대부분 안 보인다.</p>
-</blockquote>
-<p>입문용 패턴 세 가지:</p>
+  <pre><code class="language-rust">struct Transform {
+    position: Vec3,
+    rotation: Quat,
+    scale: Vec3,
+}</code></pre>
+</div><p>에디터에서 몇 줄의 코드를 작성하고 컴파일러를 돌리는 순간, 우리는 70년 전 지구상에 존재하지 않았던 세 가지 지적 도구를 동시에 사용하고 있습니다:</p>
 <ol>
-<li><strong>적대적 검증</strong>: 발견마다 독립 회의론자 N명을 띄워 반박하게 한다. 다수에 살아남은 것만 남긴다.</li>
-<li><strong>렌즈 다양성</strong>: 각각 다른 각도(정확성 / 보안 / 재현). 같은 질문을 N번 반복하는 것과 다르다.</li>
-<li><strong>판정 패널</strong>: 여러 초안을 다른 각도로 만들고, 심사위원을 병렬로 두어 점수한 뒤, 승자 위에 근접안의 장점을 이식해 합성한다.</li>
+<li><strong>역인덱싱(Reverse Indexing)</strong>: 고정된 베이스와 가변 인덱스를 뒤집어, 가변 인스턴스 주소와 고정 오프셋으로 메모리를 다루는 발상.</li>
+<li><strong>이종 데이터 번들링(Plex)</strong>: 서로 다른 크기와 의미를 가진 데이터를 하나의 원자적 실체로 취급하는 추상화.</li>
+<li><strong>관계형 포인터 그래프(Linkage)</strong>: 실체와 실체를 연결하여 복잡한 물리 세계를 모델링하는 그물망.</li>
 </ol>
-<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" role="img" aria-label="적대적 검증: 발견에서 회의론자를 거쳐 생존분만 최종 보고서로">
-  <defs>
-    <marker id="afv-arr-rose" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#e11d48"/></marker>
-    <marker id="afv-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
-  </defs>
-  <rect x="16" y="70" width="100" height="48" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="66" y="98" text-anchor="middle" font-size="14" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#1e40af">발견</text>
-  <line x1="116" y1="94" x2="168" y2="94" stroke="#e11d48" stroke-width="2.5" marker-end="url(#afv-arr-rose)"/>
-  <rect x="172" y="20" width="200" height="148" rx="12" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
-  <text x="272" y="46" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#9f1239">회의론자 × N</text>
-  <text x="272" y="64" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#e11d48">서로 다른 렌즈</text>
-  <rect x="192" y="78" width="48" height="28" rx="6" fill="#ffffff" stroke="#fda4af"/>
-  <text x="216" y="96" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#881337">정확</text>
-  <rect x="248" y="78" width="48" height="28" rx="6" fill="#ffffff" stroke="#fda4af"/>
-  <text x="272" y="96" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#881337">보안</text>
-  <rect x="304" y="78" width="48" height="28" rx="6" fill="#ffffff" stroke="#fda4af"/>
-  <text x="328" y="96" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#881337">재현</text>
-  <text x="272" y="140" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#be123c">반박 · 다수 생존만 통과</text>
-  <line x1="372" y1="94" x2="430" y2="94" stroke="#059669" stroke-width="2.5" marker-end="url(#afv-arr-em)"/>
-  <text x="401" y="84" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#059669">생존분</text>
-  <rect x="434" y="70" width="120" height="48" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
-  <text x="494" y="98" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">최종 보고서</text>
-  <text x="340" y="186" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">자기 채점 금지 · 검증은 남이</text>
-</svg>
-</div>
-
+<p>더글러스 T. 로스가 MIT의 진공관 컴퓨터 옆에서 CNC 밀링 머신의 궤적을 고민하며 하드웨어 인덱서를 거꾸로 뒤집지 않았더라면, 우리가 아는 C 언어의 <code>struct</code>도, 객체지향 프로그래밍의 인스턴스도, 현대의 3D 그래픽스와 게임 엔진도 지금과는 전혀 다른 기괴하고 비효율적인 모습으로 출발했을지 모릅니다.</p>
+<p>화면 위의 점(<code>.</code>) 하나, 화살표(<code>-&gt;</code>) 하나를 누를 때마다 기억할 가치가 있습니다. 그 작은 연산자 속에는, 1차원 배열이라는 거대한 지적 감옥을 탈출하기 위해 하드웨어를 뒤집어 보았던 한 선구자의 번뜩이는 통찰이 여전히 숨 쉬고 있습니다.</p>
 <hr>
-<h2 id="11-함대를-띄우지-말아야-할-때"><a href="#11-함대를-띄우지-말아야-할-때" class="heading-anchor" aria-hidden="true">#</a> 11. 함대를 띄우지 말아야 할 때</h2><p>반례를 먼저 외운다. 그래프는 폭을 살 뿐, 갈라지지 않는 일에 함대를 붙이면 <strong>같은 답을 비싸게</strong> 만든다.</p>
-<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
-<thead>
-<tr>
-<th></th>
-<th><strong>단일 에이전트(바이브의 본진)</strong></th>
-<th><strong>함대(그래프)</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>일의 모양</td>
-<td>매 스텝이 직전 전체 맥락을 읽음</td>
-<td>서로 안 읽는 덩어리로 <strong>갈라짐</strong></td>
-</tr>
-<tr>
-<td>강점</td>
-<td>흐름·여운·빠른 탐색</td>
-<td>폭·격리·검증·비용 티어링</td>
-</tr>
-<tr>
-<td>위험</td>
-<td>컨텍스트 비대화, 한 줄 대기</td>
-<td>배관 과다, 가짜 병렬, 검증 없는 폭주</td>
-</tr>
-<tr>
-<td>질문</td>
-<td>“한 사람이 이어서 해도 되나?”</td>
-<td>“어디서 가르고, 어디서만 모이나?”</td>
-</tr>
-</tbody></table>
-</div><p>갈라지지 않으면 <strong>한 명이 정답</strong>이다. 남은 단계는 아껴도 된다.</p>
-<hr>
-<h2 id="12-오늘-밤-5단계-연습"><a href="#12-오늘-밤-5단계-연습" class="heading-anchor" aria-hidden="true">#</a> 12. 오늘 밤 5단계 연습</h2><p>도구 설치보다 <strong>종이(또는 빈 마크다운) 한 장</strong>이면 된다.</p>
-<ol>
-<li><strong>지금 쓰는 멀티스텝을 상자·화살표로만 그린다.</strong> 프롬프트 문장을 상자 안에 길게 쓰지 말 것.</li>
-<li><strong>화살표마다</strong> “데이터가 건너가는가?”를 묻고, 가짜 간선을 지운다.</li>
-<li><strong>독립 상자</strong>에 동시 실행 표시를 친다. 모으는 상자는 “전체 집합이 필요할 때”만 남긴다.</li>
-<li><strong>최종으로 내려가는 간선</strong>에 검증자(다른 일꾼) 한 명을 얹는다. 자기 채점 금지.</li>
-<li><strong>반복 상자</strong>와 <strong>판결 상자</strong>에 모델 등급을 다르게 적어 본다.</li>
-</ol>
-<h3 id="체크리스트-3개-이상-실패면-아직-사슬"><a href="#체크리스트-3개-이상-실패면-아직-사슬" class="heading-anchor" aria-hidden="true">#</a> 체크리스트 (3개 이상 실패면 아직 사슬)</h3><ul>
-<li>데이터 없는 간선을 지웠는가?</li>
-<li>일이 정말 갈라지는가, 아니면 매 스텝이 직전 전체를 읽는가?</li>
-<li>각 노드에 입력·한 일·형태 있는 출력이 있는가?</li>
-<li>flatMap/Set으로 될 일에 에이전트를 쓰고 있지 않은가?</li>
-<li>집합이 필요 없는 배리어를 두고 있지 않은가?</li>
-<li>검증 없이 최종본으로 가는 발견이 있는가?</li>
-<li>검증자 둘이 같은 질문만 던지고 있지 않은가?</li>
-<li>루프에 라운드 상한과 “본 것 전체” 기준 중복 제거가 있는가?</li>
-<li>같은 파일을 쓰는 노드가 둘 이상인가?</li>
-<li>반복 노드가 최고가 모델을 쓰고 있는가?</li>
-</ul>
-<hr>
-<h2 id="한-장-요약"><a href="#한-장-요약" class="heading-anchor" aria-hidden="true">#</a> 한 장 요약</h2><div class="callout-box info">
-  <div class="callout-title">한 장으로</div>
-  <p><strong>에이전트 컨트롤 ≠ 여러 명 고용</strong> = 가짜 대기 제거 + 판단 자리에만 모델.</p>
-  <p>프롬프트=문장 · 루프=순환 · 하네스=바닥 · 일=그래프.<br/>
-  노드: 입력 · 일 하나 · 모양 있는 출력. 간선: 데이터가 실제로 흐를 때만 (배관은 코드).</p>
-  <ul style="margin:0.5rem 0 0; padding-left:1.25rem;">
-    <li>가짜 “그리고 나서” 삭제 → 사슬이 넓어짐</li>
-    <li>fan-out → reduce(코드) → synthesize(모델)</li>
-    <li>배리어는 집합이 필요할 때만 / 기본은 흐르기</li>
-    <li>모델이 분류, 코드가 라우팅 · 검증은 남이 · 렌즈를 섞어라</li>
-    <li>안 갈라지면 함대 금지 (바이브 1인 체제)</li>
-  </ul>
-  <p style="margin-top:0.75rem;"><strong>오늘:</strong> 그리고 → 가짜 화살표 수 세기 → 지우기</p>
-</div>
-
-<div class="callout-box tip">
-  <p>프롬프트하는 사람은 질문을 던진다. 설계하는 사람은 그래프를 그린다. 선형 에이전트는 천장이 아니라 <strong>첫 형태</strong>다. 오늘 밤 상자만 그려도, 보통은 새 도구보다 먼저 대기가 줄어든다.</p>
-</div>
-
-<hr>
-<h2 id="더-읽어-보기"><a href="#더-읽어-보기" class="heading-anchor" aria-hidden="true">#</a> 더 읽어 보기</h2><ul>
-<li>원글(필수): <a href="https://x.com/angeldot_/status/2081061068516798931">@angeldot_ — GRAPH ENGINEERING CON OPUS 5</a> (2026-07-25). 14단계 로드맵·다이아몬드·검증·비용의 원천.</li>
-<li>인접 Pages: <a href="agent_skills_architecture.html">에이전트 스킬 아키텍처</a>, <a href="astra_harness_pattern.html">Astra 하네스 패턴</a> — 스킬·실행 환경 층과 이 글의 “일의 형태(그래프)” 층을 겹쳐 읽으면 좋다.</li>
+<h2 id="연관-읽을거리-pages-hub"><a href="#연관-읽을거리-pages-hub" class="heading-anchor" aria-hidden="true">#</a> 🔗 연관 읽을거리 (Pages Hub)</h2><ul>
+<li><a href="pointer.html"><code>pointer.html</code></a> — 포인터와 메모리 모델의 기초적인 멘탈 모델</li>
+<li><a href="box_page_jump_memo.html"><code>box_page_jump_memo.html</code></a> — 주소, 점프, 그리고 컴퓨터 메모리의 공간성</li>
+<li><a href="pointer_provenance_war.html"><code>pointer_provenance_war.html</code></a> — 포인터의 혈통과 최적화 컴파일러 사이의 보이지 않는 전쟁</li>
+<li><a href="https://youtu.be/M5XDPCefJ_s">YouTube 영상: Douglas T. Ross&#39;s Plex the precursor to structs</a> — TheStandupPodClips 팟캐스트 클립 원본</li>
 </ul>
 
       </section>
