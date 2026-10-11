@@ -1,6 +1,6 @@
 ---
 title: 수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부
-subtitle: 아스워스 다모다란 교수의 가치평가 특강을 중심으로 본 AI CapEx 역설, 빅테크의 자본 집약화, 주식 위험 프리미엄(ERP), 그리고 투자자의 4대 경로
+subtitle: 아스워스 다모다란의 2026년 10월 분석을 중심으로 본 AI 설비투자의 회계 경로, 이익과 주주환원의 괴리, 무거워진 장부, 내재 주식 위험 프리미엄(ERP), 그리고 투자자의 4가지 경로
 slug: earnings_cashflows_stock_prices_ai_storm
 date: 2026-10-11
 tags:
@@ -13,66 +13,111 @@ tags:
   - 재무회계
   - 현금흐름
   - 매그니피센트7
-summary: 10년물 미 국채 금리가 한 달 만에 54bp 급등(4.75%→5.29%)하는 거시적 긴축 속에서도 뉴욕 증시는 어떻게 견고하게 버텼는가? '가치평가의 석학' 아스워스 다모다란(Aswath Damodaran) 교수의 최신 강연을 바탕으로, 수조 달러에 달하는 AI CapEx가 하이퍼스케일러(빌더)와 반도체 공급망(셀러)을 거치며 어떻게 '회계적 이익 폭증'이라는 착시를 낳는지, 왜 실제 주주환원과 잉여현금흐름(FCFE)은 이익 성장을 따라가지 못하는지, 자본 집약적 유틸리티로 변모하는 빅테크의 '잘림 위험(Truncation Risk)', 그리고 격변기를 헤쳐가는 투자자의 4대 경로를 정밀 해부한다.
+summary: 2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다. 1962년 이후 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 그런데도 2026년 초에 상장돼 있던 미국 주식의 시가총액은 9월 말까지 12.25% 늘었다. 아스워스 다모다란의 분석을 바탕으로, AI 설비투자가 빌더(하이퍼스케일러)와 공급자를 거치며 어떻게 합산 이익을 키우는지, 왜 배당과 자사주 매입은 그만큼 늘지 않는지, 장부가 얼마나 무거워졌는지, 투자의 수익률이 자본비용에 못 미치면 무슨 일이 생기는지, 그리고 투자자가 고를 수 있는 4가지 경로를 정리한다.
 author: Pages 금융·기업가치평가 분석팀
 ---
 
 # 수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부
 
-**10년물 미국 국채 금리가 단 한 달 만에 4.75%에서 5.29%로 54bp(0.54%p) 폭등했다.** 1962년부터 축적된 60여 년의 월별 금리 변동 데이터에서 상위 10%에 해당하는 가파른 긴축 충격이다. 금융 이론에 따르면 할인율의 가파른 상승은 미래 현금흐름의 현재가치를 무자비하게 깎아내려 주식 밸류에이션의 급격한 조정을 촉발해야 마땅하다. 그러나 뉴욕 증시는 흔들리지 않았다. 오히려 주요 지수는 사상 최고치 부근에서 놀라운 복원력을 과시했다.
+**2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다.** 1962년부터 2026년까지 관측된 10년물 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 금융 이론대로라면 할인율이 이렇게 빨리 오르면 미래 현금흐름의 현재가치가 줄어 주가가 눌려야 한다. 그러나 미국 증시는 적어도 합계로는 버텼다. 9월 한 달 동안 전체 상장 주식의 시가총액은 약 2.5조 달러 늘었고, 그중 약 1.5조 달러가 기술 섹터에서 나왔다.
 
-어떻게 이런 일이 가능한가? 시장을 지탱하는 표면적 논리는 명쾌하다. **"할인율 상승분을 압도할 만큼 미국 상장기업들의 당기순이익(Earnings)이 폭발적으로 늘어나고 있다"**는 것이다. 그리고 기업 실적 호조의 진원지로 지목되는 것이 바로 전 세계를 뒤흔들고 있는 **'인공지능(AI) 자본적 지출(CapEx) 붐'**이다.
+무엇이 주가를 받쳤는가? 뉴욕대학교 스턴 경영대학원(NYU Stern)의 **아스워스 다모다란(Aswath Damodaran)**은 그 버팀목을 이익에서 찾는다. 2026년에 기업들이 발표한 이익이 예상보다 컸고, 2027년과 2028년의 기대 이익도 함께 올라갔다는 것이다. 그리고 그 이익 이야기의 한가운데에 **AI 설비투자(CapEx) 붐**이 있다.
 
-하지만 여기서 기업재무와 회계학의 근본적인 모순이 고개를 든다.
-> **"기업이 수조 달러의 막대한 설비투자(CapEx)를 집행하면 통상적으로 현금이 유출되고 감가상각비가 증가하여 당기순이익을 갉아먹는다. 그런데 어떻게 수조 달러의 AI CapEx 투자가 오히려 전체 기업 이익을 사상 최대로 밀어올리는 동력이 될 수 있는가?"**
+여기서 회계의 수수께끼가 생긴다.
+> **설비투자는 보통 현금을 빼 가고, 상각을 통해 이익도 줄인다. 그런데 수조 달러의 AI 설비투자가 어떻게 미국 상장사 전체의 이익을 끌어올리는가?**
 
-뉴욕대학교 스턴 경영대학원(NYU Stern)의 '가치평가 석학' **아스워스 다모다란(Aswath Damodaran)** 교수는 특강 *「Earnings, Cashflows and Stock Prices: The AI Storm blows through!」*를 통해 이 기이한 금융 현상의 장막을 걷어낸다. 그는 하이퍼스케일러와 반도체 공급망 사이의 회계적 상호작용, 손익계산서와 현금흐름표의 위험한 괴리, 자본 경량화 기술주에서 자본 집약형 인프라 공룡으로 체질이 바뀌는 빅테크의 구조적 리스크, 그리고 투자자가 취할 수 있는 4가지 현실적 경로를 엄밀하게 추적한다.
+다모다란은 2026년 10월 8일 글 *「Stock Prices, Earnings and Cashflows: The AI Effect plays through!」*와 같은 주제의 슬라이드에서 이 수수께끼를 푼다. 같은 돈이 한 회사에서는 자산이 되고 다른 회사에서는 매출이 된다는 회계 경로, 이익만큼 늘지 않는 주주환원, 무거워진 장부, 그리고 투자 수익률이 자본비용에 못 미칠 때의 결과를 차례로 추적한다. 이 글의 수치는 모두 그 글과 슬라이드에서 가져왔다.
 
 ---
 
-## 1. 거시경제적 수수께끼 — 54bp 금리 발작과 증시의 복원력
+## 1. 54bp 금리 급등과 버틴 증시
 
-### 1.1 1962년 이후 상위 10%의 월간 금리 급등
-2026년 9월 한 달간 미국 채권 시장에서 벌어진 사태는 통상적인 경기 순환적 등락의 범주를 넘어섰다. 벤치마크인 10년 만기 미 국채 금리는 연초 4.18%에서 서서히 상승해 8월 말 4.75%를 기록하더니, 9월 한 달 동안에만 **5.29%로 54bp 수직 상승**했다.
+### 1.1 1962년 이후 상위 10%의 월간 금리 상승
+10년물 국채 금리는 2026년 초 4.18%에서 시작해 8월 말 4.75%까지 비교적 천천히 올랐다. 그런데 9월에는 한 달 만에 **5.29%로 54bp** 뛰었다. 다모다란은 1962년부터 2026년까지 10년물의 월간 변동 770번을 분포로 놓고, 9월의 상승이 그 가운데 **상위 10%**에 든다고 확인한다. 연초부터 보면 상승 폭은 111bp다.
 
-다모다란 교수는 1962년부터 현재까지의 모든 월별 국채 금리 변동 히스토그램을 작성하여 이 수치의 역사적 위치를 확인했다. 월간 54bp 상승은 지난 60여 년간 발생한 수천 번의 관측치 중 **상위 10%**에 드는 이례적인 충격이다. 
-
-일반적인 거시 금융 환경에서 이 정도 수준의 금리 급등은 주식 시장에 심각한 타격을 입힌다. 주식의 이론적 가치는 미래 기대 현금흐름을 무위험수익률과 주식 위험 프리미엄(ERP)의 합인 할인율로 할인한 값이기 때문이다:
+주식의 이론적 가치는 미래 기대 현금흐름을 무위험수익률과 주식 위험 프리미엄(ERP)을 더한 할인율로 할인한 값이다.
 
 $$P_0 = \sum_{t=1}^{\infty} \frac{CF_t}{(1 + r_f + \text{ERP})^t}$$
 
-무위험수익률($r_f$)이 54bp 상승하면 분모인 할인율이 즉각 확대되어 주식의 내재가치는 하락 압력을 받는다. 그러나 9월 뉴욕 증시는 하락하기는커녕 상승세를 유지했다. 연초 이후 금리가 100bp 넘게 오르는 동안에도 증시가 버텨낸 이유는 분자($CF_t$, 즉 기업 이익과 현금흐름)의 팽창 속도가 분모의 팽창 속도를 앞질렀기 때문이다.
+무위험수익률($r_f$)이 오르면 분모가 커져 가격에 부담이 된다. 그런데도 주가가 버텼다면, 분자인 기대 이익과 현금흐름이 올라갔거나 투자자가 요구하는 프리미엄이 줄었다는 뜻이다. 다모다란의 숫자는 두 가지가 함께 일어났음을 보여 준다.
 
-### 1.2 지수 착시와 섹터 내부의 극단적 양극화
-그러나 지수의 견고함 뒤에는 심각한 내부 균열이 숨어 있다. 다모다란 교수는 2025년 12월 31일 기준 미국 시장에 상장된 모든 기업을 전수 조사하여 2026년 연초 대비 주가 등락을 분석했다.
+### 1.2 지수는 강했지만 고르지 않았다
+다모다란은 2026년 초에 이미 상장돼 있던 미국 기업만 모아 섹터별 성적을 계산했다. 나중에 들어온 회사를 넣으면 투자자 수익이 왜곡되기 때문이다. 예를 들어 2026년 6월 상장한 스페이스X를 넣으면 통신서비스 섹터의 시가총액이 2조 달러 넘게 늘어나지만, 그 회사는 대략 그 가치로 상장했다.
 
-| 섹터 (Sector) | 연초 대비 시가총액 변동률 | 섹터 내 하락 종목 비율 | 핵심 특징 및 주가 동인 |
-|---|---|---|---|
-| **기술 (Technology)** | **+24.5%** | **48.0%** | 소수 메가캡이 지수 견인, 절반에 가까운 기업은 연초 대비 하락 |
-| **소재 (Materials)** | **+21.0%** | 34.2% | 원자재 및 AI 데이터센터 인프라 관련 수요 수혜 |
-| **금융 (Financials)** | +6.8% | 51.5% | 고금리 장기화에 따른 예대마진 방어와 상업용 부동산 부실 우려 교차 |
-| **필수소비재 (Staples)** | -1.2% | 58.7% | 인플레이션 누적에 따른 가계 구매력 저하 및 고배당 매력 퇴색 |
-| **부동산 (Real Estate)** | -8.4% | 69.3% | 5%를 웃도는 국채 금리에 직격탄을 맞으며 자금 조달 비용 급증 |
+| 섹터 | 기업 수 | 시가총액 변동 (2025년 말→2026년 9월 30일) | 2026년 상승 종목 비율 | 3분기 상승 종목 비율 |
+|---|---|---|---|---|
+| 에너지 | 266 | **+39.01%** | 63.91% | 44.74% |
+| 정보기술 | 664 | **+24.48%** | 52.41% | 37.80% |
+| 소재 | 242 | **+21.85%** | 48.35% | 35.12% |
+| 헬스케어 | 1,085 | +11.15% | 47.56% | 39.82% |
+| 부동산 | 218 | +10.93% | 52.29% | 19.27% |
+| 산업재 | 735 | +10.61% | 46.53% | 28.71% |
+| 필수소비재 | 251 | +5.99% | 33.47% | 24.30% |
+| 금융 | 1,042 | +3.02% | 62.86% | 44.15% |
+| 경기소비재 | 522 | +1.76% | 39.66% | 26.44% |
+| 유틸리티 | 88 | +0.61% | 44.32% | 20.45% |
+| 통신서비스 | 263 | −1.76% | 37.26% | 28.90% |
+| **미국 전체** | **5,376** | **+12.25%** | **50.04%** | **35.21%** |
 
-가장 충격적인 수치는 기술 섹터 내부의 분포다. **기술 섹터 전체는 시가총액 가중 기준으로 24.5% 급등했으나, 섹터 내 상장사의 48%는 오히려 연초 대비 마이너스 수익률을 기록했다.** 즉, 지수의 강세는 전체 산업의 고른 성장이 아니라 엔비디아, 마이크로소프트, 메타 등 소수 거대 기업(Mag 7)이 지수를 멱살 잡고 끌어올린 '착시'에 가깝다.
+*자료: 다모다란 슬라이드 6. 2026년 초 상장 기업만 포함.*
 
-### 1.3 S&P 500 내재 주식 위험 프리미엄(Implied ERP)의 현주소
-다모다란 교수는 시장의 건전성을 평가하기 위해 매월 1일 S&P 500 지수의 **내재 주식 위험 프리미엄(Implied Equity Risk Premium)**을 역산한다. 이는 채권의 만기수익률(YTM)을 구하는 것과 동일하게, 현재 S&P 500 지수 수준과 향후 5개년 애널리스트 기대 이익 성장률(2026년 10월 초 기준 연평균 14.59%), 배당 및 자사주 매입 성향을 일치시키는 내부수익률(IRR)을 도출하는 기법이다.
+두 가지가 눈에 띈다. 첫째, 시장을 끈 것은 **기술, 에너지, 소재** 세 섹터이고, 금액으로 가장 크게 기여한 것은 기술이다. 둘째, 상승은 고르지 않다. 연초보다 오른 종목은 전체의 약 절반(50.04%)이고, 3분기만 보면 상승 종목은 35.21%로 **약 65%가 내렸다.** 기술 섹터도 시가총액은 24.48% 늘었지만 종목 기준으로는 52.41%만 올랐다. 지수의 강세는 산업 전체의 고른 성장이 아니라 일부 대형주의 무게에서 나온 것이다.
 
-1. **S&P 500 기대수익률 ($r_e$)**: **8.99%**
-2. **10년물 국채 금리 무위험수익률 ($r_f$)**: **5.07% ~ 5.29%**
-3. **내재 주식 위험 프리미엄 ($\text{ERP} = r_e - r_f$)**: **3.70% ~ 3.92%**
+### 1.3 내재 주식 위험 프리미엄: 4% 아래로
+다모다란은 2008년 9월부터 매달 초 S&P 500의 **내재 주식 위험 프리미엄(Implied ERP)**을 역산한다. 지금 지수 가격, 기대 이익 성장률, 주주에게 돌아갈 현금, 금리를 넣고, 주식을 사면 얻을 내부수익률(IRR)을 구하는 방식이다. 특정 가치평가 모형에 기대지 않는다는 것이 그의 설명이다. 2026년 10월 1일 계산의 가정은 다음과 같다(슬라이드 7).
 
-과거 20년 평균 내재 ERP가 4.5%~5.5% 수준이었던 점과 비교하면, **현재 3.7%대의 ERP는 역사적 평균 대비 상당히 낮은 수준**이다. 주식 투자자들이 채권 대비 감수해야 하는 추가 위험에 대해 요구하는 보상(마진)이 매우 얇아졌음을 뜻한다. 위험에 대한 요구 보상이 낮다는 것은 시장이 미래의 이익 성장 스토리를 한 치의 의심 없이 믿고 있거나, 반대로 위험을 과소평가하고 있음을 시사한다.
+- **지수**: 2026년 9월 30일 S&P 500 7,651.54
+- **기준 연도 주주 현금(최근 12개월)**: 배당 81.61 + 자사주 매입 116.56 = 198.17
+- **이익 성장률**: 향후 5년 연 14.59%(애널리스트 추정), 그 뒤 10년물 금리와 같은 5.29%
+- **현금 환원 비율**: 이익의 63.52%를 계속 유지
+
+$$7{,}651.54 = \sum_{t=1}^{5} \frac{CF_t}{(1+r)^t} + \frac{CF_5 \times 1.0529}{(r - 0.0529)(1+r)^5} \quad\Rightarrow\quad r = 8.99\%$$
+
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 250" role="img" aria-label="2026년 10월 1일 S&amp;P 500 내재 ERP 계산" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <rect x="0" y="0" width="820" height="250" rx="14" fill="var(--bg-card)"/>
+  <text x="410" y="32" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="17px" fill="var(--text-main)">내재 ERP: 무위험수익률을 무엇으로 보느냐에 따라 두 값</text>
+  <text x="410" y="52" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12px" fill="var(--text-muted)">2026년 10월 1일 계산 (다모다란 블로그·슬라이드 7)</text>
+  <g transform="translate(30, 72)">
+    <rect x="0" y="0" width="240" height="150" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+    <text x="120" y="30" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="13.5px" fill="var(--primary)">S&amp;P 500 기대수익률</text>
+    <text x="120" y="80" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="30px" fill="var(--text-main)">8.99%</text>
+    <text x="120" y="112" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" fill="var(--text-muted)">연초 8.41%에서 상승</text>
+    <text x="120" y="130" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" fill="var(--text-muted)">지난 10여 년은 8.5% 근처</text>
+  </g>
+  <g transform="translate(290, 72)">
+    <rect x="0" y="0" width="240" height="68" rx="10" fill="var(--bg-surface)" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="120" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="12.5px" fill="#2563eb">10년물 국채 금리 기준</text>
+    <text x="120" y="52" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="15px" fill="var(--text-main)">8.99% − 5.29% = 3.70%</text>
+  </g>
+  <g transform="translate(290, 154)">
+    <rect x="0" y="0" width="240" height="68" rx="10" fill="var(--bg-surface)" stroke="#10b981" stroke-width="1.5"/>
+    <text x="120" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="12.5px" fill="#059669">달러 무위험수익률 기준</text>
+    <text x="120" y="52" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="15px" fill="var(--text-main)">8.99% − 5.07% = 3.92%</text>
+  </g>
+  <g transform="translate(550, 72)">
+    <rect x="0" y="0" width="240" height="150" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+    <text x="120" y="28" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">5.07%는 어디서 왔나</text>
+    <text x="120" y="56" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12px" fill="var(--text-muted)">10년물 5.29%</text>
+    <text x="120" y="76" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12px" fill="var(--text-muted)">− Aa1 등급 부도 스프레드 0.22%</text>
+    <text x="120" y="102" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="14px" fill="var(--text-main)">= 5.07%</text>
+    <text x="120" y="130" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" fill="var(--text-muted)">미국 국채의 부도 위험을 뺀 값</text>
+  </g>
+</svg>
+</div>
+
+10년물 금리를 그대로 무위험수익률로 쓰면 ERP는 **3.70%**다. 미국 국채에도 부도 위험이 조금 있다고 보고, 10년물 5.29%에서 미국의 Aa1 등급에 해당하는 부도 스프레드 0.22%를 빼면 달러 무위험수익률은 **5.07%**가 되고, ERP는 **3.92%**가 된다. 두 값은 범위가 아니라 무위험수익률의 정의가 다른 두 계산이다. 슬라이드는 환원 비율이 지속 가능한 수준(g/ROE)으로 바뀐다고 가정하면 ERP가 4.40%라는 보조 계산도 함께 싣는다.
+
+어느 기준으로 보아도 **ERP는 올해 처음으로 4% 아래로 내려왔다.** 그사이 주식의 기대수익률은 연초 8.41%에서 9월 30일 8.99%로 올랐다. 지난 10여 년 대부분 8.5% 근처에 있던 값이 이제 9%에 가까워졌다. 금리가 4.18%에서 5.29%로 오르는 동안 기대수익률이 그만큼 오르지는 않았고, 그 차이가 ERP의 하락이다. 다모다란은 시장 타이머라면 낮은 ERP를 시장이 비싸다는 신호로 읽을 수 있다고 적으면서, 자신은 시장 타이머가 아니라고 덧붙인다.
 
 ---
 
-## 2. AI CapEx의 회계학적 메커니즘 — 빌더와 셀러의 공생
+## 2. 빌더와 공급자: 이익이 커지는 회계 경로
 
-수조 달러의 설비투자가 어떻게 전체 상장기업의 합산 이익을 줄이기는커녕 사상 최대로 팽창시키는가? 다모다란 교수는 시장을 두 진영, 즉 자본을 지출하는 **'빌더(The Builders)'**와 그 지출을 흡수하는 **'셀러(The Sellers)'**로 분리하여 재무제표의 이동 경로를 추적한다.
+수조 달러의 설비투자가 어떻게 합산 이익을 줄이지 않고 키우는가? 다모다란은 시장을 두 무리로 나눈다. AI 아키텍처를 **짓는 회사(빌더)**와, 그 재료를 **파는 회사(공급자)**다. 같은 지출이 한쪽에서는 자산이 되고, 다른 쪽에서는 매출이 된다.
 
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" role="img" aria-label="AI CapEx의 회계학적 이동 경로와 이익 증폭 메커니즘" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" role="img" aria-label="AI 설비투자의 회계 경로: 빌더와 공급자" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c1-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 17px; fill: var(--text-main); }
@@ -80,218 +125,183 @@ $$P_0 = \sum_{t=1}^{\infty} \frac{CF_t}{(1 + r_f + \text{ERP})^t}$$
       .c1-box { fill: var(--bg-surface); stroke: var(--border); stroke-width: 1.2; rx: 10px; }
       .c1-h { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 13.5px; }
       .c1-t { font-family: Pretendard, -apple-system, sans-serif; font-size: 11.5px; fill: var(--text-muted); line-height: 1.45; }
-      .c1-flow { stroke: var(--primary, #3b82f6); stroke-width: 2; fill: none; }
     </style>
   </defs>
   <rect x="0" y="0" width="820" height="440" rx="14" fill="var(--bg-card)"/>
-  <text x="410" y="34" text-anchor="middle" class="c1-title">AI CapEx의 회계학적 이동 경로와 이익 증폭 메커니즘</text>
-  <text x="410" y="52" text-anchor="middle" class="c1-sub">빌더(The Builders)의 자본화와 셀러(The Sellers)의 즉각 이익 실현 (다모다란, 2026)</text>
+  <text x="410" y="34" text-anchor="middle" class="c1-title">AI 설비투자의 회계 경로: 같은 돈, 두 개의 장부</text>
+  <text x="410" y="52" text-anchor="middle" class="c1-sub">빌더에서는 자산, 공급자에게는 매출 (다모다란 블로그·슬라이드 9)</text>
   <g transform="translate(160, 72)">
     <rect x="0" y="0" width="500" height="54" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
-    <text x="250" y="24" text-anchor="middle" class="c1-h" fill="var(--primary)">하이퍼스케일러 6개사 (The Builders)</text>
-    <text x="250" y="42" text-anchor="middle" font-size="11.5px" font-family="Pretendard, sans-serif" fill="var(--text-muted)">Microsoft · Meta · Alphabet · Amazon · Oracle · CoreWeave</text>
+    <text x="250" y="24" text-anchor="middle" class="c1-h" fill="var(--primary)">빌더: 하이퍼스케일러</text>
+    <text x="250" y="42" text-anchor="middle" font-size="11.5px" font-family="Pretendard, sans-serif" fill="var(--text-muted)">메타 · 알파벳 · 아마존 · 마이크로소프트 등 (상위 10개사가 2조 달러 넘게 지출)</text>
   </g>
   <line x1="410" y1="126" x2="410" y2="152" stroke="var(--primary)" stroke-width="2"/>
   <rect x="290" y="140" width="240" height="24" rx="6" fill="var(--primary-light, #eff6ff)" stroke="var(--primary)" stroke-width="1"/>
-  <text x="410" y="156" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" font-weight="700" fill="var(--primary)">수조 달러의 AI CapEx 현금 지출</text>
+  <text x="410" y="156" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" font-weight="700" fill="var(--primary)">AI 설비투자 지출</text>
   <line x1="410" y1="164" x2="215" y2="185" stroke="#3b82f6" stroke-width="2"/>
   <line x1="410" y1="164" x2="605" y2="185" stroke="#10b981" stroke-width="2"/>
   <g transform="translate(30, 185)">
     <rect x="0" y="0" width="370" height="145" rx="10" class="c1-box" stroke="#3b82f6" stroke-width="1.5"/>
-    <text x="18" y="26" class="c1-h" fill="#2563eb">빌더(지출자) 재무제표의 회계 마술</text>
-    <text x="18" y="50" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[재무상태표 B/S]</tspan> 유형자산(PP&amp;E)으로 전액 자본화</text>
-    <text x="18" y="68" class="c1-t">• 당기 손익에 즉각 비용(Expense)으로 잡히지 않음</text>
-    <text x="18" y="92" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[손익계산서 I/S]</tspan> 4~6년 내용연수로 천천히 안분 상각</text>
-    <text x="18" y="110" class="c1-t">• 연간 감가상각비는 작고 본업 캐시카우가 이를 압도</text>
-    <text x="18" y="128" class="c1-t">• 단기 회계 이익 훼손이 거의 발생하지 않음</text>
+    <text x="18" y="26" class="c1-h" fill="#2563eb">빌더의 장부</text>
+    <text x="18" y="50" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[재무상태표]</tspan> 지출은 자산으로 기록</text>
+    <text x="18" y="68" class="c1-t">• 조달 방식에 따라 장부 자본이나 부채가 늘어남</text>
+    <text x="18" y="92" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[손익계산서]</tspan> 상각을 통해 천천히 비용 반영</text>
+    <text x="18" y="110" class="c1-t">• 상각 기간을 길게 잡을수록 당기 이익 감소가 작음</text>
+    <text x="18" y="128" class="c1-t">• 설비투자 뒤 잉여현금흐름은 가까운 시기에 줄어듦</text>
   </g>
   <g transform="translate(420, 185)">
     <rect x="0" y="0" width="370" height="145" rx="10" class="c1-box" stroke="#10b981" stroke-width="1.5"/>
-    <text x="18" y="26" class="c1-h" fill="#059669">셀러(공급망) 재무제표의 이익 폭발</text>
-    <text x="18" y="50" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[수혜 대상]</tspan> 엔비디아, 브로드컴, TSMC, 하이닉스 등</text>
-    <text x="18" y="68" class="c1-t">• 빌더의 CapEx가 공급망의 매출액(Revenue)으로 직행</text>
-    <text x="18" y="92" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[손익계산서 I/S]</tspan> 영업이익률 60~70%의 초고마진 달성</text>
-    <text x="18" y="110" class="c1-t">• 당기순이익 및 영업현금흐름(OCF) 전례 없는 폭발</text>
-    <text x="18" y="128" class="c1-t">• 단기 기업 실적의 사상 최대 팽창을 견인</text>
+    <text x="18" y="26" class="c1-h" fill="#059669">공급자의 장부</text>
+    <text x="18" y="50" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[누구]</tspan> 엔비디아, TSMC, 브로드컴, 마이크론, 마벨,</text>
+    <text x="18" y="68" class="c1-t">컨스텔레이션 에너지, 에퀴닉스, 디지털 리얼티 등</text>
+    <text x="18" y="92" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[손익계산서]</tspan> 빌더의 지출이 당기 매출</text>
+    <text x="18" y="110" class="c1-t">• 순마진만큼 매출이 순이익으로 남음</text>
+    <text x="18" y="128" class="c1-t">• 늘어난 이익이 주주 잉여현금흐름으로 이어질 수 있음</text>
   </g>
   <g transform="translate(30, 345)">
-    <line x1="215" y1="330" x2="410" y2="345" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,3"/>
-    <line x1="605" y1="330" x2="410" y2="345" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,3"/>
     <rect x="0" y="0" width="760" height="75" rx="10" fill="var(--bg-surface)" stroke="#8b5cf6" stroke-width="1.8"/>
-    <text x="380" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="14.5px" fill="#7c3aed">미국 상장기업 합산 손익계산서 (S&amp;P 500 합산 이익의 마술)</text>
-    <text x="380" y="47" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12.5px" font-weight="700" fill="var(--text-main)">빌더의 미미한 감가상각비 &lt; 셀러의 거대한 당기순이익</text>
-    <text x="380" y="65" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" fill="var(--text-muted)">수조 달러 지출에도 전체 기업 이익이 사상 최대치를 경신하는 착시의 회계학적 비밀</text>
+    <text x="380" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="14.5px" fill="#7c3aed">상장사 전체를 더하면</text>
+    <text x="380" y="47" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12.5px" font-weight="700" fill="var(--text-main)">공급자 마진이 높고 빌더의 상각 기간이 길면 합산 순이익은 늘어난다</text>
+    <text x="380" y="65" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" fill="var(--text-muted)">그러나 빌더의 순설비투자가 공급자의 주주 현금 증가보다 크면 합산 현금흐름은 줄어든다</text>
   </g>
 </svg>
 </div>
 
-### 2.1 빌더(The Builders): 6대 하이퍼스케일러의 재무상태표 마술
-빅테크 진영의 6대 하이퍼스케일러인 **메타(Meta), 알파벳(Alphabet), 아마존(Amazon), 마이크로소프트(Microsoft), 오라클(Oracle), 코어위브(CoreWeave)**는 이미 AI 인프라 구축에 누적 **2조 달러 이상의 CapEx**를 쏟아부었다.
+### 2.1 빌더: 지출은 자산이 된다
+빌더는 데이터센터와 그 밖의 인프라를 짓는 하이퍼스케일러다. 다모다란은 메타, 알파벳, 아마존, 마이크로소프트 등을 예로 들고, **상위 10개 하이퍼스케일러가 AI 설비투자의 2조 달러 넘게**를 차지한다고 적는다.
 
-회계 원칙(GAAP/IFRS)상 설비투자는 발생 시점에 비용(Expense)으로 처리되지 않는다:
-- **재무상태표(Balance Sheet)**: 구매한 GPU 클러스터, 데이터센터 건물, 냉각 장치, 광케이블망은 전액 '유형자산(Property, Plant & Equipment)'으로 자본화(Capitalize)된다.
-- **손익계산서(Income Statement)**: 이 자산들은 추정 내용연수(Useful Life) 동안 매년 감가상각비(Depreciation)로 안분된다. 빅테크 기업들은 서버 및 네트워크 장비의 내용연수를 기존 3~4년에서 4~6년으로 늘려 잡고 있다. 1,000억 달러를 지출해도 당해 연도 손익계산서에 반영되는 상각비는 160억~250억 달러에 불과하다.
-- **본업의 현금 창출력**: 구글의 검색 광고, 메타의 인스타그램 광고, 마이크로소프트의 오피스 및 엔터프라이즈 클라우드는 매 분기 수백억 달러의 막대한 영업이익을 쏟아내는 확고한 캐시카우다. 연간 수백억 달러 수준의 신규 감가상각비는 본업의 이익 성장세에 쉽게 흡수된다.
+회계는 설비투자를 비용이 아니라 **자산**으로 기록한다. 그리고 그 투자를 부채로 했는지 자기자본으로 했는지에 따라 장부의 부채나 자본을 늘린다. 비용은 상각을 통해 여러 해에 걸쳐 나뉘어 반영된다. 다모다란은 빌더에게 늘어나는 상각비가 있어야 하지만, 많은 회사가 **상각 기간을 길게 잡고 있어 당기 이익에 주는 타격이 줄어든다**고 지적한다. 반면 설비투자는 차감 후에 계산되는 잉여현금흐름을 곧바로 줄인다.
 
-따라서 빌더들의 당기순이익은 막대한 현금 지출에도 불구하고 꺾이지 않고 높은 수준을 유지한다.
+### 2.2 공급자: 지출은 매출이 된다
+빌더가 쓴 돈은 공급자의 매출이 된다. 다모다란이 이름을 드는 공급자는 칩 회사(엔비디아, TSMC), 네트워크 장비 회사(브로드컴, 마이크론, 마벨), 전력 회사(컨스텔레이션 에너지 등), 그리고 데이터센터 부동산 회사(에퀴닉스, 디지털 리얼티)다. 매출은 순마진만큼 순이익으로 남는다. 그는 지금까지 가장 큰 수혜자가 엔비디아라고 본다. 그 칩이 큰 마진을 붙인 채 데이터센터를 돌리기 때문이다.
 
-### 2.2 셀러(The Sellers): 엔비디아와 하드웨어 공급망의 마진 잔치
-빌더들이 지출한 2조 달러의 CapEx는 허공으로 사라지는 것이 아니다. 전액 **엔비디아(Nvidia), 브로드컴(Broadcom), TSMC, 슈퍼마이크로컴퓨터, 폭스콘**과 같은 공급망 기업들의 호주머니로 들어간다.
+슬라이드 9의 원그래프는 공급자 매출의 구성을 **칩 약 50%, 전력 약 20%, 네트워크 장비 약 15%, 부동산 약 8%, 냉각 약 7%**로 그린다. 블로그 본문은 이 비율을 문장으로 적지 않는다.
 
-- **즉각적인 매출 인식**: 빌더의 자본적 지출은 셀러의 **당기 매출액(Revenue)**으로 손익계산서 최상단(Top-line)에 100% 꽂힌다.
-- **경이적인 마진 구조**: 독점적 해자를 누리는 엔비디아의 경우 총마진율(Gross Margin)이 75%를 넘고, 영업이익률(Operating Margin)은 60%를 웃돈다. 빌더가 지출한 돈의 60% 이상이 고스란히 셀러의 영업이익으로 둔갑한다.
-- **법인세 차감 후 순이익**: 이 영업이익은 즉각 당기순이익과 주주 잉여현금흐름(FCFE)으로 전환된다.
+경계가 흐린 회사도 있다. 아마존은 AI 설비투자에 돈을 쓰면서 동시에 자사 클라우드의 데이터 저장 수요로 돈을 번다. 엔비디아는 칩을 팔면서 직간접으로 데이터센터에 투자한다.
 
-### 2.3 합산의 역설: 1 + (-0.2) = +0.8 (이익 증폭의 회계 공식)
-두 진영의 재무제표를 집계하면 퍼즐이 풀린다:
-- 빌더들의 합산 손익계산서에서는 자본지출 중 작은 파편인 감가상각비(-$\Delta Dep$)만이 비용으로 차감된다.
-- 셀러들의 합산 손익계산서에서는 동일한 자본지출이 막대한 고마진 순이익(+\Delta NI)으로 반영된다.
-- **결과**: 미국 기업 전체의 합산 손익계산서에는 AI CapEx로 인해 **막대한 순이익 순증(Net Gain in Aggregate Earnings)**이 나타난다.
+### 2.3 상장사 합계로 보면
+두 무리를 더하면 수수께끼가 풀린다. 빌더의 손익에서는 지출 가운데 상각분만 비용으로 빠지고, 공급자의 손익에서는 같은 지출이 매출과 순이익으로 들어온다. 공급자의 마진이 높고 빌더의 상각 기간이 길면, 합산 순이익은 늘어난다. 그러나 합산 현금흐름은 다르다. 빌더의 순설비투자가 공급자의 주주 잉여현금흐름(FCFE) 증가보다 크면, 합산 현금흐름은 오히려 줄어든다.
 
-이것이 바로 자본시장이 목도하고 있는 "수조 달러를 투자했는데 기업 이익은 오히려 사상 최고치를 경신하는" 회계학적 착시의 실체다.
+이 숫자에는 두 가지 단서가 붙는다. 첫째, 공개 자료는 **상장사만** 담는다. 오픈AI와 앤스로픽처럼 시가총액 1조 달러 이상이 예상되는 비상장 회사의 매출, 이익, 현금흐름, 투하자본은 빠진다. 둘째, AI 설비투자의 일부는 **합작 투자와 부외 기구**를 통해 이뤄지며, 특히 부채 쪽 회계가 그 결과를 다 반영하지 못할 수 있다. 그래서 상장사 재무제표의 숫자는 실제 효과보다 작게 나온다.
+
+그 단서를 감안해도 규모는 크다. 미국 상장사 전체의 **2026년 2분기 설비투자는 5,074억 달러**로, 2025년 2분기보다 **1,334억 달러(35.7%)** 많다. 증가는 몰려 있다. 같은 비교에서 정보기술은 79.9%, 통신서비스는 62.0%, 경기소비재는 50.1% 늘었다(슬라이드 10).
 
 ---
 
-## 3. 대괴리(Great Divergence) — 이익 폭증과 현금흐름 정체
+## 3. 이익은 늘고 환원은 천천히
 
-### 3.1 배당과 자사주 매입이 보여주는 차가운 진실
-기업의 실질적 기초체력은 회계 장부상의 '당기순이익'이 아니라 주주에게 실제로 돌아오는 **'현금흐름(Cash Flow)'**에 의해 결정된다. 만약 기업들이 주장하는 실적 호조가 온전한 현금성 이익이라면, 배당금과 자사주 매입 규모 역시 이익 성장률(연 14% 이상)에 발맞추어 가파르게 증가해야 한다.
+### 3.1 순이익의 급증
+설비투자가 공급자의 매출이 되는 경로는 합산 이익에서 바로 보인다.
 
-그러나 다모다란 교수가 제시한 실제 데이터는 정반대의 현실을 드러낸다:
-- **배당금(Dividends)**: 연간 약 5%~6% 증가에 불과.
-- **자사주 매입(Stock Buybacks)**: 전년도 1조 2,000억 달러에서 약 **8% 증가**에 그침.
-- **당기순이익 성장률**: 연평균 **14% ~ 15% 이상**으로 추정.
+| 구분 | 2025년 같은 분기 | 2026년 | 증가율 |
+|---|---|---|---|
+| 1분기 순이익 | 5,110억 달러 | 6,920억 달러 | **+35%** |
+| 2분기 순이익 | 5,760억 달러 | 9,040억 달러 | **+57%** |
 
-**이익은 15%씩 급증하는데 주주에게 환원되는 현금은 한 자릿수 성장에 머물고 있다.** 그 격차만큼의 현금은 도대체 어디로 사라진 것인가? 정답은 **'장부상 자본(Invested Capital)'의 팽창**이다. 벌어들인 현금 대부분이 배당이나 안전 자산으로 유보되지 못하고 데이터센터 부지 매입, 첨단 반도체 구매, 원자력 발전소 전력 PPA(전력구매계약) 등 거대한 고정자산으로 빨려 들어가고 있는 것이다.
+*자료: 다모다란 블로그, 슬라이드 12. 미국 상장사 전체.*
 
-### 3.2 가벼운 소프트웨어에서 무거운 유틸리티로: 빅테크의 체질 급변
-과거 10~15년 동안 구글(알파벳), 메타, 마이크로소프트가 시장에서 초고평가(High Multiple)를 받았던 근본적인 이유는 이들이 **'자본 경량화(Capital-Light) 고성장'** 모델이었기 때문이다.
-- 코드를 작성할 소수의 천재 엔지니어와 서버만 있으면 전 세계 수십억 명의 사용자에게 한계비용 0으로 서비스를 확장할 수 있었다.
-- 투하자본수익률(ROIC)은 30~50%를 상회했고, 부채는 전무했으며, 막대한 잉여현금이 창고에 쌓였다.
+이익 증가도 고르지 않다. 2분기에 순이익이 전년 동기보다 늘어난 기업은 48.9%로 절반에 못 미친다. 이익이 가장 크게 늘어난 섹터는 정보기술, 금융, 통신서비스이고, 헬스케어, 유틸리티, 부동산은 뒤처졌다. 헬스케어의 최근 12개월 순이익은 2025년보다 오히려 줄었다.
 
-그러나 AI 시대의 빅테크는 전혀 다른 동물로 변모했다:
-1. **자본 집약도(Capital Intensity)의 폭증**: 이제 사용자를 늘리려면 수천억 달러짜리 하이퍼스케일 데이터센터를 짓고 냉각탑과 변전소를 세워야 한다.
-2. **부채 조달의 본격화**: 천문학적인 투자금을 감당하기 위해 무차입 경영을 자랑하던 기업들이 수백억 달러 규모의 회사채를 발행하기 시작했다.
-3. **제조업 및 유틸리티화**: 비즈니스의 외형은 최첨단 소프트웨어지만, 내부 재무 구조는 대규모 설비투자와 부채 레버리지에 의존하는 전력 발전사나 통신 인프라 기업(Utility)과 놀라울 정도로 유사해졌다.
+여기서 구별할 숫자가 있다. 1.3절의 **연 14.59%**는 실현된 성장률이 아니다. ERP를 계산할 때 넣은, S&P 500의 **향후 5년 애널리스트 기대 이익 성장률**이다. 실제로 확인된 이익 증가는 위 표의 분기 비교(+35%, +57%)다.
+
+### 3.2 배당과 자사주 매입이 보여 주는 것
+주주에게 의미가 있는 현금은 배당과 자사주 매입이다. 다모다란은 설비투자 때문에 기업들의 잉여현금흐름이 이익보다 훨씬 느리게 늘 수 있다고 보고, 주주환원을 따로 확인한다.
+
+- **배당**: 최근 12개월 배당은 2025년보다 약 **433억 달러(약 5%)** 많다.
+- **자사주 매입**: 최근 12개월 매입은 약 **1,067억 달러(약 9%)** 많다.
+- **순 자사주 매입**: 2026년 2분기에 급증한 주식 발행을 빼면 약 **7%** 늘었다.
+
+전년 대비로는 무난한 증가지만, 2026년의 이익 증가에는 한참 못 미친다. 그 차이를 보여 주는 숫자가 S&P 500의 **현금 환원 비율**이다. 지난 20년 대부분 미국 기업은 이익의 80% 이상을, 때로는 100% 넘게 배당과 자사주 매입으로 돌려줬다. 그런데 2024년쯤부터 이익이 환원보다 훨씬 빨리 늘기 시작했고, 2026년으로 들어서는 최근 12개월 S&P 500 기업의 환원 비율은 **63%**로 떨어졌다. **2004년 이후 가장 낮은 수준**이다.
+
+다모다란은 여기에 한마디를 덧붙인다. 미국 기업이 자사주를 너무 많이 사고 사업에 재투자하지 않는다고 비판하던 사람들이, 이제는 같은 기업이 자사주 매입을 줄이고 AI 설비투자를 늘린다고 비판한다는 것이다. 비판자들은 기업이 무엇을 하든 흠을 찾는다는 결론이다.
 
 ---
 
-## 4. 자본비용(Cost of Capital)의 엄중한 법칙과 '잘림 위험'
+## 4. 장부가 무거워졌다
 
-다모다란 교수는 기업재무학의 제1원칙을 환기한다. **"장부상에 추가된 모든 자본은 최소한 자신의 자본비용(Cost of Capital) 이상의 초과 이익을 벌어들여야만 가치를 창출한다."**
+이익과 환원의 차이는 사라지지 않는다. 장부 위의 자본으로 쌓인다. 회계는 설비투자를 자산으로 기록하고, 그 돈을 어떻게 마련했는지에 따라 장부 자기자본과 부채를 늘린다. 2025년 2분기와 2026년 2분기 사이 미국 상장사 전체의 장부는 이렇게 변했다(슬라이드 11).
 
-### 4.1 1조 달러 추가 자본 투입의 무게
-자본비용($WACC$)이 8%인 기업이 AI 인프라 구축을 위해 장부자본(Invested Capital)을 1조 달러 늘렸다고 가정해 보자:
+| 항목 | 미국 상장사 전체 | 정보기술 섹터 |
+|---|---|---|
+| 장부 자기자본 | **+12.98%** (약 1.8조 달러) | **+29.95%** |
+| 총부채 | **+7.89%** (약 1.9조 달러) | **+18.79%** |
+| 투하자본 | **+13.24%** | **+32.98%** |
 
-$$\text{요구 최소 영업이익} = \Delta \text{Invested Capital} \times \text{WACC} = \$1,000\text{B} \times 8\% = \$80\text{B}$$
+블로그 본문의 표현으로는 자기자본이 "약 13%", 부채가 "약 8%" 늘었고, 기술 섹터는 자기자본이 약 30%, 부채가 약 18.8% 늘었다. AI 설비투자를 가장 많이 한 기술 섹터에서 장부가 가장 빨리 커졌다.
 
-이 기업은 기존 본업 외에 **순수하게 AI 인프라에서만 매년 최소 800억 달러(약 110조 원) 이상의 추가 세후영업이익(NOPAT)을 영구히 창출**해야 본전이다. 만약 6대 하이퍼스케일러의 누적 AI 투자가 3조~5조 달러에 달한다면, AI 생태계는 매년 **2,400억~4,000억 달러**의 순수 영업이익을 시장에서 뽑아내야 한다.
+이것이 다모다란이 말하는 체질 변화다. AI 투자가 기대보다 잘되더라도, 빌더는 들어오기 전보다 **훨씬 자본집약적인 회사**로 남는다. 이익이 들어오고 설비투자가 상각 수준에 가까워지면서 현금흐름은 나아지겠지만, 사업의 무게 자체는 가벼워지지 않는다. 그는 이 점을 성공 시나리오에서도 빼지 않는다.
 
-현재 최종 소비자(B2C)와 기업 고객(B2B)이 월 20달러의 챗봇 구독료나 클라우드 API 사용료로 지불하는 금액이 과연 이 천문학적인 자본비용 허들을 넘길 수 있는가?
+---
 
-### 4.2 손상차손(Impairment)과 잘림 위험(Truncation Risk)
-회계의 유예 기간은 영원하지 않다:
-1. **단기적 보호막 (Cash Cow Protection)**: 현재는 검색 광고와 클라우드 본업이 건재하여 전체 기업이 흑자를 내고 있으므로, 감사인(회계사)들이 데이터센터 자산에 대해 강제로 손상차손을 인식하지 않는다.
-2. **중기적 상각 쓰나미 (Write-downs)**: 그러나 3~5년 뒤에도 투자한 CapEx에서 자본비용을 넘어서는 현금흐름이 발생하지 않는다면, 기업들은 과거 2001년 닷컴 버블 붕괴 당시 광통신망을 상각했던 것처럼 **수천억 달러 단위의 대규모 자산 감액(Write-offs)**을 손익계산서에 한꺼번에 털어내야 한다.
-3. **잘림 위험(Truncation Risk)**: 만약 이 과정에서 기업들이 설비투자를 주식이 아닌 **부채(Debt)**로 과도하게 조달했다면 문제는 단순한 주가 하락을 넘어선다. 이자 비용 부담, 신용등급 강등, 유동성 경색이 겹치면서 기업이 영구적으로 훼손되거나 파산 위기에 직면하는 '잘림 위험'이 고개를 든다.
+## 5. 자본비용을 넘지 못하면
+
+### 5.1 가치의 조건
+기업재무의 기본 원칙은 단순하다. 늘어난 이익이 가치로 이어지려면, **추가로 투입된 AI 자본의 수익률이 그 자본의 자본비용보다 높아야 한다.**
+
+$$\text{가치 창출의 조건:} \quad \text{추가 투하자본의 수익률(ROIC)} > \text{자본비용(WACC)}$$
+
+같은 말을 금액으로 바꾸면, 매년 필요한 최소 영업이익은 *추가 투하자본 × 자본비용*이다. 다모다란은 이 허들의 구체적인 금액을 제시하지 않는다. 다만 낙관론과 비관론이 갈리는 지점이 바로 여기라고 본다. 회사들이 AI에 큰돈을 넣었다는 데는 이견이 없다. 의견이 갈리는 것은 그 투자에서 나올 이익이 자본비용을 넘는 수익률을 낼 만큼 크냐는 것이다. 그는 이 질문의 답이 오픈AI나 앤스로픽의 지금 연 매출 환산액으로 정해지지 않고, AI 제품과 서비스 시장이 실체를 갖춘 뒤에야 보일 것이라고 적는다. 그사이 양쪽 모두에서 빈약한 증거로 성급하게 승리를 선언하는 일이 생길 것이라고도 경고한다.
+
+### 5.2 잘될 때와 안 될 때
 
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" role="img" aria-label="빅테크의 재무 패러다임 전환과 내재 리스크" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" role="img" aria-label="AI 사업의 결과에 따른 회계와 시장의 결과" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c2-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 17px; fill: var(--text-main); }
       .c2-sub { font-family: Pretendard, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); }
-      .c2-th { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 12.5px; }
-      .c2-cat { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 11.5px; fill: var(--text-main); }
-      .c2-td { font-family: Pretendard, -apple-system, sans-serif; font-size: 11px; line-height: 1.4; }
-      .c2-box { fill: var(--bg-surface); stroke: var(--border); stroke-width: 1.2; rx: 8px; }
-      .c2-h { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 12.5px; }
-      .c2-t { font-family: Pretendard, -apple-system, sans-serif; font-size: 11px; fill: var(--text-muted); }
+      .c2-h { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 13.5px; }
+      .c2-t { font-family: Pretendard, -apple-system, sans-serif; font-size: 11.5px; fill: var(--text-muted); }
     </style>
   </defs>
-  <rect x="0" y="0" width="820" height="480" rx="14" fill="var(--bg-card)"/>
-  <text x="410" y="32" text-anchor="middle" class="c2-title">빅테크의 재무 패러다임 대전환과 3단계 내재 리스크</text>
-  <text x="410" y="50" text-anchor="middle" class="c2-sub">자본 경량화에서 자본 집약형 공룡으로의 변모 및 회계적 충격 시나리오 (다모다란, 2026)</text>
+  <rect x="0" y="0" width="820" height="400" rx="14" fill="var(--bg-card)"/>
+  <text x="410" y="32" text-anchor="middle" class="c2-title">AI 사업의 결과가 장부와 시장에 남기는 것</text>
+  <text x="410" y="50" text-anchor="middle" class="c2-sub">가장 좋은 경우와 가장 나쁜 경우 (다모다란 블로그·슬라이드 14–15)</text>
   <g transform="translate(30, 68)">
-    <rect x="0" y="0" width="130" height="34" rx="6" fill="var(--bg-surface)"/>
-    <text x="65" y="21" text-anchor="middle" class="c2-th" fill="var(--text-muted)">비교 지표</text>
-    <rect x="140" y="0" width="305" height="34" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.2"/>
-    <text x="292" y="21" text-anchor="middle" class="c2-th" fill="#059669">2010년대: 자본 경량화 (Capital-Light)</text>
-    <rect x="455" y="0" width="305" height="34" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1.2"/>
-    <text x="607" y="21" text-anchor="middle" class="c2-th" fill="#dc2626">2026년대 AI 시대: 자본 집약화 (Heavy)</text>
+    <rect x="0" y="0" width="370" height="220" rx="10" fill="var(--bg-surface)" stroke="#10b981" stroke-width="1.6"/>
+    <text x="18" y="28" class="c2-h" fill="#059669">잘되면: 수익률 &gt; 자본비용</text>
+    <text x="18" y="58" class="c2-t">• 빌더의 이익이 AI 투자분까지 늘어남</text>
+    <text x="18" y="82" class="c2-t">• 수익률이 자본비용을 넘으면 가치가 오름</text>
+    <text x="18" y="106" class="c2-t">• 대여자는 이자와 원금을 모두 돌려받음</text>
+    <text x="18" y="130" class="c2-t">• 설비투자가 줄며 상각 수준에 가까워지고</text>
+    <text x="30" y="148" class="c2-t">현금흐름이 나아짐</text>
+    <text x="18" y="178" class="c2-t" font-weight="700" fill="#047857">• 그래도 전보다 훨씬 자본집약적인 회사로 남음</text>
   </g>
-  <g transform="translate(30, 108)">
-    <rect x="0" y="0" width="130" height="38" rx="6" fill="var(--bg-surface)"/>
-    <text x="65" y="24" text-anchor="middle" class="c2-cat">핵심 자산</text>
-    <rect x="140" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="155" y="24" class="c2-td" fill="var(--text-main)">알고리즘, 유저 데이터, 네트워크 효과</text>
-    <rect x="455" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="470" y="24" class="c2-td" fill="#b91c1c" font-weight="700">GPU 클러스터, 하이퍼스케일 DC, 전력망</text>
+  <g transform="translate(420, 68)">
+    <rect x="0" y="0" width="370" height="220" rx="10" fill="var(--bg-surface)" stroke="#ef4444" stroke-width="1.6"/>
+    <text x="18" y="28" class="c2-h" fill="#dc2626">안 되면: 약속한 이익이 나오지 않음</text>
+    <text x="18" y="58" class="c2-t">• 회계가 대규모 상각(일회성·특별 항목)을 함</text>
+    <text x="18" y="82" class="c2-t">• 장부 자기자본과 투하자본이 줄어듦</text>
+    <text x="18" y="106" class="c2-t">• 부채 비중이 크면 부도와 재무적 곤경,</text>
+    <text x="30" y="124" class="c2-t">은행·사모 신용 등 대여자의 손실</text>
+    <text x="18" y="148" class="c2-t">• 살아남은 빌더의 현금은 기존 사업이</text>
+    <text x="30" y="166" class="c2-t">계속 벌 때에만 회복</text>
+    <text x="18" y="194" class="c2-t" font-weight="700" fill="#b91c1c">• 시장은 잃은 돈과 경영진 신뢰 상실을 함께 가격에 반영</text>
   </g>
-  <g transform="translate(30, 152)">
-    <rect x="0" y="0" width="130" height="38" rx="6" fill="var(--bg-surface)"/>
-    <text x="65" y="24" text-anchor="middle" class="c2-cat">설비투자 (CapEx)</text>
-    <rect x="140" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="155" y="24" class="c2-td" fill="#047857" font-weight="700">매출액 대비 5~8% 수준 (극소 지출)</text>
-    <rect x="455" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="470" y="24" class="c2-td" fill="#b91c1c" font-weight="700">매출액 대비 25~35% 이상 (수조 달러 폭증)</text>
-  </g>
-  <g transform="translate(30, 196)">
-    <rect x="0" y="0" width="130" height="38" rx="6" fill="var(--bg-surface)"/>
-    <text x="65" y="24" text-anchor="middle" class="c2-cat">투하자본 및 ROIC</text>
-    <rect x="140" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="155" y="24" class="c2-td" fill="var(--text-main)">가벼운 장부, ROIC 30~50%의 압도적 효율</text>
-    <rect x="455" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="470" y="24" class="c2-td" fill="var(--text-main)">무거운 자본화, 자본비용(WACC) 충족 압박</text>
-  </g>
-  <g transform="translate(30, 240)">
-    <rect x="0" y="0" width="130" height="38" rx="6" fill="var(--bg-surface)"/>
-    <text x="65" y="24" text-anchor="middle" class="c2-cat">자금 조달 구조</text>
-    <rect x="140" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="155" y="24" class="c2-td" fill="var(--text-main)">영업현금 전액 자급, 무차입 순현금 축적</text>
-    <rect x="455" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="470" y="24" class="c2-td" fill="var(--text-main)">영업현금 소진 + 대규모 회사채 발행 의존</text>
-  </g>
-  <g transform="translate(30, 284)">
-    <rect x="0" y="0" width="130" height="38" rx="6" fill="var(--bg-surface)"/>
-    <text x="65" y="24" text-anchor="middle" class="c2-cat">비즈니스 본질</text>
-    <rect x="140" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="155" y="24" class="c2-td" fill="#047857" font-weight="700">한계비용 0의 무한 확장 소프트웨어</text>
-    <rect x="455" y="0" width="305" height="38" rx="6" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
-    <text x="470" y="24" class="c2-td" fill="#b91c1c" font-weight="700">고정비·상각비가 지배하는 기간 유틸리티</text>
-  </g>
-  <g transform="translate(30, 340)">
-    <rect x="0" y="0" width="760" height="120" class="c2-box" stroke="#ef4444" stroke-width="1.6"/>
-    <text x="380" y="24" text-anchor="middle" class="c2-h" fill="#dc2626">AI 수익화 지연 시 발생할 3단계 연쇄 충격 시나리오</text>
-    <g transform="translate(20, 42)">
-      <rect x="0" y="0" width="220" height="60" rx="8" fill="var(--bg-card)" stroke="var(--border)"/>
-      <text x="110" y="24" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#dc2626">1단계: 자본비용 미달</text>
-      <text x="110" y="44" text-anchor="middle" class="c2-t">1조 달러당 연 800억$ 초과이익 부재</text>
-    </g>
-    <text x="260" y="78" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="18px" fill="#ef4444">→</text>
-    <g transform="translate(270, 42)">
-      <rect x="0" y="0" width="220" height="60" rx="8" fill="var(--bg-card)" stroke="var(--border)"/>
-      <text x="110" y="24" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#dc2626">2단계: 대규모 손상차손</text>
-      <text x="110" y="44" text-anchor="middle" class="c2-t">데이터센터 자산 강제 감액 (Write-offs)</text>
-    </g>
-    <text x="510" y="78" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="18px" fill="#ef4444">→</text>
-    <g transform="translate(520, 42)">
-      <rect x="0" y="0" width="220" height="60" rx="8" fill="var(--bg-card)" stroke="var(--border)"/>
-      <text x="110" y="24" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#dc2626">3단계: 잘림 위험 (Truncation)</text>
-      <text x="110" y="44" text-anchor="middle" class="c2-t">부채 과다 시 디폴트 및 신용 경색</text>
-    </g>
+  <g transform="translate(30, 304)">
+    <rect x="0" y="0" width="760" height="72" rx="10" fill="var(--bg-surface)" stroke="#8b5cf6" stroke-width="1.6"/>
+    <text x="380" y="28" text-anchor="middle" class="c2-h" fill="#7c3aed">순서: 시장이 먼저, 회계가 나중</text>
+    <text x="380" y="52" text-anchor="middle" class="c2-t">AI 기업의 상각이 발표될 때까지 기다렸다가 판다면, 이미 늦은 것이다</text>
   </g>
 </svg>
 </div>
 
+**가장 좋은 경우**, AI에 투자한 회사들은 적어도 합계로는 이익을 늘릴 뿐 아니라, AI 투자에서 자본비용을 넘는 수익률을 낼 만큼 추가 이익을 만든다. 대여자는 이자와 원금을 돌려받고, 빌더의 현금흐름은 더 좋아진다. 그러나 이 회사들은 성공하더라도 처음과는 매우 다른, 더 자본집약적인 사업이 된다.
+
+**가장 나쁜 경우**, 회계와 시장 모두에서 큰 피해가 난다. 약속한 이익이 나오지 않으면 회계는 AI 투자의 큰 부분을 상각한다. 그 상각은 일회성이나 특별 항목으로 표시되겠지만 규모는 크고, 장부 자기자본과 투하자본을 줄여 AI의 실수를 장부에서 지운다. AI 설비투자를 지나치게 부채에 기댔다면 부도와 재무적 곤경이 따르고, 대여자도 손실을 본다. 현금흐름은 회복할 수 있지만, 기존 사업이 예전만큼 계속 벌 때에만 그렇다. 그리고 시장은 경영진에 대한 신뢰 상실까지 가격에 반영한다.
+
+그 사이에는 **중간 시나리오**가 있다. 완만한 성공은 투자에서 이익은 나오지만 자본비용을 넘지 못하는 경우이고, 완만한 실패는 일부 회사만 투자를 정당화하고 대부분은 그러지 못하는 경우다.
+
+다모다란의 추측은 **시장이 먼저 움직이고 회계가 뒤따른다**는 것이다. AI가 기대보다 잘되거나 못되면, 회계가 반응하기 전에 AI 중심 기업의 주가가 먼저 오르거나 내린다. AI가 약속을 지키지 못하는 경우, 회계사가 AI 설비투자를 상각할 때까지 기다렸다가 AI 기업을 판다면 이미 너무 늦은 것이다.
+
 ---
 
-## 5. 투자자를 위한 4가지 경로와 다모다란의 포지션
+## 6. 투자자의 4가지 경로
 
-AI 폭풍이 금융 시장의 기초체력을 뒤흔드는 현실 앞에서 투자자는 어떤 전략적 태도를 취해야 하는가? 다모다란 교수는 투자자가 선택할 수 있는 **4가지 경로(Pathways)**를 명확히 제시한다.
+이 논쟁이 끝나기를 기다릴 수 있는 사람은 없다. 기업은 지금 설비투자를 하고 있고, 시장은 그것이 미래 이익에 주는 의미를 지금 주가에 넣고 있다. 다모다란의 말로는 시장뿐 아니라 경제 전체가 AI에 건 거대한 베팅이 됐다. 그래서 그는 투자자 앞에 네 가지 선택이 있으며, **어느 것도 AI 논쟁에서 빠져 앉아 있을 여유를 주지 않는다**고 말한다.
 
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" role="img" aria-label="아스워스 다모다란의 4대 투자 경로 매트릭스" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" role="img" aria-label="다모다란의 4가지 투자 경로" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c3-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 17px; fill: var(--text-main); }
@@ -303,94 +313,105 @@ AI 폭풍이 금융 시장의 기초체력을 뒤흔드는 현실 앞에서 투�
     </style>
   </defs>
   <rect x="0" y="0" width="820" height="440" rx="14" fill="var(--bg-card)"/>
-  <text x="410" y="34" text-anchor="middle" class="c3-title">AI 격변기를 건너는 투자자의 4대 전략 경로</text>
-  <text x="410" y="52" text-anchor="middle" class="c3-sub">확신의 강도와 실행 방식에 따른 포트폴리오 포지셔닝 및 다모다란의 실제 선택 (2026)</text>
+  <text x="410" y="34" text-anchor="middle" class="c3-title">AI 논쟁 앞의 4가지 경로</text>
+  <text x="410" y="52" text-anchor="middle" class="c3-sub">확신의 방향과 강도에 따른 선택 (다모다란 블로그·슬라이드 16)</text>
   <g transform="translate(30, 72)">
-    <rect x="0" y="0" width="370" height="155" class="c3-box" stroke="#3b82f6"/>
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#3b82f6"/>
     <rect x="15" y="15" width="85" height="20" rx="4" fill="#3b82f6"/>
-    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 1: 올인</text>
-    <text x="110" y="30" class="c3-h" fill="#2563eb">AI 맥시멀리스트 (All-In)</text>
-    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 포지션:</tspan> 수혜주(엔비디아·빅테크) 롱 + 피침식주 숏</text>
-    <text x="15" y="80" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 대표 인물:</tspan> 레오폴드 아셴브레너 (전 OpenAI 정책가)</text>
-    <text x="15" y="100" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 치명적 함정:</tspan> 과도한 확신과 극단적 레버리지로 인한 파산</text>
-    <text x="15" y="132" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#2563eb">조언: 이 논리를 따르더라도 절대 레버리지를 쓰지 말 것</text>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 1</text>
+    <text x="110" y="30" class="c3-h" fill="#2563eb">곧 이긴다에 올인</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> AI는 멈출 수 없는 힘이고 파괴의 과실을 가져간다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 실행:</tspan> AI로 파괴하는 쪽을 사고, 파괴될 쪽을 판다</text>
+    <text x="15" y="104" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 사례:</tspan> 레오 아셴브레너의 Situational Awareness</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#2563eb">경고: 과신과 과도한 레버리지가 그를 무너뜨렸다</text>
   </g>
   <g transform="translate(420, 72)">
-    <rect x="0" y="0" width="370" height="155" class="c3-box" stroke="#10b981"/>
-    <rect x="15" y="15" width="105" height="20" rx="4" fill="#10b981"/>
-    <text x="67" y="29" text-anchor="middle" class="c3-badge">경로 2: 시장 합의</text>
-    <text x="130" y="30" class="c3-h" fill="#059669">인덱스 추종 (Passive)</text>
-    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 포지션:</tspan> S&amp;P 500, 미국 전체 시장 인덱스 펀드 보유</text>
-    <text x="15" y="80" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 핵심 철학:</tspan> 군중의 지혜 인정 (AI 승리하되 속도는 완만)</text>
-    <text x="15" y="100" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 장점:</tspan> 개별 종목 위험 회피, 시장 평균 성장 향유</text>
-    <text x="15" y="132" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#059669">다모다란의 선택 A: 전체 자산의 주축은 시장 합의 동행</text>
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#10b981"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#10b981"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 2</text>
+    <text x="110" y="30" class="c3-h" fill="#059669">시장 합의에 동행</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> 시장이 가격에 넣은 AI 이야기를 따른다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 실행:</tspan> S&amp;P 500(일부 노출), 미국 전체 시장 펀드(더 넓게)</text>
+    <text x="15" y="104" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 현실:</tspan> 연금이 인덱스라면 이미 이 길에 있다</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#059669">다모다란: 포트폴리오의 몸통은 이 경로</text>
   </g>
-  <g transform="translate(30, 245)">
-    <rect x="0" y="0" width="370" height="175" class="c3-box" stroke="#f59e0b"/>
-    <rect x="15" y="15" width="115" height="20" rx="4" fill="#f59e0b"/>
-    <text x="72" y="29" text-anchor="middle" class="c3-badge">경로 3: 신중한 현실</text>
-    <text x="140" y="30" class="c3-h" fill="#d97706">코어 유지 + 현금 축적</text>
-    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 포지션:</tspan> 기존 주식 보유 유지, 신규 유입 자금은 현금화</text>
-    <text x="15" y="80" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 문제의식:</tspan> 기술 잠재력은 인정하나 현재 시장은 과열 평가</text>
-    <text x="15" y="100" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 리스크:</tspan> 현금 비중 확대로 인한 단기 기회비용 발생</text>
-    <text x="15" y="142" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#d97706">다모다란의 선택 B: 신규 현금은 MMF 축적 (현금 사상 최대)</text>
+  <g transform="translate(30, 255)">
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#f59e0b"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#f59e0b"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 3</text>
+    <text x="110" y="30" class="c3-h" fill="#d97706">AI 회의론자</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> AI가 지금의 가격과 투자를 받칠 만큼 크지 못할 수 있다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 실행:</tspan> 새 투자를 AI에 덜 바뀔 사업으로 돌린다</text>
+    <text x="15" y="104" class="c3-t">  (식품가공, 레저, EU, 아시아 일부)</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#d97706">슬라이드 제목: Trust the AI story but verify</text>
   </g>
-  <g transform="translate(420, 245)">
-    <rect x="0" y="0" width="370" height="175" class="c3-box" stroke="#ef4444"/>
-    <rect x="15" y="15" width="95" height="20" rx="4" fill="#ef4444"/>
-    <text x="62" y="29" text-anchor="middle" class="c3-badge">경로 4: 역발상</text>
-    <text x="120" y="30" class="c3-h" fill="#dc2626">AI 회의론 &amp; 숏 베팅</text>
-    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 수동적 실행:</tspan> 주식 전량 매도 후 현금/금/코인 도피</text>
-    <text x="15" y="80" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 능동적 실행:</tspan> AI 거품주 숏 + 과매도 전통 가치주 롱</text>
-    <text x="15" y="100" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 위험 요인:</tspan> 비이성적 과열이 상환 능력보다 오래 지속</text>
-    <text x="15" y="142" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#dc2626">경고: 시장의 모멘텀에 정면으로 맞서는 숏은 극도로 위험</text>
+  <g transform="translate(420, 255)">
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#ef4444"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#ef4444"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 4</text>
+    <text x="110" y="30" class="c3-h" fill="#dc2626">곧 무너진다에 베팅</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> AI의 실패가 임박했다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 최소:</tspan> 미국 주식을 줄여 현금으로 옮긴다</text>
+    <text x="15" y="104" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 적극:</tspan> AI로 오른 종목 공매도, 파괴될 종목 매수</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#dc2626">경고: 지난 2년 이 전략은 대체로 이기지 못했다</text>
   </g>
 </svg>
 </div>
 
-### 경로 1: AI 맥시멀리스트 (All-In on AI)
-- **논리**: AI는 거의 모든 산업을 완전하고도 신속하게 집어삼킬 것이다.
-- **실행**: 전형적인 '레오폴드 아셴브레너(Leopold Aschenbrenner)' 모델이다. AI의 승자(엔비디아, 빅테크)를 매수(Long)하고, AI로 인해 일자리가 파괴되거나 비즈니스가 잠식될 전통 기업(콜센터, 소프트웨어 솔루션, 지식 서비스 등)을 공매도(Short)한다.
-- **함정과 경고**: 아셴브레너의 헤지펀드가 겪었던 결정적 실수는 **'과도한 확신(Too much conviction)'과 극단적인 차입(Leverage)**이었다. 시장의 가격 반영 속도와 타이밍이 어긋날 때, 레버리지는 포지션을 강제 청산시켜 파멸로 이끈다. 다모다란은 이 경로를 따르더라도 **"레버리지 없이"** 실행해야 한다고 경고한다.
+### 경로 1: AI가 이긴다에 올인한다 (그것도 곧)
+- **논리**: AI는 우리가 사는 방식과 일하는 방식을 바꿀 멈출 수 없는 힘이고, AI 사업이 그 파괴의 과실을 가져간다. 다모다란은 이것이 그럴듯한 이야기라고 인정하면서도, 파괴의 경제적·사회적 비용에 큰 물음표가 붙고 파괴의 속도와 범위에 대한 이견도 크다고 지적한다.
+- **실행**: 레오 아셴브레너(Leo Aschenbrenner)가 Situational Awareness를 세운 바탕이 이 이야기였다. AI로 파괴하는 쪽을 사고, 파괴될 쪽을 판다.
+- **경고**: 그를 무너뜨린 것은 오만과 지나친 확신에서 나온 **과도한 레버리지**였다. 다모다란은 같은 전략을 **훨씬 적은 레버리지로** 따른다면 장기적으로 이길 수도 있다고 본다.
 
-### 경로 2: 시장 합의 추종 (Market Consensus / Indexing)
-- **논리**: 군중의 지혜(Crowd Wisdom)는 여전히 유효하다. 시장은 이미 "AI가 승리하겠지만, 낙관론자들이 믿는 것보다는 시간이 오래 걸리고 시장 규모도 다소 작을 것"이라는 속도 조절론을 가격에 반영하고 있다.
-- **실행**: S&P 500이나 미국 전체 주식 시장 인덱스 펀드를 매수하고 시장 전체의 진화를 수동적으로 따라간다. 포트폴리오의 중심을 잡기에 가장 합리적인 기본값이다.
+### 경로 2: 시장 합의를 따른다
+- **논리**: 군중의 지혜를 받드는 시대에, 시장이 가격에 넣은 AI 이야기를 확인하고 따라간다. 지금 시장은 AI가 크고 가치 있는 사업을 낳는 큰 파괴가 될 것이라고 보고, 승자를 고르고 있다. AI 아키텍처에서는 엔비디아가 지금까지 가장 큰 승자이고, LLM에서는 상장 시장의 스페이스X, 비상장 시장의 오픈AI와 앤스로픽이다.
+- **실행**: S&P 500 펀드로 이 이야기에 일부 노출되고, 미국 전체 시장 펀드로 더 넓게 노출된다. 연금과 저축을 인덱스로 굴리고 있다면, 이미 이 길을 암묵적으로 골랐을 수 있다.
 
-### 경로 3: 신중한 현실주의자 (Cautious Realist — Core 유지 & 현금 축적)
-- **논리**: AI 기술의 장기적 잠재력은 신뢰하지만, 시장이 현실의 제도적 장벽, 전력 인프라 한계, 수익성 둔화를 지나치게 무시하고 과열되어 있다고 판단한다.
-- **실행**: 기존에 보유한 주식 포트폴리오는 그대로 유지하되, **신규로 유입되는 현금은 시장에 추가 투입하지 않고 고금리 MMF나 현금성 자산으로 축적**하며 기회를 엿본다. 밸류에이션 리스크를 방어하면서 관망하는 전략이다.
+### 경로 3: AI 회의론자가 된다
+- **논리**: AI 이야기를 의심할 이유는 많다. 그 의심은 AI가 생존 가능한 사업이 되지 못하거나, 적어도 지금의 가격과 투자를 받칠 만큼 크지 못할 것이라는 믿음으로 이어질 수 있다. 블로그는 이 경로를 "Be an AI skeptic"으로, 슬라이드는 "Trust the AI story but verify"로 부른다.
+- **실행**: 그 믿음이 행동에 나설 만큼 강하지 않더라도, **새 투자를 AI 밖으로** 돌릴 수 있다. AI에 가장 덜 바뀔 사업(식품가공, 레저)과, AI의 위협이 덜한 지역이다. 다모다란은 규제 때문에 EU를, AI가 사람의 노동을 대체하기에 너무 비싼 사업이 많다는 이유로 아시아 일부를 예로 든다.
 
-### 경로 4: AI 회의론자와 역발상 (The Skeptic / Contrarian)
-- **논리**: 현재의 AI 내러티브는 연기이자 거울(Smoke and Mirrors)이며, 결국 처참하게 무너질 투기적 광풍이다.
-- **실행 A (방어적 도피)**: 주식을 전량 매도하고 현금, 금, 암호화폐, 실물 수집품으로 피신한다(일명 '편집증 경로').
-- **실행 B (적극적 역발상)**: '레오폴드 전략의 완전한 반대'를 실행한다. 고평가된 AI 수혜주(셀러 및 과열된 빅테크)를 숏 치고, AI 공포로 인해 과도하게 헐값에 내던져진 전통 우량주를 롱 포지션으로 매수한다.
+### 경로 4: AI 이야기에서 뛰어내린다
+- **논리**: AI가 실패할 것이라는 믿음이 실패가 임박했다는 확신으로 굳었다.
+- **실행**: 최소한 미국 주식을 중심으로 주식 비중을 줄여 현금으로 옮긴다. 위험을 더 감수한다면, AI 이야기로 가격이 치솟은 기업을 공매도하고 AI가 파괴할 것이라던 기업을 사서 아셴브레너의 이야기를 뒤집는다.
+- **경고**: 지난 2년 동안 이를 시도한 많은 트레이더와 투자자에게 이 전략은 이기지 못했다. 시장은 당신이 지급 능력을 유지할 수 있는 기간보다 더 오래 비이성적일 수 있다는 격언을 기억해야 한다.
 
 ---
 
-## 6. 결론: 다모다란의 고백과 젊은 투자자를 위한 제언
+## 7. 다모다란의 포지션과 인적 자본
 
-### 6.1 다모다란 교수의 실제 포트폴리오 고백
-다모다란 교수는 분석가로서의 객관적 거리를 유지하면서도, 자신이 실제로 시장에서 취하고 있는 포지션을 솔직하게 공개했다:
+### 7.1 몸통은 시장 합의, 새 돈은 단기 국채
+다모다란은 자신의 선택도 밝힌다.
 
-1. **포트폴리오 주축은 시장 합의 동행**:
-   - 그는 여전히 **매그니피센트 7 중 5개 기업(Mag 5)**을 보유하고 있다.
-   - 이 중 4개 기업은 막대한 AI CapEx를 집행하는 핵심 하이퍼스케일러다. 전체 포트폴리오 관점에서는 거대한 붕괴가 당장 발생하지 않는다는 '시장 합의'에 묵시적으로 동참하고 있는 셈이다.
-2. **현금 비중의 역사적 최고치 유지**:
-   - 그러나 포트폴리오로 새롭게 들어오는 배당금과 신규 현금은 주식 시장에 재투자하지 않고 **증권사 MMF/현금 잔고로 그대로 남겨두고 있다.** 현재 그의 현금 비중은 개인 투자 역사상 가장 높은 수준이다.
-3. **엔비디아 4회 분할 매도 ("밤에 편히 자기 위하여")**:
-   - 그는 자신이 초기에 발굴했던 엔비디아 지분을 이미 4차례에 걸쳐 분할 매도했다.
-   - "단기적으로 엔비디아 주가가 더 오를 수 있고, 내가 테이블 위에 돈을 남겨두고 나왔음(Left money on the table)을 잘 알고 있다. 하지만 나는 밤에 다리 뻗고 편안하게 자야(Sleep well at night) 한다. 일부 수익을 포기하더라도 심리적 평온을 얻는 것이 내 가치평가 철학이다."
+1. **포트폴리오의 대부분은 경로 2**다. 그는 매그니피센트 7 가운데 테슬라와 엔비디아를 뺀 **다섯 종목**을 갖고 있고, 그중 **아마존, 알파벳, 메타, 마이크로소프트** 네 곳은 AI 설비투자를 많이 하는 회사다.
+2. **새 돈은 현금**이다. 지난 1–2년 포트폴리오에 새로 들어온 돈의 대부분은 **금리 약 4%의 단기 국채**로 갔다. 그래서 그의 포트폴리오는 평소보다 현금 비중이 높다.
 
-### 6.2 젊은 세대를 향한 마지막 통찰: "당신의 최대 자산은 '인적 자본'이다"
-다모다란 교수는 은퇴를 앞둔 노년층과 달리, 청년 및 중장년 투자자가 반드시 명심해야 할 결정적인 금융 요소를 짚으며 강연을 마무리한다. 바로 **'인적 자본(Human Capital)'의 현재가치**다.
+두 번째 선택은 경로 3과 다르다. 경로 3은 새 돈을 AI에 덜 노출된 사업이나 지역의 주식으로 돌리는 길이고, 그는 새 돈을 주식 밖의 단기 국채에 두었다.
 
-$$\text{총 자산(Total Wealth)} = \text{금융 자본(Financial Wealth)} + \text{인적 자본(Human Capital)}$$
+그는 그 대가도 숨기지 않는다. 그렇게 해서 분명히 테이블 위에 돈을 남겼지만, 덕분에 밤에 더 편히 잔다는 것이다. 그리고 독자에게도 **AI 정글에서 "잠자리 테스트(sleep test)"를 통과하게 해 주는 길**을 찾으라고 권한다.
 
-젊은 투자자에게 주식 계좌에 든 몇천만 원, 몇억 원보다 압도적으로 거대한 자산은 **'앞으로 평생 노동을 통해 벌어들일 미래 임금의 현재가치(PV of Future Wages)'**다.
+### 7.2 계좌 밖의 자산: 인적 자본
+그가 마지막으로 짚는 것은 아직 보유 목록에 나타나지 않는 자산이다. 남은 근로 기간 동안 직업으로 벌어들일 소득, 곧 **인적 자본(Human Capital)**이다.
 
-- 만약 당신이 소프트웨어 개발, 번역, 회계 실무, 고객 서비스 등 **AI에 의해 업무가 직접적으로 대체되거나 임금 협상력이 침식될 수 있는 직종**에 종사하고 있다면, 당신의 인적 자본은 AI 쇼크에 심각하게 노출되어 있다.
-- 이 경우 포트폴리오에서 엔비디아나 AI 수혜주에 올인하는 것은 자칫 **'직장도 잃고 주가 폭락도 맞을 위험'**을 키우거나, 반대로 자신의 생존 기반을 왜곡할 수 있다.
-- 따라서 투자자는 금융 자산의 수익률만을 좇을 것이 아니라, **자신의 직업적 인적 자본이 입을 수 있는 잠재적 타격을 상쇄(Hedge)할 수 있는 포트폴리오**를 설계해야 한다. AI의 영향을 덜 받는 필수 서비스, 실물 자산, 대인 관계 중심의 역량에 분산 투자하는 것이야말로 21세기 AI 폭풍을 헤쳐나가는 진정한 리스크 관리다.
+$$\text{총 자산} = \text{금융 자본} + \text{인적 자본}$$
 
-> **"중국인들이 '흥미로운 시대에 태어나기를!(May you live in interesting times)'을 왜 저주로썼는지 알 것 같다. 흥미로운 시대는 우리를 극도의 스트레스 속으로 몰아넣기 때문이다. 부디 숫자의 착시에 휘둘리지 말고, 회계와 현금의 실체를 직시하며, 밤에 편히 잠들 수 있는 당신만의 투자를 구축하라."**
+자신의 직업이 AI에 잠식될 것이라고 본다면, 금융 자본을 AI 파괴에 가장 많이 노출된 사업에서 빼서 전체 균형을 맞추는 것이 합리적이다. 직장과 주식이 같은 충격에 함께 흔들리지 않게 하려는 것이다. 다모다란은 자신은 남은 근로 연한이 짧아 이 항목을 크게 신경 쓰지 않지만, 자신보다 훨씬 젊은 투자자라면 이 점이 투자 방식 자체를 바꿀 수 있다고 말한다.
+
+---
+
+## 8. 이 글의 근거와 한계
+
+- **수치의 출처**: 본문의 수치와 인용은 다모다란의 2026년 10월 8일 블로그 글과 같은 주제의 슬라이드(MktandAI2026.pdf, 18장)에서 가져왔다. 섹터 표, ERP 계산의 세부 가정(지수 7,651.54, 성장률 14.59%, 환원 비율 63.52%, Aa1 스프레드 0.22%), 투하자본 증가율, 공급자 매출 구성은 슬라이드의 표와 그림에서 읽은 값이다. 블로그 본문은 이 값들을 문장으로 적지 않는다.
+- **집계의 범위**: 모든 집계는 미국 상장사만 담는다. 오픈AI, 앤스로픽 같은 비상장 회사와 합작·부외 기구는 빠져 있어, 실제 AI 투자의 효과는 이 숫자보다 크다.
+- **두 개의 ERP**: 3.70%와 3.92%는 범위가 아니라 무위험수익률의 정의(10년물 5.29%, 달러 무위험수익률 5.07%)가 다른 두 계산이다.
+- **두 종류의 성장률**: 14.59%는 향후 5년의 애널리스트 기대치이고, 실현된 이익 증가는 2026년 1분기 +35%, 2분기 +57%다.
+- **자본비용 허들**: 다모다란은 AI 투자가 넘어야 할 허들의 구체적인 금액이나 자본비용 수치를 제시하지 않는다. 그래서 이 글도 원칙만 적었다.
+- **영상**: 같은 주제의 영상 강연이 있지만 그 대사는 따로 대조하지 않았다.
+
+---
+
+## 출처
+
+- Aswath Damodaran, [Stock Prices, Earnings and Cashflows: The AI Effect plays through!](https://aswathdamodaran.blogspot.com/2026/10/stock-prices-earnings-and-cashflows-ai.html), *Musings on Markets*, 2026. 10. 8.
+- Aswath Damodaran, [슬라이드 MktandAI2026.pdf](https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/MktandAI2026.pdf), 18장.
+- Aswath Damodaran, [Earnings, Cashflows and Stock Prices: The AI Storm blows through!](https://www.youtube.com/watch?v=nwmvMh6P1Lo) (YouTube 영상 강연).
