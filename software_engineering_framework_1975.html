@@ -1856,7 +1856,7 @@
       <header class="article-header">
         <div class="article-meta">
           <span class="meta-badge">📅 2026-10-11</span>
-          <span class="meta-badge">⏱️ 약 31분</span>
+          <span class="meta-badge">⏱️ 약 41분</span>
           <span class="meta-badge">✍️ 기술 분석 백서 프레임워크</span>
         </div>
         <h1 class="article-title">소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보</h1>
@@ -1891,34 +1891,81 @@
 <li>1968년과 1969년 독일 가르미슈(Garmisch)와 로마에서 개최된 <strong>NATO 소프트웨어 공학 컨퍼런스</strong>를 기점으로, &#39;소프트웨어 공학&#39;이라는 용어가 공식적으로 대중화되었습니다. 주먹구구식 코딩(Hacking)을 탈피하여 건축이나 토목처럼 엄밀한 공학적 규율(Discipline)을 수립해야 한다는 절박한 요구가 분출했습니다.</li>
 </ul>
 <h3 id="12-1975년-논문의-역사적-의의"><a href="#12-1975년-논문의-역사적-의의" class="heading-anchor" aria-hidden="true">#</a> 1.2 1975년 논문의 역사적 의의</h3><p>Douglas T. Ross, John B. Goodenough, C. A. Irvine은 소프트웨어 개발이 맞닥뜨린 복잡성을 체계적으로 해체하고 정복하기 위해 <strong>소프트웨어 공학의 3차원 기본 블록(The Building Blocks of Software Engineering)</strong> 프레임워크를 제안했습니다. 이 논문은 개별 기법(컴파일러, 고수준 언어, 프로그래밍 기법 등)의 나열을 넘어, 소프트웨어 공학 전체를 관통하는 <strong>4대 목표, 7대 원칙, 5단계 프로세스</strong>의 상호작용 매트릭스를 정립한 기념비적 고전입니다.</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" width="100%" height="auto" role="img" aria-label="소프트웨어 공학 3차원 프레임워크 마인드맵">
+  <defs>
+    <filter id="shadow-soft" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <linearGradient id="grad-center" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="grad-goals" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+    <linearGradient id="grad-principles" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#3730a3" />
+    </linearGradient>
+    <linearGradient id="grad-process" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">mindmap
-  root((소프트웨어 공학 3차원 큐브))
-    4대 목표 Goals
-      이해성 Understandability
-      신뢰성 Reliability
-      수정 용이성 Modifiability
-      효율성 Efficiency
-    7대 원칙 Principles
-      모듈화 Modularity
-      추상화 Abstraction
-      은닉 Hiding
-      국소화 Localization
-      균일성 Uniformity
-      완전성 Completeness
-      확인 가능성 Confirmability
-    5단계 프로세스 Process
-      목적 Purpose
-      개념 Concept
-      메커니즘 Mechanism
-      표기법 Notation
-      사용 Usage</code></pre>
-</div><blockquote>
+  <rect width="940" height="450" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
+
+  <!-- 연결선 곡선 -->
+  <path d="M 470 225 C 320 225, 230 115, 140 115" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="4 4" />
+  <path d="M 470 225 C 600 225, 680 180, 770 180" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-dasharray="4 4" />
+  <path d="M 470 225 C 320 225, 230 335, 140 335" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-dasharray="4 4" />
+
+  <!-- 중앙 루트 노드 -->
+  <g transform="translate(470, 225)" filter="url(#shadow-soft)">
+    <rect x="-135" y="-36" width="270" height="72" rx="36" fill="url(#grad-center)" stroke="#475569" stroke-width="2" />
+    <text x="0" y="-6" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">소프트웨어 공학 3차원 큐브</text>
+    <text x="0" y="18" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">Building Blocks (1975)</text>
+  </g>
+
+  <!-- 1. 좌측 상단: 4대 목표 (Goals) -->
+  <g transform="translate(40, 40)" filter="url(#shadow-soft)">
+    <rect x="0" y="0" width="250" height="150" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5" />
+    <rect x="12" y="12" width="226" height="30" rx="6" fill="url(#grad-goals)" />
+    <text x="125" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4대 기본 목표 (Goals)</text>
+    <text x="24" y="66" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0369a1">• 이해성 (Understandability)</text>
+    <text x="24" y="88" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0369a1">• 신뢰성 (Reliability)</text>
+    <text x="24" y="110" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0369a1">• 수정 용이성 (Modifiability)</text>
+    <text x="24" y="132" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0369a1">• 효율성 (Efficiency)</text>
+  </g>
+
+  <!-- 2. 우측: 7대 원칙 (Principles) -->
+  <g transform="translate(650, 45)" filter="url(#shadow-soft)">
+    <rect x="0" y="0" width="250" height="270" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5" />
+    <rect x="12" y="12" width="226" height="30" rx="6" fill="url(#grad-principles)" />
+    <text x="125" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">7대 공학 원칙 (Principles)</text>
+    <text x="24" y="66" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">1. 모듈화 (Modularity)</text>
+    <text x="24" y="93" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">2. 추상화 (Abstraction)</text>
+    <text x="24" y="120" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">3. 정보 은닉 (Hiding)</text>
+    <text x="24" y="147" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">4. 국소화 (Localization)</text>
+    <text x="24" y="174" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">5. 균일성 (Uniformity)</text>
+    <text x="24" y="201" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">6. 완전성 (Completeness)</text>
+    <text x="24" y="228" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#3730a3">7. 확인 가능성 (Confirmability)</text>
+  </g>
+
+  <!-- 3. 좌측 하단: 5단계 프로세스 (Process) -->
+  <g transform="translate(40, 240)" filter="url(#shadow-soft)">
+    <rect x="0" y="0" width="250" height="175" rx="12" fill="#ffffff" stroke="#99f6e4" stroke-width="1.5" />
+    <rect x="12" y="12" width="226" height="30" rx="6" fill="url(#grad-process)" />
+    <text x="125" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">5단계 기본 프로세스 (Process)</text>
+    <text x="24" y="66" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0f766e">1. 목적 (Purpose, Why)</text>
+    <text x="24" y="90" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0f766e">2. 개념 (Concept, What)</text>
+    <text x="24" y="114" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0f766e">3. 메커니즘 (Mechanism, How)</text>
+    <text x="24" y="138" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0f766e">4. 표기법 (Notation, Syntax)</text>
+    <text x="24" y="162" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#0f766e">5. 사용 (Usage, Application)</text>
+  </g>
+</svg></p>
+<blockquote>
 <p>[!NOTE]
 <strong>레드팀 분석: 1968년 이전 소프트웨어 &#39;무법지대&#39; 신화의 해체</strong><br>흔히 1968년 이전의 초기 컴퓨팅을 &quot;체계도 규율도 없는 완전한 스파게티 암흑기&quot;로 묘사하곤 하지만, 이는 사후적 역사 재구성(Historical Retconning)에 가깝습니다.</p>
 <ul>
@@ -1928,28 +1975,99 @@
 </blockquote>
 <hr>
 <h2 id="2-3차원-빌딩-블록-the-3d-cube-model"><a href="#2-3차원-빌딩-블록-the-3d-cube-model" class="heading-anchor" aria-hidden="true">#</a> 2. 3차원 빌딩 블록 (The 3D Cube Model)</h2><p>논문은 소프트웨어 공학의 모든 활동을 3개의 직교하는 축으로 구성된 <strong>큐브 모델</strong>로 정의합니다.</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 540" width="100%" height="auto" role="img" aria-label="소프트웨어 공학의 빌딩 블록 3차원 큐브 모델">
+  <defs>
+    <filter id="cube-shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.12" />
+    </filter>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-text">                    ┌─────────────────────────────────────────┐
-                   ╱                 PROCESS                 ╱│
-                  ╱   (Purpose, Concept, Mechanism,         ╱ │
-                 ╱     Notation, Usage)                    ╱  │
-                ┌─────────────────────────────────────────┐   │
-                │                                         │   │
-                │              PRINCIPLES                 │ G │  UNDERSTANDABILITY
-                │                                         │ O │  RELIABILITY
-                │   • Modularity       • Uniformity       │ A │  EFFICIENCY
-                │   • Abstraction      • Completeness     │ L │  MODIFIABILITY
-                │   • Localization     • Confirmability   │ S │
-                │   • Hiding                              │   │
-                │                                         │  ╱
-                │                                         │ ╱
-                └─────────────────────────────────────────┘╱</code></pre>
-</div><ol>
+  <rect width="940" height="540" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
+
+  <!-- 타이틀 -->
+  <text x="470" y="38" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#0f172a" text-anchor="middle">Figure 1. The Building Blocks of Software Engineering (1975)</text>
+  <text x="470" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#64748b" text-anchor="middle">프로세스(Process) × 원칙(Principles) × 목표(Goals)의 3차원 상호작용 매트릭스</text>
+
+  <!-- 3차원 큐브 투영 (Isometric Projection) -->
+  <g transform="translate(140, 100)" filter="url(#cube-shadow)">
+    
+    <!-- 1. 윗면: PROCESS (5단계) -->
+    <!-- 좌표: 좌측상단 (140, 0), 우측상단 (480, 0), 우측하단 (380, 70), 좌측하단 (0, 70) -->
+    <path d="M 0 70 L 140 0 L 500 0 L 360 70 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" />
+    <!-- 5개 프로세스 분할 슬라이스 -->
+    <path d="M 72 56 L 212 -14" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3 3" />
+    <path d="M 144 42 L 284 -28" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3 3" />
+    <path d="M 216 28 L 356 -42" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3 3" />
+    <path d="M 288 14 L 428 -56" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3 3" />
+
+    <!-- 윗면 레이블 (비스듬한 기울기 투영) -->
+    <g transform="translate(70, 48) rotate(-26)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0369a1">PURPOSE</text>
+    </g>
+    <g transform="translate(142, 34) rotate(-26)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0369a1">CONCEPT</text>
+    </g>
+    <g transform="translate(214, 20) rotate(-26)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0369a1">MECHANISM</text>
+    </g>
+    <g transform="translate(286, 6) rotate(-26)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0369a1">NOTATION</text>
+    </g>
+    <g transform="translate(360, -8) rotate(-26)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0369a1">USAGE</text>
+    </g>
+
+    <text x="250" y="-12" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#0284c7" text-anchor="middle">PROCESS ➔</text>
+
+    <!-- 2. 앞면: PRINCIPLES (7대 원칙) -->
+    <rect x="0" y="70" width="360" height="280" fill="#ffffff" stroke="#4f46e5" stroke-width="2" />
+    <!-- 7개 원칙 수평선 분할 (높이 40px 씩) -->
+    <line x1="0" y1="110" x2="360" y2="110" stroke="#cbd5e1" stroke-width="1.2" />
+    <line x1="0" y1="150" x2="360" y2="150" stroke="#cbd5e1" stroke-width="1.2" />
+    <line x1="0" y1="190" x2="360" y2="190" stroke="#cbd5e1" stroke-width="1.2" />
+    <line x1="0" y1="230" x2="360" y2="230" stroke="#cbd5e1" stroke-width="1.2" />
+    <line x1="0" y1="270" x2="360" y2="270" stroke="#cbd5e1" stroke-width="1.2" />
+    <line x1="0" y1="310" x2="360" y2="310" stroke="#cbd5e1" stroke-width="1.2" />
+
+    <!-- 7대 원칙 텍스트 -->
+    <text x="180" y="96" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">MODULARITY (모듈화)</text>
+    <text x="180" y="136" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">ABSTRACTION (추상화)</text>
+    <text x="180" y="176" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">LOCALIZATION (국소화)</text>
+    <text x="180" y="216" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">HIDING (정보 은닉)</text>
+    <text x="180" y="256" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">UNIFORMITY (균일성)</text>
+    <text x="180" y="296" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">COMPLETENESS (완전성)</text>
+    <text x="180" y="336" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1e1b4b" text-anchor="middle">CONFIRMABILITY (확인 가능성)</text>
+
+    <!-- 앞면 좌측 화살표 -->
+    <text x="-15" y="215" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#4f46e5" text-anchor="middle" transform="rotate(-90, -15, 215)">PRINCIPLES ➔</text>
+
+    <!-- 3. 우측면: GOALS (4대 목표) -->
+    <!-- 좌표: 좌측상단 (360, 70), 우측상단 (500, 0), 우측하단 (500, 280), 좌측하단 (360, 350) -->
+    <path d="M 360 70 L 500 0 L 500 280 L 360 350 Z" fill="#f1f5f9" stroke="#0f766e" stroke-width="2" />
+    <!-- 4개 목표 경사 분할선 -->
+    <path d="M 395 52.5 L 395 332.5" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3" />
+    <path d="M 430 35 L 430 315" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3" />
+    <path d="M 465 17.5 L 465 297.5" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3" />
+
+    <!-- 우측면 레이블 (세로 기울기 투영) -->
+    <g transform="translate(378, 200) rotate(90)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">MODIFIABILITY</text>
+    </g>
+    <g transform="translate(412, 185) rotate(90)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">EFFICIENCY</text>
+    </g>
+    <g transform="translate(448, 170) rotate(90)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">RELIABILITY</text>
+    </g>
+    <g transform="translate(482, 155) rotate(90)">
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">UNDERSTANDABILITY</text>
+    </g>
+
+    <!-- 우측 상단 화살표 -->
+    <text x="535" y="140" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#0f766e" text-anchor="middle" transform="rotate(90, 535, 140)">GOALS ➔</text>
+  </g>
+</svg></p>
+<ol>
 <li><strong>프로세스 축 (Process)</strong>: 인간의 지성이 문제를 분해하고 해결해 나가는 5단계 논리적 경로</li>
 <li><strong>원칙 축 (Principles)</strong>: 시스템을 구조화하고 인터페이스를 통제할 때 적용하는 7가지 설계 나침반</li>
 <li><strong>목표 축 (Goals)</strong>: 최종 소프트웨어가 지녀야 할 바람직한 4가지 공학적 속성</li>
@@ -2016,36 +2134,89 @@
 </blockquote>
 <hr>
 <h2 id="4-7대-공학-원칙-the-seven-principles"><a href="#4-7대-공학-원칙-the-seven-principles" class="heading-anchor" aria-hidden="true">#</a> 4. 7대 공학 원칙 (The Seven Principles)</h2><p>원칙은 목표라는 목적지를 향해 갈 때 올바른 설계 결정을 내리도록 돕는 도구입니다.</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="auto" role="img" aria-label="7대 공학 원칙 구조도">
+  <defs>
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arrow-indigo" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4f46e5" />
+    </marker>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">flowchart TD
-    subgraph Core ["핵심 아키텍처 원칙"]
-        M["모듈화 (Modularity)&lt;br&gt;목적이 있는 구조화"]
-        A["추상화 (Abstraction)&lt;br&gt;본질적 속성 추출 (What)"]
-        H["은닉 (Hiding)&lt;br&gt;세부 접근 차단 및 강제 (Not How)"]
-    end
+  <rect width="920" height="400" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
 
-    subgraph Placement ["물리적/구조적 배치 원칙"]
-        L["국소화 (Localization)&lt;br&gt;물리적 근접성 &amp; 단일 지점 관리"]
-        U["균일성 (Uniformity)&lt;br&gt;불필요한 불일치 제거 (단일 참조 원칙)"]
-    end
+  <!-- 1. 핵심 아키텍처 원칙 (좌측) -->
+  <g transform="translate(30, 30)" filter="url(#card-shadow)">
+    <rect width="260" height="340" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5" />
+    <rect x="12" y="12" width="236" height="32" rx="6" fill="#4f46e5" />
+    <text x="130" y="33" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">핵심 아키텍처 원칙</text>
 
-    subgraph Verification ["검증 및 완성 원칙"]
-        C["완전성 (Completeness)&lt;br&gt;모든 필수 요소의 명시적 포괄"]
-        Cf["확인 가능성 (Confirmability)&lt;br&gt;검증 및 테스트 가능성의 내재화"]
-    end
+    <!-- 모듈화 -->
+    <rect x="16" y="60" width="228" height="70" rx="8" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1" />
+    <text x="28" y="85" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#312e81">모듈화 (Modularity)</text>
+    <text x="28" y="108" font-family="system-ui, sans-serif" font-size="11" fill="#4338ca">목적이 있는 구조화 제약</text>
 
-    M --&gt; A
-    A --&gt; H
-    H --&gt; L
-    L --&gt; U
-    U --&gt; C
-    C --&gt; Cf</code></pre>
-</div><h3 id="41-모듈화-modularity-목적이-있는-구조화"><a href="#41-모듈화-modularity-목적이-있는-구조화" class="heading-anchor" aria-hidden="true">#</a> 4.1 모듈화 (Modularity): 목적이 있는 구조화</h3><ul>
+    <line x1="130" y1="130" x2="130" y2="150" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrow-indigo)" />
+
+    <!-- 추상화 -->
+    <rect x="16" y="152" width="228" height="70" rx="8" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1" />
+    <text x="28" y="177" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#312e81">추상화 (Abstraction)</text>
+    <text x="28" y="200" font-family="system-ui, sans-serif" font-size="11" fill="#4338ca">본질적 속성 추출 (What)</text>
+
+    <line x1="130" y1="222" x2="130" y2="242" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrow-indigo)" />
+
+    <!-- 은닉 -->
+    <rect x="16" y="244" width="228" height="70" rx="8" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1" />
+    <text x="28" y="269" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#312e81">정보 은닉 (Hiding)</text>
+    <text x="28" y="292" font-family="system-ui, sans-serif" font-size="11" fill="#4338ca">세부 접근 강제 차단 (Not How)</text>
+  </g>
+
+  <!-- 좌측 -> 중앙 연결선 -->
+  <path d="M 290 200 L 330 200" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arrow-indigo)" />
+
+  <!-- 2. 물리적/구조적 배치 원칙 (중앙) -->
+  <g transform="translate(340, 70)" filter="url(#card-shadow)">
+    <rect width="260" height="260" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5" />
+    <rect x="12" y="12" width="236" height="32" rx="6" fill="#0284c7" />
+    <text x="130" y="33" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">물리적/구조적 배치 원칙</text>
+
+    <!-- 국소화 -->
+    <rect x="16" y="65" width="228" height="75" rx="8" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1" />
+    <text x="28" y="93" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#0c4a6e">국소화 (Localization)</text>
+    <text x="28" y="117" font-family="system-ui, sans-serif" font-size="11" fill="#0369a1">물리적 근접성 &amp; 단일 지점 관리</text>
+
+    <line x1="130" y1="140" x2="130" y2="162" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-indigo)" />
+
+    <!-- 균일성 -->
+    <rect x="16" y="165" width="228" height="75" rx="8" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1" />
+    <text x="28" y="193" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#0c4a6e">균일성 (Uniformity)</text>
+    <text x="28" y="217" font-family="system-ui, sans-serif" font-size="11" fill="#0369a1">단일 참조 원칙 (구문 일관성)</text>
+  </g>
+
+  <!-- 중앙 -> 우측 연결선 -->
+  <path d="M 600 200 L 640 200" stroke="#0284c7" stroke-width="2.5" marker-end="url(#arrow-indigo)" />
+
+  <!-- 3. 검증 및 완성 원칙 (우측) -->
+  <g transform="translate(650, 70)" filter="url(#card-shadow)">
+    <rect width="240" height="260" rx="12" fill="#ffffff" stroke="#a7f3d0" stroke-width="1.5" />
+    <rect x="12" y="12" width="216" height="32" rx="6" fill="#059669" />
+    <text x="120" y="33" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">검증 및 완성 원칙</text>
+
+    <!-- 완전성 -->
+    <rect x="16" y="65" width="208" height="75" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1" />
+    <text x="28" y="93" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#064e3b">완전성 (Completeness)</text>
+    <text x="28" y="117" font-family="system-ui, sans-serif" font-size="11" fill="#047857">필수 요소의 명시적 포괄</text>
+
+    <line x1="120" y1="140" x2="120" y2="162" stroke="#059669" stroke-width="2" marker-end="url(#arrow-indigo)" />
+
+    <!-- 확인 가능성 -->
+    <rect x="16" y="165" width="208" height="75" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1" />
+    <text x="28" y="193" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#064e3b">확인 가능성 (Confirmability)</text>
+    <text x="28" y="217" font-family="system-ui, sans-serif" font-size="11" fill="#047857">테스트 가능성의 설계 내재화</text>
+  </g>
+</svg></p>
+<h3 id="41-모듈화-modularity-목적이-있는-구조화"><a href="#41-모듈화-modularity-목적이-있는-구조화" class="heading-anchor" aria-hidden="true">#</a> 4.1 모듈화 (Modularity): 목적이 있는 구조화</h3><ul>
 <li><strong>정의</strong>: 단순히 커다란 코드를 물리적으로 토막 내는 것이 아니라, <strong>어떤 목적을 더 쉽게 달성하기 위해 구조적 제약을 부과하는 행위(Purposeful Structuring)</strong>.</li>
 <li><strong>적용</strong>: 하향식 계층 구조에서 상위 모듈은 &#39;무엇을 할 것인가(What)&#39;를 규정하고, 하위 모듈은 &#39;어떻게 실행할 것인가(How)&#39;를 구현합니다.</li>
 </ul>
@@ -2107,25 +2278,81 @@
 </blockquote>
 <hr>
 <h2 id="5-5단계-기본-프로세스와-계층적-분해"><a href="#5-5단계-기본-프로세스와-계층적-분해" class="heading-anchor" aria-hidden="true">#</a> 5. 5단계 기본 프로세스와 계층적 분해</h2><p>소프트웨어 개발의 모든 단계(요구분석 $\rightarrow$ 아키텍처 설계 $\rightarrow$ 구현 명세 $\rightarrow$ 코딩/디버깅 $\rightarrow$ 성능 튜닝)는 다음과 같은 <strong>5단계 기본 프로세스(The Fundamental Process)</strong> 패턴의 프랙탈 구조로 이루어집니다.</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 220" width="100%" height="auto" role="img" aria-label="5단계 기본 프로세스 시퀀스">
+  <defs>
+    <filter id="step-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0d9488" />
+    </marker>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">sequenceDiagram
-    autonumber
-    participant P as 1. 목적 (Purpose)
-    participant C as 2. 개념 (Concept)
-    participant M as 3. 메커니즘 (Mechanism)
-    participant N as 4. 표기법 (Notation)
-    participant U as 5. 사용 (Usage)
+  <rect width="920" height="220" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
 
-    P-&gt;&gt;C: 달성해야 할 목표를 명확화하고 개념적 해결책 도출
-    C-&gt;&gt;M: 개념 구조를 실체화할 구체적 메커니즘 고안
-    M-&gt;&gt;N: 메커니즘의 기능을 호출/제어할 문법적 표기법 정의
-    N-&gt;&gt;U: 실제 문제 맥락에서 표기법을 적용하여 목적 달성</code></pre>
-</div><h3 id="계층적-분해-hierarchical-decomposition"><a href="#계층적-분해-hierarchical-decomposition" class="heading-anchor" aria-hidden="true">#</a> 계층적 분해 (Hierarchical Decomposition)</h3><p>인간은 거대한 시스템을 한 번에 다룰 수 없습니다.</p>
+  <!-- 1. 목적 (Purpose) -->
+  <g transform="translate(30, 45)" filter="url(#step-shadow)">
+    <rect width="150" height="110" rx="10" fill="#ffffff" stroke="#99f6e4" stroke-width="1.5" />
+    <circle cx="28" cy="28" r="14" fill="#0d9488" />
+    <text x="28" y="33" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="50" y="33" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#0f766e">목적 (Purpose)</text>
+    <text x="16" y="65" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#134e4a">Why: 목표 정의</text>
+    <text x="16" y="85" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">요구사항 및 제약조건</text>
+  </g>
+
+  <line x1="185" y1="100" x2="205" y2="100" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-teal)" />
+
+  <!-- 2. 개념 (Concept) -->
+  <g transform="translate(210, 45)" filter="url(#step-shadow)">
+    <rect width="150" height="110" rx="10" fill="#ffffff" stroke="#99f6e4" stroke-width="1.5" />
+    <circle cx="28" cy="28" r="14" fill="#0d9488" />
+    <text x="28" y="33" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="50" y="33" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#0f766e">개념 (Concept)</text>
+    <text x="16" y="65" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#134e4a">What: 구조 도출</text>
+    <text x="16" y="85" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">아키텍처 및 모듈 사양</text>
+  </g>
+
+  <line x1="365" y1="100" x2="385" y2="100" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-teal)" />
+
+  <!-- 3. 메커니즘 (Mechanism) -->
+  <g transform="translate(390, 45)" filter="url(#step-shadow)">
+    <rect width="150" height="110" rx="10" fill="#ffffff" stroke="#99f6e4" stroke-width="1.5" />
+    <circle cx="28" cy="28" r="14" fill="#0d9488" />
+    <text x="28" y="33" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="50" y="33" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#0f766e">메커니즘 (Mechanism)</text>
+    <text x="16" y="65" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#134e4a">How: 구체적 구현</text>
+    <text x="16" y="85" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">알고리즘 및 서브루틴</text>
+  </g>
+
+  <line x1="545" y1="100" x2="565" y2="100" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-teal)" />
+
+  <!-- 4. 표기법 (Notation) -->
+  <g transform="translate(570, 45)" filter="url(#step-shadow)">
+    <rect width="150" height="110" rx="10" fill="#ffffff" stroke="#99f6e4" stroke-width="1.5" />
+    <circle cx="28" cy="28" r="14" fill="#0d9488" />
+    <text x="28" y="33" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="50" y="33" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#0f766e">표기법 (Notation)</text>
+    <text x="16" y="65" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#134e4a">Syntax: 문법 정의</text>
+    <text x="16" y="85" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">프로그래밍 언어 표현</text>
+  </g>
+
+  <line x1="725" y1="100" x2="745" y2="100" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-teal)" />
+
+  <!-- 5. 사용 (Usage) -->
+  <g transform="translate(750, 45)" filter="url(#step-shadow)">
+    <rect width="140" height="110" rx="10" fill="#ffffff" stroke="#99f6e4" stroke-width="1.5" />
+    <circle cx="28" cy="28" r="14" fill="#0d9488" />
+    <text x="28" y="33" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+    <text x="50" y="33" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#0f766e">사용 (Usage)</text>
+    <text x="16" y="65" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#134e4a">Application: 실전 적용</text>
+    <text x="16" y="85" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">API 및 사용자 매뉴얼</text>
+  </g>
+
+  <!-- 하단 프랙탈 순환 안내 -->
+  <path d="M 820 160 C 820 195, 105 195, 105 160" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrow-teal)" />
+  <text x="470" y="195" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#0f766e" text-anchor="middle">계층적 분해 (Top-down Analysis) ⇄ 상향식 종합 (Bottom-up Synthesis) 프랙탈 순환</text>
+</svg></p>
+<h3 id="계층적-분해-hierarchical-decomposition"><a href="#계층적-분해-hierarchical-decomposition" class="heading-anchor" aria-hidden="true">#</a> 계층적 분해 (Hierarchical Decomposition)</h3><p>인간은 거대한 시스템을 한 번에 다룰 수 없습니다.</p>
 <ul>
 <li><strong>하향식 분해 (Top-down Analysis)</strong>: 큰 목적을 하위 목적, 하위 모듈로 잘게 쪼개어 가며 각 계층에 필요한 제약을 부과합니다.</li>
 <li><strong>상향식 종합 (Bottom-up Synthesis)</strong>: 쪼개진 단위 메커니즘들의 공통점을 발견하여 공용 서브루틴, 재사용 라이브러리로 묶어 상위 시스템으로 조립해 나갑니다.</li>
@@ -2136,23 +2363,51 @@
 </blockquote>
 <hr>
 <h2 id="6-심층-사례-연구-서브루틴subroutine-분석"><a href="#6-심층-사례-연구-서브루틴subroutine-분석" class="heading-anchor" aria-hidden="true">#</a> 6. 심층 사례 연구: 서브루틴(Subroutine) 분석</h2><p>논문은 소프트웨어에서 가장 보편적이고 친숙한 &#39;서브루틴&#39;을 3차원 프레임워크로 정밀 해부합니다.</p>
-<h3 id="61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine"><a href="#61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine" class="heading-anchor" aria-hidden="true">#</a> 6.1 인라인 서브루틴 vs 닫힌 서브루틴 (Closed Subroutine)</h3>
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">graph LR
-    subgraph Subroutine ["서브루틴 메커니즘의 분기"]
-        direction TB
-        Base["목적: 유사한 동작 패턴을 여러 곳에서 재사용"]
-        Base --&gt; Inline["인라인 서브루틴 (Inline)"]
-        Base --&gt; Closed["닫힌 서브루틴 (Closed)"]
+<h3 id="61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine"><a href="#61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine" class="heading-anchor" aria-hidden="true">#</a> 6.1 인라인 서브루틴 vs 닫힌 서브루틴 (Closed Subroutine)</h3><p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 340" width="100%" height="auto" role="img" aria-label="서브루틴 메커니즘 분기 다이어그램">
+  <defs>
+    <filter id="branch-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+  </defs>
 
-        Inline --&gt; InP["목적: 호출 오버헤드 제거, 컴파일 타임 최적화 (실행 속도 중시)"]
-        Closed --&gt; ClP["목적: 단일 코드 본체 공유를 통한 메모리 공간 절약"]
-    end</code></pre>
-</div><ul>
+  <rect width="920" height="340" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
+
+  <!-- 루트: 서브루틴 개념 -->
+  <g transform="translate(300, 25)" filter="url(#branch-shadow)">
+    <rect width="320" height="60" rx="30" fill="#1e293b" stroke="#475569" stroke-width="1.5" />
+    <text x="160" y="27" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">서브루틴 (Subroutine Concept)</text>
+    <text x="160" y="46" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">목적: 유사한 동작 패턴의 단일화 및 재사용</text>
+  </g>
+
+  <!-- 분기 연결선 -->
+  <path d="M 460 85 C 460 125, 230 115, 230 145" fill="none" stroke="#0284c7" stroke-width="2.5" />
+  <path d="M 460 85 C 460 125, 690 115, 690 145" fill="none" stroke="#4f46e5" stroke-width="2.5" />
+
+  <!-- 좌측: 인라인 서브루틴 -->
+  <g transform="translate(50, 145)" filter="url(#branch-shadow)">
+    <rect width="360" height="165" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5" />
+    <rect x="14" y="14" width="332" height="32" rx="6" fill="#0284c7" />
+    <text x="180" y="35" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">인라인 서브루틴 (Inline Subroutine)</text>
+    
+    <text x="24" y="72" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#0369a1">메커니즘: 매크로 치환 및 코드 본체 직접 삽입</text>
+    <text x="24" y="98" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 호출/복귀 오버헤드 완전 제거 (Zero Call Overhead)</text>
+    <text x="24" y="118" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 실제 인자 기반 컴파일 타임 상수 폴딩 및 최적화</text>
+    <text x="24" y="144" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#0284c7">지향 목표: 실행 속도 극대화 (Efficiency)</text>
+  </g>
+
+  <!-- 우측: 닫힌 서브루틴 -->
+  <g transform="translate(510, 145)" filter="url(#branch-shadow)">
+    <rect width="360" height="165" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5" />
+    <rect x="14" y="14" width="332" height="32" rx="6" fill="#4f46e5" />
+    <text x="180" y="35" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">닫힌 서브루틴 (Closed Subroutine)</text>
+
+    <text x="24" y="72" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#3730a3">메커니즘: 호출-복귀(Call-Return) 단일 본체 공유</text>
+    <text x="24" y="98" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 중복 코드 제거를 통한 메모리 공간 극적 절약</text>
+    <text x="24" y="118" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 간접 링키지(Indirect Linkage)를 통한 프로파일링·추적</text>
+    <text x="24" y="144" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#4f46e5">지향 목표: 공간 절약 및 국소 제어 (Reliability)</text>
+  </g>
+</svg></p>
+<ul>
 <li><strong>닫힌 서브루틴 (Closed Subroutine)</strong>:<ul>
 <li>호출-복귀(Call-Return) 구조를 사용하여 단일 코드 블록을 공유합니다.</li>
 <li><strong>직접 링키지(Direct Linkage)</strong>: 기계어 점프 명령어로 직접 주소를 넘김.</li>
@@ -2163,35 +2418,93 @@
 </ul>
 <hr>
 <h3 id="62-표기법notation의-트레이드오프-pli-vs-jovial"><a href="#62-표기법notation의-트레이드오프-pli-vs-jovial" class="heading-anchor" aria-hidden="true">#</a> 6.2 표기법(Notation)의 트레이드오프: PL/I vs JOVIAL</h3><p>매개변수를 표현하는 문법적 표기법 하나에도 심오한 공학적 트레이드오프가 존재합니다.</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 280" width="100%" height="auto" role="img" aria-label="PL/I와 JOVIAL 매개변수 표기법 비교">
+  <defs>
+    <filter id="box-shadow" x="-3%" y="-5%" width="106%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-text">[PL/I 표기법]
-  F(A, B, C, D) 
-  --&gt; 어떤 인수가 입력(Read-only)이고 출력(Writeable)인지 코드만 보고 식별 불가능.
+  <rect width="920" height="280" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
 
-[JOVIAL 표기법]
-  F(A, B : C, D)
-  --&gt; 콜론(:) 앞은 입력 인수, 뒤는 출력 인수임을 시각적으로 명확히 분리.</code></pre>
-</div>
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">graph TD
-    J[JOVIAL 표기법: F A, B : C, D]
-    J --&gt;|장점: 시각적 명확성| U[이해성 Understandability 향상]
-    J --&gt;|장점: 입출력 오류 컴파일 감지| Cf[확인 가능성 Confirmability 향상]
-    J --&gt;|단점: 인터페이스 변경 시 파급| M[수정 용이성 Modifiability 저하]
+  <!-- 1. PL/I 표기법 (상단) -->
+  <g transform="translate(35, 25)" filter="url(#box-shadow)">
+    <rect width="850" height="105" rx="10" fill="#ffffff" stroke="#fca5a5" stroke-width="1.5" />
+    <rect x="14" y="12" width="120" height="24" rx="4" fill="#ef4444" />
+    <text x="74" y="28" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">PL/I 표기법</text>
 
-    style U fill:#d4edda,stroke:#28a745
-    style Cf fill:#d4edda,stroke:#28a745
-    style M fill:#f8d7da,stroke:#dc3545</code></pre>
-</div><ul>
+    <!-- 코드 구문 블록 -->
+    <rect x="14" y="44" width="220" height="42" rx="6" fill="#1e293b" />
+    <text x="30" y="70" font-family="monospace" font-size="16" font-weight="700" fill="#f8fafc">F(A, B, C, D)</text>
+
+    <!-- 설명 -->
+    <text x="260" y="60" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#991b1b">입력과 출력의 시각적 구분 완전 부재 (불투명성)</text>
+    <text x="260" y="80" font-family="system-ui, sans-serif" font-size="12" fill="#475569">어떤 인수가 읽기 전용(Read-only)이고 쓰기 전용(Writeable)인지 코드만 보고 식별 불가 ➔ 설명서 필수</text>
+  </g>
+
+  <!-- 2. JOVIAL 표기법 (하단) -->
+  <g transform="translate(35, 145)" filter="url(#box-shadow)">
+    <rect width="850" height="110" rx="10" fill="#ffffff" stroke="#86efac" stroke-width="1.5" />
+    <rect x="14" y="12" width="130" height="24" rx="4" fill="#10b981" />
+    <text x="79" y="28" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">JOVIAL 표기법</text>
+
+    <!-- 코드 구문 블록 -->
+    <rect x="14" y="44" width="250" height="44" rx="6" fill="#1e293b" />
+    <text x="28" y="72" font-family="monospace" font-size="16" font-weight="700" fill="#38bdf8">F(A, B </text>
+    <text x="96" y="72" font-family="monospace" font-size="18" font-weight="800" fill="#facc15">: </text>
+    <text x="114" y="72" font-family="monospace" font-size="16" font-weight="700" fill="#4ade80">C, D)</text>
+
+    <!-- 설명 -->
+    <text x="290" y="60" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#065f46">콜론(:)을 경계로 입력과 출력을 엄격히 분리 (투명성)</text>
+    <text x="290" y="80" font-family="system-ui, sans-serif" font-size="12" fill="#475569">콜론 앞의 A, B는 입력 인수(Read-only), 뒤의 C, D는 출력 인수(Writeable) ➔ 컴파일 타임 검증 가능</text>
+  </g>
+</svg></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 320" width="100%" height="auto" role="img" aria-label="JOVIAL 표기법의 트레이드오프 분석">
+  <defs>
+    <filter id="trade-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="320" fill="#f8fafc" rx="16" stroke="#e2e8f0" stroke-width="1.5" />
+
+  <!-- 중앙: JOVIAL 구문 -->
+  <g transform="translate(310, 25)" filter="url(#trade-shadow)">
+    <rect width="300" height="60" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2" />
+    <text x="150" y="27" font-family="monospace" font-size="15" font-weight="700" fill="#38bdf8" text-anchor="middle">JOVIAL: F(A, B : C, D)</text>
+    <text x="150" y="47" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">입출력 구분 표기법의 트레이드오프</text>
+  </g>
+
+  <!-- 좌측 장점 화살표 & 카드 -->
+  <path d="M 380 85 C 380 130, 240 120, 240 150" fill="none" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrow-green)" />
+  <g transform="translate(40, 150)" filter="url(#trade-shadow)">
+    <rect width="400" height="140" rx="10" fill="#ffffff" stroke="#86efac" stroke-width="1.5" />
+    <rect x="12" y="12" width="376" height="28" rx="5" fill="#10b981" />
+    <text x="200" y="31" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">공학적 이점 (Advantages)</text>
+    <text x="20" y="65" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#065f46">▲ 이해성 (Understandability) 극대화</text>
+    <text x="35" y="85" font-family="system-ui, sans-serif" font-size="11" fill="#475569">설명서 없이도 각 인수의 입출력 역할을 시각적으로 즉시 인지</text>
+    <text x="20" y="108" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#065f46">▲ 확인 가능성 (Confirmability) 극대화</text>
+    <text x="35" y="125" font-family="system-ui, sans-serif" font-size="11" fill="#475569">입력 인수에 대한 잘못된 쓰기 시도를 컴파일 타임에 즉시 적발</text>
+  </g>
+
+  <!-- 우측 단점 화살표 & 카드 -->
+  <path d="M 540 85 C 540 130, 680 120, 680 150" fill="none" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrow-red)" />
+  <g transform="translate(480, 150)" filter="url(#trade-shadow)">
+    <rect width="400" height="140" rx="10" fill="#ffffff" stroke="#fca5a5" stroke-width="1.5" />
+    <rect x="12" y="12" width="376" height="28" rx="5" fill="#ef4444" />
+    <text x="200" y="31" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">기회비용 및 대가 (Trade-off Penalty)</text>
+    <text x="20" y="70" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#991b1b">▼ 수정 용이성 (Modifiability) 저하</text>
+    <text x="35" y="95" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• 만약 인수 B가 '입력'에서 '출력'으로 변경될 경우,</text>
+    <text x="35" y="115" font-family="system-ui, sans-serif" font-size="11" fill="#475569">• 해당 루틴을 호출하는 수백 개 호출부의 콜론 위치를 전수 수정해야 함</text>
+  </g>
+</svg></p>
+<ul>
 <li><strong>JOVIAL의 이점</strong>:<ul>
 <li><strong>이해성(Understandability)</strong> 및 <strong>확인 가능성(Confirmability)</strong> 극대화. 설명서 없이도 인수의 역할을 즉시 파악할 수 있고, 잘못된 쓰기 시도를 컴파일 타임에 차단할 수 있습니다.</li>
 </ul>
