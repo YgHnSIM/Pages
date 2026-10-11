@@ -201,6 +201,14 @@ function compileMarkdown(markdown, meta = {}) {
     return placeholder;
   });
 
+  // Protect raw SVG blocks from markdown parser (avoid blank lines breaking into code blocks)
+  const svgPlaceholders = [];
+  protectedMd = protectedMd.replace(/<svg[\s\S]*?<\/svg>/gi, (m) => {
+    const placeholder = `%%SVG_BLOCK_${svgPlaceholders.length}%%`;
+    svgPlaceholders.push({ placeholder, original: m });
+    return placeholder;
+  });
+
   // CommonMark quirk: when ** closes after punctuation (like ), %, ', ", ]) and is followed by Korean syllable,
   // CommonMark treats it as non-right-flanking delimiter and refuses to parse bold.
   // We convert it directly to <strong>...</strong> so it is preserved through marked.
@@ -293,6 +301,11 @@ function compileMarkdown(markdown, meta = {}) {
 
   // Restore Math blocks
   mathPlaceholders.forEach(({ placeholder, original }) => {
+    html = html.replace(placeholder, original);
+  });
+
+  // Restore SVG blocks
+  svgPlaceholders.forEach(({ placeholder, original }) => {
     html = html.replace(placeholder, original);
   });
 
