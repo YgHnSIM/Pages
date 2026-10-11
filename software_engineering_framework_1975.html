@@ -1,0 +1,2830 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보</title>
+  <meta name="description" content="1975년 Douglas T. Ross, John B. Goodenough, C. A. Irvine(SofTech)이 발표한 고전 'Software Engineering: Process, Principles, and Goals'를 중심으로 4대 목표, 7대 원칙, 5단계 프로세스의 3차원 직교 큐브 모델을 심층 분석하고, 1차 원전 사료 계보와 레드팀 비판을 통해 현대 분산·AI 환경에서의 공학적 가치를 재조명한 백서.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#심층-분석-백서-소프트웨어-공학-과정-원칙-그리고-목표-1975" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">[심층 분석 백서] 소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975)</span></a></li><li class="depth-2"><a href="#1-역사적-배경과-문제의식" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 역사적 배경과 문제의식</span></a></li><li class="depth-3"><a href="#11-39소프트웨어-위기software-crisis39의-도래" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 &#39;소프트웨어 위기(Software Crisis)&#39;의 도래</span></a></li><li class="depth-3"><a href="#12-1975년-논문의-역사적-의의" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 1975년 논문의 역사적 의의</span></a></li><li class="depth-2"><a href="#2-3차원-빌딩-블록-the-3d-cube-model" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 3차원 빌딩 블록 (The 3D Cube Model)</span></a></li><li class="depth-2"><a href="#3-소프트웨어-공학의-4대-기본-목표-the-four-goals" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 소프트웨어 공학의 4대 기본 목표 (The Four Goals)</span></a></li><li class="depth-3"><a href="#31-심층-분석-왜-39수정-용이성39이-가장-어려운가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 심층 분석: 왜 &#39;수정 용이성&#39;이 가장 어려운가?</span></a></li><li class="depth-2"><a href="#4-7대-공학-원칙-the-seven-principles" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 7대 공학 원칙 (The Seven Principles)</span></a></li><li class="depth-3"><a href="#41-모듈화-modularity-목적이-있는-구조화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 모듈화 (Modularity): 목적이 있는 구조화</span></a></li><li class="depth-3"><a href="#42-추상화-abstraction-vs-정보-은닉-hiding" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 추상화 (Abstraction) vs 정보 은닉 (Hiding)</span></a></li><li class="depth-3"><a href="#43-국소화-localization" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 국소화 (Localization)</span></a></li><li class="depth-3"><a href="#44-균일성-uniformity과-단일-참조-원칙" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.4 균일성 (Uniformity)과 단일 참조 원칙</span></a></li><li class="depth-3"><a href="#45-완전성-completeness-amp-확인-가능성-confirmability" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.5 완전성 (Completeness) &amp; 확인 가능성 (Confirmability)</span></a></li><li class="depth-2"><a href="#5-5단계-기본-프로세스와-계층적-분해" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 5단계 기본 프로세스와 계층적 분해</span></a></li><li class="depth-3"><a href="#계층적-분해-hierarchical-decomposition" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">계층적 분해 (Hierarchical Decomposition)</span></a></li><li class="depth-2"><a href="#6-심층-사례-연구-서브루틴subroutine-분석" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 심층 사례 연구: 서브루틴(Subroutine) 분석</span></a></li><li class="depth-3"><a href="#61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 인라인 서브루틴 vs 닫힌 서브루틴 (Closed Subroutine)</span></a></li><li class="depth-3"><a href="#62-표기법notation의-트레이드오프-pli-vs-jovial" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 표기법(Notation)의 트레이드오프: PL/I vs JOVIAL</span></a></li><li class="depth-2"><a href="#7-1975년-프레임워크가-현대-소프트웨어에-던지는-통찰" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 1975년 프레임워크가 현대 소프트웨어에 던지는 통찰</span></a></li><li class="depth-3"><a href="#71-quot만능-열쇠는-없다quot-트레이드오프의-학문" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 &quot;만능 열쇠는 없다&quot;: 트레이드오프의 학문</span></a></li><li class="depth-3"><a href="#72-현대-아키텍처와의-직결성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 현대 아키텍처와의 직결성</span></a></li><li class="depth-2"><a href="#8-미래를-향한-화두-ai-시대의-소프트웨어-공학" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 미래를 향한 화두: AI 시대의 소프트웨어 공학</span></a></li><li class="depth-2"><a href="#9-1차-원전-사료-및-서지학적-아카이브-primary-references" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 1차 원전 사료 및 서지학적 아카이브 (Primary References)</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-11</span>
+          <span class="meta-badge">⏱️ 약 31분</span>
+          <span class="meta-badge">✍️ 기술 분석 백서 프레임워크</span>
+        </div>
+        <h1 class="article-title">소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보</h1>
+        <p class="article-subtitle">로스·굿이너프·어바인의 1975년 기념비적 논문 심층 해부 및 비판적 재평가</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#소프트웨어 공학</span>
+          
+          <span class="tag-pill">#아키텍처</span>
+          
+          <span class="tag-pill">#서브루틴</span>
+          
+          <span class="tag-pill">#컴퓨터 과학사</span>
+          
+          <span class="tag-pill">#프로그래밍 언어</span>
+          
+          <span class="tag-pill">#시스템 설계</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="심층-분석-백서-소프트웨어-공학-과정-원칙-그리고-목표-1975"><a href="#심층-분석-백서-소프트웨어-공학-과정-원칙-그리고-목표-1975" class="heading-anchor" aria-hidden="true">#</a> [심층 분석 백서] 소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975)</h2><blockquote>
+<p><strong>원제</strong>: <em>Software Engineering: Process, Principles, and Goals</em><br><strong>저자</strong>: Douglas T. Ross, John B. Goodenough, C. A. Irvine (<em>SofTech, Inc.</em>)<br><strong>발표</strong>: IEEE Computer Society, <em>Computer</em>, Vol. 8, No. 5 (May 1975, pp. 17–27) <a href="https://doi.org/10.1109/C-M.1975.218952">DOI: 10.1109/C-M.1975.218952</a><br><strong>문서 성격</strong>: 1975년 고전 텍스트의 핵심 이론을 체계적으로 복원하고, 1차 원전 사료 계보와 레드팀 비평(Red-Team Review)을 접목하여 현대 시스템 공학 관점에서 재평가한 종합 분석 백서.</p>
+</blockquote>
+<hr>
+<h2 id="1-역사적-배경과-문제의식"><a href="#1-역사적-배경과-문제의식" class="heading-anchor" aria-hidden="true">#</a> 1. 역사적 배경과 문제의식</h2><h3 id="11-39소프트웨어-위기software-crisis39의-도래"><a href="#11-39소프트웨어-위기software-crisis39의-도래" class="heading-anchor" aria-hidden="true">#</a> 1.1 &#39;소프트웨어 위기(Software Crisis)&#39;의 도래</h3><p>1960년대 중후반, 메인프레임 컴퓨터 하드웨어의 처리 속도와 용량은 비약적으로 발전했으나, 그 위에서 작동하는 소프트웨어는 극심한 혼돈 상태에 빠져 있었습니다.</p>
+<ul>
+<li>막대한 비용과 시간이 투입되었음에도 일정 지연, 예산 초과, 잦은 시스템 다운이 일상화되었습니다.</li>
+<li>개발자 본인조차 수개월 전에 작성한 코드를 읽고 수정하지 못하는 <strong>&#39;스파게티 코드(Spaghetti Code)&#39;</strong> 현상이 속출했습니다.</li>
+<li>1968년과 1969년 독일 가르미슈(Garmisch)와 로마에서 개최된 <strong>NATO 소프트웨어 공학 컨퍼런스</strong>를 기점으로, &#39;소프트웨어 공학&#39;이라는 용어가 공식적으로 대중화되었습니다. 주먹구구식 코딩(Hacking)을 탈피하여 건축이나 토목처럼 엄밀한 공학적 규율(Discipline)을 수립해야 한다는 절박한 요구가 분출했습니다.</li>
+</ul>
+<h3 id="12-1975년-논문의-역사적-의의"><a href="#12-1975년-논문의-역사적-의의" class="heading-anchor" aria-hidden="true">#</a> 1.2 1975년 논문의 역사적 의의</h3><p>Douglas T. Ross, John B. Goodenough, C. A. Irvine은 소프트웨어 개발이 맞닥뜨린 복잡성을 체계적으로 해체하고 정복하기 위해 <strong>소프트웨어 공학의 3차원 기본 블록(The Building Blocks of Software Engineering)</strong> 프레임워크를 제안했습니다. 이 논문은 개별 기법(컴파일러, 고수준 언어, 프로그래밍 기법 등)의 나열을 넘어, 소프트웨어 공학 전체를 관통하는 <strong>4대 목표, 7대 원칙, 5단계 프로세스</strong>의 상호작용 매트릭스를 정립한 기념비적 고전입니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">mermaid</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-mermaid">mindmap
+  root((소프트웨어 공학 3차원 큐브))
+    4대 목표 Goals
+      이해성 Understandability
+      신뢰성 Reliability
+      수정 용이성 Modifiability
+      효율성 Efficiency
+    7대 원칙 Principles
+      모듈화 Modularity
+      추상화 Abstraction
+      은닉 Hiding
+      국소화 Localization
+      균일성 Uniformity
+      완전성 Completeness
+      확인 가능성 Confirmability
+    5단계 프로세스 Process
+      목적 Purpose
+      개념 Concept
+      메커니즘 Mechanism
+      표기법 Notation
+      사용 Usage</code></pre>
+</div><blockquote>
+<p>[!NOTE]
+<strong>레드팀 분석: 1968년 이전 소프트웨어 &#39;무법지대&#39; 신화의 해체</strong><br>흔히 1968년 이전의 초기 컴퓨팅을 &quot;체계도 규율도 없는 완전한 스파게티 암흑기&quot;로 묘사하곤 하지만, 이는 사후적 역사 재구성(Historical Retconning)에 가깝습니다.</p>
+<ul>
+<li><strong>선행 구조화 체계</strong>: 이미 <strong>COBOL-60(1959~1960)</strong>은 <code>Data Division</code>과 <code>Procedure Division</code>의 엄격한 관심사 분리를 강제하고 계층적 레코드(<code>01</code>, <code>05</code>)를 지원했습니다. <strong>ALGOL 60</strong>은 블록 구조(<code>begin...end</code>), 렉시컬 스코프, BNF 문법 정의를 확립했으며, <strong>SAGE 프로젝트(1950년대)</strong>는 중앙 컴풀(Compool) 테이블과 엄격한 인터페이스 제어 문서(ICD) 하에 수십만 라인의 실시간 시스템을 성공적으로 운용했습니다.</li>
+<li><strong>위기의 진정한 본질</strong>: 소프트웨어 위기는 방법론의 전무 때문이 아니라, IBM System/360 등 3세대 컴퓨터 보급으로 하드웨어 용량이 폭증하면서 요구되는 시스템 규모가 수천 라인에서 수백만 라인으로 급팽창한 <strong>하드웨어-소프트웨어 스케일링 불균형(Capacity-Complexity Mismatch)</strong>에서 비롯되었습니다. NATO 컨퍼런스는 무에서 유를 창조한 것이 아니라, 학술적·산업적 규율의 필요성을 공식 제도권으로 끌어올린 분수령이었습니다.</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="2-3차원-빌딩-블록-the-3d-cube-model"><a href="#2-3차원-빌딩-블록-the-3d-cube-model" class="heading-anchor" aria-hidden="true">#</a> 2. 3차원 빌딩 블록 (The 3D Cube Model)</h2><p>논문은 소프트웨어 공학의 모든 활동을 3개의 직교하는 축으로 구성된 <strong>큐브 모델</strong>로 정의합니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">                    ┌─────────────────────────────────────────┐
+                   ╱                 PROCESS                 ╱│
+                  ╱   (Purpose, Concept, Mechanism,         ╱ │
+                 ╱     Notation, Usage)                    ╱  │
+                ┌─────────────────────────────────────────┐   │
+                │                                         │   │
+                │              PRINCIPLES                 │ G │  UNDERSTANDABILITY
+                │                                         │ O │  RELIABILITY
+                │   • Modularity       • Uniformity       │ A │  EFFICIENCY
+                │   • Abstraction      • Completeness     │ L │  MODIFIABILITY
+                │   • Localization     • Confirmability   │ S │
+                │   • Hiding                              │   │
+                │                                         │  ╱
+                │                                         │ ╱
+                └─────────────────────────────────────────┘╱</code></pre>
+</div><ol>
+<li><strong>프로세스 축 (Process)</strong>: 인간의 지성이 문제를 분해하고 해결해 나가는 5단계 논리적 경로</li>
+<li><strong>원칙 축 (Principles)</strong>: 시스템을 구조화하고 인터페이스를 통제할 때 적용하는 7가지 설계 나침반</li>
+<li><strong>목표 축 (Goals)</strong>: 최종 소프트웨어가 지녀야 할 바람직한 4가지 공학적 속성</li>
+</ol>
+<p>소프트웨어 시스템의 모든 설계 선택(Design Choice)은 큐브 상의 특정 좌표점 <strong>(프로세스 단계 × 적용 원칙 × 달성 목표)</strong> 에 위치하며, 한 지점의 선택이 다른 좌표점들에 어떤 연쇄 작용과 트레이드오프를 유발하는지 추적할 수 있습니다.</p>
+<blockquote>
+<p>[!WARNING]
+<strong>레드팀 분석: 3차원 큐브의 &#39;직교성(Orthogonality)&#39;과 선형 독립의 한계</strong><br>저자들은 큐브의 세 축이 독립적으로 교차한다고 설명하지만, 실제 공학 실무에서 이 세 축은 <strong>수학적 직교 벡터 공간을 이루지 못합니다</strong>.</p>
+<ol>
+<li><strong>원칙 간의 충돌</strong>: &#39;은닉(Hiding)&#39;은 내부 가시성을 차단하여 &#39;확인 가능성(Confirmability)&#39;과 화이트박스 테스트를 저해하며, &#39;국소화(Localization)&#39;는 시스템 전반의 &#39;균일성(Uniformity)&#39;과 마찰을 빚습니다.</li>
+<li><strong>원칙 간의 비대칭 종속</strong>: 모듈화(Modularity)라는 목적 있는 구조화가 선행되지 않으면 추상화나 국소화 논의 자체가 성립할 수 없습니다.
+따라서 큐브 모델은 수학적 선형 독립이라기보다는, 복잡한 설계 과업을 다각도에서 점검하기 위한 <strong>&#39;인지적 관심사 분리(Separation of Concerns) 체크리스트&#39;</strong>로 이해하는 것이 정확합니다.</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="3-소프트웨어-공학의-4대-기본-목표-the-four-goals"><a href="#3-소프트웨어-공학의-4대-기본-목표-the-four-goals" class="heading-anchor" aria-hidden="true">#</a> 3. 소프트웨어 공학의 4대 기본 목표 (The Four Goals)</h2><p>공학 도구와 방법론의 숙련도는 &#39;목적의 선명도&#39;에 의해 좌우됩니다. 논문은 결과물 소프트웨어가 만족해야 하는 4대 근본 목표를 규정합니다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="소프트웨어 공학 4대 기본 목표 정의">
+<table>
+<thead>
+<tr>
+<th style="min-width: 120px; text-align:left;">목표</th>
+<th style="min-width: 140px; text-align:left;">영문</th>
+<th style="min-width: 450px; text-align:left;">핵심 정의 및 논문의 통찰</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>이해성</strong></td>
+<td>Understandability</td>
+<td><strong>복잡성 극복의 절대적 전제조건.</strong> 시스템의 개념 구조가 인간의 인지 한계 내에서 파악 가능한 상태. 가독성(Legibility) 수준을 넘어 전체 아키텍처의 의도가 명료하게 투영되어야 함.</td>
+</tr>
+<tr>
+<td><strong>신뢰성</strong></td>
+<td>Reliability</td>
+<td><strong>설계 초기부터 내재화되어야 하는 성질.</strong> 개념 구상부터 결함을 예방하고, 운영 중 예외 발생 시 회복할 수 있는 능력. 사후에 테스트나 패치로 덧붙일 수 없음.</td>
+</tr>
+<tr>
+<td><strong>수정 용이성</strong></td>
+<td>Modifiability</td>
+<td><strong>인간이 정복하기 가장 어려운 목표.</strong> 전체적인 논리적 불변성(Invariance)을 엄격히 통제하면서, 원하는 국소적 부분만을 안전하게 변경할 수 있는 능력.</td>
+</tr>
+<tr>
+<td><strong>효율성</strong></td>
+<td>Efficiency</td>
+<td><strong>가장 남용되기 쉬운 목표.</strong> 미성숙한 최적화(Premature Optimization)를 경계해야 함. 구조적 결함 속에서 비트를 쥐어짜는 것보다, 올바른 추상화와 균일한 구조가 장기적 효율성을 극대화함.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3 id="31-심층-분석-왜-39수정-용이성39이-가장-어려운가"><a href="#31-심층-분석-왜-39수정-용이성39이-가장-어려운가" class="heading-anchor" aria-hidden="true">#</a> 3.1 심층 분석: 왜 &#39;수정 용이성&#39;이 가장 어려운가?</h3><p>논문은 수정 용이성을 단순한 &#39;코드 다시 짜기&#39;가 아니라 <strong>&quot;불변성(Invariance)의 제어&quot;</strong>로 정의합니다.</p>
+<ul>
+<li>예: 소프트웨어를 새로운 하드웨어로 이식할 때, 시스템의 수학적/논리적 기능은 <strong>완벽히 불변</strong>이어야 하며, 오직 머신 종속적인 인터페이스만 변경되어야 합니다.</li>
+<li>전체의 무결성을 깨뜨리지 않고 특정 요소만 &#39;젠가 블록&#39;처럼 안전하게 빼내어 교체하는 작업은 인간의 인지적 통제력을 극도로 요구하기 때문에 역사상 가장 달성하기 힘든 목표로 평가됩니다.</li>
+</ul>
+<blockquote>
+<p>[!NOTE]
+<strong>레드팀 분석: 4대 목표에 대한 현대적 재평가</strong>  </p>
+<ul>
+<li><strong>이해성의 이분법 도그마 비판</strong>: 논문은 *&quot;이해성은 존재하거나 존재하지 않거나 둘 중 하나다(There is no middle ground)&quot;*라고 단언하지만, 이는 리눅스 커널(3,000만 줄)이나 크로미움(3,500만 줄)과 같은 현대 거대 복잡계에서는 성립 불가능한 이상주의입니다. 현대 공학의 실체는 단일 인간의 100% 완전한 이해가 아니라, <strong>&#39;타입 계약과 불변식 기반의 한정된 부분적 이해(Bounded Partial Understanding)&#39;</strong>와 동료·도구 간 분산 인지(Distributed Cognition)입니다.</li>
+<li><strong>수정 용이성 최고 난도설의 현대적 역전</strong>: 1975년 당시 수정 용이성이 최고 난도로 꼽힌 본질은 인간 두뇌 한계라기보다 <strong>Git, 자동 테스트 스위트, CI/CD, 피처 플래그가 전무했던 &#39;도구 결핍(Tooling Vacuum)&#39;</strong> 때문이었습니다. 현대 엔지니어링에서는 자동화 파이프라인 덕분에 수정 용이성이 저렴해진 반면, 수천 대의 노드에서 데이터 레이스를 통제하는 <strong>&#39;분산 무결성(신뢰성)&#39;</strong>과 <strong>&#39;제로데이 방어(보안성)&#39;</strong>가 최고 난도의 자리를 차지하고 있습니다.</li>
+<li><strong>데이터 지향 설계(DOD) 관점에서의 조기 최적화 경계론 재해석</strong>: 논문이 지적한 &quot;비트 쪼개기 식 조기 최적화의 위험&quot;은 타당하나, 현대 하드웨어의 물리 법칙인 <strong>메모리 월(Memory Wall)</strong>과 CPU 캐시 계층(L1/L2/L3) 환경에서는 재해석이 필요합니다. L1 캐시(1ns)와 메인 메모리(60~100ns) 간의 백 배 지연 격차 환경에서, 데이터 레이아웃(SoA vs AoS)과 캐시 라인(64B) 친화적 배치는 사후 프로파일링으로 바꿀 수 없는 <strong>&#39;거시 아키텍처 1급 시민&#39;</strong>입니다.</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="4-7대-공학-원칙-the-seven-principles"><a href="#4-7대-공학-원칙-the-seven-principles" class="heading-anchor" aria-hidden="true">#</a> 4. 7대 공학 원칙 (The Seven Principles)</h2><p>원칙은 목표라는 목적지를 향해 갈 때 올바른 설계 결정을 내리도록 돕는 도구입니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">mermaid</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-mermaid">flowchart TD
+    subgraph Core ["핵심 아키텍처 원칙"]
+        M["모듈화 (Modularity)&lt;br&gt;목적이 있는 구조화"]
+        A["추상화 (Abstraction)&lt;br&gt;본질적 속성 추출 (What)"]
+        H["은닉 (Hiding)&lt;br&gt;세부 접근 차단 및 강제 (Not How)"]
+    end
+
+    subgraph Placement ["물리적/구조적 배치 원칙"]
+        L["국소화 (Localization)&lt;br&gt;물리적 근접성 &amp; 단일 지점 관리"]
+        U["균일성 (Uniformity)&lt;br&gt;불필요한 불일치 제거 (단일 참조 원칙)"]
+    end
+
+    subgraph Verification ["검증 및 완성 원칙"]
+        C["완전성 (Completeness)&lt;br&gt;모든 필수 요소의 명시적 포괄"]
+        Cf["확인 가능성 (Confirmability)&lt;br&gt;검증 및 테스트 가능성의 내재화"]
+    end
+
+    M --&gt; A
+    A --&gt; H
+    H --&gt; L
+    L --&gt; U
+    U --&gt; C
+    C --&gt; Cf</code></pre>
+</div><h3 id="41-모듈화-modularity-목적이-있는-구조화"><a href="#41-모듈화-modularity-목적이-있는-구조화" class="heading-anchor" aria-hidden="true">#</a> 4.1 모듈화 (Modularity): 목적이 있는 구조화</h3><ul>
+<li><strong>정의</strong>: 단순히 커다란 코드를 물리적으로 토막 내는 것이 아니라, <strong>어떤 목적을 더 쉽게 달성하기 위해 구조적 제약을 부과하는 행위(Purposeful Structuring)</strong>.</li>
+<li><strong>적용</strong>: 하향식 계층 구조에서 상위 모듈은 &#39;무엇을 할 것인가(What)&#39;를 규정하고, 하위 모듈은 &#39;어떻게 실행할 것인가(How)&#39;를 구현합니다.</li>
+</ul>
+<h3 id="42-추상화-abstraction-vs-정보-은닉-hiding"><a href="#42-추상화-abstraction-vs-정보-은닉-hiding" class="heading-anchor" aria-hidden="true">#</a> 4.2 추상화 (Abstraction) vs 정보 은닉 (Hiding)</h3><p>이 두 원칙은 자주 혼동되지만, 논문은 명확한 역할 분담을 제시합니다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="추상화와 정보 은닉의 비교">
+<table>
+<thead>
+<tr>
+<th style="min-width: 120px; text-align:left;">구분</th>
+<th style="min-width: 250px; text-align:left;">추상화 (Abstraction)</th>
+<th style="min-width: 250px; text-align:left;">정보 은닉 (Hiding)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>성격</strong></td>
+<td>인지적 / 개념적 설계 과정</td>
+<td>물리적 / 강제적 제약 규정</td>
+</tr>
+<tr>
+<td><strong>핵심 질문</strong></td>
+<td>무엇이 본질이고 핵심인가? (What)</td>
+<td>다른 모듈이 알 필요 없는 세부 구현을 어떻게 차단할 것인가?</td>
+</tr>
+<tr>
+<td><strong>비유</strong></td>
+<td>지하철 노선도 (굴곡과 경사를 버리고 역과 연결선만 표현)</td>
+<td>기관실 철문 (승객이 엔진과 배선에 접근하지 못하도록 물리적 시건)</td>
+</tr>
+<tr>
+<td><strong>역할</strong></td>
+<td>숨겨야 할 것과 남길 것을 <strong>식별</strong>하는 거름망</td>
+<td>식별된 세부에 대해 시스템적 <strong>접근 제약을 강제</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3 id="43-국소화-localization"><a href="#43-국소화-localization" class="heading-anchor" aria-hidden="true">#</a> 4.3 국소화 (Localization)</h3><ul>
+<li>연관된 모든 정보와 제어를 물리적으로 한곳에 모으는 원칙입니다.</li>
+<li>흩어져 있는 전역 변수나 분산된 스케줄링 로직을 단일 테이블이나 전용 서브루틴으로 모아둠으로써, 변경 영향 범위를 제한하고 디버깅 효율을 극대화합니다.</li>
+</ul>
+<h3 id="44-균일성-uniformity과-단일-참조-원칙"><a href="#44-균일성-uniformity과-단일-참조-원칙" class="heading-anchor" aria-hidden="true">#</a> 4.4 균일성 (Uniformity)과 단일 참조 원칙</h3><ul>
+<li>불필요한 차이점과 비일관성을 철저히 배제하는 원칙입니다.</li>
+<li><strong>단일 참조 원칙(Uniform Referent Principle, Ross 1970)</strong>: 어떤 기능이나 데이터가 내부적으로 인라인 매크로로 전개되든 닫힌 함수 호출로 처리되든, 호출자 입장에서는 완전히 동일한 구문(Syntax)으로 다룰 수 있어야 합니다. 이는 후일 버트런드 마이어(Bertrand Meyer, 1988)의 <strong>단일 접근 원칙(Uniform Access Principle, UAP)</strong>과 현대 C#/Kotlin 프로퍼티 문법의 모태가 되었습니다.</li>
+</ul>
+<h3 id="45-완전성-completeness-amp-확인-가능성-confirmability"><a href="#45-완전성-completeness-amp-확인-가능성-confirmability" class="heading-anchor" aria-hidden="true">#</a> 4.5 완전성 (Completeness) &amp; 확인 가능성 (Confirmability)</h3><ul>
+<li><strong>완전성</strong>: 추상화된 규격에서 누락된 요구사항이나 예외 처리가 없어야 함을 의미합니다. (예: <code>case</code>문에서 정의되지 않은 범위에 대한 예외 처리 경로 지원)</li>
+<li><strong>확인 가능성</strong>: 시스템이 올바르게 작동하는지 명시적으로 검증할 수 있도록 설계하는 것입니다.</li>
+<li><strong>자아 없는 프로그래밍(Egoless Programming)</strong>: 제럴드 와인버그(Gerald M. Weinberg, 1971)의 사상을 계승하여, 개발자가 코드에 자아를 투영하지 않고 객관적 워크스루(Walk-through)와 테스트를 통해 결함을 공학적으로 찾아내는 문화적 실무론을 강조합니다.</li>
+</ul>
+<blockquote>
+<p>[!NOTE]
+<strong>레드팀 분석: 캡슐화의 융합과 &#39;자아 없는 프로그래밍&#39;의 조직 심리학적 한계</strong>  </p>
+<ul>
+<li><strong>추상화와 은닉의 언어적 융합</strong>: 1970년대에는 언어 차원의 접근 제어자(<code>private</code>)가 미비하여 프로그래머의 머릿속 &#39;추상화&#39;와 링커 규약상의 &#39;은닉&#39;이 분리되어 있었으나, 현대 프로그래밍 언어(C++, Java, Rust, Go)에서는 이 두 원칙이 <strong>&#39;캡슐화(Encapsulation)&#39;라는 단일 문법 메커니즘으로 불가분하게 융합</strong>되었습니다.</li>
+<li><strong>자아 없는 프로그래밍의 나이브한 이상주의</strong>: 인간의 심리적 소유권(Psychological Ownership)을 인위적으로 거세하려 하면 책임 분산(Diffusion of Responsibility)과 무임승차가 발생합니다. 리눅스(Linus Torvalds)나 아마존(Single-Threaded Owner)의 사례처럼, 뛰어난 품질은 자아 없음이 아니라 <strong>강력한 개인적 오너십(DRI)</strong>에서 나옵니다. 현대 엔지니어링은 &#39;자아를 버리라&#39;는 도덕적 훈계 대신, <strong>린터(Linter)와 CI 자동화라는 비인격적 기계 피드백(Mechanical Feedback)</strong>으로 감정적 마찰을 해소하고 있습니다.</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="5-5단계-기본-프로세스와-계층적-분해"><a href="#5-5단계-기본-프로세스와-계층적-분해" class="heading-anchor" aria-hidden="true">#</a> 5. 5단계 기본 프로세스와 계층적 분해</h2><p>소프트웨어 개발의 모든 단계(요구분석 $\rightarrow$ 아키텍처 설계 $\rightarrow$ 구현 명세 $\rightarrow$ 코딩/디버깅 $\rightarrow$ 성능 튜닝)는 다음과 같은 <strong>5단계 기본 프로세스(The Fundamental Process)</strong> 패턴의 프랙탈 구조로 이루어집니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">mermaid</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    participant P as 1. 목적 (Purpose)
+    participant C as 2. 개념 (Concept)
+    participant M as 3. 메커니즘 (Mechanism)
+    participant N as 4. 표기법 (Notation)
+    participant U as 5. 사용 (Usage)
+
+    P-&gt;&gt;C: 달성해야 할 목표를 명확화하고 개념적 해결책 도출
+    C-&gt;&gt;M: 개념 구조를 실체화할 구체적 메커니즘 고안
+    M-&gt;&gt;N: 메커니즘의 기능을 호출/제어할 문법적 표기법 정의
+    N-&gt;&gt;U: 실제 문제 맥락에서 표기법을 적용하여 목적 달성</code></pre>
+</div><h3 id="계층적-분해-hierarchical-decomposition"><a href="#계층적-분해-hierarchical-decomposition" class="heading-anchor" aria-hidden="true">#</a> 계층적 분해 (Hierarchical Decomposition)</h3><p>인간은 거대한 시스템을 한 번에 다룰 수 없습니다.</p>
+<ul>
+<li><strong>하향식 분해 (Top-down Analysis)</strong>: 큰 목적을 하위 목적, 하위 모듈로 잘게 쪼개어 가며 각 계층에 필요한 제약을 부과합니다.</li>
+<li><strong>상향식 종합 (Bottom-up Synthesis)</strong>: 쪼개진 단위 메커니즘들의 공통점을 발견하여 공용 서브루틴, 재사용 라이브러리로 묶어 상위 시스템으로 조립해 나갑니다.</li>
+</ul>
+<blockquote>
+<p>[!NOTE]
+<strong>레드팀 분석: 5단계 프랙탈 프로세스와 폭포수 모델의 환원주의적 한계</strong><br>논문의 5단계 분해는 요구사항에서 구현으로 이어지는 훌륭한 논리적 틀을 제공하지만, <strong>초기 불확실성이 극심한 도메인에서는 한계</strong>를 가집니다. 요구사항은 코드가 작동하는 것을 보기 전까지 확정되지 않는 경우가 많으며, 1970년대식 엄격한 단계별 산출물 고정은 경직된 폭포수(Waterfall) 모델로 변질되어 납기 지연을 초래했습니다. 현대의 진화적 프로토타이핑과 애자일 피드백 루프는 이 선형적 환원주의를 극복하기 위해 등장한 것입니다.</p>
+</blockquote>
+<hr>
+<h2 id="6-심층-사례-연구-서브루틴subroutine-분석"><a href="#6-심층-사례-연구-서브루틴subroutine-분석" class="heading-anchor" aria-hidden="true">#</a> 6. 심층 사례 연구: 서브루틴(Subroutine) 분석</h2><p>논문은 소프트웨어에서 가장 보편적이고 친숙한 &#39;서브루틴&#39;을 3차원 프레임워크로 정밀 해부합니다.</p>
+<h3 id="61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine"><a href="#61-인라인-서브루틴-vs-닫힌-서브루틴-closed-subroutine" class="heading-anchor" aria-hidden="true">#</a> 6.1 인라인 서브루틴 vs 닫힌 서브루틴 (Closed Subroutine)</h3>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">mermaid</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-mermaid">graph LR
+    subgraph Subroutine ["서브루틴 메커니즘의 분기"]
+        direction TB
+        Base["목적: 유사한 동작 패턴을 여러 곳에서 재사용"]
+        Base --&gt; Inline["인라인 서브루틴 (Inline)"]
+        Base --&gt; Closed["닫힌 서브루틴 (Closed)"]
+
+        Inline --&gt; InP["목적: 호출 오버헤드 제거, 컴파일 타임 최적화 (실행 속도 중시)"]
+        Closed --&gt; ClP["목적: 단일 코드 본체 공유를 통한 메모리 공간 절약"]
+    end</code></pre>
+</div><ul>
+<li><strong>닫힌 서브루틴 (Closed Subroutine)</strong>:<ul>
+<li>호출-복귀(Call-Return) 구조를 사용하여 단일 코드 블록을 공유합니다.</li>
+<li><strong>직접 링키지(Direct Linkage)</strong>: 기계어 점프 명령어로 직접 주소를 넘김.</li>
+<li><strong>간접 링키지(Indirect Linkage)</strong>: 링키지 서브루틴을 경유하여 호출. 호출 지점을 국소화(Localization)함으로써 런타임 성능 측정(Profiling)과 디버깅 인터셉트를 손쉽게 지원하여 <strong>신뢰성</strong>과 <strong>효율성</strong>을 동시에 향상시킵니다. (SofTech AED 시스템의 Transfer Vector 메커니즘에 기반)</li>
+</ul>
+</li>
+<li><strong>균일성 원칙의 적용</strong>: 인라인이든 닫힌 서브루틴이든 호출 구문(Notation)은 동일해야 하며, 구현 방식의 변경이 호출부 전체의 수정을 강제해서는 안 됩니다.</li>
+</ul>
+<hr>
+<h3 id="62-표기법notation의-트레이드오프-pli-vs-jovial"><a href="#62-표기법notation의-트레이드오프-pli-vs-jovial" class="heading-anchor" aria-hidden="true">#</a> 6.2 표기법(Notation)의 트레이드오프: PL/I vs JOVIAL</h3><p>매개변수를 표현하는 문법적 표기법 하나에도 심오한 공학적 트레이드오프가 존재합니다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang lang-generic">평문</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[PL/I 표기법]
+  F(A, B, C, D) 
+  --&gt; 어떤 인수가 입력(Read-only)이고 출력(Writeable)인지 코드만 보고 식별 불가능.
+
+[JOVIAL 표기법]
+  F(A, B : C, D)
+  --&gt; 콜론(:) 앞은 입력 인수, 뒤는 출력 인수임을 시각적으로 명확히 분리.</code></pre>
+</div>
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">mermaid</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-mermaid">graph TD
+    J[JOVIAL 표기법: F A, B : C, D]
+    J --&gt;|장점: 시각적 명확성| U[이해성 Understandability 향상]
+    J --&gt;|장점: 입출력 오류 컴파일 감지| Cf[확인 가능성 Confirmability 향상]
+    J --&gt;|단점: 인터페이스 변경 시 파급| M[수정 용이성 Modifiability 저하]
+
+    style U fill:#d4edda,stroke:#28a745
+    style Cf fill:#d4edda,stroke:#28a745
+    style M fill:#f8d7da,stroke:#dc3545</code></pre>
+</div><ul>
+<li><strong>JOVIAL의 이점</strong>:<ul>
+<li><strong>이해성(Understandability)</strong> 및 <strong>확인 가능성(Confirmability)</strong> 극대화. 설명서 없이도 인수의 역할을 즉시 파악할 수 있고, 잘못된 쓰기 시도를 컴파일 타임에 차단할 수 있습니다.</li>
+</ul>
+</li>
+<li><strong>JOVIAL의 대가</strong>:<ul>
+<li><strong>수정 용이성(Modifiability)</strong> 저하. 만약 인수 <code>B</code>를 입력에서 출력으로 변경해야 할 경우, 해당 서브루틴을 호출하는 수백 개의 소스 코드 위치를 모두 찾아가 콜론 뒤로 위치를 옮겨야 합니다.</li>
+</ul>
+</li>
+<li><strong>공학적 교훈</strong>:<ul>
+<li>만능의 문법은 존재하지 않습니다. 설계자는 이해성과 확인 가능성을 취할 것인지, 아니면 변경의 유연성을 취할 것인지에 대한 <strong>의식적인 트레이드오프(Trade-off)</strong> 결정을 내려야 합니다.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>[!NOTE]
+<strong>레드팀 분석: JOVIAL 표기법 비판의 현대적 역전 (LSP &amp; Rust <code>&amp;mut</code>)</strong><br>1975년 논문은 JOVIAL의 콜론 표기법이 시그니처 변경 시 호출부 수정을 강제하여 수정 용이성을 해친다고 비판했으나, 현대 프로그래밍 환경에서는 <strong>이 비판이 정반대로 역전되었습니다</strong>.</p>
+<ol>
+<li><strong>LSP 기반 지능형 리팩토링</strong>: 현대 IDE에서는 <code>Change Signature</code> 기능으로 수만 개의 호출부를 단 1초 만에 안전하게 자동 수정하므로 구문 수정 비용이 거의 0에 수렴합니다.</li>
+<li><strong>명시적 가시성의 절대적 승리</strong>: Rust는 호출부에서 <code>foo(&amp;x, &amp;mut y)</code>처럼 가변 참조를 명시하도록 강제하고, C#은 <code>out/ref</code> 키워드를 요구합니다. 숨기는 것(PL/I)보다 호출 지점에서 명시적으로 드러내는 것(JOVIAL)이 메모리 안전성과 버그 예방에 압도적으로 우월함을 현대 소프트웨어 공학 역사가 증명했습니다.</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="7-1975년-프레임워크가-현대-소프트웨어에-던지는-통찰"><a href="#7-1975년-프레임워크가-현대-소프트웨어에-던지는-통찰" class="heading-anchor" aria-hidden="true">#</a> 7. 1975년 프레임워크가 현대 소프트웨어에 던지는 통찰</h2><h3 id="71-quot만능-열쇠는-없다quot-트레이드오프의-학문"><a href="#71-quot만능-열쇠는-없다quot-트레이드오프의-학문" class="heading-anchor" aria-hidden="true">#</a> 7.1 &quot;만능 열쇠는 없다&quot;: 트레이드오프의 학문</h3><p>이 논문의 핵심 결론은 3차원 큐브가 모든 문제를 해결해 주는 &#39;마법 지팡이&#39;가 아니라는 점입니다. 큐브는 시스템 설계자가 <strong>무엇을 얻고 무엇을 희생하고 있는지(기회비용)를 투명하게 인식하게 만드는 렌즈</strong>입니다.</p>
+<h3 id="72-현대-아키텍처와의-직결성"><a href="#72-현대-아키텍처와의-직결성" class="heading-anchor" aria-hidden="true">#</a> 7.2 현대 아키텍처와의 직결성</h3><ul>
+<li><strong>클린 아키텍처 &amp; DDD</strong>: 계층적 분해와 추상화/정보 은닉의 현대적 재해석입니다.</li>
+<li><strong>마이크로서비스 아키텍처 (MSA)</strong>: 독립적인 배포와 격리를 위한 모듈화 및 국소화 원칙의 분산 시스템 버전입니다.</li>
+<li><strong>성급한 최적화(Premature Optimization) 경계</strong>: 도널드 커누스(Donald Knuth)의 유명한 격언과 마찬가지로, 논문은 구조적 투명성이 확보되지 않은 상태에서의 미세 최적화가 시스템 붕괴의 주원인임을 반세기 전에 이미 경고했습니다.</li>
+</ul>
+<hr>
+<h2 id="8-미래를-향한-화두-ai-시대의-소프트웨어-공학"><a href="#8-미래를-향한-화두-ai-시대의-소프트웨어-공학" class="heading-anchor" aria-hidden="true">#</a> 8. 미래를 향한 화두: AI 시대의 소프트웨어 공학</h2><ol>
+<li><p><strong>반세기가 지난 오늘날, 왜 거대 프로젝트는 여전히 실패하는가?</strong></p>
+<ul>
+<li>1975년에 이미 정교한 철학적·공학적 원칙이 완성되었음에도 실패가 반복되는 이유는, 복잡성을 다루는 인간의 인지 한계와 함께 &#39;원칙보다 출시 속도와 단기 성과를 우선시하는 비즈니스 환경&#39;의 압박 때문입니다.</li>
+</ul>
+</li>
+<li><p><strong>인공지능(AI) 코딩 시대, 1975년의 원칙은 유효한가?</strong></p>
+<ul>
+<li>LLM과 AI 에이전트가 코드를 자동으로 생성하는 시대가 되더라도, 이 원칙들은 폐기되지 않습니다.</li>
+<li>오히려 내부 메커니즘을 알 수 없는 <strong>거대한 딥러닝 블랙박스를 통제하고, 인간이 검증 가능한(Confirmable) 모듈 단위로 시스템을 조율하기 위한 가장 강력한 설계 지침서</strong>로 재조명받게 될 것입니다. 에이전트 하네스(Agent Harness) 패턴은 AI 에이전트에게 &#39;확인 가능성&#39;을 부여하는 1975년 원칙의 최신 현대적 구현체입니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="9-1차-원전-사료-및-서지학적-아카이브-primary-references"><a href="#9-1차-원전-사료-및-서지학적-아카이브-primary-references" class="heading-anchor" aria-hidden="true">#</a> 9. 1차 원전 사료 및 서지학적 아카이브 (Primary References)</h2><p>본 백서에서 고찰한 모든 핵심 이론과 논쟁은 공식 디지털 아카이브 및 영구 DOI(Digital Object Identifier)를 통해 교차 검증된 1차 사료에 기반합니다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="1차 원전 사료 전수 서지 목록">
+<table>
+<thead>
+<tr>
+<th style="min-width: 180px; text-align:left;">사료명 및 저자</th>
+<th style="min-width: 100px; text-align:center;">출판 연월</th>
+<th style="min-width: 200px; text-align:left;">발행처 및 서지 정보</th>
+<th style="min-width: 250px; text-align:left;">공식 영구 아카이브 / DOI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NATO Software Engineering (Garmisch)</strong><br>P. Naur &amp; B. Randell (Eds.)</td>
+<td align="center">1969.01</td>
+<td>Scientific Affairs Division, NATO, Brussels</td>
+<td><a href="http://homepages.cs.ncl.ac.uk/brian.randell/NATO/nato1968.PDF" target="_blank" rel="noopener">Newcastle Univ. Brian Randell Archive (PDF)</a></td>
+</tr>
+<tr>
+<td><strong>NATO Software Engineering Techniques (Rome)</strong><br>J. N. Buxton &amp; B. Randell (Eds.)</td>
+<td align="center">1970.04</td>
+<td>Scientific Affairs Division, NATO, Brussels (D. T. Ross 참석)</td>
+<td><a href="http://homepages.cs.ncl.ac.uk/brian.randell/NATO/nato1969.PDF" target="_blank" rel="noopener">Newcastle Univ. Brian Randell Archive (PDF)</a></td>
+</tr>
+<tr>
+<td><strong>Software Engineering: Process, Principles, and Goals</strong><br>D. T. Ross, J. B. Goodenough, C. A. Irvine</td>
+<td align="center">1975.05</td>
+<td>IEEE Computer Society, <em>Computer</em>, 8(5), pp. 17–27</td>
+<td><a href="https://doi.org/10.1109/C-M.1975.218952" target="_blank" rel="noopener">DOI: 10.1109/C-M.1975.218952</a></td>
+</tr>
+<tr>
+<td><strong>On the Criteria to Be Used in Decomposing Systems into Modules</strong><br>David L. Parnas</td>
+<td align="center">1972.12</td>
+<td>ACM, <em>Communications of the ACM</em>, 15(12), pp. 1053–1058</td>
+<td><a href="https://doi.org/10.1145/361598.361623" target="_blank" rel="noopener">DOI: 10.1145/361598.361623</a></td>
+</tr>
+<tr>
+<td><strong>Programming with Abstract Data Types</strong><br>Barbara Liskov &amp; Stephen Zilles</td>
+<td align="center">1974.04</td>
+<td>ACM, <em>SIGPLAN Notices</em>, 9(4), pp. 50–59</td>
+<td><a href="https://doi.org/10.1145/800233.807045" target="_blank" rel="noopener">DOI: 10.1145/800233.807045</a></td>
+</tr>
+<tr>
+<td><strong>The Psychology of Computer Programming</strong><br>Gerald M. Weinberg</td>
+<td align="center">1971</td>
+<td>Van Nostrand Reinhold, New York (LCCN: 75-165410)</td>
+<td><a href="https://dl.acm.org/doi/book/10.5555/540030" target="_blank" rel="noopener">ACM Digital Library Book Record</a></td>
+</tr>
+<tr>
+<td><strong>Uniform Referents: An Essential Property for a Language</strong><br>Douglas T. Ross</td>
+<td align="center">1970</td>
+<td>Academic Press, <em>Software Engineering: COINS III</em>, pp. 91–101</td>
+<td><a href="https://doi.org/10.1016/B978-0-12-696201-7.50012-7" target="_blank" rel="noopener">DOI: 10.1016/B978-0-12-696201-7.50012-7</a></td>
+</tr>
+<tr>
+<td><strong>Procedure Closure in EL1</strong><br>Ben Wegbreit</td>
+<td align="center">1974.02</td>
+<td>Oxford Univ. Press, <em>The Computer Journal</em>, 17(1), pp. 38–43</td>
+<td><a href="https://doi.org/10.1093/comjnl/17.1.38" target="_blank" rel="noopener">DOI: 10.1093/comjnl/17.1.38</a></td>
+</tr>
+<tr>
+<td><strong>Introduction to Software Engineering with the AED-0 Language</strong><br>SofTech Technical Staff</td>
+<td align="center">1972.11</td>
+<td>SofTech Report G-AED-003-2, Waltham, MA</td>
+<td><a href="https://libraries.mit.edu/archives/" target="_blank" rel="noopener">MIT Archives Douglas T. Ross Papers (MC-0414)</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
