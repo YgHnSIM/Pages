@@ -5,7 +5,7 @@ import os from 'os';
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const TARGET_URL = 'file:///C:/Pages/western_civilization_vine_not_tree.html';
-const SCREENSHOT_DIR = path.join(process.cwd(), 'audit_screenshots', 'western_civilization');
+const SCREENSHOT_DIR = path.join(process.cwd(), 'audit', 'screenshots', 'western_civilization');
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });

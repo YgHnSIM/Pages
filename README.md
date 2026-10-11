@@ -21,20 +21,28 @@
 
 ```text
 Pages/
-├── sources/                         # 마크다운(.md) 소스 파일 보관 폴더
-│   ├── 상자-페이지-점프-메모지-강의록.md
-│   └── 포인터와-메모리-모델-시리즈.md
-├── templates/                       # 웹페이지 템플릿
+├── sources/                         # ✍️ 마크다운(.md) 정규 아티클 소스 보관 폴더
+│   ├── preview/                     # 미발행 / 검수 대기 초안 마크다운
+│   └── *.md                         # 발행 대상 본문 마크다운 파일들
+├── raw_data/                        # 🎙️ 1차 원천 데이터 및 스크립트 아카이브
+│   ├── transcripts/                 # 유튜브 자막(txt), STT 원문, 교정 대본(md)
+│   └── chat_logs/                   # AI 질의응답 및 리서치 대화 원본 로그
+├── audit/                           # 🛡️ 인텔리전스 감사 보고서 및 검수 데이터
+│   ├── reports/                     # 마스터 팩트체크 및 감사 종합 보고서
+│   └── screenshots/                 # 디바이스/반응형 UI 캡처 스크린샷
+├── archive/                         # 📦 과거 특화 프로젝트 아카이브
+│   └── python-mental-model/         # 파이썬 멘탈 모델 학습 기록, 레슨, 레퍼런스
+├── templates/                       # 웹페이지 HTML 템플릿
 │   ├── article.html                 # 모바일 최적화 아티클 뷰어 템플릿
 │   └── index.html                   # 메인 타임라인 홈 피드 템플릿
+├── scripts/                         # 빌드/검수 유틸리티 스크립트
+├── assets/                          # 공용 정적 리소스 (quiz, visualizer 등)
 ├── .github/workflows/
 │   └── deploy.yml                   # GitHub Pages 자동 배포 워크플로우
 ├── build.js                         # 정적 사이트 빌더 스크립트
-├── package.json                     # 의존성 및 실행 스크립트
-├── index.html                       # 생성된 메인 홈 페이지
-├── box_page_jump_memo.html          # 생성된 아티클 HTML
-├── pointer.html                     # 생성된 아티클 HTML
-└── cpu_dram_memory_interface.html   # 모바일 최적화 인터랙티브 다이어그램 문서
+├── package.json                     # 프로젝트 설정 및 실행 스크립트
+├── index.html                       # 생성된 메인 타임라인 홈 페이지
+└── *.html                           # 생성된 아티클 HTML 파일들
 ```
 
 ---

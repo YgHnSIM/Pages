@@ -5,7 +5,7 @@ import os from 'os';
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const TARGET_URL = 'file:///C:/Pages/douglas_ross_plex_struct_origin_dossier.html';
-const SCREENSHOT_DIR = path.join(process.cwd(), 'audit_screenshots');
+const SCREENSHOT_DIR = path.join(process.cwd(), 'audit', 'screenshots');
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });

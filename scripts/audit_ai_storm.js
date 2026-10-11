@@ -5,7 +5,7 @@ import os from 'os';
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const TARGET_URL = 'file:///C:/Pages/earnings_cashflows_stock_prices_ai_storm.html';
-const SCREENSHOT_DIR = path.join(process.cwd(), 'audit_screenshots', 'ai_storm');
+const SCREENSHOT_DIR = path.join(process.cwd(), 'audit', 'screenshots', 'ai_storm');
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
