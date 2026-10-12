@@ -477,13 +477,13 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
-      title: "디지털 장인정신: AI 시대의 의도, 품질, 예술성",
+      title: "디지털 장인정신, AI 시대에 의도·품질·예술성을 키우는 법",
       subtitle: "Katie Dill(Stripe) 강연 'How to scale intent, quality, and artistry with AI' 정리",
       date: "2026-10-13",
       summary: "좀비 건물에서 좀비 UI까지, AI 시대에 제품의 의도와 품질, 예술성을 지키는 함정과 해독제를 Stripe 디자인 리더 Katie Dill의 강연으로 정리합니다.",
       tags: ["AI", "디자인", "품질", "장인정신", "Stripe"],
       tag_string: "AI 디자인 품질 장인정신 Stripe",
-      reading_time: 9,
+      reading_time: 20,
       url: "digital_craftsmanship_ai_era.html",
       _timestamp: new Date("2026-10-13T12:00:00Z").getTime()
     },
