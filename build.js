@@ -171,9 +171,17 @@ function compileMarkdown(markdown, meta = {}) {
   let skippedTitle = false;
   let skippedSubtitle = false;
 
+  // Protect raw SVG blocks from markdown parser and math regex
+  const svgPlaceholders = [];
+  let protectedMd = markdown.replace(/<svg[\s\S]*?<\/svg>/gi, (m) => {
+    const placeholder = `%%SVG_BLOCK_${svgPlaceholders.length}%%`;
+    svgPlaceholders.push({ placeholder, original: m });
+    return placeholder;
+  });
+
   // Protect Math blocks from markdown parsers
   const mathPlaceholders = [];
-  let protectedMd = markdown.replace(/\$\$([\s\S]*?)\$\$/g, (m) => {
+  protectedMd = protectedMd.replace(/\$\$([\s\S]*?)\$\$/g, (m) => {
     const placeholder = `%%MATH_BLOCK_${mathPlaceholders.length}%%`;
     mathPlaceholders.push({ placeholder, original: m });
     return placeholder;
@@ -198,14 +206,6 @@ function compileMarkdown(markdown, meta = {}) {
   protectedMd = protectedMd.replace(/\\\((.+?)\\\)/g, (m) => {
     const placeholder = `%%MATH_INLINE_${mathPlaceholders.length}%%`;
     mathPlaceholders.push({ placeholder, original: m });
-    return placeholder;
-  });
-
-  // Protect raw SVG blocks from markdown parser (avoid blank lines breaking into code blocks)
-  const svgPlaceholders = [];
-  protectedMd = protectedMd.replace(/<svg[\s\S]*?<\/svg>/gi, (m) => {
-    const placeholder = `%%SVG_BLOCK_${svgPlaceholders.length}%%`;
-    svgPlaceholders.push({ placeholder, original: m });
     return placeholder;
   });
 
