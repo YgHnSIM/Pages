@@ -477,6 +477,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "코딩 에이전트 직접 만들기, 300줄 루프를 6단계로 따라가기",
+      subtitle: "Geoffrey Huntley의 무료 워크숍 「how to build a coding agent」와 Go 실습 저장소 심층 학습",
+      date: "2026-10-16",
+      summary: "코딩 에이전트는 LLM 토큰과 함께 루프를 도는 300줄 코드라는 Geoffrey Huntley의 워크숍을 따라, 대화 루프에 read_file, list_files, bash, edit_file, code_search 도구를 하나씩 붙여 가는 6단계를 실제 Go 코드로 읽습니다.",
+      tags: ["AI", "코딩에이전트", "Go", "워크숍", "GeoffreyHuntley"],
+      tag_string: "AI 코딩에이전트 Go 워크숍 GeoffreyHuntley",
+      reading_time: 35,
+      url: "build_a_coding_agent_workshop.html",
+      _timestamp: new Date("2026-10-15T19:50:00Z").getTime()
+    },
+    {
       title: "영한 대조 심화 학습서, nobody should type code by hand anymore",
       subtitle: "Geoffrey Huntley의 글을 영·한 병렬 대조와 25개 심화 주석으로 읽기",
       date: "2026-10-15",
