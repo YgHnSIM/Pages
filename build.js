@@ -477,6 +477,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "영한 대조 심화 학습서, nobody should type code by hand anymore",
+      subtitle: "Geoffrey Huntley의 글을 영·한 병렬 대조와 25개 심화 주석으로 읽기",
+      date: "2026-10-15",
+      summary: "Josh Wulf와의 4부작 대담을 정리한 Geoffrey Huntley의 글을 96개 영·한 대조 블록으로 읽고, 인간 엔지니어에게 남은 비전·결정론적 검증·주체성을 25개 심화 주석과 챕터, 자가 점검으로 짚습니다.",
+      tags: ["AI", "에이전틱엔지니어링", "소프트웨어개발", "영한대조", "GeoffreyHuntley"],
+      tag_string: "AI 에이전틱엔지니어링 소프트웨어개발 영한대조 GeoffreyHuntley",
+      reading_time: 50,
+      url: "huntley_nobody_should_type_code_by_hand.html",
+      _timestamp: new Date("2026-10-15T13:00:00Z").getTime()
+    },
+    {
       title: "가비지 컬렉션 심화분석, 수동 관리에서 마크 앤 스윕까지",
       subtitle: "Computerphile의 Laurence Tratt 강의와 슬라이드로 읽는 자동 메모리 관리의 논리",
       date: "2026-10-15",
