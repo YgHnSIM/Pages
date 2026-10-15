@@ -477,6 +477,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "가비지 컬렉션 심화분석, 수동 관리에서 마크 앤 스윕까지",
+      subtitle: "Computerphile의 Laurence Tratt 강의와 슬라이드로 읽는 자동 메모리 관리의 논리",
+      date: "2026-10-15",
+      summary: "malloc과 free의 세 가지 오류에서 참조 횟수 계산의 한계, 마크 앤 스윕의 도달 가능성 발상, 그리고 GC가 있어도 누수가 생기는 이유까지 짚습니다.",
+      tags: ["컴퓨터과학", "메모리관리", "가비지컬렉션", "프로그래밍언어", "Computerphile"],
+      tag_string: "컴퓨터과학 메모리관리 가비지컬렉션 프로그래밍언어 Computerphile",
+      reading_time: 20,
+      url: "garbage_collection_mark_and_sweep.html",
+      _timestamp: new Date("2026-10-15T12:00:00Z").getTime()
+    },
+    {
       title: "디지털 장인정신, AI 시대에 의도·품질·예술성을 키우는 법",
       subtitle: "Katie Dill(Stripe) 강연 'How to scale intent, quality, and artistry with AI' 정리",
       date: "2026-10-13",
