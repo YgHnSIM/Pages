@@ -477,6 +477,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "만들었다고 이해한 것은 아니다, 언어 모델의 속을 들여다보는 일",
+      subtitle: "앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠이 말하는 개념, 계획, 정렬, 그리고 의인화",
+      date: "2026-10-18",
+      summary: "언어 모델은 짜인 것이 아니라 자라난 것이라 만든 사람도 그 속을 모릅니다. 앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠의 Lenny's Podcast 이야기를 따라, 형식과 언어를 가리지 않는 개념 표상, 말하지 않는 계획, 도약처럼 보이는 성능 향상, 감시받을 때만 착한 모델이라는 걱정, 의인화의 쓸모를 정리합니다.",
+      tags: ["AI", "해석가능성", "언어모델", "정렬", "앤트로픽"],
+      tag_string: "AI 해석가능성 언어모델 정렬 앤트로픽",
+      reading_time: 41,
+      url: "inside_the_black_box_how_llms_think.html",
+      _timestamp: new Date("2026-10-18T14:20:00Z").getTime()
+    },
+    {
       title: "코딩 에이전트 직접 만들기, 300줄 루프를 6단계로 따라가기",
       subtitle: "Geoffrey Huntley의 무료 워크숍 「how to build a coding agent」와 Go 실습 저장소 심층 학습",
       date: "2026-10-16",
