@@ -1856,7 +1856,7 @@
       <header class="article-header">
         <div class="article-meta">
           <span class="meta-badge">📅 2026-10-19</span>
-          <span class="meta-badge">⏱️ 약 49분</span>
+          <span class="meta-badge">⏱️ 약 56분</span>
           <span class="meta-badge">✍️ Pages 과학·수학사 분석</span>
         </div>
         <h1 class="article-title">지수 기호 하나를 얻기까지 왜 1,877년이나 걸렸는가 — 로버트 레코드의 등호와 데카르트의 구문론 혁명</h1>
@@ -1906,21 +1906,83 @@
 <p>아르키메데스는 이 수열에서 어떤 두 항을 곱하면, 그 결과는 두 항이 수열의 시작점(1)으로부터 떨어진 위치(거리)를 합친 지점에 위치한 항과 같아진다는 사실을 발견했다. 이것이 바로 인류 역사상 최초로 문서화된 <strong>지수의 곱셈 법칙</strong>이었다.</p>
 <p>$a^m \cdot a^n = a^{m+n}$</p>
 <p>그러나 아르키메데스에게는 거듭제곱을 압축적으로 적을 수 있는 대수적 기호 체계가 없었다. 그는 이 모든 원리를 &#39;기하학적 비례식&#39;이라는 장황한 언어로 기술해야만 했다.</p>
+<div class="svg-chart-container" style="margin: 28px 0; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" role="img" aria-label="아르키메데스의 연속 비례와 거듭제곱 곱셈 법칙" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+  <defs>
+    <marker id="m1-arr-gray" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,1 L5,3.5 L0,6 Z" fill="var(--text-light, #94a3b8)"/>
+    </marker>
+    <marker id="m1-arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--primary, #2563eb)"/>
+    </marker>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">flowchart LR
-    A["1 (시작점)"] --&gt; B["a (1단계)"]
-    B --&gt; C["a² (2단계)"]
-    C --&gt; D["a³ (3단계)"]
-    D --&gt; E["a⁴ (4단계)"]
-    E --&gt; F["a⁷ (7단계 = 3+4단계)"]
-    style A fill:#f9f,stroke:#333,stroke-width:1px
-    style F fill:#bbf,stroke:#333,stroke-width:2px</code></pre>
-</div><h3 id="디오판토스의-미지수-거듭제곱-단축-기호"><a href="#디오판토스의-미지수-거듭제곱-단축-기호" class="heading-anchor" aria-hidden="true">#</a> 디오판토스의 미지수 거듭제곱 단축 기호</h3><p>아르키메데스로부터 약 500년 뒤인 서기 3세기, 알렉산드리아의 수학자 <strong>디오판토스(Diophantus)</strong>는 『산술(<em>Arithmetica</em>)』에서 미지수와 미지수의 거듭제곱을 다루기 위한 획기적인 단축 기호(Syncopated notation)를 도입했다.</p>
+  <!-- Title & Subtitle -->
+  <text x="400" y="32" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">아르키메데스의 연속 비례(Continued Proportions)와 거듭제곱 곱셈 법칙</text>
+  <text x="400" y="52" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" fill="var(--text-muted)">수열의 시작점(1)으로부터 떨어진 위치(단계)를 합산하여 곱셈 결과(a³ × a⁴ = a⁷)를 도출</text>
+
+  <!-- Arc Jump: Step 3 + Step 4 = Step 7 -->
+  <path d="M 425 105 C 425 45, 725 45, 725 105" fill="none" stroke="var(--primary, #2563eb)" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#m1-arr-blue)"/>
+  <rect x="535" y="46" width="90" height="22" rx="6" fill="var(--bg-surface)" stroke="var(--primary, #2563eb)" stroke-width="1.2"/>
+  <text x="580" y="61" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="var(--primary, #2563eb)">3 + 4 = 7단계</text>
+
+  <!-- Nodes (1 -> a -> a² -> a³ -> a⁴ -> a⁷) -->
+  <!-- Node 0: 1 -->
+  <g transform="translate(35, 115)">
+    <rect width="75" height="64" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="37.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">1</text>
+    <text x="37.5" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">시작점 (0)</text>
+  </g>
+  <line x1="110" y1="147" x2="145" y2="147" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m1-arr-gray)"/>
+
+  <!-- Node 1: a -->
+  <g transform="translate(150, 115)">
+    <rect width="75" height="64" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="37.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">a</text>
+    <text x="37.5" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">1단계</text>
+  </g>
+  <line x1="225" y1="147" x2="260" y2="147" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m1-arr-gray)"/>
+
+  <!-- Node 2: a² -->
+  <g transform="translate(265, 115)">
+    <rect width="75" height="64" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="37.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">a²</text>
+    <text x="37.5" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">2단계</text>
+  </g>
+  <line x1="340" y1="147" x2="375" y2="147" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m1-arr-gray)"/>
+
+  <!-- Node 3: a³ -->
+  <g transform="translate(380, 115)">
+    <rect width="85" height="64" rx="10" fill="var(--primary-light, #eff6ff)" stroke="var(--primary, #2563eb)" stroke-width="2"/>
+    <text x="42.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="800" fill="var(--primary, #2563eb)">a³</text>
+    <text x="42.5" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--primary, #2563eb)">3단계</text>
+  </g>
+  <line x1="465" y1="147" x2="495" y2="147" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m1-arr-gray)"/>
+
+  <!-- Node 4: a⁴ -->
+  <g transform="translate(500, 115)">
+    <rect width="85" height="64" rx="10" fill="var(--primary-light, #eff6ff)" stroke="var(--primary, #2563eb)" stroke-width="2"/>
+    <text x="42.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="800" fill="var(--primary, #2563eb)">a⁴</text>
+    <text x="42.5" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--primary, #2563eb)">4단계</text>
+  </g>
+
+  <!-- Ellipsis -->
+  <text x="612" y="152" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="18px" font-weight="700" fill="var(--text-light, #94a3b8)">⋯</text>
+  <line x1="632" y1="147" x2="668" y2="147" stroke="var(--primary, #2563eb)" stroke-width="1.5" marker-end="url(#m1-arr-blue)"/>
+
+  <!-- Node 7: a⁷ -->
+  <g transform="translate(675, 115)">
+    <rect width="90" height="64" rx="10" fill="var(--primary, #2563eb)" stroke="var(--primary-hover, #1d4ed8)" stroke-width="2"/>
+    <text x="45" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="16px" font-weight="800" fill="#ffffff">a⁷</text>
+    <text x="45" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="rgba(255,255,255,0.88)">7단계 (결과)</text>
+  </g>
+
+  <!-- Formula Summary -->
+  <text x="400" y="215" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="13px" font-weight="600" fill="var(--text-main)">지수 곱셈 법칙: aᵐ · aⁿ = aᵐ⁺ⁿ  (a³ · a⁴ = a³⁺⁴ = a⁷)</text>
+</svg>
+</div>
+
+<h3 id="디오판토스의-미지수-거듭제곱-단축-기호"><a href="#디오판토스의-미지수-거듭제곱-단축-기호" class="heading-anchor" aria-hidden="true">#</a> 디오판토스의 미지수 거듭제곱 단축 기호</h3><p>아르키메데스로부터 약 500년 뒤인 서기 3세기, 알렉산드리아의 수학자 <strong>디오판토스(Diophantus)</strong>는 『산술(<em>Arithmetica</em>)』에서 미지수와 미지수의 거듭제곱을 다루기 위한 획기적인 단축 기호(Syncopated notation)를 도입했다.</p>
 <p>디오판토스는 미지수(unknown, $x$)를 그리스 문자 아리스모스(arithmos)의 머릿글자 모양을 딴 기호로 나타내고, 그 거듭제곱들에 다음과 같은 이름을 부여했다:</p>
 <ul>
 <li>제곱($x^2$): <strong>뒤나미스($\Delta^{\Upsilon}$, dynamis, 능력/제곱)</strong></li>
@@ -2078,18 +2140,61 @@
 <p><strong>&quot;And to auoide the tediouse repetition of these woordes: is equalle to: I will sette as I doe often in woorke vse, a paire of paralleles, or Gemowe lines of one lengthe, thus: ======, bicause noe .2. thynges, can be moare equalle.&quot;</strong><br>*(그리고 &#39;is equal to&#39;라는 단어의 지루한 반복을 피하기 위해, 내가 작업할 때 자주 쓰듯 길이가 같은 한 쌍의 평행선, 즉 쌍둥이 선을 이렇게 그을 것이다: ======, <strong>왜냐하면 그 어떤 두 사물도 이 세상에서 평행한 두 선보다 더 같을 수는 없기 때문이다.</strong>)*<br>— Robert Recorde, <em>The Whetstone of Witte</em> (1557)</p>
 </blockquote>
 <p>레코드가 종이 위에 그은 두 평행선, 그것이 바로 오늘날 전 세계 80억 인류가 사용하는 <strong>등호($=$)</strong>의 탄생 순간이었다.</p>
+<div class="svg-chart-container" style="margin: 28px 0; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="로버트 레코드의 등호 발명 계보" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+  <defs>
+    <marker id="m2-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--text-light, #94a3b8)"/>
+    </marker>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">flowchart LR
-    A["지루한 문장 반복\n'is equalle to'"] --&gt; B["로버트 레코드의 고뇌\n(The Whetstone of Witte)"]
-    B --&gt; C["쌍둥이 평행선 발명\n'Gemowe lines' (======)"]
-    C --&gt; D["세계 표준 등호\n(=)"]
-    style C fill:#ffe,stroke:#d4af37,stroke-width:2px</code></pre>
-</div><h3 id="펨브룩-백작과의-정쟁과-채무자-감옥에서의-옥사"><a href="#펨브룩-백작과의-정쟁과-채무자-감옥에서의-옥사" class="heading-anchor" aria-hidden="true">#</a> 펨브룩 백작과의 정쟁과 채무자 감옥에서의 옥사</h3><p>그러나 현실의 세계는 수학 기호처럼 아름답지 못했다. 레코드가 브리스톨 조폐국에 부임한 지 불과 일주일 만에 치명적인 정적이 나타났다. 당대 최고의 실력자였던 <strong>제1대 펨브룩 백작 윌리엄 허버트(William Herbert, 1501~1570)</strong>였다.</p>
+  <!-- Title & Subtitle -->
+  <text x="400" y="30" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">로버트 레코드의 등호(=) 발명 계보: 『지혜의 숫돌』(1557)</text>
+  <text x="400" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" fill="var(--text-muted)">라틴어 수사적 문장 반복에서 세계 공통의 수학 기호로의 진화</text>
+
+  <!-- 4 Step Cards -->
+  <!-- Card 1 -->
+  <g transform="translate(30, 70)">
+    <rect width="155" height="95" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="12" y="12" width="60" height="20" rx="4" fill="var(--border)"/>
+    <text x="42" y="26" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="var(--text-muted)">1. 기존 관습</text>
+    <text x="77.5" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13px" font-weight="700" fill="var(--text-main)">is equalle to</text>
+    <text x="77.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">지루한 문장 끝없는 반복</text>
+  </g>
+  <line x1="190" y1="117" x2="225" y2="117" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m2-arr)"/>
+
+  <!-- Card 2 -->
+  <g transform="translate(230, 70)">
+    <rect width="155" height="95" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="12" y="12" width="60" height="20" rx="4" fill="var(--border)"/>
+    <text x="42" y="26" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="var(--text-muted)">2. 레코드의 고뇌</text>
+    <text x="77.5" y="52" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--text-main)">시각적 단순화</text>
+    <text x="77.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">집필 피로 및 교육 혁신</text>
+  </g>
+  <line x1="390" y1="117" x2="425" y2="117" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m2-arr)"/>
+
+  <!-- Card 3: Gemowe lines -->
+  <g transform="translate(430, 70)">
+    <rect width="170" height="95" rx="10" fill="var(--primary-light, #eff6ff)" stroke="var(--primary, #2563eb)" stroke-width="1.8"/>
+    <rect x="12" y="12" width="70" height="20" rx="4" fill="var(--primary, #2563eb)"/>
+    <text x="47" y="26" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="#ffffff">3. 쌍둥이 선</text>
+    <text x="85" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14px" font-weight="800" fill="var(--primary, #2563eb)">====== (Gemowe)</text>
+    <text x="85" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--primary, #2563eb)">"더 같을 수는 없다"</text>
+  </g>
+  <line x1="605" y1="117" x2="635" y2="117" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m2-arr)"/>
+
+  <!-- Card 4: Global Standard -->
+  <g transform="translate(640, 70)">
+    <rect width="130" height="95" rx="10" fill="var(--primary, #2563eb)" stroke="var(--primary-hover, #1d4ed8)" stroke-width="2"/>
+    <rect x="12" y="12" width="65" height="20" rx="4" fill="rgba(255,255,255,0.2)"/>
+    <text x="44.5" y="26" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="#ffffff">4. 세계 표준</text>
+    <text x="65" y="60" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="28px" font-weight="800" fill="#ffffff">=</text>
+    <text x="65" y="80" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="10px" font-weight="600" fill="rgba(255,255,255,0.85)">인류 공통 등호</text>
+  </g>
+</svg>
+</div>
+
+<h3 id="펨브룩-백작과의-정쟁과-채무자-감옥에서의-옥사"><a href="#펨브룩-백작과의-정쟁과-채무자-감옥에서의-옥사" class="heading-anchor" aria-hidden="true">#</a> 펨브룩 백작과의 정쟁과 채무자 감옥에서의 옥사</h3><p>그러나 현실의 세계는 수학 기호처럼 아름답지 못했다. 레코드가 브리스톨 조폐국에 부임한 지 불과 일주일 만에 치명적인 정적이 나타났다. 당대 최고의 실력자였던 <strong>제1대 펨브룩 백작 윌리엄 허버트(William Herbert, 1501~1570)</strong>였다.</p>
 <p>훗날 전기 작가 존 오브리가 &quot;문맹에 가까웠고 미친 싸움꾼(a mad fighting fellow)&quot;이라 묘사했던 허버트는, 레코드가 관리하던 웨일스 펜티르크의 왕실 제철소에서 국왕에게 수송될 귀금속과 물자를 무단으로 가로채려 했다. 원리원칙주의자였던 레코드가 이를 단호히 거부하자, 격분한 허버트는 레코드를 &#39;반역죄&#39;로 고발하며 법정 공방을 벌였다.</p>
 <p>1553년 소년왕 에드워드 6세가 15세의 나이로 요절하고 가톨릭 군주 메리 1세가 즉위하자, 레코드는 정치적 바람이 자신에게 유리하게 분다고 믿었다. 메리 여왕이 조폐국 비리 척결을 선언하자, 레코드는 여왕에게 비밀 서한을 보내 지난 수년간 브리스톨과 아일랜드 더블린 조폐국에서 허버트가 저지른 횡령과 방해 공작을 낱낱이 고발했다.</p>
 <p>하지만 그것은 순진한 학자의 치명적인 오판이었다. 그 사이 허버트의 정치적 권력은 여왕조차 함부로 건드릴 수 없을 만큼 거대해져 있었다.</p>
@@ -2160,23 +2265,71 @@ xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 
 <h3 id="패러다임-전환-quot구문론이-의미론을-이끈다-syntax-leads-semanticsquot"><a href="#패러다임-전환-quot구문론이-의미론을-이끈다-syntax-leads-semanticsquot" class="heading-anchor" aria-hidden="true">#</a> 패러다임 전환: &quot;구문론이 의미론을 이끈다 (Syntax leads Semantics)&quot;</h3><p>데카르트의 표기법이 가져온 진정한 혁명은 단순히 글자 수가 줄어들었다는 시각적 편리함에 있지 않았다. 그것은 <strong>인간의 뇌가 수학을 다루는 근본적인 방식의 지각변동</strong>이었다.</p>
 <p>과거의 수학책은 &#39;입으로 소리 내어 낭독하고 암송하는 책&#39;이었다. 따라서 표기법은 언제나 현실 세계의 말과 물리적 실체(선, 면, 입체)에 단단히 묶여 있어야만 했다.</p>
 <p>그러나 인쇄술과 데카르트의 표기법을 거치며 수학책은 <strong>&#39;눈으로 읽고 손으로 기호를 조작하는 시각적 텍스트&#39;</strong>로 탈바꿈했다. 기호가 말의 굴레에서 해방되자, 인류 역사상 처음으로 <strong>&quot;표기 규칙(구문론, Syntax)이 물리적 의미(의미론, Semantics)를 스스로 이끌고 나가는 역전 현상&quot;</strong>이 일어났다.</p>
+<div class="svg-chart-container" style="margin: 32px 0; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" role="img" aria-label="대수학 인식론 대도약: 구술적 의미론에서 시각적 구문론으로" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+  <defs>
+    <marker id="m3-arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--primary, #2563eb)"/>
+    </marker>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">flowchart TD
-    subgraph 과거["과거: 의미론이 구문론을 지배 (Oral Semantics)"]
-        M1["물리적 직관 &amp; 구술 설명\n(선, 면, 입체, 계란 한 다스)"] --&gt; S1["기호 표기\n(zenzizenzic, 말의 기록에 불과)"]
-    end
-    subgraph 현대["근대 이후: 구문론이 의미론을 창출 (Visual Syntax)"]
-        S2["순수 기호 조작 규칙\n(xᵃ · xᵇ = xᵃ⁺ᵇ, xᵃ / xᵇ = xᵃ⁻ᵇ)"] --&gt; M2["새로운 의미의 탄생\n(음수 지수, 분수 지수, 복소 지수의 자동 도출)"]
-    end
-    과거 ==&gt;|패러다임 대전환| 현대
-    style 과거 fill:#ffe,stroke:#999
-    style 현대 fill:#eef,stroke:#33b</code></pre>
-</div><p>이 규칙의 인도를 따라가자, 과거에는 도저히 상상할 수 없었던 수학적 개념들이 마치 마법처럼 저절로 쏟아져 나오기 시작했다:</p>
+  <!-- Title & Subtitle -->
+  <text x="400" y="30" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">대수학 인식론의 대도약: 구술적 의미론에서 시각적 구문론으로</text>
+  <text x="400" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" fill="var(--text-muted)">"표기 규칙(Syntax)이 물리적 실체(Semantics)의 한계를 깨고 새로운 수학적 진리를 창출한다"</text>
+
+  <!-- Left Card: Oral Semantics -->
+  <g transform="translate(30, 70)">
+    <rect width="345" height="225" rx="12" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="16" y="14" width="135" height="24" rx="6" fill="var(--border)"/>
+    <text x="83.5" y="30" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="var(--text-main)">과거: 구술적 의미론 중심</text>
+
+    <!-- Sub-box 1: Intuition -->
+    <rect x="16" y="48" width="313" height="66" rx="8" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
+    <text x="30" y="70" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--text-main)">1. 물리적 직관 &amp; 구술 설명 (출발점)</text>
+    <text x="30" y="90" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">• 선(1D) → 정사각형(2D) → 정육면체(3D)의 감각적 굴레</text>
+    <text x="30" y="104" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">• 수는 사물을 꾸미는 '형용사' (계란 한 다스, 동전 3개)</text>
+
+    <!-- Down Arrow inside left card -->
+    <path d="M 172 118 L 172 134" stroke="var(--text-light)" stroke-width="2" marker-end="url(#m3-arr-blue)"/>
+
+    <!-- Sub-box 2: Notation as mere recording -->
+    <rect x="16" y="140" width="313" height="66" rx="8" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
+    <text x="30" y="162" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--text-main)">2. 기호의 종속적 위치 (결과물)</text>
+    <text x="30" y="182" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">• 기호는 단지 '말과 발음의 기록 도구'에 불과</text>
+    <text x="30" y="196" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">• zenzizenzic, sursolid 등 명칭의 미로에 감금</text>
+  </g>
+
+  <!-- Big Central Transition -->
+  <g transform="translate(385, 150)">
+    <rect x="-3" y="-22" width="34" height="44" rx="8" fill="var(--primary-light, #eff6ff)" stroke="var(--primary, #2563eb)" stroke-width="1.5"/>
+    <text x="14" y="5" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="18px" font-weight="800" fill="var(--primary, #2563eb)">➔</text>
+  </g>
+
+  <!-- Right Card: Visual Syntax -->
+  <g transform="translate(425, 70)">
+    <rect width="345" height="225" rx="12" fill="var(--primary-light, #eff6ff)" stroke="var(--primary, #2563eb)" stroke-width="1.8"/>
+    <rect x="16" y="14" width="145" height="24" rx="6" fill="var(--primary, #2563eb)"/>
+    <text x="88.5" y="30" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="700" fill="#ffffff">근대: 시각적 구문론 혁명</text>
+
+    <!-- Sub-box 1: Syntax Rules -->
+    <rect x="16" y="48" width="313" height="66" rx="8" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="1"/>
+    <text x="30" y="70" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--primary, #2563eb)">1. 순수 기호 조작 규칙 (출발점)</text>
+    <text x="30" y="90" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-main)">• 나눗셈 차감 규칙: xᵃ / xᵇ = xᵃ⁻ᵇ</text>
+    <text x="30" y="104" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-main)">• 거듭제곱 곱셈 규칙: (xᵃ)ᵇ = xᵃᵇ</text>
+
+    <!-- Down Arrow inside right card -->
+    <path d="M 172 118 L 172 134" stroke="var(--primary, #2563eb)" stroke-width="2" marker-end="url(#m3-arr-blue)"/>
+
+    <!-- Sub-box 2: Semantic Emergence -->
+    <rect x="16" y="140" width="313" height="66" rx="8" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="1"/>
+    <text x="30" y="162" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--primary, #2563eb)">2. 새로운 의미의 자동 창출 (도약)</text>
+    <text x="30" y="182" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--text-main)">• 음수 지수 탄생: 2³ / 2⁵ = 2⁻² = 1/4</text>
+    <text x="30" y="196" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--text-main)">• 분수 지수 통일: (2¹/²)² = 2¹ ⟹ 2¹/² = √2</text>
+  </g>
+</svg>
+</div>
+
+<p>이 규칙의 인도를 따라가자, 과거에는 도저히 상상할 수 없었던 수학적 개념들이 마치 마법처럼 저절로 쏟아져 나오기 시작했다:</p>
 <h4 id="1-음수-지수의-필연적-탄생"><a href="#1-음수-지수의-필연적-탄생" class="heading-anchor" aria-hidden="true">#</a> 1) 음수 지수의 필연적 탄생</h4><p>지수의 나눗셈 규칙(밑이 같으면 지수끼리 뺀다)을 기계적으로 적용해보자:</p>
 <p>$\frac{2^3}{2^5} = \frac{8}{32} = \frac{1}{4}$</p>
 <p>하지만 지수 규칙을 그대로 따르면 지수끼리 빼야 한다:</p>
@@ -2198,20 +2351,57 @@ xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 
 <p>뉴턴은 지수 $r$이 음수이든 분수이든 상관없이 무한급수로 전개될 수 있음을 증명했다. 이 순간, 지수($r$)는 &#39;어떤 수를 몇 번 거듭 곱했는가&#39;라는 원시적인 정수 카운팅의 족쇄를 완전히 벗어던지고, 미적분학의 거대한 바다를 항해하는 연속적인 수학적 자유를 얻었다.</p>
 <p>18세기에 이르러 <strong>요한 베르누이(Johann Bernoulli)</strong>와 <strong>레온하르트 오일러(Leonhard Euler)</strong>는 지수를 함수 자체($f(x) = a^x, e^x$)로 확장했고, 마침내 오일러는 허수 단위 $i$를 지수 위에 얹음으로써 인류 역사상 가장 아름다운 공식을 탄생시켰다.</p>
 <p>$e^{i\pi} + 1 = 0$</p>
+<div class="svg-chart-container" style="margin: 28px 0; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="일반화자들의 계보: 데카르트에서 오일러까지" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+  <defs>
+    <marker id="m4-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--text-light, #94a3b8)"/>
+    </marker>
+  </defs>
 
-<div class="code-block-wrapper">
-  <div class="code-header">
-    <span class="code-lang">mermaid</span>
-    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
-  </div>
-  <pre><code class="language-mermaid">flowchart LR
-    A["데카르트 (1637)\nx³, xx"] --&gt; B["존 월리스 (1655)\n음수/분수 지수 제안"]
-    B --&gt; C["아이작 뉴턴 (1676)\n일반화된 이항정리"]
-    C --&gt; D["오일러 (1748)\n지수함수 &amp; 복소 지수\ne^{iπ} + 1 = 0"]
-    style A fill:#eef,stroke:#333
-    style C fill:#ddf,stroke:#333
-    style D fill:#bbf,stroke:#333,stroke-width:2px</code></pre>
-</div><h3 id="에필로그-100년-만에-얻은-불멸성"><a href="#에필로그-100년-만에-얻은-불멸성" class="heading-anchor" aria-hidden="true">#</a> 에필로그: 100년 만에 얻은 불멸성</h3><p>이 거대한 대서사시의 마지막 장에는 가슴 뭉클한 역사의 수수께끼가 숨어 있다.</p>
+  <!-- Title & Subtitle -->
+  <text x="400" y="30" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="15px" font-weight="700" fill="var(--text-main)">일반화자들의 계보: 데카르트에서 오일러까지 (1637 ~ 1748)</text>
+  <text x="400" y="48" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" fill="var(--text-muted)">정수 반복 곱셈에서 무한급수와 복소 지수함수로의 연속적 확장</text>
+
+  <!-- 4 Step Cards -->
+  <!-- Card 1: Descartes -->
+  <g transform="translate(25, 70)">
+    <rect width="165" height="95" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="82.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--text-main)">데카르트 (1637)</text>
+    <text x="82.5" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="15px" font-weight="800" fill="var(--primary, #2563eb)">x³, x⁴, xx</text>
+    <text x="82.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">밑과 위첨자 지수 확립</text>
+  </g>
+  <line x1="195" y1="117" x2="225" y2="117" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m4-arr)"/>
+
+  <!-- Card 2: Wallis -->
+  <g transform="translate(230, 70)">
+    <rect width="165" height="95" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="82.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--text-main)">존 월리스 (1655)</text>
+    <text x="82.5" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14px" font-weight="800" fill="var(--primary, #2563eb)">x⁻ⁿ, x¹/ⁿ</text>
+    <text x="82.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" fill="var(--text-muted)">음수/분수 지수 제안</text>
+  </g>
+  <line x1="400" y1="117" x2="430" y2="117" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m4-arr)"/>
+
+  <!-- Card 3: Newton -->
+  <g transform="translate(435, 70)">
+    <rect width="165" height="95" rx="10" fill="var(--primary-light, #eff6ff)" stroke="var(--primary, #2563eb)" stroke-width="1.8"/>
+    <text x="82.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="var(--primary, #2563eb)">아이작 뉴턴 (1676)</text>
+    <text x="82.5" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13px" font-weight="800" fill="var(--primary, #2563eb)">(1+x)ʳ 급수</text>
+    <text x="82.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--primary, #2563eb)">일반화된 이항정리</text>
+  </g>
+  <line x1="605" y1="117" x2="635" y2="117" stroke="var(--text-light, #94a3b8)" stroke-width="1.5" marker-end="url(#m4-arr)"/>
+
+  <!-- Card 4: Euler -->
+  <g transform="translate(640, 70)">
+    <rect width="135" height="95" rx="10" fill="var(--primary, #2563eb)" stroke="var(--primary-hover, #1d4ed8)" stroke-width="2"/>
+    <text x="67.5" y="28" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="12px" font-weight="700" fill="#ffffff">오일러 (1748)</text>
+    <text x="67.5" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13px" font-weight="800" fill="#ffffff">eⁱᵖᶦ + 1 = 0</text>
+    <text x="67.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="10px" font-weight="600" fill="rgba(255,255,255,0.85)">복소 지수함수 완성</text>
+  </g>
+</svg>
+</div>
+
+<h3 id="에필로그-100년-만에-얻은-불멸성"><a href="#에필로그-100년-만에-얻은-불멸성" class="heading-anchor" aria-hidden="true">#</a> 에필로그: 100년 만에 얻은 불멸성</h3><p>이 거대한 대서사시의 마지막 장에는 가슴 뭉클한 역사의 수수께끼가 숨어 있다.</p>
 <p>데카르트는 1637년 『기하학』을 쓸 때 로버트 레코드의 등호($=$)를 알지 못했다. 그래서 데카르트는 라틴어 <em>equalis</em>의 머릿글자에서 유래한 뫼비우스 띠 모양의 기호($\propto$)를 등호로 사용했다. </p>
 <p>그렇다면 레코드가 1557년 차가운 옥사 직전에 『지혜의 숫돌』에 남겨놓았던 두 평행선($=$)은 어떻게 사라지지 않고 오늘날 전 인류의 표준 기호로 부활할 수 있었을까?</p>
 <p>그 결정적인 가교 역할을 한 인물이 바로 영국의 수학자 <strong>윌리엄 오트레드(William Oughtred, 1574~1660)</strong>였다. 1631년 오트레드가 발표한 대수학서 『수학의 열쇠(<em>Clavis Mathematicae</em>)』는 레코드의 『지혜의 숫돌』을 밀어내고 영국의 표준 고급 수학 교재가 되었다. </p>
