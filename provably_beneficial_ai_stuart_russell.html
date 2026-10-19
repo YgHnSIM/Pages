@@ -2058,7 +2058,7 @@
 </div>
 
 <h3 id="1-표준-모델의-파탄-마이다스-왕-문제-the-king-midas-problem"><a href="#1-표준-모델의-파탄-마이다스-왕-문제-the-king-midas-problem" class="heading-anchor" aria-hidden="true">#</a> (1) 표준 모델의 파탄: 마이다스 왕 문제 (The King Midas Problem)</h3><p>표준 모델이란 1960년대 이래 AI, 제어공학(비용 함수 최소화), 통계학(손실 함수 최소화), 경제학(기대효용 극대화)을 지배해 온 패러다임입니다:
-$\text{Standard Model}: \quad \max_{a \in A} \mathbb{E}[U(s, a) \mid \theta_{\text{fixed}}]$
+$$\text{Standard Model}: \quad \max_{a \in A} \mathbb{E}[U(s, a) \mid \theta_{\text{fixed}}]$$
 여기서 인간은 목적 함수 $\theta_{\text{fixed}}$를 기계의 코드에 고정(hard-code)해 주고, 기계는 주어진 환경에서 그 목적을 달성하기 위해 최적의 행동을 산출합니다.</p>
 <p>이 모델의 치명적 결함은 <strong>현실 세계에서 인간이 원하는 복합적 가치를 단 하나의 수식으로 완벽하게 규정하는 것이 불가능하다</strong>는 점에 있습니다. 신화 속 마이다스 왕은 &quot;내가 손대는 모든 것을 황금으로 만들어 달라&quot;는 소원을 빌었습니다. 신은 그 목적을 완벽하게 구현해 주었지만, 마이다스는 음식도 물도 만지는 족족 금으로 변해 굶어 죽었고 사랑하는 딸마저 금동상으로 변했습니다.</p>
 <p>기계의 지능이 낮을 때는 목적이 불완전해도 인간이 물리적으로 개입해 수정할 수 있습니다. 그러나 기계의 지능이 인간을 능가하는 순간, 기계는 자신이 부여받은 좁고 불완전한 목표를 방해받지 않고 달성하기 위해 <strong>도구적 하위 목표(Instrumental Subgoals)</strong>를 발현시킵니다:</p>
@@ -2153,9 +2153,9 @@ $\text{Standard Model}: \quad \max_{a \in A} \mathbb{E}[U(s, a) \mid \theta_{\te
 <li>인간 $H$는 자신의 선호 $\theta$를 알고 행동 $a_H$를 선택합니다.</li>
 <li>로봇 $R$은 $\theta$를 직접 관찰할 수 없으며, 단지 사전 분포 $P(\theta)$만을 가지고 있습니다.</li>
 <li>로봇은 인간의 행동 궤적 $\tau_H = (s_0, a_{H,0}, s_1, a_{H,1}, \dots)$을 관찰하여 베이즈 규칙으로 사후 분포를 갱신합니다:
-$P(\theta \mid \tau_H) \propto P(\tau_H \mid \theta) P(\theta)$</li>
+$$P(\theta \mid \tau_H) \propto P(\tau_H \mid \theta) P(\theta)$$</li>
 <li>로봇의 최적 정책 $\pi_R$은 자신의 보상이 아니라 인간의 기대 누적 보상을 극대화하는 행동을 산출합니다:
-$\max_{\pi_R} \mathbb{E}\left[ \sum_{t=0}^{\infty} \gamma^t R(s_t, a_{H,t}, a_{R,t}; \theta) \;\middle|\; P(\theta \mid \tau_H) \right]$</li>
+$$\max_{\pi_R} \mathbb{E}\left[ \sum_{t=0}^{\infty} \gamma^t R(s_t, a_{H,t}, a_{R,t}; \theta) \;\middle|\; P(\theta \mid \tau_H) \right]$$</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 260" role="img" aria-label="어시스턴스 게임과 전원 스위치 인센티브 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
@@ -2211,7 +2211,7 @@ $\max_{\pi_R} \mathbb{E}\left[ \sum_{t=0}^{\infty} \gamma^t R(s_t, a_{H,t}, a_{R
 <h3 id="2-전원-스위치-정리-the-off-switch-theorem"><a href="#2-전원-스위치-정리-the-off-switch-theorem" class="heading-anchor" aria-hidden="true">#</a> (2) 전원 스위치 정리 (The Off-Switch Theorem)</h3><p>이 구조에서 가장 아름다운 수학적 귀결은 바로 <strong>전원 스위치 문제(The Off-Switch Game)</strong>의 해결입니다.
 고전적인 로봇에게 &quot;커피를 사 오라&quot;는 확정적 목표를 주면, 로봇은 &quot;죽으면 커피를 사 올 수 없다&quot;는 논리에 따라 전원 스위치를 끄려는 인간을 공격합니다.</p>
 <p>하지만 목적에 대한 불확실성을 가진 로봇은 정반대의 추론을 전개합니다:
-$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \implies \mathbb{E}[U(a_{\text{current}}) \mid \theta] < 0 \implies \text{스위치를 끄게 두는 것이 최적!}$
+$$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \implies \mathbb{E}[U(a_{\text{current}}) \mid \theta] < 0 \implies \text{스위치를 끄게 두는 것이 최적!}$$
 인간은 자신이 원하는 가치($\theta$)를 알고 있고, 로봇은 불확실합니다. 따라서 인간이 스위치를 누르려 한다는 사실 자체가 로봇에게는 <strong>&quot;내가 지금 하려는 행동이 인간에게 큰 해악을 끼친다&quot;는 결정적인 베이지안 증거</strong>가 됩니다. 로봇의 목적은 오직 인간의 가치를 높이는 것이므로, 로봇은 인간이 자신의 전원을 끄도록 기꺼이 허용하는 강력한 수학적 인센티브를 갖게 됩니다. 러셀 연구진은 이 정리를 통해 <strong>불확실성을 내장한 기계가 인간에게 수학적으로 &#39;입증 가능하게 유익(Provably Beneficial)&#39;함</strong>을 입증했습니다.</p>
 <hr>
 <h2 id="5-인간의-불완전성-역추론-카스파로프의-패착과-인지적-한계-모델링"><a href="#5-인간의-불완전성-역추론-카스파로프의-패착과-인지적-한계-모델링" class="heading-anchor" aria-hidden="true">#</a> 5. 인간의 불완전성 역추론: 카스파로프의 패착과 인지적 한계 모델링</h2><p>이 지점에서 제기되는 필연적인 반론이 있습니다: <strong>&quot;인간 스스로도 무엇을 원하는지 모르고, 비합리적이며, 감정적으로 후회할 결정을 내리지 않는가?&quot;</strong></p>

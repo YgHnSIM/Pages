@@ -2402,29 +2402,29 @@ Plex 헤더 워드에 타입 태그 비트를 두어 하위 워드들을 다형�
 <h3 id="31-주소-계산-수식의-수학적-비교"><a href="#31-주소-계산-수식의-수학적-비교" class="heading-anchor" aria-hidden="true">#</a> 3.1 주소 계산 수식의 수학적 비교</h3><p>선형 물리 메모리 공간 $\mathcal{M}$에서 $K$개의 이종 필드를 가진 엔티티에 대한 4대 패러다임의 주소 계산 공식은 다음과 같습니다:</p>
 <ol>
 <li><p><strong>전통적 동질 배열 (Traditional Array)</strong>:
-$\text{Addr}_{\text{Array}}(A, i) = \text{Base}(A) + (i \times S) \quad [Official\ Fact]$</p>
+$$\text{Addr}_{\text{Array}}(A, i) = \text{Base}(A) + (i \times S) \quad [Official\ Fact]$$</p>
 <ul>
 <li>고정된 기저 주소 $\text{Base}(A)$에 가변 루프 인덱스 $i$와 스케일 $S$를 곱하여 연산함. x86 SIB(Scale-Index-Base) 하드웨어 회로와 1:1 대응.</li>
 </ul>
 </li>
 <li><p><strong>병렬 배열 (Structure of Arrays / SoA)</strong>:
-$\text{Addr}_{\text{ParArray}}(\text{field}_k, i) = \text{Base}_k + (i \times s_k) \quad [Official\ Fact]$</p>
+$$\text{Addr}_{\text{ParArray}}(\text{field}_k, i) = \text{Base}_k + (i \times s_k) \quad [Official\ Fact]$$</p>
 <ul>
 <li>엔티티 $i$의 모든 $K$개 속성을 읽으려면 $K$번의 독립적인 기저 배열 주소 수식 $\vec{\text{Addr}}(i) = \{ \text{Base}_k + (i \times s_k) \}_{k=1}^K$이 요구됨.</li>
 </ul>
 </li>
 <li><p><strong>로스의 역인덱싱 (Douglas Ross&#39;s Plex / Reverse Indexing)</strong>:
-$\text{Addr}_{\text{Plex}}(P, \text{field}_k) = P + \text{Offset}(k) \quad [Official\ Fact]$</p>
+$$\text{Addr}_{\text{Plex}}(P, \text{field}_k) = P + \text{Offset}(k) \quad [Official\ Fact]$$</p>
 <ul>
 <li>여기서 $P$는 동적으로 할당된 인스턴스의 가변 베이스 포인터이며, $\text{Offset}(k)$는 컴파일 타임에 결정되는 불변의 즉치 상수(Immediate Displacement)임:
-$\text{Offset}(1) = 0, \quad \text{Offset}(k) = \text{AlignUp}\left( \text{Offset}(k-1) + s_{k-1},\; \alpha_k \right) \quad [Independent\ Analysis]$
-$\text{AlignUp}(x, \alpha) = (x + \alpha - 1) \ \& \ \sim(\alpha - 1) \quad [Independent\ Analysis]$</li>
+$$\text{Offset}(1) = 0, \quad \text{Offset}(k) = \text{AlignUp}\left( \text{Offset}(k-1) + s_{k-1},\; \alpha_k \right) \quad [Independent\ Analysis]$$
+$$\text{AlignUp}(x, \alpha) = (x + \alpha - 1) \ \& \ \sim(\alpha - 1) \quad [Independent\ Analysis]$$</li>
 <li>CPU 주소 생성 유닛(AGU)에서 별도의 곱셈기나 ALU 레지스터 소비 없이 1사이클 즉치 변위 명령어(<code>mov eax, [rdi + Disp32]</code>)로 직접 실행됨:
-$T_{\text{AGU}}(P + \text{Offset}(k)) = 1 \text{ cycle} \quad [Official\ Fact]$</li>
+$$T_{\text{AGU}}(P + \text{Offset}(k)) = 1 \text{ cycle} \quad [Official\ Fact]$$</li>
 </ul>
 </li>
 <li><p><strong>동적 해시 테이블 (Dynamic Hash Table)</strong>:
-$\text{Addr}_{\text{Hash}}(O, \kappa_k) = \text{TableBase}(O) + \text{ProbeSequence}\Big(h(\kappa_k), \; \kappa_k, \; M\Big) \times S_{\text{entry}} \quad [Official\ Fact]$</p>
+$$\text{Addr}_{\text{Hash}}(O, \kappa_k) = \text{TableBase}(O) + \text{ProbeSequence}\Big(h(\kappa_k), \; \kappa_k, \; M\Big) \times S_{\text{entry}} \quad [Official\ Fact]$$</p>
 <ul>
 <li>문자열 키 해시 $h(\kappa_k)$ 연산과 버킷 충돌 프로빙, 메모리 간접 참조가 연속적으로 발생함.</li>
 </ul>
@@ -2432,22 +2432,22 @@ $\text{Addr}_{\text{Hash}}(O, \kappa_k) = \text{TableBase}(O) + \text{ProbeSeque
 </ol>
 <hr>
 <h3 id="32-캐시-라인-전송-효율-및-포인터-체이싱-지연-유도"><a href="#32-캐시-라인-전송-효율-및-포인터-체이싱-지연-유도" class="heading-anchor" aria-hidden="true">#</a> 3.2 캐시 라인 전송 효율 및 포인터 체이싱 지연 유도</h3><p>표준 CPU 캐시 라인 크기 $B = 64\text{ bytes}$ 환경에서 엔티티 중심 전수 접근 워크로드($\mathcal{W}_1$)에 대한 캐시 버스 효율 $\eta_{\text{cache}}$:
-$\eta_{\text{cache}} = \frac{\text{캐시 라인 상주 중 실제 소비된 유효 바이트 수}}{\text{메모리 버스에서 전송된 총 바이트 수 } (B)} \times 100\% \quad [Official\ Fact]$</p>
+$$\eta_{\text{cache}} = \frac{\text{캐시 라인 상주 중 실제 소비된 유효 바이트 수}}{\text{메모리 버스에서 전송된 총 바이트 수 } (B)} \times 100\% \quad [Official\ Fact]$$</p>
 <ol>
 <li><strong>Plex (AoS)</strong>: 모든 필드가 인접 패킹되어 $S_{\text{struct}} \le B$일 때:
-$\eta_{\text{cache}}^{\text{Plex}}(\mathcal{W}_1) = \frac{\sum_{k=1}^K s_k}{S_{\text{struct}}} \approx 85\%\text{--}100\% \quad [Independent\ Analysis]$</li>
+$$\eta_{\text{cache}}^{\text{Plex}}(\mathcal{W}_1) = \frac{\sum_{k=1}^K s_k}{S_{\text{struct}}} \approx 85\%\text{--}100\% \quad [Independent\ Analysis]$$</li>
 <li><strong>Parallel Arrays (SoA)</strong>: 엔티티 하나를 읽기 위해 $K$개의 서로 다른 캐시 라인을 인출해야 하므로:
-$\eta_{\text{cache}}^{\text{SoA}}(\mathcal{W}_1) = \frac{\sum_{k=1}^K s_k}{K \times B} = \frac{\bar{s}}{B} \approx \frac{4}{64} = 6.25\% \quad [Independent\ Analysis]$
+$$\eta_{\text{cache}}^{\text{SoA}}(\mathcal{W}_1) = \frac{\sum_{k=1}^K s_k}{K \times B} = \frac{\bar{s}}{B} \approx \frac{4}{64} = 6.25\% \quad [Independent\ Analysis]$$
 <em>최대 93.75%의 메모리 대역폭이 인출만 되고 버려지는 대역폭 낭비 발생.</em></li>
 </ol>
 <h4 id="lisp-cons-cell-포인터-체이싱-vs-plex-직접-오프셋-지연시간-유도"><a href="#lisp-cons-cell-포인터-체이싱-vs-plex-직접-오프셋-지연시간-유도" class="heading-anchor" aria-hidden="true">#</a> LISP Cons-Cell 포인터 체이싱 vs Plex 직접 오프셋 지연시간 유도:</h4><p>Cons cell 리스트에서 $k$번째 필드 접근은 이전 셀의 <code>cdr</code> 포인터를 읽어야만 다음 주소가 결정되는 직렬 RAW(Read-After-Write) 데이터 종속성을 갖습니다:
-$\text{MLP}_{\text{cons}} = 1, \quad T_{\text{cons}}(k) = \sum_{j=1}^k \Big( L_{\text{mem}}(j) + L_{\text{ALU}} \Big) \quad [Official\ Fact]$
+$$\text{MLP}_{\text{cons}} = 1, \quad T_{\text{cons}}(k) = \sum_{j=1}^k \Big( L_{\text{mem}}(j) + L_{\text{ALU}} \Big) \quad [Official\ Fact]$$
 콜드 DRAM 환경($L_{\text{DRAM}} \approx 250\text{ cycles}$)에서 $k=5$인 경우:
-$T_{\text{cons}}(5) = 5 \times (250 + 1) = 1,255 \text{ cycles} \quad [Model\ Estimate]$</p>
+$$T_{\text{cons}}(5) = 5 \times (250 + 1) = 1,255 \text{ cycles} \quad [Model\ Estimate]$$</p>
 <p>반면 Plex의 직접 오프셋 접근은 즉시 1회 메모리 로드로 해결됩니다:
-$T_{\text{plex\_cold}} = L_{\text{AGU}} + L_{\text{DRAM}} = 1 + 250 = 251 \text{ cycles} \quad [Model\ Estimate]$
-$T_{\text{plex\_warm}} = L_{\text{AGU}} + L_{\text{L1}} = 1 + 4 = 5 \text{ cycles} \quad [Model\ Estimate]$
-$\text{Speedup}_{\text{warm}} = \frac{1,255}{5} = \mathbf{251\times} \quad [Model\ Estimate]$</p>
+$$T_{\text{plex\_cold}} = L_{\text{AGU}} + L_{\text{DRAM}} = 1 + 250 = 251 \text{ cycles} \quad [Model\ Estimate]$$
+$$T_{\text{plex\_warm}} = L_{\text{AGU}} + L_{\text{L1}} = 1 + 4 = 5 \text{ cycles} \quad [Model\ Estimate]$$
+$$\text{Speedup}_{\text{warm}} = \frac{1,255}{5} = \mathbf{251\times} \quad [Model\ Estimate]$$</p>
 <hr>
 <h3 id="33-3대-컴퓨팅-시나리오-전수-비교-매트릭스-표"><a href="#33-3대-컴퓨팅-시나리오-전수-비교-매트릭스-표" class="heading-anchor" aria-hidden="true">#</a> 3.3 3대 컴퓨팅 시나리오 전수 비교 매트릭스 표</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="3대 컴퓨팅 시나리오 전수 비교 매트릭스 표">
 <table>

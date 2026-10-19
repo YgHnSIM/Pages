@@ -301,12 +301,12 @@ function compileMarkdown(markdown, meta = {}) {
 
   // Restore Math blocks
   mathPlaceholders.forEach(({ placeholder, original }) => {
-    html = html.replace(placeholder, original);
+    html = html.replace(placeholder, () => original);
   });
 
   // Restore SVG blocks
   svgPlaceholders.forEach(({ placeholder, original }) => {
-    html = html.replace(placeholder, original);
+    html = html.replace(placeholder, () => original);
   });
 
   return { html, headings };
