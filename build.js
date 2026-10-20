@@ -10,6 +10,32 @@ const SOURCES_DIR = path.join(__dirname, 'sources');
 const TEMPLATES_DIR = path.join(__dirname, 'templates');
 const OUTPUT_DIR = __dirname;
 
+// Home preset chips. An article matches when one of its tags is listed here.
+// Match is exact. Title substrings are intentionally not used.
+const PRESETS = [
+  { name: 'AI', tags: ['AI', 'AGI', '에이전트', 'LLM', '인공지능안전', '인공지능철학', '인공지능윤리', '코딩에이전트', '에이전틱엔지니어링', 'AI안전', '생성형AI', '하네스', '정렬', '해석가능성', '언어모델', '정렬문제', '통제문제'] },
+  { name: '컴퓨터', tags: ['Python', 'CPython', '포인터', '메모리', '메모리 모델', '메모리모델', 'DRAM', '가비지컬렉션', '컴파일러', '어셈블리', 'C/C++', '자료구조', '컴퓨터 구조', '컴퓨터과학', '컴퓨터 과학사', '시스템프로그래밍', '시스템 프로그래밍', '프로그래밍언어', '바이트코드', '인터프리터', '소프트웨어 공학', 'LLVM', 'vectorcall', 'callable', 'BoundMethod', '디스크립터', '멘탈모델', '객체지향', 'provenance', 'Memory Controller'] },
+  { name: '법', tags: ['노동법', '비교노동법', '형법', '공정거래법', '경쟁법', '근로자성', '종속성', '플랫폼노동', '업무방해죄', '노동법사', '독일노동법', '미국노동법', '멤버십형고용', '노동3권', '노무제공자'] },
+  { name: '역사', tags: ['고대사', '역사', '역사학', '군사역사학', '고대근동', '서양문명', '청동기', '청동기시대', '스페인정복', '페르시아만', '바다민족', '콩키스타도르'] },
+  { name: '수학', tags: ['수학사', '해석기하학', '대수학', '미적분학', '기호학'] },
+  { name: '사상', tags: ['동양철학', '법철학', '정치철학', '법가사상', '한비자', '홉스', '라이프니츠', '인공지능철학'] },
+  { name: '과학', tags: ['우주론', '우주배경복사', '시뮬레이션가설'] },
+  { name: '경제', tags: ['기업재무', '가치평가', '재무회계', '현금흐름', 'AICapEx', '위험프리미엄', '빅테크'] }
+];
+
+function presetsFor(tags) {
+  const list = Array.isArray(tags) ? tags : [];
+  return PRESETS.filter(preset => list.some(tag => preset.tags.includes(tag))).map(preset => preset.name);
+}
+
+function escapeAttr(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 // Read templates
 const articleTemplate = fs.readFileSync(path.join(TEMPLATES_DIR, 'article.html'), 'utf-8');
 const indexTemplate = fs.readFileSync(path.join(TEMPLATES_DIR, 'index.html'), 'utf-8');
@@ -393,7 +419,6 @@ async function build() {
 
   const jobs = collectMarkdownJobs();
   const articles = [];
-  const allTagsSet = new Set();
 
   for (const job of jobs) {
     const filePath = job.relDir
@@ -459,7 +484,6 @@ async function build() {
     console.log(`  ✓ Rendered ${label}: ${publicUrl} (${title})`);
 
     if (!unlisted) {
-      tags.forEach(t => allTagsSet.add(t));
       articles.push({
         title,
         subtitle,
@@ -568,8 +592,6 @@ async function build() {
 
 
   legacyArticles.forEach(item => {
-    item.tags.forEach(t => allTagsSet.add(t));
-    // If not already in list
     if (!articles.find(a => a.url === item.url)) {
       articles.push(item);
     }
@@ -578,16 +600,49 @@ async function build() {
   // Sort articles descending by date
   articles.sort((a, b) => b._timestamp - a._timestamp);
 
+  const tagCounts = new Map();
+  articles.forEach(article => {
+    const matched = presetsFor(article.tags);
+    article.preset_json = escapeAttr(JSON.stringify(matched));
+    article.tag_json = escapeAttr(JSON.stringify(article.tags));
+    article.title_attr = escapeAttr(article.title);
+    article.summary_attr = escapeAttr(article.summary);
+    if (matched.length === 0) {
+      console.warn(`  ! No preset: ${article.url}`);
+    }
+    new Set(article.tags).forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  });
+
+  const tagEntries = Array.from(tagCounts.entries()).sort((a, b) => {
+    return b[1] - a[1] || a[0].localeCompare(b[0], 'ko');
+  });
+  const tagRow = ([name, count]) => ({
+    name_html: escapeAttr(name),
+    name_attr: escapeAttr(name),
+    count
+  });
+  const frequentTags = tagEntries.filter(([, count]) => count >= 2).map(tagRow);
+  const singletonTags = tagEntries.filter(([, count]) => count === 1).map(tagRow);
+  const presetRows = PRESETS.map(preset => ({
+    name_html: escapeAttr(preset.name),
+    name_attr: escapeAttr(preset.name),
+    count: articles.filter(article => presetsFor(article.tags).includes(preset.name)).length
+  })).filter(preset => preset.count > 0);
+
   // Generate Index Page
-  const allTags = Array.from(allTagsSet);
   const indexHtml = interpolate(indexTemplate, {
     total_count: articles.length,
-    all_tags: allTags,
+    presets: presetRows,
+    frequent_tags: frequentTags,
+    singleton_tags: singletonTags,
+    singleton_count: singletonTags.length,
     articles: articles
   });
 
   fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), indexHtml, 'utf-8');
-  console.log(`  ✓ Rendered index: index.html (Total ${articles.length} articles, ${allTags.length} tags)`);
+  console.log(`  ✓ Rendered index: index.html (Total ${articles.length} articles, ${presetRows.length} presets, ${tagEntries.length} tags)`);
 
   console.log('🎉 Build completed successfully!');
 }

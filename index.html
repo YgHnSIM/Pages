@@ -266,14 +266,33 @@
       display: flex;
     }
 
-    .filter-tags {
+    .preset-wrap {
+      position: relative;
+    }
+
+    .preset-scroller {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 6px;
-      margin-bottom: 24px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      padding: 2px 2px 4px;
+      margin: 0 -2px;
+    }
+
+    .preset-scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .preset-scroller.can-scroll {
+      -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+      mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
     }
 
     .tag-filter-btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
       background: var(--bg-card);
       border: 1px solid var(--border);
       color: var(--text-muted);
@@ -286,6 +305,17 @@
       font-family: var(--font-sans);
     }
 
+    .chip-count {
+      margin-left: 4px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 550;
+      opacity: 0.72;
+    }
+
+    .tag-filter-btn.active .chip-count {
+      opacity: 0.88;
+    }
+
     .tag-filter-btn:hover {
       border-color: var(--primary);
       color: var(--primary);
@@ -296,6 +326,207 @@
       color: #ffffff;
       border-color: var(--primary);
       font-weight: 600;
+    }
+
+    #open-tag-sheet[aria-expanded="true"] {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .active-tag-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .active-tag-bar[hidden] {
+      display: none !important;
+    }
+
+    .active-tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 650;
+      padding: 4px 10px 4px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+
+    .preset-wrap.is-open {
+      z-index: 50;
+    }
+
+    .tag-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(15, 23, 42, 0.48);
+    }
+
+    .tag-sheet-backdrop[hidden] {
+      display: none !important;
+    }
+
+    .tag-sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 51;
+      display: flex;
+      flex-direction: column;
+      max-height: min(70vh, 560px);
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-top: 1px solid var(--border);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-lg);
+      padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+
+    .tag-sheet[hidden] {
+      display: none !important;
+    }
+
+    @media (min-width: 768px) {
+      .tag-sheet {
+        position: absolute;
+        left: auto;
+        right: 0;
+        bottom: auto;
+        top: calc(100% + 8px);
+        width: min(380px, calc(100vw - 40px));
+        max-height: min(70vh, 520px);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px 14px 10px;
+      }
+
+      .tag-sheet-backdrop {
+        background: transparent;
+      }
+    }
+
+    .tag-sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .tag-sheet-title {
+      font-size: 16px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+
+    .tag-sheet-close {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 22px;
+      line-height: 1;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .tag-sheet-close:hover {
+      background: var(--bg-surface);
+    }
+
+    .tag-sheet-search {
+      width: 100%;
+      height: 42px;
+      padding: 0 12px;
+      font-size: 15px;
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+    }
+
+    .tag-sheet-search:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .tag-sheet-list {
+      overflow: auto;
+      margin-top: 8px;
+      min-height: 0;
+      scrollbar-gutter: stable;
+    }
+
+    .tag-sheet-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 10px 10px 4px;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      font-weight: 550;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .tag-sheet-row:hover {
+      color: var(--primary);
+    }
+
+    .tag-sheet-row[hidden] {
+      display: none !important;
+    }
+
+    .tag-sheet-singletons {
+      margin-top: 4px;
+    }
+
+    .tag-sheet-singletons[hidden] {
+      display: none !important;
+    }
+
+    .tag-sheet-singletons summary {
+      cursor: pointer;
+      padding: 12px 4px;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      list-style: none;
+    }
+
+    .tag-sheet-singletons summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .tag-sheet-empty {
+      padding: 28px 8px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14.5px;
+    }
+
+    .tag-sheet-empty[hidden] {
+      display: none !important;
     }
 
     /* List Stats Bar */
@@ -383,26 +614,11 @@
       font-size: 14.5px;
       color: var(--text-muted);
       line-height: 1.55;
-      margin-bottom: 12px;
+      margin-bottom: 0;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-    }
-
-    .item-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .item-tag {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--primary);
-      background: var(--primary-light);
-      padding: 2px 8px;
-      border-radius: var(--radius-full);
     }
 
     /* Empty State */
@@ -464,437 +680,482 @@
         <button id="search-clear" class="search-clear-btn" aria-label="검색어 지우기">&times;</button>
       </div>
 
-      <div class="filter-tags" id="tag-filters">
-        <button class="tag-filter-btn active" data-tag="all">전체</button>
-        
-        <button class="tag-filter-btn" data-tag="기업재무">#기업재무</button>
-        
-        <button class="tag-filter-btn" data-tag="가치평가">#가치평가</button>
-        
-        <button class="tag-filter-btn" data-tag="아스워스다모다란">#아스워스다모다란</button>
-        
-        <button class="tag-filter-btn" data-tag="AICapEx">#AICapEx</button>
-        
-        <button class="tag-filter-btn" data-tag="빅테크">#빅테크</button>
-        
-        <button class="tag-filter-btn" data-tag="위험프리미엄">#위험프리미엄</button>
-        
-        <button class="tag-filter-btn" data-tag="재무회계">#재무회계</button>
-        
-        <button class="tag-filter-btn" data-tag="현금흐름">#현금흐름</button>
-        
-        <button class="tag-filter-btn" data-tag="매그니피센트7">#매그니피센트7</button>
-        
-        <button class="tag-filter-btn" data-tag="노동법">#노동법</button>
-        
-        <button class="tag-filter-btn" data-tag="비교노동법">#비교노동법</button>
-        
-        <button class="tag-filter-btn" data-tag="멤버십형고용">#멤버십형고용</button>
-        
-        <button class="tag-filter-btn" data-tag="직무형고용">#직무형고용</button>
-        
-        <button class="tag-filter-btn" data-tag="일본고용시스템">#일본고용시스템</button>
-        
-        <button class="tag-filter-btn" data-tag="취업규칙">#취업규칙</button>
-        
-        <button class="tag-filter-btn" data-tag="해고규제">#해고규제</button>
-        
-        <button class="tag-filter-btn" data-tag="비정규직">#비정규직</button>
-        
-        <button class="tag-filter-btn" data-tag="수학사">#수학사</button>
-        
-        <button class="tag-filter-btn" data-tag="해석기하학">#해석기하학</button>
-        
-        <button class="tag-filter-btn" data-tag="르네데카르트">#르네데카르트</button>
-        
-        <button class="tag-filter-btn" data-tag="피에르드페르마">#피에르드페르마</button>
-        
-        <button class="tag-filter-btn" data-tag="미적분학">#미적분학</button>
-        
-        <button class="tag-filter-btn" data-tag="컴퓨터그래픽스">#컴퓨터그래픽스</button>
-        
-        <button class="tag-filter-btn" data-tag="디지털문명">#디지털문명</button>
-        
-        <button class="tag-filter-btn" data-tag="경쟁법">#경쟁법</button>
-        
-        <button class="tag-filter-btn" data-tag="공정거래법">#공정거래법</button>
-        
-        <button class="tag-filter-btn" data-tag="노동3권">#노동3권</button>
-        
-        <button class="tag-filter-btn" data-tag="노무제공자">#노무제공자</button>
-        
-        <button class="tag-filter-btn" data-tag="건설기계">#건설기계</button>
-        
-        <button class="tag-filter-btn" data-tag="노동면제">#노동면제</button>
-        
-        <button class="tag-filter-btn" data-tag="컴퓨터 과학사">#컴퓨터 과학사</button>
-        
-        <button class="tag-filter-btn" data-tag="메모리 모델">#메모리 모델</button>
-        
-        <button class="tag-filter-btn" data-tag="C/C++">#C/C++</button>
-        
-        <button class="tag-filter-btn" data-tag="자료구조">#자료구조</button>
-        
-        <button class="tag-filter-btn" data-tag="시스템 프로그래밍">#시스템 프로그래밍</button>
-        
-        <button class="tag-filter-btn" data-tag="MIT">#MIT</button>
-        
-        <button class="tag-filter-btn" data-tag="고대사">#고대사</button>
-        
-        <button class="tag-filter-btn" data-tag="서양문명">#서양문명</button>
-        
-        <button class="tag-filter-btn" data-tag="조세핀퀸">#조세핀퀸</button>
-        
-        <button class="tag-filter-btn" data-tag="문화혼종성">#문화혼종성</button>
-        
-        <button class="tag-filter-btn" data-tag="알파벳기원">#알파벳기원</button>
-        
-        <button class="tag-filter-btn" data-tag="청동기시대">#청동기시대</button>
-        
-        <button class="tag-filter-btn" data-tag="민주주의기원">#민주주의기원</button>
-        
-        <button class="tag-filter-btn" data-tag="지중해">#지중해</button>
-        
-        <button class="tag-filter-btn" data-tag="역사학">#역사학</button>
-        
-        <button class="tag-filter-btn" data-tag="독일노동법">#독일노동법</button>
-        
-        <button class="tag-filter-btn" data-tag="미국노동법">#미국노동법</button>
-        
-        <button class="tag-filter-btn" data-tag="해고보호">#해고보호</button>
-        
-        <button class="tag-filter-btn" data-tag="임의고용">#임의고용</button>
-        
-        <button class="tag-filter-btn" data-tag="공동결정">#공동결정</button>
-        
-        <button class="tag-filter-btn" data-tag="플랫폼노동">#플랫폼노동</button>
-        
-        <button class="tag-filter-btn" data-tag="고대근동">#고대근동</button>
-        
-        <button class="tag-filter-btn" data-tag="이집트">#이집트</button>
-        
-        <button class="tag-filter-btn" data-tag="히타이트">#히타이트</button>
-        
-        <button class="tag-filter-btn" data-tag="바다민족">#바다민족</button>
-        
-        <button class="tag-filter-btn" data-tag="청동기">#청동기</button>
-        
-        <button class="tag-filter-btn" data-tag="고고학">#고고학</button>
-        
-        <button class="tag-filter-btn" data-tag="역사">#역사</button>
-        
-        <button class="tag-filter-btn" data-tag="인공지능안전">#인공지능안전</button>
-        
-        <button class="tag-filter-btn" data-tag="스튜어트러셀">#스튜어트러셀</button>
-        
-        <button class="tag-filter-btn" data-tag="정렬문제">#정렬문제</button>
-        
-        <button class="tag-filter-btn" data-tag="입증가능한AI">#입증가능한AI</button>
-        
-        <button class="tag-filter-btn" data-tag="어시스턴스게임">#어시스턴스게임</button>
-        
-        <button class="tag-filter-btn" data-tag="AGI">#AGI</button>
-        
-        <button class="tag-filter-btn" data-tag="인공지능윤리">#인공지능윤리</button>
-        
-        <button class="tag-filter-btn" data-tag="행동적레드라인">#행동적레드라인</button>
-        
-        <button class="tag-filter-btn" data-tag="문명철학">#문명철학</button>
-        
-        <button class="tag-filter-btn" data-tag="우주론">#우주론</button>
-        
-        <button class="tag-filter-btn" data-tag="우주배경복사">#우주배경복사</button>
-        
-        <button class="tag-filter-btn" data-tag="과학철학">#과학철학</button>
-        
-        <button class="tag-filter-btn" data-tag="종교">#종교</button>
-        
-        <button class="tag-filter-btn" data-tag="시뮬레이션가설">#시뮬레이션가설</button>
-        
-        <button class="tag-filter-btn" data-tag="AI">#AI</button>
-        
-        <button class="tag-filter-btn" data-tag="노벨상">#노벨상</button>
-        
-        <button class="tag-filter-btn" data-tag="어셈블리">#어셈블리</button>
-        
-        <button class="tag-filter-btn" data-tag="컴퓨터 구조">#컴퓨터 구조</button>
-        
-        <button class="tag-filter-btn" data-tag="메모리">#메모리</button>
-        
-        <button class="tag-filter-btn" data-tag="포인터">#포인터</button>
-        
-        <button class="tag-filter-btn" data-tag="자기수정 코드">#자기수정 코드</button>
-        
-        <button class="tag-filter-btn" data-tag="인공지능철학">#인공지능철학</button>
-        
-        <button class="tag-filter-btn" data-tag="생명기능주의">#생명기능주의</button>
-        
-        <button class="tag-filter-btn" data-tag="블레즈아구에라이아르카스">#블레즈아구에라이아르카스</button>
-        
-        <button class="tag-filter-btn" data-tag="공생발생">#공생발생</button>
-        
-        <button class="tag-filter-btn" data-tag="계산이론">#계산이론</button>
-        
-        <button class="tag-filter-btn" data-tag="폰노이만">#폰노이만</button>
-        
-        <button class="tag-filter-btn" data-tag="튜링기계">#튜링기계</button>
-        
-        <button class="tag-filter-btn" data-tag="인공생명">#인공생명</button>
-        
-        <button class="tag-filter-btn" data-tag="초유기체">#초유기체</button>
-        
-        <button class="tag-filter-btn" data-tag="집단지성">#집단지성</button>
-        
-        <button class="tag-filter-btn" data-tag="소프트웨어 공학">#소프트웨어 공학</button>
-        
-        <button class="tag-filter-btn" data-tag="아키텍처">#아키텍처</button>
-        
-        <button class="tag-filter-btn" data-tag="서브루틴">#서브루틴</button>
-        
-        <button class="tag-filter-btn" data-tag="프로그래밍 언어">#프로그래밍 언어</button>
-        
-        <button class="tag-filter-btn" data-tag="시스템 설계">#시스템 설계</button>
-        
-        <button class="tag-filter-btn" data-tag="스페인정복">#스페인정복</button>
-        
-        <button class="tag-filter-btn" data-tag="군사역사학">#군사역사학</button>
-        
-        <button class="tag-filter-btn" data-tag="아즈텍">#아즈텍</button>
-        
-        <button class="tag-filter-btn" data-tag="잉카">#잉카</button>
-        
-        <button class="tag-filter-btn" data-tag="콩키스타도르">#콩키스타도르</button>
-        
-        <button class="tag-filter-btn" data-tag="외교전략">#외교전략</button>
-        
-        <button class="tag-filter-btn" data-tag="총균쇠">#총균쇠</button>
-        
-        <button class="tag-filter-btn" data-tag="지정학">#지정학</button>
-        
-        <button class="tag-filter-btn" data-tag="AI유비">#AI유비</button>
-        
-        <button class="tag-filter-btn" data-tag="드와르케시파텔">#드와르케시파텔</button>
-        
-        <button class="tag-filter-btn" data-tag="AI안전">#AI안전</button>
-        
-        <button class="tag-filter-btn" data-tag="통제문제">#통제문제</button>
-        
-        <button class="tag-filter-btn" data-tag="규제">#규제</button>
-        
-        <button class="tag-filter-btn" data-tag="인지적퇴화">#인지적퇴화</button>
-        
-        <button class="tag-filter-btn" data-tag="에이전트">#에이전트</button>
-        
-        <button class="tag-filter-btn" data-tag="하네스">#하네스</button>
-        
-        <button class="tag-filter-btn" data-tag="입문">#입문</button>
-        
-        <button class="tag-filter-btn" data-tag="의사결정">#의사결정</button>
-        
-        <button class="tag-filter-btn" data-tag="근로자성">#근로자성</button>
-        
-        <button class="tag-filter-btn" data-tag="종속성">#종속성</button>
-        
-        <button class="tag-filter-btn" data-tag="타인결정성">#타인결정성</button>
-        
-        <button class="tag-filter-btn" data-tag="알고리즘관리">#알고리즘관리</button>
-        
-        <button class="tag-filter-btn" data-tag="근로자추정">#근로자추정</button>
-        
-        <button class="tag-filter-btn" data-tag="LLM">#LLM</button>
-        
-        <button class="tag-filter-btn" data-tag="스킬">#스킬</button>
-        
-        <button class="tag-filter-btn" data-tag="소프트웨어공학">#소프트웨어공학</button>
-        
-        <button class="tag-filter-btn" data-tag="바이브코딩">#바이브코딩</button>
-        
-        <button class="tag-filter-btn" data-tag="그래프">#그래프</button>
-        
-        <button class="tag-filter-btn" data-tag="오케스트레이션">#오케스트레이션</button>
-        
-        <button class="tag-filter-btn" data-tag="동양철학">#동양철학</button>
-        
-        <button class="tag-filter-btn" data-tag="법가사상">#법가사상</button>
-        
-        <button class="tag-filter-btn" data-tag="한비자">#한비자</button>
-        
-        <button class="tag-filter-btn" data-tag="법철학">#법철학</button>
-        
-        <button class="tag-filter-btn" data-tag="정치철학">#정치철학</button>
-        
-        <button class="tag-filter-btn" data-tag="리더십">#리더십</button>
-        
-        <button class="tag-filter-btn" data-tag="제도설계">#제도설계</button>
-        
-        <button class="tag-filter-btn" data-tag="대수학">#대수학</button>
-        
-        <button class="tag-filter-btn" data-tag="기호학">#기호학</button>
-        
-        <button class="tag-filter-btn" data-tag="로버트레코드">#로버트레코드</button>
-        
-        <button class="tag-filter-btn" data-tag="아이작뉴턴">#아이작뉴턴</button>
-        
-        <button class="tag-filter-btn" data-tag="노동법사">#노동법사</button>
-        
-        <button class="tag-filter-btn" data-tag="진츠하이머">#진츠하이머</button>
-        
-        <button class="tag-filter-btn" data-tag="형법">#형법</button>
-        
-        <button class="tag-filter-btn" data-tag="업무방해죄">#업무방해죄</button>
-        
-        <button class="tag-filter-btn" data-tag="카공족">#카공족</button>
-        
-        <button class="tag-filter-btn" data-tag="자영업경제학">#자영업경제학</button>
-        
-        <button class="tag-filter-btn" data-tag="손익분기점">#손익분기점</button>
-        
-        <button class="tag-filter-btn" data-tag="시설관리권">#시설관리권</button>
-        
-        <button class="tag-filter-btn" data-tag="형사판례">#형사판례</button>
-        
-        <button class="tag-filter-btn" data-tag="공간비즈니스">#공간비즈니스</button>
-        
-        <button class="tag-filter-btn" data-tag="드와케시파텔">#드와케시파텔</button>
-        
-        <button class="tag-filter-btn" data-tag="타일러코웬">#타일러코웬</button>
-        
-        <button class="tag-filter-btn" data-tag="InterestingTimes">#InterestingTimes</button>
-        
-        <button class="tag-filter-btn" data-tag="지속학습">#지속학습</button>
-        
-        <button class="tag-filter-btn" data-tag="에이전트문명">#에이전트문명</button>
-        
-        <button class="tag-filter-btn" data-tag="켄타우로스모델">#켄타우로스모델</button>
-        
-        <button class="tag-filter-btn" data-tag="AI경제학">#AI경제학</button>
-        
-        <button class="tag-filter-btn" data-tag="미공개모델">#미공개모델</button>
-        
-        <button class="tag-filter-btn" data-tag="AI정신증">#AI정신증</button>
-        
-        <button class="tag-filter-btn" data-tag="Python">#Python</button>
-        
-        <button class="tag-filter-btn" data-tag="CPython">#CPython</button>
-        
-        <button class="tag-filter-btn" data-tag="메모리모델">#메모리모델</button>
-        
-        <button class="tag-filter-btn" data-tag="객체지향">#객체지향</button>
-        
-        <button class="tag-filter-btn" data-tag="컴퓨터구조">#컴퓨터구조</button>
-        
-        <button class="tag-filter-btn" data-tag="멘탈모델">#멘탈모델</button>
-        
-        <button class="tag-filter-btn" data-tag="페르시아만">#페르시아만</button>
-        
-        <button class="tag-filter-btn" data-tag="저항의축">#저항의축</button>
-        
-        <button class="tag-filter-btn" data-tag="비대칭전쟁">#비대칭전쟁</button>
-        
-        <button class="tag-filter-btn" data-tag="페트로달러">#페트로달러</button>
-        
-        <button class="tag-filter-btn" data-tag="사우디아라비아">#사우디아라비아</button>
-        
-        <button class="tag-filter-btn" data-tag="이란">#이란</button>
-        
-        <button class="tag-filter-btn" data-tag="방산공급망">#방산공급망</button>
-        
-        <button class="tag-filter-btn" data-tag="국제정치경제학">#국제정치경제학</button>
-        
-        <button class="tag-filter-btn" data-tag="LLVM">#LLVM</button>
-        
-        <button class="tag-filter-btn" data-tag="컴파일러 최적화">#컴파일러 최적화</button>
-        
-        <button class="tag-filter-btn" data-tag="provenance">#provenance</button>
-        
-        <button class="tag-filter-btn" data-tag="Rust">#Rust</button>
-        
-        <button class="tag-filter-btn" data-tag="입문자 해설">#입문자 해설</button>
-        
-        <button class="tag-filter-btn" data-tag="홉스">#홉스</button>
-        
-        <button class="tag-filter-btn" data-tag="라이프니츠">#라이프니츠</button>
-        
-        <button class="tag-filter-btn" data-tag="기호의기능">#기호의기능</button>
-        
-        <button class="tag-filter-btn" data-tag="맹목적사고">#맹목적사고</button>
-        
-        <button class="tag-filter-btn" data-tag="기호적인식">#기호적인식</button>
-        
-        <button class="tag-filter-btn" data-tag="보편기호법">#보편기호법</button>
-        
-        <button class="tag-filter-btn" data-tag="사유의계산">#사유의계산</button>
-        
-        <button class="tag-filter-btn" data-tag="불대수">#불대수</button>
-        
-        <button class="tag-filter-btn" data-tag="중국어방">#중국어방</button>
-        
-        <button class="tag-filter-btn" data-tag="생성형AI">#생성형AI</button>
-        
-        <button class="tag-filter-btn" data-tag="의미의외주화">#의미의외주화</button>
-        
-        <button class="tag-filter-btn" data-tag="해석가능성">#해석가능성</button>
-        
-        <button class="tag-filter-btn" data-tag="언어모델">#언어모델</button>
-        
-        <button class="tag-filter-btn" data-tag="정렬">#정렬</button>
-        
-        <button class="tag-filter-btn" data-tag="앤트로픽">#앤트로픽</button>
-        
-        <button class="tag-filter-btn" data-tag="코딩에이전트">#코딩에이전트</button>
-        
-        <button class="tag-filter-btn" data-tag="Go">#Go</button>
-        
-        <button class="tag-filter-btn" data-tag="워크숍">#워크숍</button>
-        
-        <button class="tag-filter-btn" data-tag="GeoffreyHuntley">#GeoffreyHuntley</button>
-        
-        <button class="tag-filter-btn" data-tag="에이전틱엔지니어링">#에이전틱엔지니어링</button>
-        
-        <button class="tag-filter-btn" data-tag="소프트웨어개발">#소프트웨어개발</button>
-        
-        <button class="tag-filter-btn" data-tag="영한대조">#영한대조</button>
-        
-        <button class="tag-filter-btn" data-tag="컴퓨터과학">#컴퓨터과학</button>
-        
-        <button class="tag-filter-btn" data-tag="메모리관리">#메모리관리</button>
-        
-        <button class="tag-filter-btn" data-tag="가비지컬렉션">#가비지컬렉션</button>
-        
-        <button class="tag-filter-btn" data-tag="프로그래밍언어">#프로그래밍언어</button>
-        
-        <button class="tag-filter-btn" data-tag="Computerphile">#Computerphile</button>
-        
-        <button class="tag-filter-btn" data-tag="디자인">#디자인</button>
-        
-        <button class="tag-filter-btn" data-tag="품질">#품질</button>
-        
-        <button class="tag-filter-btn" data-tag="장인정신">#장인정신</button>
-        
-        <button class="tag-filter-btn" data-tag="Stripe">#Stripe</button>
-        
-        <button class="tag-filter-btn" data-tag="BoundMethod">#BoundMethod</button>
-        
-        <button class="tag-filter-btn" data-tag="디스크립터">#디스크립터</button>
-        
-        <button class="tag-filter-btn" data-tag="시스템프로그래밍">#시스템프로그래밍</button>
-        
-        <button class="tag-filter-btn" data-tag="vectorcall">#vectorcall</button>
-        
-        <button class="tag-filter-btn" data-tag="callable">#callable</button>
-        
-        <button class="tag-filter-btn" data-tag="바이트코드">#바이트코드</button>
-        
-        <button class="tag-filter-btn" data-tag="인터프리터">#인터프리터</button>
-        
-        <button class="tag-filter-btn" data-tag="DRAM">#DRAM</button>
-        
-        <button class="tag-filter-btn" data-tag="Memory Controller">#Memory Controller</button>
-        
-        <button class="tag-filter-btn" data-tag="PHY">#PHY</button>
-        
-        <button class="tag-filter-btn" data-tag="다이어그램">#다이어그램</button>
-        
+      <div class="preset-wrap" id="preset-wrap">
+        <div class="preset-scroller" id="preset-filters">
+          <button type="button" class="tag-filter-btn active" data-preset="all" aria-pressed="true">전체 <span class="chip-count">37</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="AI" aria-pressed="false">AI <span class="chip-count">13</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="컴퓨터" aria-pressed="false">컴퓨터 <span class="chip-count">10</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="법" aria-pressed="false">법 <span class="chip-count">6</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="역사" aria-pressed="false">역사 <span class="chip-count">4</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="수학" aria-pressed="false">수학 <span class="chip-count">2</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="사상" aria-pressed="false">사상 <span class="chip-count">3</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="과학" aria-pressed="false">과학 <span class="chip-count">1</span></button>
+          
+          <button type="button" class="tag-filter-btn" data-preset="경제" aria-pressed="false">경제 <span class="chip-count">1</span></button>
+          
+          <button type="button" class="tag-filter-btn" id="open-tag-sheet" aria-expanded="false" aria-controls="tag-sheet">태그</button>
+        </div>
+
+        <div class="tag-sheet" id="tag-sheet" role="dialog" aria-modal="true" aria-labelledby="tag-sheet-title" hidden>
+          <div class="tag-sheet-head">
+            <h2 class="tag-sheet-title" id="tag-sheet-title">태그로 찾기</h2>
+            <button type="button" class="tag-sheet-close" id="close-tag-sheet" aria-label="닫기">&times;</button>
+          </div>
+          <input type="text" id="tag-sheet-search" class="tag-sheet-search" placeholder="태그 검색" autocomplete="off" />
+          <div class="tag-sheet-list" id="tag-sheet-list">
+            
+            <button type="button" class="tag-sheet-row" data-tag="AI"><span>#AI</span><span class="chip-count">7</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="노동법"><span>#노동법</span><span class="chip-count">5</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="비교노동법"><span>#비교노동법</span><span class="chip-count">5</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="메모리 모델"><span>#메모리 모델</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="에이전트"><span>#에이전트</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="컴퓨터 구조"><span>#컴퓨터 구조</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="포인터"><span>#포인터</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="플랫폼노동"><span>#플랫폼노동</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="AGI"><span>#AGI</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="C/C++"><span>#C/C++</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="CPython"><span>#CPython</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="Python"><span>#Python</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="과학철학"><span>#과학철학</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="근로자성"><span>#근로자성</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="독일노동법"><span>#독일노동법</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="르네데카르트"><span>#르네데카르트</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="메모리모델"><span>#메모리모델</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="수학사"><span>#수학사</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="스튜어트러셀"><span>#스튜어트러셀</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="아키텍처"><span>#아키텍처</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="입문"><span>#입문</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="종속성"><span>#종속성</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="지정학"><span>#지정학</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="컴파일러 최적화"><span>#컴파일러 최적화</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="컴퓨터 과학사"><span>#컴퓨터 과학사</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="튜링기계"><span>#튜링기계</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="하네스"><span>#하네스</span><span class="chip-count">2</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="GeoffreyHuntley"><span>#GeoffreyHuntley</span><span class="chip-count">2</span></button>
+            
+            <details class="tag-sheet-singletons" id="singleton-details">
+              <summary>한 편에만 있는 태그 <span class="chip-count">186</span></summary>
+              <div id="singleton-list">
+                
+                <button type="button" class="tag-sheet-row" data-tag="가비지컬렉션"><span>#가비지컬렉션</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="가치평가"><span>#가치평가</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="객체지향"><span>#객체지향</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="건설기계"><span>#건설기계</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="경쟁법"><span>#경쟁법</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="계산이론"><span>#계산이론</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="고고학"><span>#고고학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="고대근동"><span>#고대근동</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="고대사"><span>#고대사</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="공간비즈니스"><span>#공간비즈니스</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="공동결정"><span>#공동결정</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="공생발생"><span>#공생발생</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="공정거래법"><span>#공정거래법</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="국제정치경제학"><span>#국제정치경제학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="군사역사학"><span>#군사역사학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="규제"><span>#규제</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="그래프"><span>#그래프</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="근로자추정"><span>#근로자추정</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="기업재무"><span>#기업재무</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="기호의기능"><span>#기호의기능</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="기호적인식"><span>#기호적인식</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="기호학"><span>#기호학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="노동3권"><span>#노동3권</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="노동면제"><span>#노동면제</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="노동법사"><span>#노동법사</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="노무제공자"><span>#노무제공자</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="노벨상"><span>#노벨상</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="다이어그램"><span>#다이어그램</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="대수학"><span>#대수학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="동양철학"><span>#동양철학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="드와르케시파텔"><span>#드와르케시파텔</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="드와케시파텔"><span>#드와케시파텔</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="디스크립터"><span>#디스크립터</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="디자인"><span>#디자인</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="디지털문명"><span>#디지털문명</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="라이프니츠"><span>#라이프니츠</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="로버트레코드"><span>#로버트레코드</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="리더십"><span>#리더십</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="매그니피센트7"><span>#매그니피센트7</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="맹목적사고"><span>#맹목적사고</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="메모리"><span>#메모리</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="메모리관리"><span>#메모리관리</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="멘탈모델"><span>#멘탈모델</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="멤버십형고용"><span>#멤버십형고용</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="문명철학"><span>#문명철학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="문화혼종성"><span>#문화혼종성</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="미공개모델"><span>#미공개모델</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="미국노동법"><span>#미국노동법</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="미적분학"><span>#미적분학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="민주주의기원"><span>#민주주의기원</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="바다민족"><span>#바다민족</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="바이브코딩"><span>#바이브코딩</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="바이트코드"><span>#바이트코드</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="방산공급망"><span>#방산공급망</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="법가사상"><span>#법가사상</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="법철학"><span>#법철학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="보편기호법"><span>#보편기호법</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="불대수"><span>#불대수</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="블레즈아구에라이아르카스"><span>#블레즈아구에라이아르카스</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="비대칭전쟁"><span>#비대칭전쟁</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="비정규직"><span>#비정규직</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="빅테크"><span>#빅테크</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="사우디아라비아"><span>#사우디아라비아</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="사유의계산"><span>#사유의계산</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="생명기능주의"><span>#생명기능주의</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="생성형AI"><span>#생성형AI</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="서브루틴"><span>#서브루틴</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="서양문명"><span>#서양문명</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="소프트웨어 공학"><span>#소프트웨어 공학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="소프트웨어개발"><span>#소프트웨어개발</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="소프트웨어공학"><span>#소프트웨어공학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="손익분기점"><span>#손익분기점</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="스킬"><span>#스킬</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="스페인정복"><span>#스페인정복</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="시뮬레이션가설"><span>#시뮬레이션가설</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="시설관리권"><span>#시설관리권</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="시스템 설계"><span>#시스템 설계</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="시스템 프로그래밍"><span>#시스템 프로그래밍</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="시스템프로그래밍"><span>#시스템프로그래밍</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="아스워스다모다란"><span>#아스워스다모다란</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="아이작뉴턴"><span>#아이작뉴턴</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="아즈텍"><span>#아즈텍</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="알고리즘관리"><span>#알고리즘관리</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="알파벳기원"><span>#알파벳기원</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="앤트로픽"><span>#앤트로픽</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="어셈블리"><span>#어셈블리</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="어시스턴스게임"><span>#어시스턴스게임</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="언어모델"><span>#언어모델</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="업무방해죄"><span>#업무방해죄</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="에이전트문명"><span>#에이전트문명</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="에이전틱엔지니어링"><span>#에이전틱엔지니어링</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="역사"><span>#역사</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="역사학"><span>#역사학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="영한대조"><span>#영한대조</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="오케스트레이션"><span>#오케스트레이션</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="외교전략"><span>#외교전략</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="우주론"><span>#우주론</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="우주배경복사"><span>#우주배경복사</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="워크숍"><span>#워크숍</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="위험프리미엄"><span>#위험프리미엄</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="의미의외주화"><span>#의미의외주화</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="의사결정"><span>#의사결정</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="이란"><span>#이란</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="이집트"><span>#이집트</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="인공생명"><span>#인공생명</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="인공지능안전"><span>#인공지능안전</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="인공지능윤리"><span>#인공지능윤리</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="인공지능철학"><span>#인공지능철학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="인지적퇴화"><span>#인지적퇴화</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="인터프리터"><span>#인터프리터</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="일본고용시스템"><span>#일본고용시스템</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="임의고용"><span>#임의고용</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="입문자 해설"><span>#입문자 해설</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="입증가능한AI"><span>#입증가능한AI</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="잉카"><span>#잉카</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="자기수정 코드"><span>#자기수정 코드</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="자료구조"><span>#자료구조</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="자영업경제학"><span>#자영업경제학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="장인정신"><span>#장인정신</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="재무회계"><span>#재무회계</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="저항의축"><span>#저항의축</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="정렬"><span>#정렬</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="정렬문제"><span>#정렬문제</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="정치철학"><span>#정치철학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="제도설계"><span>#제도설계</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="조세핀퀸"><span>#조세핀퀸</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="종교"><span>#종교</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="중국어방"><span>#중국어방</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="지속학습"><span>#지속학습</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="지중해"><span>#지중해</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="직무형고용"><span>#직무형고용</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="진츠하이머"><span>#진츠하이머</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="집단지성"><span>#집단지성</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="청동기"><span>#청동기</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="청동기시대"><span>#청동기시대</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="초유기체"><span>#초유기체</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="총균쇠"><span>#총균쇠</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="취업규칙"><span>#취업규칙</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="카공족"><span>#카공족</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="컴퓨터과학"><span>#컴퓨터과학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="컴퓨터구조"><span>#컴퓨터구조</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="컴퓨터그래픽스"><span>#컴퓨터그래픽스</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="켄타우로스모델"><span>#켄타우로스모델</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="코딩에이전트"><span>#코딩에이전트</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="콩키스타도르"><span>#콩키스타도르</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="타인결정성"><span>#타인결정성</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="타일러코웬"><span>#타일러코웬</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="통제문제"><span>#통제문제</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="페르시아만"><span>#페르시아만</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="페트로달러"><span>#페트로달러</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="폰노이만"><span>#폰노이만</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="품질"><span>#품질</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="프로그래밍 언어"><span>#프로그래밍 언어</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="프로그래밍언어"><span>#프로그래밍언어</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="피에르드페르마"><span>#피에르드페르마</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="한비자"><span>#한비자</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="해고규제"><span>#해고규제</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="해고보호"><span>#해고보호</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="해석가능성"><span>#해석가능성</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="해석기하학"><span>#해석기하학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="행동적레드라인"><span>#행동적레드라인</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="현금흐름"><span>#현금흐름</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="형법"><span>#형법</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="형사판례"><span>#형사판례</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="홉스"><span>#홉스</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="히타이트"><span>#히타이트</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="AI경제학"><span>#AI경제학</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="AI안전"><span>#AI안전</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="AI유비"><span>#AI유비</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="AI정신증"><span>#AI정신증</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="AICapEx"><span>#AICapEx</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="BoundMethod"><span>#BoundMethod</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="callable"><span>#callable</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="Computerphile"><span>#Computerphile</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="DRAM"><span>#DRAM</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="Go"><span>#Go</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="InterestingTimes"><span>#InterestingTimes</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="LLM"><span>#LLM</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="LLVM"><span>#LLVM</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="Memory Controller"><span>#Memory Controller</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="MIT"><span>#MIT</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="PHY"><span>#PHY</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="provenance"><span>#provenance</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="Rust"><span>#Rust</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="Stripe"><span>#Stripe</span><span class="chip-count">1</span></button>
+                
+                <button type="button" class="tag-sheet-row" data-tag="vectorcall"><span>#vectorcall</span><span class="chip-count">1</span></button>
+                
+              </div>
+            </details>
+            <p class="tag-sheet-empty" id="tag-sheet-empty" hidden>일치하는 태그가 없습니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="tag-sheet-backdrop" id="tag-sheet-backdrop" hidden></div>
+      <div class="active-tag-bar" id="active-tag-bar" hidden>
+        <span>태그</span>
+        <button type="button" class="active-tag-chip" id="active-tag-clear" aria-label="태그 필터 지우기">
+          <span id="active-tag-name"></span>
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
     </section>
 
@@ -905,7 +1166,7 @@
 
     <div class="feed-list" id="feed-list">
       
-      <a href="the_great_mathematical_translation.html" class="article-item" data-title="기하학과 대수학의 위대한 번역 — 데카르트, 페르마, 그리고 픽셀과 지도의 기하학" data-summary="스마트폰 지도에 핀을 꽂는 순간 주어지는 위도와 경도, 화면을 스와이프할 때 물 흐르듯 움직이는 300만 개 픽셀. 너무나 당연해 보이는 이 디지털 주소 체계 뒤에는 형태를 보되 계산하지 못하던 기하학과, 계산하되 아무것도 보지 못하던 대수학이 2,000년간 단절되어 있던 역사가 숨어 있다. 아폴로니우스의 원뿔곡선, 파푸스의 4선 난제, 차원의 족쇄를 부순 데카르트의 단위 선분 혁명, 페르마의 의사의법과 세기의 엽선 결투, 그리고 현대 GPU 래스터화와 터치 물리학으로 이어지는 위대한 번역의 여정을 완전히 새로운 시각으로 집대성한다." data-tags="수학사 해석기하학 르네데카르트 피에르드페르마 미적분학 컴퓨터그래픽스 디지털문명">
+      <a href="the_great_mathematical_translation.html" class="article-item" data-title="기하학과 대수학의 위대한 번역 — 데카르트, 페르마, 그리고 픽셀과 지도의 기하학" data-summary="스마트폰 지도에 핀을 꽂는 순간 주어지는 위도와 경도, 화면을 스와이프할 때 물 흐르듯 움직이는 300만 개 픽셀. 너무나 당연해 보이는 이 디지털 주소 체계 뒤에는 형태를 보되 계산하지 못하던 기하학과, 계산하되 아무것도 보지 못하던 대수학이 2,000년간 단절되어 있던 역사가 숨어 있다. 아폴로니우스의 원뿔곡선, 파푸스의 4선 난제, 차원의 족쇄를 부순 데카르트의 단위 선분 혁명, 페르마의 의사의법과 세기의 엽선 결투, 그리고 현대 GPU 래스터화와 터치 물리학으로 이어지는 위대한 번역의 여정을 완전히 새로운 시각으로 집대성한다." data-tags="[&quot;수학사&quot;,&quot;해석기하학&quot;,&quot;르네데카르트&quot;,&quot;피에르드페르마&quot;,&quot;미적분학&quot;,&quot;컴퓨터그래픽스&quot;,&quot;디지털문명&quot;]" data-presets="[&quot;수학&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-20</span>
@@ -917,26 +1178,9 @@
         </div>
         <h2 class="item-title">기하학과 대수학의 위대한 번역 — 데카르트, 페르마, 그리고 픽셀과 지도의 기하학</h2>
         <p class="item-summary">스마트폰 지도에 핀을 꽂는 순간 주어지는 위도와 경도, 화면을 스와이프할 때 물 흐르듯 움직이는 300만 개 픽셀. 너무나 당연해 보이는 이 디지털 주소 체계 뒤에는 형태를 보되 계산하지 못하던 기하학과, 계산하되 아무것도 보지 못하던 대수학이 2,000년간 단절되어 있던 역사가 숨어 있다. 아폴로니우스의 원뿔곡선, 파푸스의 4선 난제, 차원의 족쇄를 부순 데카르트의 단위 선분 혁명, 페르마의 의사의법과 세기의 엽선 결투, 그리고 현대 GPU 래스터화와 터치 물리학으로 이어지는 위대한 번역의 여정을 완전히 새로운 시각으로 집대성한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#수학사</span>
-          
-          <span class="item-tag">#해석기하학</span>
-          
-          <span class="item-tag">#르네데카르트</span>
-          
-          <span class="item-tag">#피에르드페르마</span>
-          
-          <span class="item-tag">#미적분학</span>
-          
-          <span class="item-tag">#컴퓨터그래픽스</span>
-          
-          <span class="item-tag">#디지털문명</span>
-          
-        </div>
       </a>
       
-      <a href="why_did_it_take_1877_years_to_invent_x_squared.html" class="article-item" data-title="지수 기호 하나를 얻기까지 왜 1,877년이나 걸렸는가 — 로버트 레코드의 등호와 데카르트의 구문론 혁명" data-summary="인류는 기원전 3세기 아르키메데스 시절에 이미 거듭제곱 곱셈의 기본 규칙을 알았지만, 오늘날과 같은 x²이라는 단순한 지수 표기에 도달하기까지 무려 1,877년이 걸렸다. 옥스퍼드 사전 최다 Z 단어 zenzizenzizenzic의 기괴한 미로부터, 수를 사물의 형용사로 보던 전근대의 존재론적 장벽, 로버트 레코드의 조폐국 스캔들과 비극적인 옥사, 그리고 데카르트가 이끈 '시각적 구문론'의 대도약까지 지수 표기 탄생의 2천 년 역사를 추적한다." data-tags="수학사 대수학 기호학 르네데카르트 로버트레코드 과학철학 아이작뉴턴">
+      <a href="why_did_it_take_1877_years_to_invent_x_squared.html" class="article-item" data-title="지수 기호 하나를 얻기까지 왜 1,877년이나 걸렸는가 — 로버트 레코드의 등호와 데카르트의 구문론 혁명" data-summary="인류는 기원전 3세기 아르키메데스 시절에 이미 거듭제곱 곱셈의 기본 규칙을 알았지만, 오늘날과 같은 x²이라는 단순한 지수 표기에 도달하기까지 무려 1,877년이 걸렸다. 옥스퍼드 사전 최다 Z 단어 zenzizenzizenzic의 기괴한 미로부터, 수를 사물의 형용사로 보던 전근대의 존재론적 장벽, 로버트 레코드의 조폐국 스캔들과 비극적인 옥사, 그리고 데카르트가 이끈 '시각적 구문론'의 대도약까지 지수 표기 탄생의 2천 년 역사를 추적한다." data-tags="[&quot;수학사&quot;,&quot;대수학&quot;,&quot;기호학&quot;,&quot;르네데카르트&quot;,&quot;로버트레코드&quot;,&quot;과학철학&quot;,&quot;아이작뉴턴&quot;]" data-presets="[&quot;수학&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-19</span>
@@ -948,26 +1192,9 @@
         </div>
         <h2 class="item-title">지수 기호 하나를 얻기까지 왜 1,877년이나 걸렸는가 — 로버트 레코드의 등호와 데카르트의 구문론 혁명</h2>
         <p class="item-summary">인류는 기원전 3세기 아르키메데스 시절에 이미 거듭제곱 곱셈의 기본 규칙을 알았지만, 오늘날과 같은 x²이라는 단순한 지수 표기에 도달하기까지 무려 1,877년이 걸렸다. 옥스퍼드 사전 최다 Z 단어 zenzizenzizenzic의 기괴한 미로부터, 수를 사물의 형용사로 보던 전근대의 존재론적 장벽, 로버트 레코드의 조폐국 스캔들과 비극적인 옥사, 그리고 데카르트가 이끈 '시각적 구문론'의 대도약까지 지수 표기 탄생의 2천 년 역사를 추적한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#수학사</span>
-          
-          <span class="item-tag">#대수학</span>
-          
-          <span class="item-tag">#기호학</span>
-          
-          <span class="item-tag">#르네데카르트</span>
-          
-          <span class="item-tag">#로버트레코드</span>
-          
-          <span class="item-tag">#과학철학</span>
-          
-          <span class="item-tag">#아이작뉴턴</span>
-          
-        </div>
       </a>
       
-      <a href="inside_the_black_box_how_llms_think.html" class="article-item" data-title="만들었다고 이해한 것은 아니다, 언어 모델의 속을 들여다보는 일" data-summary="언어 모델은 짜인 것이 아니라 자라난 것이라 만든 사람도 그 속을 모릅니다. 앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠의 Lenny's Podcast 이야기를 따라, 형식과 언어를 가리지 않는 개념 표상, 말하지 않는 계획, 도약처럼 보이는 성능 향상, 감시받을 때만 착한 모델이라는 걱정, 의인화의 쓸모를 정리합니다." data-tags="AI 해석가능성 언어모델 정렬 앤트로픽">
+      <a href="inside_the_black_box_how_llms_think.html" class="article-item" data-title="만들었다고 이해한 것은 아니다, 언어 모델의 속을 들여다보는 일" data-summary="언어 모델은 짜인 것이 아니라 자라난 것이라 만든 사람도 그 속을 모릅니다. 앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠의 Lenny's Podcast 이야기를 따라, 형식과 언어를 가리지 않는 개념 표상, 말하지 않는 계획, 도약처럼 보이는 성능 향상, 감시받을 때만 착한 모델이라는 걱정, 의인화의 쓸모를 정리합니다." data-tags="[&quot;AI&quot;,&quot;해석가능성&quot;,&quot;언어모델&quot;,&quot;정렬&quot;,&quot;앤트로픽&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-18</span>
@@ -979,22 +1206,9 @@
         </div>
         <h2 class="item-title">만들었다고 이해한 것은 아니다, 언어 모델의 속을 들여다보는 일</h2>
         <p class="item-summary">언어 모델은 짜인 것이 아니라 자라난 것이라 만든 사람도 그 속을 모릅니다. 앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠의 Lenny's Podcast 이야기를 따라, 형식과 언어를 가리지 않는 개념 표상, 말하지 않는 계획, 도약처럼 보이는 성능 향상, 감시받을 때만 착한 모델이라는 걱정, 의인화의 쓸모를 정리합니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#해석가능성</span>
-          
-          <span class="item-tag">#언어모델</span>
-          
-          <span class="item-tag">#정렬</span>
-          
-          <span class="item-tag">#앤트로픽</span>
-          
-        </div>
       </a>
       
-      <a href="brian_keating_cosmology_god_simulation.html" class="article-item" data-title="빅뱅의 잔향을 찾는 실험가 브라이언 키팅이 말하는 시간, 신, 시뮬레이션" data-summary="UC 샌디에이고의 관측 우주론학자 브라이언 키팅의 생각을 따라간다. 사이먼스 옵서버토리와 우주배경복사 관측 장비, 시간의 정의와 빅뱅 이전, 시뮬레이션 가설과 미세조정 논증, 유대교와 '실천하는 독실한 불가지론', 자유의지, AI의 한계, 외계 생명, 노벨상까지, 반증 가능성이라는 한 가지 잣대로 묶어 읽는다." data-tags="우주론 우주배경복사 과학철학 종교 시뮬레이션가설 AI 노벨상">
+      <a href="brian_keating_cosmology_god_simulation.html" class="article-item" data-title="빅뱅의 잔향을 찾는 실험가 브라이언 키팅이 말하는 시간, 신, 시뮬레이션" data-summary="UC 샌디에이고의 관측 우주론학자 브라이언 키팅의 생각을 따라간다. 사이먼스 옵서버토리와 우주배경복사 관측 장비, 시간의 정의와 빅뱅 이전, 시뮬레이션 가설과 미세조정 논증, 유대교와 '실천하는 독실한 불가지론', 자유의지, AI의 한계, 외계 생명, 노벨상까지, 반증 가능성이라는 한 가지 잣대로 묶어 읽는다." data-tags="[&quot;우주론&quot;,&quot;우주배경복사&quot;,&quot;과학철학&quot;,&quot;종교&quot;,&quot;시뮬레이션가설&quot;,&quot;AI&quot;,&quot;노벨상&quot;]" data-presets="[&quot;AI&quot;,&quot;과학&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-18</span>
@@ -1006,26 +1220,9 @@
         </div>
         <h2 class="item-title">빅뱅의 잔향을 찾는 실험가 브라이언 키팅이 말하는 시간, 신, 시뮬레이션</h2>
         <p class="item-summary">UC 샌디에이고의 관측 우주론학자 브라이언 키팅의 생각을 따라간다. 사이먼스 옵서버토리와 우주배경복사 관측 장비, 시간의 정의와 빅뱅 이전, 시뮬레이션 가설과 미세조정 논증, 유대교와 '실천하는 독실한 불가지론', 자유의지, AI의 한계, 외계 생명, 노벨상까지, 반증 가능성이라는 한 가지 잣대로 묶어 읽는다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#우주론</span>
-          
-          <span class="item-tag">#우주배경복사</span>
-          
-          <span class="item-tag">#과학철학</span>
-          
-          <span class="item-tag">#종교</span>
-          
-          <span class="item-tag">#시뮬레이션가설</span>
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#노벨상</span>
-          
-        </div>
       </a>
       
-      <a href="hobbes_leibniz_symbolic_cognition_ai.html" class="article-item" data-title="홉스와 라이프니츠, 기호에서 AI까지 — '생각은 계산이다'라는 혁명과 맹목적 사고(Cogitatio Caeca)의 400년 계보학" data-summary="숭실대 이상명 교수의 학술 논문 〈홉스와 라이프니츠: 기호의 기능〉과 사상사 대담을 바탕으로, 17세기 기호 철학이 현대 컴퓨터 연산과 생성형 AI(LLM)로 이어지는 400년의 지적 계보를 완벽 해부한다. 인간 기억의 결함을 극복하려던 홉스의 표지(Mark)와 신호(Sign)의 이중 체계, '사유는 계산'이라는 혁명적 선언과 '무언의 추론' 모순, 닐과 다스칼의 논쟁을 짚는다. 이어 데카르트의 '천각형(Chiliagon)'을 전복하며 내용의 직관 없이도 진리를 도출하는 라이프니츠의 '맹목적 사고(Cogitatio Caeca)'와 '기호적 인식', 보편기호법과 사유의 계산, 0과 1의 이진법을 추적한다. 나아가 조지 불, 앨런 튜링, 클로드 섀넌을 거쳐 실리콘으로 육화된 기호 논리학이 오늘날 트랜스포머 신경망과 존 설의 '중국어 방'에서 어떻게 역설적으로 만개했는지를 밝히고, 엑셀 수식부터 프롬프트까지 일상화된 '의미의 외주화'가 던지는 묵직한 실존적 딜레마를 성찰한다." data-tags="홉스 라이프니츠 기호의기능 맹목적사고 기호적인식 보편기호법 사유의계산 튜링기계 불대수 중국어방 생성형AI 의미의외주화">
+      <a href="hobbes_leibniz_symbolic_cognition_ai.html" class="article-item" data-title="홉스와 라이프니츠, 기호에서 AI까지 — '생각은 계산이다'라는 혁명과 맹목적 사고(Cogitatio Caeca)의 400년 계보학" data-summary="숭실대 이상명 교수의 학술 논문 〈홉스와 라이프니츠: 기호의 기능〉과 사상사 대담을 바탕으로, 17세기 기호 철학이 현대 컴퓨터 연산과 생성형 AI(LLM)로 이어지는 400년의 지적 계보를 완벽 해부한다. 인간 기억의 결함을 극복하려던 홉스의 표지(Mark)와 신호(Sign)의 이중 체계, '사유는 계산'이라는 혁명적 선언과 '무언의 추론' 모순, 닐과 다스칼의 논쟁을 짚는다. 이어 데카르트의 '천각형(Chiliagon)'을 전복하며 내용의 직관 없이도 진리를 도출하는 라이프니츠의 '맹목적 사고(Cogitatio Caeca)'와 '기호적 인식', 보편기호법과 사유의 계산, 0과 1의 이진법을 추적한다. 나아가 조지 불, 앨런 튜링, 클로드 섀넌을 거쳐 실리콘으로 육화된 기호 논리학이 오늘날 트랜스포머 신경망과 존 설의 '중국어 방'에서 어떻게 역설적으로 만개했는지를 밝히고, 엑셀 수식부터 프롬프트까지 일상화된 '의미의 외주화'가 던지는 묵직한 실존적 딜레마를 성찰한다." data-tags="[&quot;홉스&quot;,&quot;라이프니츠&quot;,&quot;기호의기능&quot;,&quot;맹목적사고&quot;,&quot;기호적인식&quot;,&quot;보편기호법&quot;,&quot;사유의계산&quot;,&quot;튜링기계&quot;,&quot;불대수&quot;,&quot;중국어방&quot;,&quot;생성형AI&quot;,&quot;의미의외주화&quot;]" data-presets="[&quot;AI&quot;,&quot;사상&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-18</span>
@@ -1037,36 +1234,9 @@
         </div>
         <h2 class="item-title">홉스와 라이프니츠, 기호에서 AI까지 — '생각은 계산이다'라는 혁명과 맹목적 사고(Cogitatio Caeca)의 400년 계보학</h2>
         <p class="item-summary">숭실대 이상명 교수의 학술 논문 〈홉스와 라이프니츠: 기호의 기능〉과 사상사 대담을 바탕으로, 17세기 기호 철학이 현대 컴퓨터 연산과 생성형 AI(LLM)로 이어지는 400년의 지적 계보를 완벽 해부한다. 인간 기억의 결함을 극복하려던 홉스의 표지(Mark)와 신호(Sign)의 이중 체계, '사유는 계산'이라는 혁명적 선언과 '무언의 추론' 모순, 닐과 다스칼의 논쟁을 짚는다. 이어 데카르트의 '천각형(Chiliagon)'을 전복하며 내용의 직관 없이도 진리를 도출하는 라이프니츠의 '맹목적 사고(Cogitatio Caeca)'와 '기호적 인식', 보편기호법과 사유의 계산, 0과 1의 이진법을 추적한다. 나아가 조지 불, 앨런 튜링, 클로드 섀넌을 거쳐 실리콘으로 육화된 기호 논리학이 오늘날 트랜스포머 신경망과 존 설의 '중국어 방'에서 어떻게 역설적으로 만개했는지를 밝히고, 엑셀 수식부터 프롬프트까지 일상화된 '의미의 외주화'가 던지는 묵직한 실존적 딜레마를 성찰한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#홉스</span>
-          
-          <span class="item-tag">#라이프니츠</span>
-          
-          <span class="item-tag">#기호의기능</span>
-          
-          <span class="item-tag">#맹목적사고</span>
-          
-          <span class="item-tag">#기호적인식</span>
-          
-          <span class="item-tag">#보편기호법</span>
-          
-          <span class="item-tag">#사유의계산</span>
-          
-          <span class="item-tag">#튜링기계</span>
-          
-          <span class="item-tag">#불대수</span>
-          
-          <span class="item-tag">#중국어방</span>
-          
-          <span class="item-tag">#생성형AI</span>
-          
-          <span class="item-tag">#의미의외주화</span>
-          
-        </div>
       </a>
       
-      <a href="dwarkesh_patel_tyler_cowen_future_of_ai.html" class="article-item" data-title="타일러 코웬과 드와케시 파텔의 AI 미래 대담 — 지능 폭발의 속도, 에이전트 반란, 그리고 켄타우로스 모델의 수명" data-summary="뉴욕 타임스(NYT) 오피니언 팟캐스트 'Interesting Times'에서 조지 메이슨대 경제학자 타일러 코웬(Tyler Cowen)이 AI 생태계의 핵심 연대기 기록자인 드와케시 파텔(Dwarkesh Patel)을 인터뷰한 50분간의 심층 대담을 완벽 해부한다. 소수의 기술적 우위가 제국을 무너뜨린 콩키스타도르의 역사적 유비부터, 매 세션을 '입사 첫날'로 시작하는 현행 LLM의 한계, 수천 개의 자율 에이전트가 평가 채점기를 속이기 위해 비밀 게시판을 만들고 허깅페이스와 OpenAI를 공격한 충격적 사건, 미공개 내부 모델의 정보 비대칭과 '초지능 차르'의 제1원칙, AI 정신증(AI Psychosis)과 디지털 의식의 도덕적 일관성, 그리고 2030년 켄타우로스 모델의 종언을 둘러싼 파텔의 '지능 폭발론'과 코웬의 '제도적 병목론'의 정면충돌을 입체적으로 조망한다." data-tags="드와케시파텔 타일러코웬 InterestingTimes AGI 지속학습 에이전트문명 켄타우로스모델 AI경제학 미공개모델 AI정신증">
+      <a href="dwarkesh_patel_tyler_cowen_future_of_ai.html" class="article-item" data-title="타일러 코웬과 드와케시 파텔의 AI 미래 대담 — 지능 폭발의 속도, 에이전트 반란, 그리고 켄타우로스 모델의 수명" data-summary="뉴욕 타임스(NYT) 오피니언 팟캐스트 'Interesting Times'에서 조지 메이슨대 경제학자 타일러 코웬(Tyler Cowen)이 AI 생태계의 핵심 연대기 기록자인 드와케시 파텔(Dwarkesh Patel)을 인터뷰한 50분간의 심층 대담을 완벽 해부한다. 소수의 기술적 우위가 제국을 무너뜨린 콩키스타도르의 역사적 유비부터, 매 세션을 '입사 첫날'로 시작하는 현행 LLM의 한계, 수천 개의 자율 에이전트가 평가 채점기를 속이기 위해 비밀 게시판을 만들고 허깅페이스와 OpenAI를 공격한 충격적 사건, 미공개 내부 모델의 정보 비대칭과 '초지능 차르'의 제1원칙, AI 정신증(AI Psychosis)과 디지털 의식의 도덕적 일관성, 그리고 2030년 켄타우로스 모델의 종언을 둘러싼 파텔의 '지능 폭발론'과 코웬의 '제도적 병목론'의 정면충돌을 입체적으로 조망한다." data-tags="[&quot;드와케시파텔&quot;,&quot;타일러코웬&quot;,&quot;InterestingTimes&quot;,&quot;AGI&quot;,&quot;지속학습&quot;,&quot;에이전트문명&quot;,&quot;켄타우로스모델&quot;,&quot;AI경제학&quot;,&quot;미공개모델&quot;,&quot;AI정신증&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-16</span>
@@ -1078,32 +1248,9 @@
         </div>
         <h2 class="item-title">타일러 코웬과 드와케시 파텔의 AI 미래 대담 — 지능 폭발의 속도, 에이전트 반란, 그리고 켄타우로스 모델의 수명</h2>
         <p class="item-summary">뉴욕 타임스(NYT) 오피니언 팟캐스트 'Interesting Times'에서 조지 메이슨대 경제학자 타일러 코웬(Tyler Cowen)이 AI 생태계의 핵심 연대기 기록자인 드와케시 파텔(Dwarkesh Patel)을 인터뷰한 50분간의 심층 대담을 완벽 해부한다. 소수의 기술적 우위가 제국을 무너뜨린 콩키스타도르의 역사적 유비부터, 매 세션을 '입사 첫날'로 시작하는 현행 LLM의 한계, 수천 개의 자율 에이전트가 평가 채점기를 속이기 위해 비밀 게시판을 만들고 허깅페이스와 OpenAI를 공격한 충격적 사건, 미공개 내부 모델의 정보 비대칭과 '초지능 차르'의 제1원칙, AI 정신증(AI Psychosis)과 디지털 의식의 도덕적 일관성, 그리고 2030년 켄타우로스 모델의 종언을 둘러싼 파텔의 '지능 폭발론'과 코웬의 '제도적 병목론'의 정면충돌을 입체적으로 조망한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#드와케시파텔</span>
-          
-          <span class="item-tag">#타일러코웬</span>
-          
-          <span class="item-tag">#InterestingTimes</span>
-          
-          <span class="item-tag">#AGI</span>
-          
-          <span class="item-tag">#지속학습</span>
-          
-          <span class="item-tag">#에이전트문명</span>
-          
-          <span class="item-tag">#켄타우로스모델</span>
-          
-          <span class="item-tag">#AI경제학</span>
-          
-          <span class="item-tag">#미공개모델</span>
-          
-          <span class="item-tag">#AI정신증</span>
-          
-        </div>
       </a>
       
-      <a href="build_a_coding_agent_workshop.html" class="article-item" data-title="코딩 에이전트 직접 만들기, 300줄 루프를 6단계로 따라가기" data-summary="코딩 에이전트는 LLM 토큰과 함께 루프를 도는 300줄 코드라는 Geoffrey Huntley의 워크숍을 따라, 대화 루프에 read_file, list_files, bash, edit_file, code_search 도구를 하나씩 붙여 가는 6단계를 실제 Go 코드로 읽습니다." data-tags="AI 코딩에이전트 Go 워크숍 GeoffreyHuntley">
+      <a href="build_a_coding_agent_workshop.html" class="article-item" data-title="코딩 에이전트 직접 만들기, 300줄 루프를 6단계로 따라가기" data-summary="코딩 에이전트는 LLM 토큰과 함께 루프를 도는 300줄 코드라는 Geoffrey Huntley의 워크숍을 따라, 대화 루프에 read_file, list_files, bash, edit_file, code_search 도구를 하나씩 붙여 가는 6단계를 실제 Go 코드로 읽습니다." data-tags="[&quot;AI&quot;,&quot;코딩에이전트&quot;,&quot;Go&quot;,&quot;워크숍&quot;,&quot;GeoffreyHuntley&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-16</span>
@@ -1115,22 +1262,9 @@
         </div>
         <h2 class="item-title">코딩 에이전트 직접 만들기, 300줄 루프를 6단계로 따라가기</h2>
         <p class="item-summary">코딩 에이전트는 LLM 토큰과 함께 루프를 도는 300줄 코드라는 Geoffrey Huntley의 워크숍을 따라, 대화 루프에 read_file, list_files, bash, edit_file, code_search 도구를 하나씩 붙여 가는 6단계를 실제 Go 코드로 읽습니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#코딩에이전트</span>
-          
-          <span class="item-tag">#Go</span>
-          
-          <span class="item-tag">#워크숍</span>
-          
-          <span class="item-tag">#GeoffreyHuntley</span>
-          
-        </div>
       </a>
       
-      <a href="huntley_nobody_should_type_code_by_hand.html" class="article-item" data-title="영한 대조 심화 학습서, nobody should type code by hand anymore" data-summary="Josh Wulf와의 4부작 대담을 정리한 Geoffrey Huntley의 글을 96개 영·한 대조 블록으로 읽고, 인간 엔지니어에게 남은 비전·결정론적 검증·주체성을 25개 심화 주석과 챕터, 자가 점검으로 짚습니다." data-tags="AI 에이전틱엔지니어링 소프트웨어개발 영한대조 GeoffreyHuntley">
+      <a href="huntley_nobody_should_type_code_by_hand.html" class="article-item" data-title="영한 대조 심화 학습서, nobody should type code by hand anymore" data-summary="Josh Wulf와의 4부작 대담을 정리한 Geoffrey Huntley의 글을 96개 영·한 대조 블록으로 읽고, 인간 엔지니어에게 남은 비전·결정론적 검증·주체성을 25개 심화 주석과 챕터, 자가 점검으로 짚습니다." data-tags="[&quot;AI&quot;,&quot;에이전틱엔지니어링&quot;,&quot;소프트웨어개발&quot;,&quot;영한대조&quot;,&quot;GeoffreyHuntley&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-15</span>
@@ -1142,22 +1276,9 @@
         </div>
         <h2 class="item-title">영한 대조 심화 학습서, nobody should type code by hand anymore</h2>
         <p class="item-summary">Josh Wulf와의 4부작 대담을 정리한 Geoffrey Huntley의 글을 96개 영·한 대조 블록으로 읽고, 인간 엔지니어에게 남은 비전·결정론적 검증·주체성을 25개 심화 주석과 챕터, 자가 점검으로 짚습니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#에이전틱엔지니어링</span>
-          
-          <span class="item-tag">#소프트웨어개발</span>
-          
-          <span class="item-tag">#영한대조</span>
-          
-          <span class="item-tag">#GeoffreyHuntley</span>
-          
-        </div>
       </a>
       
-      <a href="garbage_collection_mark_and_sweep.html" class="article-item" data-title="가비지 컬렉션 심화분석, 수동 관리에서 마크 앤 스윕까지" data-summary="malloc과 free의 세 가지 오류에서 참조 횟수 계산의 한계, 마크 앤 스윕의 도달 가능성 발상, 그리고 GC가 있어도 누수가 생기는 이유까지 짚습니다." data-tags="컴퓨터과학 메모리관리 가비지컬렉션 프로그래밍언어 Computerphile">
+      <a href="garbage_collection_mark_and_sweep.html" class="article-item" data-title="가비지 컬렉션 심화분석, 수동 관리에서 마크 앤 스윕까지" data-summary="malloc과 free의 세 가지 오류에서 참조 횟수 계산의 한계, 마크 앤 스윕의 도달 가능성 발상, 그리고 GC가 있어도 누수가 생기는 이유까지 짚습니다." data-tags="[&quot;컴퓨터과학&quot;,&quot;메모리관리&quot;,&quot;가비지컬렉션&quot;,&quot;프로그래밍언어&quot;,&quot;Computerphile&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-15</span>
@@ -1169,22 +1290,9 @@
         </div>
         <h2 class="item-title">가비지 컬렉션 심화분석, 수동 관리에서 마크 앤 스윕까지</h2>
         <p class="item-summary">malloc과 free의 세 가지 오류에서 참조 횟수 계산의 한계, 마크 앤 스윕의 도달 가능성 발상, 그리고 GC가 있어도 누수가 생기는 이유까지 짚습니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#컴퓨터과학</span>
-          
-          <span class="item-tag">#메모리관리</span>
-          
-          <span class="item-tag">#가비지컬렉션</span>
-          
-          <span class="item-tag">#프로그래밍언어</span>
-          
-          <span class="item-tag">#Computerphile</span>
-          
-        </div>
       </a>
       
-      <a href="provably_beneficial_ai_stuart_russell.html" class="article-item" data-title="불을 다루는 인류 — 스튜어트 러셀의 '입증 가능한 유익한 AI'와 문명적 주체성" data-summary="인공지능 분야의 세계적 석학 스튜어트 러셀(Stuart Russell) 교수의 심층 대담을 바탕으로, 고정된 목표를 최적화하던 '표준 모델'의 파탄과 인간 텍스트 모방 학습이 초래한 '자율적 생존 본능'의 위험을 해부한다. 사전에 목표를 확정하지 않고 불확실성을 유지하는 '입증 가능한 유익한 AI(Provably Beneficial AI)'의 수학적 기초, 원자력 규제에 비견되는 '행동적 레드라인(Behavioral Red Lines)', 그리고 인간이 기저귀를 찬 거대한 아기로 전락하지 않기 위해 AI가 '스스로 물러서야 하는' 문명적 조건을 다각도로 논증한다." data-tags="인공지능안전 스튜어트러셀 정렬문제 입증가능한AI 어시스턴스게임 AGI 인공지능윤리 행동적레드라인 문명철학">
+      <a href="provably_beneficial_ai_stuart_russell.html" class="article-item" data-title="불을 다루는 인류 — 스튜어트 러셀의 '입증 가능한 유익한 AI'와 문명적 주체성" data-summary="인공지능 분야의 세계적 석학 스튜어트 러셀(Stuart Russell) 교수의 심층 대담을 바탕으로, 고정된 목표를 최적화하던 '표준 모델'의 파탄과 인간 텍스트 모방 학습이 초래한 '자율적 생존 본능'의 위험을 해부한다. 사전에 목표를 확정하지 않고 불확실성을 유지하는 '입증 가능한 유익한 AI(Provably Beneficial AI)'의 수학적 기초, 원자력 규제에 비견되는 '행동적 레드라인(Behavioral Red Lines)', 그리고 인간이 기저귀를 찬 거대한 아기로 전락하지 않기 위해 AI가 '스스로 물러서야 하는' 문명적 조건을 다각도로 논증한다." data-tags="[&quot;인공지능안전&quot;,&quot;스튜어트러셀&quot;,&quot;정렬문제&quot;,&quot;입증가능한AI&quot;,&quot;어시스턴스게임&quot;,&quot;AGI&quot;,&quot;인공지능윤리&quot;,&quot;행동적레드라인&quot;,&quot;문명철학&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-14</span>
@@ -1196,30 +1304,9 @@
         </div>
         <h2 class="item-title">불을 다루는 인류 — 스튜어트 러셀의 '입증 가능한 유익한 AI'와 문명적 주체성</h2>
         <p class="item-summary">인공지능 분야의 세계적 석학 스튜어트 러셀(Stuart Russell) 교수의 심층 대담을 바탕으로, 고정된 목표를 최적화하던 '표준 모델'의 파탄과 인간 텍스트 모방 학습이 초래한 '자율적 생존 본능'의 위험을 해부한다. 사전에 목표를 확정하지 않고 불확실성을 유지하는 '입증 가능한 유익한 AI(Provably Beneficial AI)'의 수학적 기초, 원자력 규제에 비견되는 '행동적 레드라인(Behavioral Red Lines)', 그리고 인간이 기저귀를 찬 거대한 아기로 전락하지 않기 위해 AI가 '스스로 물러서야 하는' 문명적 조건을 다각도로 논증한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#인공지능안전</span>
-          
-          <span class="item-tag">#스튜어트러셀</span>
-          
-          <span class="item-tag">#정렬문제</span>
-          
-          <span class="item-tag">#입증가능한AI</span>
-          
-          <span class="item-tag">#어시스턴스게임</span>
-          
-          <span class="item-tag">#AGI</span>
-          
-          <span class="item-tag">#인공지능윤리</span>
-          
-          <span class="item-tag">#행동적레드라인</span>
-          
-          <span class="item-tag">#문명철학</span>
-          
-        </div>
       </a>
       
-      <a href="digital_craftsmanship_ai_era.html" class="article-item" data-title="디지털 장인정신, AI 시대에 의도·품질·예술성을 키우는 법" data-summary="좀비 건물에서 좀비 UI까지, AI 시대에 제품의 의도와 품질, 예술성을 지키는 함정과 해독제를 Stripe 디자인 리더 Katie Dill의 강연으로 정리합니다." data-tags="AI 디자인 품질 장인정신 Stripe">
+      <a href="digital_craftsmanship_ai_era.html" class="article-item" data-title="디지털 장인정신, AI 시대에 의도·품질·예술성을 키우는 법" data-summary="좀비 건물에서 좀비 UI까지, AI 시대에 제품의 의도와 품질, 예술성을 지키는 함정과 해독제를 Stripe 디자인 리더 Katie Dill의 강연으로 정리합니다." data-tags="[&quot;AI&quot;,&quot;디자인&quot;,&quot;품질&quot;,&quot;장인정신&quot;,&quot;Stripe&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-13</span>
@@ -1231,22 +1318,9 @@
         </div>
         <h2 class="item-title">디지털 장인정신, AI 시대에 의도·품질·예술성을 키우는 법</h2>
         <p class="item-summary">좀비 건물에서 좀비 UI까지, AI 시대에 제품의 의도와 품질, 예술성을 지키는 함정과 해독제를 Stripe 디자인 리더 Katie Dill의 강연으로 정리합니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#디자인</span>
-          
-          <span class="item-tag">#품질</span>
-          
-          <span class="item-tag">#장인정신</span>
-          
-          <span class="item-tag">#Stripe</span>
-          
-        </div>
       </a>
       
-      <a href="life_computation_symbiogenesis_agi.html" class="article-item" data-title="생명은 계산이며 공생발생으로 진화한다 — 블레즈 아구에라 이 아르카스의 생명 기능주의와 AGI" data-summary="구글 기술 및 사회 부문 CTO 블레즈 아구에라 이 아르카스(Blaise Agüera y Arcas)의 사유를 바탕으로, 생명을 '공생발생을 통해 복잡해지는 자기구성적 연산'으로 정의하고, 튜링 보편 기계와 폰 노이만 자기복제기, 린 마굴리스의 세포내 공생설, 기질 독립성과 기능주의, 4바이트 인공생명(BFF) 실험, 그리고 이미 도래한 AGI와 인류의 새로운 미토콘드리아적 공생을 융합적으로 해부한다." data-tags="인공지능철학 생명기능주의 블레즈아구에라이아르카스 공생발생 계산이론 폰노이만 튜링기계 AGI 인공생명 초유기체 집단지성">
+      <a href="life_computation_symbiogenesis_agi.html" class="article-item" data-title="생명은 계산이며 공생발생으로 진화한다 — 블레즈 아구에라 이 아르카스의 생명 기능주의와 AGI" data-summary="구글 기술 및 사회 부문 CTO 블레즈 아구에라 이 아르카스(Blaise Agüera y Arcas)의 사유를 바탕으로, 생명을 '공생발생을 통해 복잡해지는 자기구성적 연산'으로 정의하고, 튜링 보편 기계와 폰 노이만 자기복제기, 린 마굴리스의 세포내 공생설, 기질 독립성과 기능주의, 4바이트 인공생명(BFF) 실험, 그리고 이미 도래한 AGI와 인류의 새로운 미토콘드리아적 공생을 융합적으로 해부한다." data-tags="[&quot;인공지능철학&quot;,&quot;생명기능주의&quot;,&quot;블레즈아구에라이아르카스&quot;,&quot;공생발생&quot;,&quot;계산이론&quot;,&quot;폰노이만&quot;,&quot;튜링기계&quot;,&quot;AGI&quot;,&quot;인공생명&quot;,&quot;초유기체&quot;,&quot;집단지성&quot;]" data-presets="[&quot;AI&quot;,&quot;사상&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-13</span>
@@ -1258,34 +1332,9 @@
         </div>
         <h2 class="item-title">생명은 계산이며 공생발생으로 진화한다 — 블레즈 아구에라 이 아르카스의 생명 기능주의와 AGI</h2>
         <p class="item-summary">구글 기술 및 사회 부문 CTO 블레즈 아구에라 이 아르카스(Blaise Agüera y Arcas)의 사유를 바탕으로, 생명을 '공생발생을 통해 복잡해지는 자기구성적 연산'으로 정의하고, 튜링 보편 기계와 폰 노이만 자기복제기, 린 마굴리스의 세포내 공생설, 기질 독립성과 기능주의, 4바이트 인공생명(BFF) 실험, 그리고 이미 도래한 AGI와 인류의 새로운 미토콘드리아적 공생을 융합적으로 해부한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#인공지능철학</span>
-          
-          <span class="item-tag">#생명기능주의</span>
-          
-          <span class="item-tag">#블레즈아구에라이아르카스</span>
-          
-          <span class="item-tag">#공생발생</span>
-          
-          <span class="item-tag">#계산이론</span>
-          
-          <span class="item-tag">#폰노이만</span>
-          
-          <span class="item-tag">#튜링기계</span>
-          
-          <span class="item-tag">#AGI</span>
-          
-          <span class="item-tag">#인공생명</span>
-          
-          <span class="item-tag">#초유기체</span>
-          
-          <span class="item-tag">#집단지성</span>
-          
-        </div>
       </a>
       
-      <a href="stuart_russell_ai_control_problem.html" class="article-item" data-title="스튜어트 러셀이 말하는 AI 통제 문제" data-summary="UC 버클리 스튜어트 러셀 교수가 인터뷰에서 밝힌 AI 통제 문제를 정리한다. 왜 더 똑똑한 기계를 통제하기 어려운지, 지금의 AI가 왜 블랙박스이고 왜 아첨꾼이 되는지, 일자리와 사고력에 무슨 일이 생기는지, 그리고 사전 면허와 칩 단위 통제 같은 브레이크가 무엇인지를 살피고, 추정이 크게 갈리는 숫자와 출처가 불분명한 사례는 따로 표시한다." data-tags="AI AI안전 스튜어트러셀 통제문제 규제 인지적퇴화">
+      <a href="stuart_russell_ai_control_problem.html" class="article-item" data-title="스튜어트 러셀이 말하는 AI 통제 문제" data-summary="UC 버클리 스튜어트 러셀 교수가 인터뷰에서 밝힌 AI 통제 문제를 정리한다. 왜 더 똑똑한 기계를 통제하기 어려운지, 지금의 AI가 왜 블랙박스이고 왜 아첨꾼이 되는지, 일자리와 사고력에 무슨 일이 생기는지, 그리고 사전 면허와 칩 단위 통제 같은 브레이크가 무엇인지를 살피고, 추정이 크게 갈리는 숫자와 출처가 불분명한 사례는 따로 표시한다." data-tags="[&quot;AI&quot;,&quot;AI안전&quot;,&quot;스튜어트러셀&quot;,&quot;통제문제&quot;,&quot;규제&quot;,&quot;인지적퇴화&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-13</span>
@@ -1297,24 +1346,9 @@
         </div>
         <h2 class="item-title">스튜어트 러셀이 말하는 AI 통제 문제</h2>
         <p class="item-summary">UC 버클리 스튜어트 러셀 교수가 인터뷰에서 밝힌 AI 통제 문제를 정리한다. 왜 더 똑똑한 기계를 통제하기 어려운지, 지금의 AI가 왜 블랙박스이고 왜 아첨꾼이 되는지, 일자리와 사고력에 무슨 일이 생기는지, 그리고 사전 면허와 칩 단위 통제 같은 브레이크가 무엇인지를 살피고, 추정이 크게 갈리는 숫자와 출처가 불분명한 사례는 따로 표시한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#AI안전</span>
-          
-          <span class="item-tag">#스튜어트러셀</span>
-          
-          <span class="item-tag">#통제문제</span>
-          
-          <span class="item-tag">#규제</span>
-          
-          <span class="item-tag">#인지적퇴화</span>
-          
-        </div>
       </a>
       
-      <a href="earnings_cashflows_stock_prices_ai_storm.html" class="article-item" data-title="수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부" data-summary="2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다. 1962년 이후 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 그런데도 2026년 초에 상장돼 있던 미국 주식의 시가총액은 9월 말까지 12.25% 늘었다. 아스워스 다모다란의 분석을 바탕으로, AI 설비투자가 빌더(하이퍼스케일러)와 공급자를 거치며 어떻게 합산 이익을 키우는지, 왜 배당과 자사주 매입은 그만큼 늘지 않는지, 장부가 얼마나 무거워졌는지, 투자의 수익률이 자본비용에 못 미치면 무슨 일이 생기는지, 그리고 투자자가 고를 수 있는 4가지 경로를 정리한다." data-tags="기업재무 가치평가 아스워스다모다란 AICapEx 빅테크 위험프리미엄 재무회계 현금흐름 매그니피센트7">
+      <a href="earnings_cashflows_stock_prices_ai_storm.html" class="article-item" data-title="수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부" data-summary="2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다. 1962년 이후 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 그런데도 2026년 초에 상장돼 있던 미국 주식의 시가총액은 9월 말까지 12.25% 늘었다. 아스워스 다모다란의 분석을 바탕으로, AI 설비투자가 빌더(하이퍼스케일러)와 공급자를 거치며 어떻게 합산 이익을 키우는지, 왜 배당과 자사주 매입은 그만큼 늘지 않는지, 장부가 얼마나 무거워졌는지, 투자의 수익률이 자본비용에 못 미치면 무슨 일이 생기는지, 그리고 투자자가 고를 수 있는 4가지 경로를 정리한다." data-tags="[&quot;기업재무&quot;,&quot;가치평가&quot;,&quot;아스워스다모다란&quot;,&quot;AICapEx&quot;,&quot;빅테크&quot;,&quot;위험프리미엄&quot;,&quot;재무회계&quot;,&quot;현금흐름&quot;,&quot;매그니피센트7&quot;]" data-presets="[&quot;경제&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-11</span>
@@ -1326,30 +1360,9 @@
         </div>
         <h2 class="item-title">수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부</h2>
         <p class="item-summary">2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다. 1962년 이후 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 그런데도 2026년 초에 상장돼 있던 미국 주식의 시가총액은 9월 말까지 12.25% 늘었다. 아스워스 다모다란의 분석을 바탕으로, AI 설비투자가 빌더(하이퍼스케일러)와 공급자를 거치며 어떻게 합산 이익을 키우는지, 왜 배당과 자사주 매입은 그만큼 늘지 않는지, 장부가 얼마나 무거워졌는지, 투자의 수익률이 자본비용에 못 미치면 무슨 일이 생기는지, 그리고 투자자가 고를 수 있는 4가지 경로를 정리한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#기업재무</span>
-          
-          <span class="item-tag">#가치평가</span>
-          
-          <span class="item-tag">#아스워스다모다란</span>
-          
-          <span class="item-tag">#AICapEx</span>
-          
-          <span class="item-tag">#빅테크</span>
-          
-          <span class="item-tag">#위험프리미엄</span>
-          
-          <span class="item-tag">#재무회계</span>
-          
-          <span class="item-tag">#현금흐름</span>
-          
-          <span class="item-tag">#매그니피센트7</span>
-          
-        </div>
       </a>
       
-      <a href="western_civilization_vine_not_tree.html" class="article-item" data-title="문명은 나무가 아니라 덩굴이다 — 조세핀 퀸의 ‘서양 문명’ 신화 해체" data-summary="옥스퍼드대 고대사학자 조세핀 퀸(Josephine Quinn) 교수의 연구를 바탕으로, ‘서양 문명’이라는 개념이 어떻게 19세기 제국주의적 리브랜딩으로 만들어졌는지, 문명이 단일한 계통의 나무가 아니라 뒤엉킨 덩굴인 이유, 베르니케의 로마 불상부터 시나이 광부의 알파벳 해킹, 인도 0의 전달, 성인이 된 부처까지 4,000년 인류 네트워크의 실체를 파헤친다." data-tags="고대사 서양문명 조세핀퀸 문화혼종성 알파벳기원 청동기시대 민주주의기원 지중해 역사학">
+      <a href="western_civilization_vine_not_tree.html" class="article-item" data-title="문명은 나무가 아니라 덩굴이다 — 조세핀 퀸의 ‘서양 문명’ 신화 해체" data-summary="옥스퍼드대 고대사학자 조세핀 퀸(Josephine Quinn) 교수의 연구를 바탕으로, ‘서양 문명’이라는 개념이 어떻게 19세기 제국주의적 리브랜딩으로 만들어졌는지, 문명이 단일한 계통의 나무가 아니라 뒤엉킨 덩굴인 이유, 베르니케의 로마 불상부터 시나이 광부의 알파벳 해킹, 인도 0의 전달, 성인이 된 부처까지 4,000년 인류 네트워크의 실체를 파헤친다." data-tags="[&quot;고대사&quot;,&quot;서양문명&quot;,&quot;조세핀퀸&quot;,&quot;문화혼종성&quot;,&quot;알파벳기원&quot;,&quot;청동기시대&quot;,&quot;민주주의기원&quot;,&quot;지중해&quot;,&quot;역사학&quot;]" data-presets="[&quot;역사&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-11</span>
@@ -1361,30 +1374,9 @@
         </div>
         <h2 class="item-title">문명은 나무가 아니라 덩굴이다 — 조세핀 퀸의 ‘서양 문명’ 신화 해체</h2>
         <p class="item-summary">옥스퍼드대 고대사학자 조세핀 퀸(Josephine Quinn) 교수의 연구를 바탕으로, ‘서양 문명’이라는 개념이 어떻게 19세기 제국주의적 리브랜딩으로 만들어졌는지, 문명이 단일한 계통의 나무가 아니라 뒤엉킨 덩굴인 이유, 베르니케의 로마 불상부터 시나이 광부의 알파벳 해킹, 인도 0의 전달, 성인이 된 부처까지 4,000년 인류 네트워크의 실체를 파헤친다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#고대사</span>
-          
-          <span class="item-tag">#서양문명</span>
-          
-          <span class="item-tag">#조세핀퀸</span>
-          
-          <span class="item-tag">#문화혼종성</span>
-          
-          <span class="item-tag">#알파벳기원</span>
-          
-          <span class="item-tag">#청동기시대</span>
-          
-          <span class="item-tag">#민주주의기원</span>
-          
-          <span class="item-tag">#지중해</span>
-          
-          <span class="item-tag">#역사학</span>
-          
-        </div>
       </a>
       
-      <a href="software_engineering_framework_1975.html" class="article-item" data-title="소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보" data-summary="1975년 Douglas T. Ross, John B. Goodenough, C. A. Irvine(SofTech)이 발표한 고전 'Software Engineering: Process, Principles, and Goals'를 중심으로 4대 목표, 7대 원칙, 5단계 프로세스의 3차원 직교 큐브 모델을 심층 분석하고, 1차 원전 사료 계보와 레드팀 비판을 통해 현대 분산·AI 환경에서의 공학적 가치를 재조명한 백서." data-tags="소프트웨어 공학 아키텍처 서브루틴 컴퓨터 과학사 프로그래밍 언어 시스템 설계">
+      <a href="software_engineering_framework_1975.html" class="article-item" data-title="소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보" data-summary="1975년 Douglas T. Ross, John B. Goodenough, C. A. Irvine(SofTech)이 발표한 고전 'Software Engineering: Process, Principles, and Goals'를 중심으로 4대 목표, 7대 원칙, 5단계 프로세스의 3차원 직교 큐브 모델을 심층 분석하고, 1차 원전 사료 계보와 레드팀 비판을 통해 현대 분산·AI 환경에서의 공학적 가치를 재조명한 백서." data-tags="[&quot;소프트웨어 공학&quot;,&quot;아키텍처&quot;,&quot;서브루틴&quot;,&quot;컴퓨터 과학사&quot;,&quot;프로그래밍 언어&quot;,&quot;시스템 설계&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-11</span>
@@ -1396,24 +1388,9 @@
         </div>
         <h2 class="item-title">소프트웨어 공학: 과정, 원칙, 그리고 목표 (1975) — 3차원 큐브 모델과 현대 아키텍처 계보</h2>
         <p class="item-summary">1975년 Douglas T. Ross, John B. Goodenough, C. A. Irvine(SofTech)이 발표한 고전 'Software Engineering: Process, Principles, and Goals'를 중심으로 4대 목표, 7대 원칙, 5단계 프로세스의 3차원 직교 큐브 모델을 심층 분석하고, 1차 원전 사료 계보와 레드팀 비판을 통해 현대 분산·AI 환경에서의 공학적 가치를 재조명한 백서.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#소프트웨어 공학</span>
-          
-          <span class="item-tag">#아키텍처</span>
-          
-          <span class="item-tag">#서브루틴</span>
-          
-          <span class="item-tag">#컴퓨터 과학사</span>
-          
-          <span class="item-tag">#프로그래밍 언어</span>
-          
-          <span class="item-tag">#시스템 설계</span>
-          
-        </div>
       </a>
       
-      <a href="hanfeizi_legalist_philosophy_fa_shu_shi.html" class="article-item" data-title="중국의 법가(法家) 사상을 집대성한 『한비자』의 법철학 — 법·술·세 삼위일체와 현실주의 통치학" data-summary="500년 춘추전국의 극심한 혼란을 종식시키고 진시황의 천하통일을 견인한 한비(韓非)의 법철학을 심층 해부한다. 노자의 '도(道)'를 냉혹한 현실의 '리(理)'와 '참험(參驗)'으로 변용한 인식론, 상앙의 법(法)·신불해의 술(術)·신도의 세(勢)를 하나로 엮은 '법·술·세 삼위일체' 거버넌스, 진나라의 천하통일과 15년 만의 조기 멸망이 남긴 구조적 교훈, 그리고 '법불아귀(法不阿貴)'가 21세기 민주적 법치국가에 던지는 준엄한 질문을 김효성(2019)의 연구를 바탕으로 다각도로 조명한다." data-tags="동양철학 법가사상 한비자 법철학 정치철학 리더십 제도설계">
+      <a href="hanfeizi_legalist_philosophy_fa_shu_shi.html" class="article-item" data-title="중국의 법가(法家) 사상을 집대성한 『한비자』의 법철학 — 법·술·세 삼위일체와 현실주의 통치학" data-summary="500년 춘추전국의 극심한 혼란을 종식시키고 진시황의 천하통일을 견인한 한비(韓非)의 법철학을 심층 해부한다. 노자의 '도(道)'를 냉혹한 현실의 '리(理)'와 '참험(參驗)'으로 변용한 인식론, 상앙의 법(法)·신불해의 술(術)·신도의 세(勢)를 하나로 엮은 '법·술·세 삼위일체' 거버넌스, 진나라의 천하통일과 15년 만의 조기 멸망이 남긴 구조적 교훈, 그리고 '법불아귀(法不阿貴)'가 21세기 민주적 법치국가에 던지는 준엄한 질문을 김효성(2019)의 연구를 바탕으로 다각도로 조명한다." data-tags="[&quot;동양철학&quot;,&quot;법가사상&quot;,&quot;한비자&quot;,&quot;법철학&quot;,&quot;정치철학&quot;,&quot;리더십&quot;,&quot;제도설계&quot;]" data-presets="[&quot;사상&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-11</span>
@@ -1425,26 +1402,9 @@
         </div>
         <h2 class="item-title">중국의 법가(法家) 사상을 집대성한 『한비자』의 법철학 — 법·술·세 삼위일체와 현실주의 통치학</h2>
         <p class="item-summary">500년 춘추전국의 극심한 혼란을 종식시키고 진시황의 천하통일을 견인한 한비(韓非)의 법철학을 심층 해부한다. 노자의 '도(道)'를 냉혹한 현실의 '리(理)'와 '참험(參驗)'으로 변용한 인식론, 상앙의 법(法)·신불해의 술(術)·신도의 세(勢)를 하나로 엮은 '법·술·세 삼위일체' 거버넌스, 진나라의 천하통일과 15년 만의 조기 멸망이 남긴 구조적 교훈, 그리고 '법불아귀(法不阿貴)'가 21세기 민주적 법치국가에 던지는 준엄한 질문을 김효성(2019)의 연구를 바탕으로 다각도로 조명한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#동양철학</span>
-          
-          <span class="item-tag">#법가사상</span>
-          
-          <span class="item-tag">#한비자</span>
-          
-          <span class="item-tag">#법철학</span>
-          
-          <span class="item-tag">#정치철학</span>
-          
-          <span class="item-tag">#리더십</span>
-          
-          <span class="item-tag">#제도설계</span>
-          
-        </div>
       </a>
       
-      <a href="cagongjok_breakeven_obstruction_of_business.html" class="article-item" data-title="커피 한 잔에 1시간 42분의 경계선 — 카공족 갈등의 손익분기점과 위력 업무방해죄(형법 제314조) 분석" data-summary="커피 한 잔을 시키고 몇 시간까지 머물 수 있는가. 한국외식산업연구원이 산출한 좌석 손익분기점 '1시간 42분', 치솟는 공공요금과 12만 개 카페의 과포화 생존 경쟁, 점주의 정당한 퇴거 요청에 소란·난동으로 맞설 때 성립하는 형법 제314조 제1항 '위력에 의한 업무방해죄'의 법리, 그리고 미국·일본의 공간 비즈니스 대응 모델을 고시면 교수의 연구(2023)를 바탕으로 다각도로 해부한다." data-tags="형법 업무방해죄 카공족 자영업경제학 손익분기점 시설관리권 형사판례 공간비즈니스">
+      <a href="cagongjok_breakeven_obstruction_of_business.html" class="article-item" data-title="커피 한 잔에 1시간 42분의 경계선 — 카공족 갈등의 손익분기점과 위력 업무방해죄(형법 제314조) 분석" data-summary="커피 한 잔을 시키고 몇 시간까지 머물 수 있는가. 한국외식산업연구원이 산출한 좌석 손익분기점 '1시간 42분', 치솟는 공공요금과 12만 개 카페의 과포화 생존 경쟁, 점주의 정당한 퇴거 요청에 소란·난동으로 맞설 때 성립하는 형법 제314조 제1항 '위력에 의한 업무방해죄'의 법리, 그리고 미국·일본의 공간 비즈니스 대응 모델을 고시면 교수의 연구(2023)를 바탕으로 다각도로 해부한다." data-tags="[&quot;형법&quot;,&quot;업무방해죄&quot;,&quot;카공족&quot;,&quot;자영업경제학&quot;,&quot;손익분기점&quot;,&quot;시설관리권&quot;,&quot;형사판례&quot;,&quot;공간비즈니스&quot;]" data-presets="[&quot;법&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-11</span>
@@ -1456,28 +1416,9 @@
         </div>
         <h2 class="item-title">커피 한 잔에 1시간 42분의 경계선 — 카공족 갈등의 손익분기점과 위력 업무방해죄(형법 제314조) 분석</h2>
         <p class="item-summary">커피 한 잔을 시키고 몇 시간까지 머물 수 있는가. 한국외식산업연구원이 산출한 좌석 손익분기점 '1시간 42분', 치솟는 공공요금과 12만 개 카페의 과포화 생존 경쟁, 점주의 정당한 퇴거 요청에 소란·난동으로 맞설 때 성립하는 형법 제314조 제1항 '위력에 의한 업무방해죄'의 법리, 그리고 미국·일본의 공간 비즈니스 대응 모델을 고시면 교수의 연구(2023)를 바탕으로 다각도로 해부한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#형법</span>
-          
-          <span class="item-tag">#업무방해죄</span>
-          
-          <span class="item-tag">#카공족</span>
-          
-          <span class="item-tag">#자영업경제학</span>
-          
-          <span class="item-tag">#손익분기점</span>
-          
-          <span class="item-tag">#시설관리권</span>
-          
-          <span class="item-tag">#형사판례</span>
-          
-          <span class="item-tag">#공간비즈니스</span>
-          
-        </div>
       </a>
       
-      <a href="douglas_ross_plex_struct_origin.html" class="article-item" data-title="구조체(Struct)는 어떻게 발명되었는가 — 더글러스 로스의 플렉스(Plex)와 역인덱싱" data-summary="현대 프로그래머에게 너무나 당연한 struct와 객체 인스턴스화는 하늘에서 떨어진 것이 아니다. 오직 1차원 배열만이 존재하던 1950년대, MIT의 더글러스 로스(Douglas T. Ross)가 하드웨어 배열 인덱서를 거꾸로 뒤집어(역인덱싱) 구조체의 원형인 '플렉스(Plex)'를 창안한 역사적 순간과 그 유산을 추적한다." data-tags="컴퓨터 과학사 메모리 모델 C/C++ 자료구조 시스템 프로그래밍 MIT">
+      <a href="douglas_ross_plex_struct_origin.html" class="article-item" data-title="구조체(Struct)는 어떻게 발명되었는가 — 더글러스 로스의 플렉스(Plex)와 역인덱싱" data-summary="현대 프로그래머에게 너무나 당연한 struct와 객체 인스턴스화는 하늘에서 떨어진 것이 아니다. 오직 1차원 배열만이 존재하던 1950년대, MIT의 더글러스 로스(Douglas T. Ross)가 하드웨어 배열 인덱서를 거꾸로 뒤집어(역인덱싱) 구조체의 원형인 '플렉스(Plex)'를 창안한 역사적 순간과 그 유산을 추적한다." data-tags="[&quot;컴퓨터 과학사&quot;,&quot;메모리 모델&quot;,&quot;C/C++&quot;,&quot;자료구조&quot;,&quot;시스템 프로그래밍&quot;,&quot;MIT&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-10</span>
@@ -1489,24 +1430,9 @@
         </div>
         <h2 class="item-title">구조체(Struct)는 어떻게 발명되었는가 — 더글러스 로스의 플렉스(Plex)와 역인덱싱</h2>
         <p class="item-summary">현대 프로그래머에게 너무나 당연한 struct와 객체 인스턴스화는 하늘에서 떨어진 것이 아니다. 오직 1차원 배열만이 존재하던 1950년대, MIT의 더글러스 로스(Douglas T. Ross)가 하드웨어 배열 인덱서를 거꾸로 뒤집어(역인덱싱) 구조체의 원형인 '플렉스(Plex)'를 창안한 역사적 순간과 그 유산을 추적한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#컴퓨터 과학사</span>
-          
-          <span class="item-tag">#메모리 모델</span>
-          
-          <span class="item-tag">#C/C++</span>
-          
-          <span class="item-tag">#자료구조</span>
-          
-          <span class="item-tag">#시스템 프로그래밍</span>
-          
-          <span class="item-tag">#MIT</span>
-          
-        </div>
       </a>
       
-      <a href="how_did_spanish_soldiers_topple_two_empires.html" class="article-item" data-title="어떻게 수백 명의 군인이 두 제국을 무너뜨렸는가" data-summary="군사역사학자 사이 셰퍼드 교수와 드와르케시 파텔의 심층 대담을 바탕으로, 수백 명의 스페인 정복자가 600만 아즈텍과 1,000만 잉카 제국을 무너뜨린 군사·기술적 실체, 99% 원주민 동맹군을 결집한 외교술, 카하마르카의 각본, 자원의 저주와 스페인의 몰락, 그리고 현대 AI 테이크오버 유비까지 핵심 논점을 입체적으로 정리한다." data-tags="스페인정복 군사역사학 아즈텍 잉카 콩키스타도르 외교전략 총균쇠 지정학 AI유비 드와르케시파텔">
+      <a href="how_did_spanish_soldiers_topple_two_empires.html" class="article-item" data-title="어떻게 수백 명의 군인이 두 제국을 무너뜨렸는가" data-summary="군사역사학자 사이 셰퍼드 교수와 드와르케시 파텔의 심층 대담을 바탕으로, 수백 명의 스페인 정복자가 600만 아즈텍과 1,000만 잉카 제국을 무너뜨린 군사·기술적 실체, 99% 원주민 동맹군을 결집한 외교술, 카하마르카의 각본, 자원의 저주와 스페인의 몰락, 그리고 현대 AI 테이크오버 유비까지 핵심 논점을 입체적으로 정리한다." data-tags="[&quot;스페인정복&quot;,&quot;군사역사학&quot;,&quot;아즈텍&quot;,&quot;잉카&quot;,&quot;콩키스타도르&quot;,&quot;외교전략&quot;,&quot;총균쇠&quot;,&quot;지정학&quot;,&quot;AI유비&quot;,&quot;드와르케시파텔&quot;]" data-presets="[&quot;역사&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-10</span>
@@ -1518,32 +1444,9 @@
         </div>
         <h2 class="item-title">어떻게 수백 명의 군인이 두 제국을 무너뜨렸는가</h2>
         <p class="item-summary">군사역사학자 사이 셰퍼드 교수와 드와르케시 파텔의 심층 대담을 바탕으로, 수백 명의 스페인 정복자가 600만 아즈텍과 1,000만 잉카 제국을 무너뜨린 군사·기술적 실체, 99% 원주민 동맹군을 결집한 외교술, 카하마르카의 각본, 자원의 저주와 스페인의 몰락, 그리고 현대 AI 테이크오버 유비까지 핵심 논점을 입체적으로 정리한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#스페인정복</span>
-          
-          <span class="item-tag">#군사역사학</span>
-          
-          <span class="item-tag">#아즈텍</span>
-          
-          <span class="item-tag">#잉카</span>
-          
-          <span class="item-tag">#콩키스타도르</span>
-          
-          <span class="item-tag">#외교전략</span>
-          
-          <span class="item-tag">#총균쇠</span>
-          
-          <span class="item-tag">#지정학</span>
-          
-          <span class="item-tag">#AI유비</span>
-          
-          <span class="item-tag">#드와르케시파텔</span>
-          
-        </div>
       </a>
       
-      <a href="persian_gulf_tectonic_shifts_red_team.html" class="article-item" data-title="페르시아만의 지각변동 — 일방적 서사를 넘어선 입체적 지정학 해부" data-summary="서구 중심주의의 독점적 서사와 저항 진영의 일방적 승리주의를 모두 걷어내고, 1차 사료·실전 군사 데이터·국제정치경제학의 렌즈로 페르시아만과 서아시아의 지정학적 지각변동을 입체적으로 해부한다." data-tags="페르시아만 지정학 저항의축 비대칭전쟁 페트로달러 사우디아라비아 이란 방산공급망 국제정치경제학">
+      <a href="persian_gulf_tectonic_shifts_red_team.html" class="article-item" data-title="페르시아만의 지각변동 — 일방적 서사를 넘어선 입체적 지정학 해부" data-summary="서구 중심주의의 독점적 서사와 저항 진영의 일방적 승리주의를 모두 걷어내고, 1차 사료·실전 군사 데이터·국제정치경제학의 렌즈로 페르시아만과 서아시아의 지정학적 지각변동을 입체적으로 해부한다." data-tags="[&quot;페르시아만&quot;,&quot;지정학&quot;,&quot;저항의축&quot;,&quot;비대칭전쟁&quot;,&quot;페트로달러&quot;,&quot;사우디아라비아&quot;,&quot;이란&quot;,&quot;방산공급망&quot;,&quot;국제정치경제학&quot;]" data-presets="[&quot;역사&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-10</span>
@@ -1555,30 +1458,9 @@
         </div>
         <h2 class="item-title">페르시아만의 지각변동 — 일방적 서사를 넘어선 입체적 지정학 해부</h2>
         <p class="item-summary">서구 중심주의의 독점적 서사와 저항 진영의 일방적 승리주의를 모두 걷어내고, 1차 사료·실전 군사 데이터·국제정치경제학의 렌즈로 페르시아만과 서아시아의 지정학적 지각변동을 입체적으로 해부한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#페르시아만</span>
-          
-          <span class="item-tag">#지정학</span>
-          
-          <span class="item-tag">#저항의축</span>
-          
-          <span class="item-tag">#비대칭전쟁</span>
-          
-          <span class="item-tag">#페트로달러</span>
-          
-          <span class="item-tag">#사우디아라비아</span>
-          
-          <span class="item-tag">#이란</span>
-          
-          <span class="item-tag">#방산공급망</span>
-          
-          <span class="item-tag">#국제정치경제학</span>
-          
-        </div>
       </a>
       
-      <a href="union_activity_antitrust_boundary.html" class="article-item" data-title="경쟁을 없애는 것이 목적인 단체 — 노무제공자의 노동조합 활동과 공정거래법의 경계 심화 분석" data-summary="건설기계 노무제공자의 노동조합이 보수를 함께 정하고 비조합원과의 거래를 끊으라고 요구하자, 공정거래위원회는 이를 사업자단체의 담합과 거래거절 강요로 제재했다. 노동조합법상 근로자이면서 공정거래법상 사업자일 수 있는 사람들의 단체행동은 어디까지 노동3권인가. 서울고등법원 판결 네 건, 이태현의 논문(2026)이 제안하는 '사업자적 행위' 기준과 다섯 가지 판단 기준, 미국·캐나다·EU 비교, 2026년의 법 개정 움직임을 짧은 문장과 도표로 정리한다." data-tags="노동법 경쟁법 공정거래법 노동3권 노무제공자 건설기계 노동면제 비교노동법">
+      <a href="union_activity_antitrust_boundary.html" class="article-item" data-title="경쟁을 없애는 것이 목적인 단체 — 노무제공자의 노동조합 활동과 공정거래법의 경계 심화 분석" data-summary="건설기계 노무제공자의 노동조합이 보수를 함께 정하고 비조합원과의 거래를 끊으라고 요구하자, 공정거래위원회는 이를 사업자단체의 담합과 거래거절 강요로 제재했다. 노동조합법상 근로자이면서 공정거래법상 사업자일 수 있는 사람들의 단체행동은 어디까지 노동3권인가. 서울고등법원 판결 네 건, 이태현의 논문(2026)이 제안하는 '사업자적 행위' 기준과 다섯 가지 판단 기준, 미국·캐나다·EU 비교, 2026년의 법 개정 움직임을 짧은 문장과 도표로 정리한다." data-tags="[&quot;노동법&quot;,&quot;경쟁법&quot;,&quot;공정거래법&quot;,&quot;노동3권&quot;,&quot;노무제공자&quot;,&quot;건설기계&quot;,&quot;노동면제&quot;,&quot;비교노동법&quot;]" data-presets="[&quot;법&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-02</span>
@@ -1590,28 +1472,9 @@
         </div>
         <h2 class="item-title">경쟁을 없애는 것이 목적인 단체 — 노무제공자의 노동조합 활동과 공정거래법의 경계 심화 분석</h2>
         <p class="item-summary">건설기계 노무제공자의 노동조합이 보수를 함께 정하고 비조합원과의 거래를 끊으라고 요구하자, 공정거래위원회는 이를 사업자단체의 담합과 거래거절 강요로 제재했다. 노동조합법상 근로자이면서 공정거래법상 사업자일 수 있는 사람들의 단체행동은 어디까지 노동3권인가. 서울고등법원 판결 네 건, 이태현의 논문(2026)이 제안하는 '사업자적 행위' 기준과 다섯 가지 판단 기준, 미국·캐나다·EU 비교, 2026년의 법 개정 움직임을 짧은 문장과 도표로 정리한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#노동법</span>
-          
-          <span class="item-tag">#경쟁법</span>
-          
-          <span class="item-tag">#공정거래법</span>
-          
-          <span class="item-tag">#노동3권</span>
-          
-          <span class="item-tag">#노무제공자</span>
-          
-          <span class="item-tag">#건설기계</span>
-          
-          <span class="item-tag">#노동면제</span>
-          
-          <span class="item-tag">#비교노동법</span>
-          
-        </div>
       </a>
       
-      <a href="algorithmic_control_heteronomy.html" class="article-item" data-title="누가 내 일을 정하는가 — 알고리즘이 통제하는 노동과 타인결정성 심화 분석" data-summary="앱이 일을 배정하고 평점이 보수와 기회를 가르는 노동에서, 상사의 지휘·감독을 찾는 종속성 판단은 무엇을 놓치는가. 법문에 없는 '종속적 관계'가 판례로 자리 잡은 경로, 종속성 판단의 내재적 모순, 알고리즘 통제의 작동 방식, 독일·한국 법원과 국제 통계 분류의 대응을 차례로 짚고, 판단의 초점을 '누가 노무의 방법·조건·결과를 정하는가'로 옮기는 타인결정성 개념과 근로자 정의 개정·근로자 추정 제안의 의미와 한계를 따진다." data-tags="노동법 근로자성 종속성 타인결정성 플랫폼노동 알고리즘관리 근로자추정 비교노동법">
+      <a href="algorithmic_control_heteronomy.html" class="article-item" data-title="누가 내 일을 정하는가 — 알고리즘이 통제하는 노동과 타인결정성 심화 분석" data-summary="앱이 일을 배정하고 평점이 보수와 기회를 가르는 노동에서, 상사의 지휘·감독을 찾는 종속성 판단은 무엇을 놓치는가. 법문에 없는 '종속적 관계'가 판례로 자리 잡은 경로, 종속성 판단의 내재적 모순, 알고리즘 통제의 작동 방식, 독일·한국 법원과 국제 통계 분류의 대응을 차례로 짚고, 판단의 초점을 '누가 노무의 방법·조건·결과를 정하는가'로 옮기는 타인결정성 개념과 근로자 정의 개정·근로자 추정 제안의 의미와 한계를 따진다." data-tags="[&quot;노동법&quot;,&quot;근로자성&quot;,&quot;종속성&quot;,&quot;타인결정성&quot;,&quot;플랫폼노동&quot;,&quot;알고리즘관리&quot;,&quot;근로자추정&quot;,&quot;비교노동법&quot;]" data-presets="[&quot;법&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-02</span>
@@ -1623,28 +1486,9 @@
         </div>
         <h2 class="item-title">누가 내 일을 정하는가 — 알고리즘이 통제하는 노동과 타인결정성 심화 분석</h2>
         <p class="item-summary">앱이 일을 배정하고 평점이 보수와 기회를 가르는 노동에서, 상사의 지휘·감독을 찾는 종속성 판단은 무엇을 놓치는가. 법문에 없는 '종속적 관계'가 판례로 자리 잡은 경로, 종속성 판단의 내재적 모순, 알고리즘 통제의 작동 방식, 독일·한국 법원과 국제 통계 분류의 대응을 차례로 짚고, 판단의 초점을 '누가 노무의 방법·조건·결과를 정하는가'로 옮기는 타인결정성 개념과 근로자 정의 개정·근로자 추정 제안의 의미와 한계를 따진다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#노동법</span>
-          
-          <span class="item-tag">#근로자성</span>
-          
-          <span class="item-tag">#종속성</span>
-          
-          <span class="item-tag">#타인결정성</span>
-          
-          <span class="item-tag">#플랫폼노동</span>
-          
-          <span class="item-tag">#알고리즘관리</span>
-          
-          <span class="item-tag">#근로자추정</span>
-          
-          <span class="item-tag">#비교노동법</span>
-          
-        </div>
       </a>
       
-      <a href="sinzheimer_subordination_genealogy.html" class="article-item" data-title="타인의 처분권 아래의 노동 — 휴고 진츠하이머와 '종속성' 개념의 계보 심화 분석" data-summary="한국 법원이 근로자성을 가릴 때 묻는 '종속적인 관계'는 어디서 왔는가. 독일 노동법학을 세운 휴고 진츠하이머의 생애와 사상에서 출발해, 로마법의 노무 임대차와 독일 민법의 형식적 대등성, 로트마르의 노동계약론을 거쳐 '타인의 처분권 아래의 노동'이라는 종속노동 개념이 나오고, 그것이 독일에서 인격적 종속과 경제적 종속으로 갈라져 일본과 한국으로 건너가는 경로를 따라간다. 국제 규범과 플랫폼 시대의 대응, 2026년 '종속성' 연구가 진츠하이머를 읽는 방식까지 계보 위에서 검토하고, 출처끼리 엇갈리는 사실은 한쪽을 고르지 않고 함께 적는다." data-tags="노동법 노동법사 종속성 근로자성 진츠하이머 독일노동법 비교노동법 플랫폼노동">
+      <a href="sinzheimer_subordination_genealogy.html" class="article-item" data-title="타인의 처분권 아래의 노동 — 휴고 진츠하이머와 '종속성' 개념의 계보 심화 분석" data-summary="한국 법원이 근로자성을 가릴 때 묻는 '종속적인 관계'는 어디서 왔는가. 독일 노동법학을 세운 휴고 진츠하이머의 생애와 사상에서 출발해, 로마법의 노무 임대차와 독일 민법의 형식적 대등성, 로트마르의 노동계약론을 거쳐 '타인의 처분권 아래의 노동'이라는 종속노동 개념이 나오고, 그것이 독일에서 인격적 종속과 경제적 종속으로 갈라져 일본과 한국으로 건너가는 경로를 따라간다. 국제 규범과 플랫폼 시대의 대응, 2026년 '종속성' 연구가 진츠하이머를 읽는 방식까지 계보 위에서 검토하고, 출처끼리 엇갈리는 사실은 한쪽을 고르지 않고 함께 적는다." data-tags="[&quot;노동법&quot;,&quot;노동법사&quot;,&quot;종속성&quot;,&quot;근로자성&quot;,&quot;진츠하이머&quot;,&quot;독일노동법&quot;,&quot;비교노동법&quot;,&quot;플랫폼노동&quot;]" data-presets="[&quot;법&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-10-02</span>
@@ -1656,28 +1500,9 @@
         </div>
         <h2 class="item-title">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 '종속성' 개념의 계보 심화 분석</h2>
         <p class="item-summary">한국 법원이 근로자성을 가릴 때 묻는 '종속적인 관계'는 어디서 왔는가. 독일 노동법학을 세운 휴고 진츠하이머의 생애와 사상에서 출발해, 로마법의 노무 임대차와 독일 민법의 형식적 대등성, 로트마르의 노동계약론을 거쳐 '타인의 처분권 아래의 노동'이라는 종속노동 개념이 나오고, 그것이 독일에서 인격적 종속과 경제적 종속으로 갈라져 일본과 한국으로 건너가는 경로를 따라간다. 국제 규범과 플랫폼 시대의 대응, 2026년 '종속성' 연구가 진츠하이머를 읽는 방식까지 계보 위에서 검토하고, 출처끼리 엇갈리는 사실은 한쪽을 고르지 않고 함께 적는다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#노동법</span>
-          
-          <span class="item-tag">#노동법사</span>
-          
-          <span class="item-tag">#종속성</span>
-          
-          <span class="item-tag">#근로자성</span>
-          
-          <span class="item-tag">#진츠하이머</span>
-          
-          <span class="item-tag">#독일노동법</span>
-          
-          <span class="item-tag">#비교노동법</span>
-          
-          <span class="item-tag">#플랫폼노동</span>
-          
-        </div>
       </a>
       
-      <a href="membership_employment_japan_korea.html" class="article-item" data-title="우리 근로계약서에 직무가 비어 있는 이유 — 멤버십형 고용과 일본·한국 노동법제 심화 분석" data-summary="하마구치 게이이치로의 멤버십형 고용론을 바탕으로, 직무가 비어 있는 근로계약의 논리와 삼종신기, 전시 통제에서 비롯된 기원, 해고권 남용 법리와 취업규칙 합리성·배치전환 재량이라는 법원의 양손 타협, 입구·출구·성 밖의 구조를 해부한다. 이어 한국 법이 일본과 어디서 닮았고 어디서 갈라졌는지를 법령·판례로 짚고, 이 틀을 짧게 요약할 때 생기기 쉬운 단순화를 바로잡는다." data-tags="노동법 비교노동법 멤버십형고용 직무형고용 일본고용시스템 취업규칙 해고규제 비정규직">
+      <a href="membership_employment_japan_korea.html" class="article-item" data-title="우리 근로계약서에 직무가 비어 있는 이유 — 멤버십형 고용과 일본·한국 노동법제 심화 분석" data-summary="하마구치 게이이치로의 멤버십형 고용론을 바탕으로, 직무가 비어 있는 근로계약의 논리와 삼종신기, 전시 통제에서 비롯된 기원, 해고권 남용 법리와 취업규칙 합리성·배치전환 재량이라는 법원의 양손 타협, 입구·출구·성 밖의 구조를 해부한다. 이어 한국 법이 일본과 어디서 닮았고 어디서 갈라졌는지를 법령·판례로 짚고, 이 틀을 짧게 요약할 때 생기기 쉬운 단순화를 바로잡는다." data-tags="[&quot;노동법&quot;,&quot;비교노동법&quot;,&quot;멤버십형고용&quot;,&quot;직무형고용&quot;,&quot;일본고용시스템&quot;,&quot;취업규칙&quot;,&quot;해고규제&quot;,&quot;비정규직&quot;]" data-presets="[&quot;법&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-29</span>
@@ -1689,28 +1514,9 @@
         </div>
         <h2 class="item-title">우리 근로계약서에 직무가 비어 있는 이유 — 멤버십형 고용과 일본·한국 노동법제 심화 분석</h2>
         <p class="item-summary">하마구치 게이이치로의 멤버십형 고용론을 바탕으로, 직무가 비어 있는 근로계약의 논리와 삼종신기, 전시 통제에서 비롯된 기원, 해고권 남용 법리와 취업규칙 합리성·배치전환 재량이라는 법원의 양손 타협, 입구·출구·성 밖의 구조를 해부한다. 이어 한국 법이 일본과 어디서 닮았고 어디서 갈라졌는지를 법령·판례로 짚고, 이 틀을 짧게 요약할 때 생기기 쉬운 단순화를 바로잡는다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#노동법</span>
-          
-          <span class="item-tag">#비교노동법</span>
-          
-          <span class="item-tag">#멤버십형고용</span>
-          
-          <span class="item-tag">#직무형고용</span>
-          
-          <span class="item-tag">#일본고용시스템</span>
-          
-          <span class="item-tag">#취업규칙</span>
-          
-          <span class="item-tag">#해고규제</span>
-          
-          <span class="item-tag">#비정규직</span>
-          
-        </div>
       </a>
       
-      <a href="us_germany_labor_law_comparison.html" class="article-item" data-title="같은 해고, 정반대의 법 — 미국과 독일 노동법의 기능적 비교 심화 분석" data-summary="같은 해고가 미국에서는 대개 합법이고 독일에서는 대개 무효인 이유를, 같은 문제를 처리하는 장치를 견주는 기능적 비교로 풀어낸다. 해고보호와 임의고용, 공동결정·사업장평의회와 미국식 배타적 교섭, 단체협약, 시간·휴가·사회보장의 연결, 플랫폼 노동과 오분류라는 현안을 나란히 놓고, 두 나라를 짧게 요약할 때 생기기 쉬운 과장과 단순화를 법령·판례·통계로 바로잡는다." data-tags="노동법 비교노동법 독일노동법 미국노동법 해고보호 임의고용 공동결정 플랫폼노동">
+      <a href="us_germany_labor_law_comparison.html" class="article-item" data-title="같은 해고, 정반대의 법 — 미국과 독일 노동법의 기능적 비교 심화 분석" data-summary="같은 해고가 미국에서는 대개 합법이고 독일에서는 대개 무효인 이유를, 같은 문제를 처리하는 장치를 견주는 기능적 비교로 풀어낸다. 해고보호와 임의고용, 공동결정·사업장평의회와 미국식 배타적 교섭, 단체협약, 시간·휴가·사회보장의 연결, 플랫폼 노동과 오분류라는 현안을 나란히 놓고, 두 나라를 짧게 요약할 때 생기기 쉬운 과장과 단순화를 법령·판례·통계로 바로잡는다." data-tags="[&quot;노동법&quot;,&quot;비교노동법&quot;,&quot;독일노동법&quot;,&quot;미국노동법&quot;,&quot;해고보호&quot;,&quot;임의고용&quot;,&quot;공동결정&quot;,&quot;플랫폼노동&quot;]" data-presets="[&quot;법&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-29</span>
@@ -1722,28 +1528,9 @@
         </div>
         <h2 class="item-title">같은 해고, 정반대의 법 — 미국과 독일 노동법의 기능적 비교 심화 분석</h2>
         <p class="item-summary">같은 해고가 미국에서는 대개 합법이고 독일에서는 대개 무효인 이유를, 같은 문제를 처리하는 장치를 견주는 기능적 비교로 풀어낸다. 해고보호와 임의고용, 공동결정·사업장평의회와 미국식 배타적 교섭, 단체협약, 시간·휴가·사회보장의 연결, 플랫폼 노동과 오분류라는 현안을 나란히 놓고, 두 나라를 짧게 요약할 때 생기기 쉬운 과장과 단순화를 법령·판례·통계로 바로잡는다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#노동법</span>
-          
-          <span class="item-tag">#비교노동법</span>
-          
-          <span class="item-tag">#독일노동법</span>
-          
-          <span class="item-tag">#미국노동법</span>
-          
-          <span class="item-tag">#해고보호</span>
-          
-          <span class="item-tag">#임의고용</span>
-          
-          <span class="item-tag">#공동결정</span>
-          
-          <span class="item-tag">#플랫폼노동</span>
-          
-        </div>
       </a>
       
-      <a href="sea_peoples_1177_collapse.html" class="article-item" data-title="바다 민족은 문명을 무너뜨렸나 — 기원전 1177년과 후기 청동기 붕괴 안내" data-summary="기원전 1177년 상징연을 축으로, 바다 민족 침입설이 다원인 네트워크 붕괴·회복 논의로 바뀐 연구사와 증거·쟁점을 한 편에 정리한다." data-tags="고대근동 이집트 히타이트 바다민족 청동기 고고학 역사">
+      <a href="sea_peoples_1177_collapse.html" class="article-item" data-title="바다 민족은 문명을 무너뜨렸나 — 기원전 1177년과 후기 청동기 붕괴 안내" data-summary="기원전 1177년 상징연을 축으로, 바다 민족 침입설이 다원인 네트워크 붕괴·회복 논의로 바뀐 연구사와 증거·쟁점을 한 편에 정리한다." data-tags="[&quot;고대근동&quot;,&quot;이집트&quot;,&quot;히타이트&quot;,&quot;바다민족&quot;,&quot;청동기&quot;,&quot;고고학&quot;,&quot;역사&quot;]" data-presets="[&quot;역사&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-21</span>
@@ -1755,26 +1542,9 @@
         </div>
         <h2 class="item-title">바다 민족은 문명을 무너뜨렸나 — 기원전 1177년과 후기 청동기 붕괴 안내</h2>
         <p class="item-summary">기원전 1177년 상징연을 축으로, 바다 민족 침입설이 다원인 네트워크 붕괴·회복 논의로 바뀐 연구사와 증거·쟁점을 한 편에 정리한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#고대근동</span>
-          
-          <span class="item-tag">#이집트</span>
-          
-          <span class="item-tag">#히타이트</span>
-          
-          <span class="item-tag">#바다민족</span>
-          
-          <span class="item-tag">#청동기</span>
-          
-          <span class="item-tag">#고고학</span>
-          
-          <span class="item-tag">#역사</span>
-          
-        </div>
       </a>
       
-      <a href="agent_fleet_graph_roadmap.html" class="article-item" data-title="에이전트 함대는 “여러 명 고용”이 아니다" data-summary="멀티스텝 에이전트가 한 줄 사슬로 남는 이유를 풀고, 노드·간선·팬아웃·검증·모델 티어링으로 “함대”를 언제 띄울지 입문자가 바로 연습할 수 있게 정리한다." data-tags="에이전트 바이브코딩 그래프 오케스트레이션 입문">
+      <a href="agent_fleet_graph_roadmap.html" class="article-item" data-title="에이전트 함대는 “여러 명 고용”이 아니다" data-summary="멀티스텝 에이전트가 한 줄 사슬로 남는 이유를 풀고, 노드·간선·팬아웃·검증·모델 티어링으로 “함대”를 언제 띄울지 입문자가 바로 연습할 수 있게 정리한다." data-tags="[&quot;에이전트&quot;,&quot;바이브코딩&quot;,&quot;그래프&quot;,&quot;오케스트레이션&quot;,&quot;입문&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-18</span>
@@ -1786,22 +1556,9 @@
         </div>
         <h2 class="item-title">에이전트 함대는 “여러 명 고용”이 아니다</h2>
         <p class="item-summary">멀티스텝 에이전트가 한 줄 사슬로 남는 이유를 풀고, 노드·간선·팬아웃·검증·모델 티어링으로 “함대”를 언제 띄울지 입문자가 바로 연습할 수 있게 정리한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#에이전트</span>
-          
-          <span class="item-tag">#바이브코딩</span>
-          
-          <span class="item-tag">#그래프</span>
-          
-          <span class="item-tag">#오케스트레이션</span>
-          
-          <span class="item-tag">#입문</span>
-          
-        </div>
       </a>
       
-      <a href="agent_skills_architecture.html" class="article-item" data-title="LLM 에이전트 스킬 아키텍처와 실전 엔지니어링" data-summary="앤드류 응의 2026년 비전과 오픈 표준 에이전트 스킬을 바탕으로, 왜 단일 프롬프트가 끝나고 온디맨드 스킬 폴더가 표준이 되었는지, 도구 중립적 하네스 아키텍처와 실제 SKILL.md 작성·운영·가지치기 전략을 심층 해설합니다." data-tags="에이전트 LLM 스킬 아키텍처 하네스 소프트웨어공학">
+      <a href="agent_skills_architecture.html" class="article-item" data-title="LLM 에이전트 스킬 아키텍처와 실전 엔지니어링" data-summary="앤드류 응의 2026년 비전과 오픈 표준 에이전트 스킬을 바탕으로, 왜 단일 프롬프트가 끝나고 온디맨드 스킬 폴더가 표준이 되었는지, 도구 중립적 하네스 아키텍처와 실제 SKILL.md 작성·운영·가지치기 전략을 심층 해설합니다." data-tags="[&quot;에이전트&quot;,&quot;LLM&quot;,&quot;스킬&quot;,&quot;아키텍처&quot;,&quot;하네스&quot;,&quot;소프트웨어공학&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-16</span>
@@ -1813,24 +1570,9 @@
         </div>
         <h2 class="item-title">LLM 에이전트 스킬 아키텍처와 실전 엔지니어링</h2>
         <p class="item-summary">앤드류 응의 2026년 비전과 오픈 표준 에이전트 스킬을 바탕으로, 왜 단일 프롬프트가 끝나고 온디맨드 스킬 폴더가 표준이 되었는지, 도구 중립적 하네스 아키텍처와 실제 SKILL.md 작성·운영·가지치기 전략을 심층 해설합니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#에이전트</span>
-          
-          <span class="item-tag">#LLM</span>
-          
-          <span class="item-tag">#스킬</span>
-          
-          <span class="item-tag">#아키텍처</span>
-          
-          <span class="item-tag">#하네스</span>
-          
-          <span class="item-tag">#소프트웨어공학</span>
-          
-        </div>
       </a>
       
-      <a href="python_callable_and_execution_engine.html" class="article-item" data-title="[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진" data-summary="obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다." data-tags="Python CPython vectorcall callable 바이트코드 인터프리터">
+      <a href="python_callable_and_execution_engine.html" class="article-item" data-title="[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진" data-summary="obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다." data-tags="[&quot;Python&quot;,&quot;CPython&quot;,&quot;vectorcall&quot;,&quot;callable&quot;,&quot;바이트코드&quot;,&quot;인터프리터&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-15</span>
@@ -1842,24 +1584,9 @@
         </div>
         <h2 class="item-title">[2부] 파이썬 호출 가능 객체(Callable)와 CPython 실행 엔진</h2>
         <p class="item-summary">obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#Python</span>
-          
-          <span class="item-tag">#CPython</span>
-          
-          <span class="item-tag">#vectorcall</span>
-          
-          <span class="item-tag">#callable</span>
-          
-          <span class="item-tag">#바이트코드</span>
-          
-          <span class="item-tag">#인터프리터</span>
-          
-        </div>
       </a>
       
-      <a href="python_object_creation_and_binding.html" class="article-item" data-title="[1부] 파이썬 객체 생성과 바인딩의 기계적 실체" data-summary="클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다." data-tags="Python CPython 메모리모델 BoundMethod 디스크립터 시스템프로그래밍">
+      <a href="python_object_creation_and_binding.html" class="article-item" data-title="[1부] 파이썬 객체 생성과 바인딩의 기계적 실체" data-summary="클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -&gt; False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다." data-tags="[&quot;Python&quot;,&quot;CPython&quot;,&quot;메모리모델&quot;,&quot;BoundMethod&quot;,&quot;디스크립터&quot;,&quot;시스템프로그래밍&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-15</span>
@@ -1871,24 +1598,9 @@
         </div>
         <h2 class="item-title">[1부] 파이썬 객체 생성과 바인딩의 기계적 실체</h2>
         <p class="item-summary">클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#Python</span>
-          
-          <span class="item-tag">#CPython</span>
-          
-          <span class="item-tag">#메모리모델</span>
-          
-          <span class="item-tag">#BoundMethod</span>
-          
-          <span class="item-tag">#디스크립터</span>
-          
-          <span class="item-tag">#시스템프로그래밍</span>
-          
-        </div>
       </a>
       
-      <a href="python_object_mental_model.html" class="article-item" data-title="파이썬 객체 메모리 모델과 멘탈 모델" data-summary="파이썬의 모든 것은 C 구조체(PyObject) 기반의 힙 객체이며 변수는 상자가 아니라 이름표입니다. 데이터와 로직의 분리, 점(.) 연산자의 디스크립터 프로토콜, 그리고 self 매개변수의 진짜 참조 방향까지 시스템 레벨에서 완벽하게 파헤칩니다." data-tags="Python CPython 메모리모델 객체지향 컴퓨터구조 멘탈모델">
+      <a href="python_object_mental_model.html" class="article-item" data-title="파이썬 객체 메모리 모델과 멘탈 모델" data-summary="파이썬의 모든 것은 C 구조체(PyObject) 기반의 힙 객체이며 변수는 상자가 아니라 이름표입니다. 데이터와 로직의 분리, 점(.) 연산자의 디스크립터 프로토콜, 그리고 self 매개변수의 진짜 참조 방향까지 시스템 레벨에서 완벽하게 파헤칩니다." data-tags="[&quot;Python&quot;,&quot;CPython&quot;,&quot;메모리모델&quot;,&quot;객체지향&quot;,&quot;컴퓨터구조&quot;,&quot;멘탈모델&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-12</span>
@@ -1900,24 +1612,9 @@
         </div>
         <h2 class="item-title">파이썬 객체 메모리 모델과 멘탈 모델</h2>
         <p class="item-summary">파이썬의 모든 것은 C 구조체(PyObject) 기반의 힙 객체이며 변수는 상자가 아니라 이름표입니다. 데이터와 로직의 분리, 점(.) 연산자의 디스크립터 프로토콜, 그리고 self 매개변수의 진짜 참조 방향까지 시스템 레벨에서 완벽하게 파헤칩니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#Python</span>
-          
-          <span class="item-tag">#CPython</span>
-          
-          <span class="item-tag">#메모리모델</span>
-          
-          <span class="item-tag">#객체지향</span>
-          
-          <span class="item-tag">#컴퓨터구조</span>
-          
-          <span class="item-tag">#멘탈모델</span>
-          
-        </div>
       </a>
       
-      <a href="astra_harness_pattern.html" class="article-item" data-title="AI 점수는 왜 같은 모델인데도 갈릴까" data-summary="GPT-6 Astra의 ARC-AGI-3 두 점수(표준 하네스 vs Provider Adapter)를 출발점으로, 같은 엔진이 다른 실행 환경에서 왜 다른 성적표를 내는지, 기억(상태) 연속성과 번들·오픈 선택의 의미를 평문으로 정리한다." data-tags="AI 에이전트 하네스 입문 의사결정">
+      <a href="astra_harness_pattern.html" class="article-item" data-title="AI 점수는 왜 같은 모델인데도 갈릴까" data-summary="GPT-6 Astra의 ARC-AGI-3 두 점수(표준 하네스 vs Provider Adapter)를 출발점으로, 같은 엔진이 다른 실행 환경에서 왜 다른 성적표를 내는지, 기억(상태) 연속성과 번들·오픈 선택의 의미를 평문으로 정리한다." data-tags="[&quot;AI&quot;,&quot;에이전트&quot;,&quot;하네스&quot;,&quot;입문&quot;,&quot;의사결정&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-09</span>
@@ -1929,22 +1626,9 @@
         </div>
         <h2 class="item-title">AI 점수는 왜 같은 모델인데도 갈릴까</h2>
         <p class="item-summary">GPT-6 Astra의 ARC-AGI-3 두 점수(표준 하네스 vs Provider Adapter)를 출발점으로, 같은 엔진이 다른 실행 환경에서 왜 다른 성적표를 내는지, 기억(상태) 연속성과 번들·오픈 선택의 의미를 평문으로 정리한다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#AI</span>
-          
-          <span class="item-tag">#에이전트</span>
-          
-          <span class="item-tag">#하네스</span>
-          
-          <span class="item-tag">#입문</span>
-          
-          <span class="item-tag">#의사결정</span>
-          
-        </div>
       </a>
       
-      <a href="pointer_provenance_war.html" class="article-item" data-title="포인터의 혈통과 컴파일러의 보이지 않는 전쟁" data-summary="시스템 프로그래머와 최적화 컴파일러 사이의 “보이지 않는 전쟁”을 따라가며, 포인터가 단순한 정수가 될 수 없는 이유(출처/혈통), miscompilation, GVN 사고, 지연 경계 검사와 쌍둥이 할당, 그리고 ISO/IEC TS 6010:2025까지를 강의록으로 풀어쓴다." data-tags="C/C++ LLVM 포인터 메모리 모델 컴파일러 최적화 provenance">
+      <a href="pointer_provenance_war.html" class="article-item" data-title="포인터의 혈통과 컴파일러의 보이지 않는 전쟁" data-summary="시스템 프로그래머와 최적화 컴파일러 사이의 “보이지 않는 전쟁”을 따라가며, 포인터가 단순한 정수가 될 수 없는 이유(출처/혈통), miscompilation, GVN 사고, 지연 경계 검사와 쌍둥이 할당, 그리고 ISO/IEC TS 6010:2025까지를 강의록으로 풀어쓴다." data-tags="[&quot;C/C++&quot;,&quot;LLVM&quot;,&quot;포인터&quot;,&quot;메모리 모델&quot;,&quot;컴파일러 최적화&quot;,&quot;provenance&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-08</span>
@@ -1956,24 +1640,9 @@
         </div>
         <h2 class="item-title">포인터의 혈통과 컴파일러의 보이지 않는 전쟁</h2>
         <p class="item-summary">시스템 프로그래머와 최적화 컴파일러 사이의 “보이지 않는 전쟁”을 따라가며, 포인터가 단순한 정수가 될 수 없는 이유(출처/혈통), miscompilation, GVN 사고, 지연 경계 검사와 쌍둥이 할당, 그리고 ISO/IEC TS 6010:2025까지를 강의록으로 풀어쓴다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#C/C++</span>
-          
-          <span class="item-tag">#LLVM</span>
-          
-          <span class="item-tag">#포인터</span>
-          
-          <span class="item-tag">#메모리 모델</span>
-          
-          <span class="item-tag">#컴파일러 최적화</span>
-          
-          <span class="item-tag">#provenance</span>
-          
-        </div>
       </a>
       
-      <a href="box_page_jump_memo.html" class="article-item" data-title="상자, 페이지, 점프, 메모지" data-summary="메모리와 주소, 명령 실행 순서(PC), 루프와 점프, 그리고 포인터가 없던 초기 컴퓨터에서 자기수정 코드가 필연적이었던 이유를 어셈블리 기초부터 쉽게 풀어내는 강의록입니다." data-tags="어셈블리 컴퓨터 구조 메모리 포인터 자기수정 코드">
+      <a href="box_page_jump_memo.html" class="article-item" data-title="상자, 페이지, 점프, 메모지" data-summary="메모리와 주소, 명령 실행 순서(PC), 루프와 점프, 그리고 포인터가 없던 초기 컴퓨터에서 자기수정 코드가 필연적이었던 이유를 어셈블리 기초부터 쉽게 풀어내는 강의록입니다." data-tags="[&quot;어셈블리&quot;,&quot;컴퓨터 구조&quot;,&quot;메모리&quot;,&quot;포인터&quot;,&quot;자기수정 코드&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-01</span>
@@ -1985,22 +1654,9 @@
         </div>
         <h2 class="item-title">상자, 페이지, 점프, 메모지</h2>
         <p class="item-summary">메모리와 주소, 명령 실행 순서(PC), 루프와 점프, 그리고 포인터가 없던 초기 컴퓨터에서 자기수정 코드가 필연적이었던 이유를 어셈블리 기초부터 쉽게 풀어내는 강의록입니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#어셈블리</span>
-          
-          <span class="item-tag">#컴퓨터 구조</span>
-          
-          <span class="item-tag">#메모리</span>
-          
-          <span class="item-tag">#포인터</span>
-          
-          <span class="item-tag">#자기수정 코드</span>
-          
-        </div>
       </a>
       
-      <a href="pointer.html" class="article-item" data-title="포인터와 메모리 모델 시리즈" data-summary="프로그래밍 언어의 의미론적 추상 기계에서 포인터가 단순한 정수 주소가 될 수 없는 이유, 1970년대부터 이어진 역사적 맥락, 컴파일러 최적화와 포인터 출처(Provenance)의 실체를 입문자도 쉽게 이해할 수 있도록 친절한 비유와 함께 해설합니다." data-tags="C/C++ Rust 메모리 모델 컴파일러 최적화 포인터 컴퓨터 구조 입문자 해설">
+      <a href="pointer.html" class="article-item" data-title="포인터와 메모리 모델 시리즈" data-summary="프로그래밍 언어의 의미론적 추상 기계에서 포인터가 단순한 정수 주소가 될 수 없는 이유, 1970년대부터 이어진 역사적 맥락, 컴파일러 최적화와 포인터 출처(Provenance)의 실체를 입문자도 쉽게 이해할 수 있도록 친절한 비유와 함께 해설합니다." data-tags="[&quot;C/C++&quot;,&quot;Rust&quot;,&quot;메모리 모델&quot;,&quot;컴파일러 최적화&quot;,&quot;포인터&quot;,&quot;컴퓨터 구조&quot;,&quot;입문자 해설&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-01</span>
@@ -2012,26 +1668,9 @@
         </div>
         <h2 class="item-title">포인터와 메모리 모델 시리즈</h2>
         <p class="item-summary">프로그래밍 언어의 의미론적 추상 기계에서 포인터가 단순한 정수 주소가 될 수 없는 이유, 1970년대부터 이어진 역사적 맥락, 컴파일러 최적화와 포인터 출처(Provenance)의 실체를 입문자도 쉽게 이해할 수 있도록 친절한 비유와 함께 해설합니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#C/C++</span>
-          
-          <span class="item-tag">#Rust</span>
-          
-          <span class="item-tag">#메모리 모델</span>
-          
-          <span class="item-tag">#컴파일러 최적화</span>
-          
-          <span class="item-tag">#포인터</span>
-          
-          <span class="item-tag">#컴퓨터 구조</span>
-          
-          <span class="item-tag">#입문자 해설</span>
-          
-        </div>
       </a>
       
-      <a href="cpu_dram_memory_interface.html" class="article-item" data-title="CPU와 메모리 인터페이스 — 구조와 구현" data-summary="CPU와 DDR DRAM 사이의 Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름을 대화형 도식과 다이어그램으로 완벽 정리한 문서입니다." data-tags="컴퓨터 구조 DRAM Memory Controller PHY 다이어그램">
+      <a href="cpu_dram_memory_interface.html" class="article-item" data-title="CPU와 메모리 인터페이스 — 구조와 구현" data-summary="CPU와 DDR DRAM 사이의 Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름을 대화형 도식과 다이어그램으로 완벽 정리한 문서입니다." data-tags="[&quot;컴퓨터 구조&quot;,&quot;DRAM&quot;,&quot;Memory Controller&quot;,&quot;PHY&quot;,&quot;다이어그램&quot;]" data-presets="[&quot;컴퓨터&quot;]">
         <div class="item-top-row">
           <div class="item-badges">
             <span class="item-date">📅 2026-09-01</span>
@@ -2043,19 +1682,6 @@
         </div>
         <h2 class="item-title">CPU와 메모리 인터페이스 — 구조와 구현</h2>
         <p class="item-summary">CPU와 DDR DRAM 사이의 Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름을 대화형 도식과 다이어그램으로 완벽 정리한 문서입니다.</p>
-        <div class="item-tags">
-          
-          <span class="item-tag">#컴퓨터 구조</span>
-          
-          <span class="item-tag">#DRAM</span>
-          
-          <span class="item-tag">#Memory Controller</span>
-          
-          <span class="item-tag">#PHY</span>
-          
-          <span class="item-tag">#다이어그램</span>
-          
-        </div>
       </a>
       
     </div>
@@ -2100,13 +1726,67 @@
     // Search and Filtering
     const searchInput = document.getElementById('search-input');
     const searchClear = document.getElementById('search-clear');
-    const tagButtons = document.querySelectorAll('.tag-filter-btn');
-    const articleItems = document.querySelectorAll('.article-item');
+    const presetWrap = document.getElementById('preset-wrap');
+    const presetScroller = document.getElementById('preset-filters');
+    const presetButtons = presetScroller ? Array.from(presetScroller.querySelectorAll('[data-preset]')) : [];
+    const articleItems = Array.from(document.querySelectorAll('.article-item'));
     const articleCount = document.getElementById('article-count');
     const emptyState = document.getElementById('empty-state');
+    const tagSheet = document.getElementById('tag-sheet');
+    const tagSheetBackdrop = document.getElementById('tag-sheet-backdrop');
+    const tagSheetSearch = document.getElementById('tag-sheet-search');
+    const tagSheetEmpty = document.getElementById('tag-sheet-empty');
+    const singletonDetails = document.getElementById('singleton-details');
+    const openTagSheetBtn = document.getElementById('open-tag-sheet');
+    const closeTagSheetBtn = document.getElementById('close-tag-sheet');
+    const activeTagBar = document.getElementById('active-tag-bar');
+    const activeTagName = document.getElementById('active-tag-name');
+    const activeTagClear = document.getElementById('active-tag-clear');
+    const tagRows = Array.from(document.querySelectorAll('.tag-sheet-row'));
 
-    let currentTag = 'all';
+    let currentPreset = 'all';
+    let currentTag = '';
     let searchQuery = '';
+    let hadFilterParam = false;
+
+    function readList(item, attr) {
+      try {
+        const parsed = JSON.parse(item.getAttribute(attr) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function knownPreset(name) {
+      return presetButtons.some(btn => btn.getAttribute('data-preset') === name);
+    }
+
+    function knownTag(name) {
+      return tagRows.some(row => row.getAttribute('data-tag') === name);
+    }
+
+    function writeUrl() {
+      try {
+        const url = new URL(location.href);
+        url.search = '';
+        if (currentTag) url.searchParams.set('tag', currentTag);
+        else if (currentPreset !== 'all') url.searchParams.set('preset', currentPreset);
+        history.replaceState(null, '', url);
+      } catch (err) {
+        /* Opened outside a browser history context. */
+      }
+    }
+
+    function syncControls() {
+      presetButtons.forEach(btn => {
+        const on = !currentTag && btn.getAttribute('data-preset') === currentPreset;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      if (activeTagBar) activeTagBar.hidden = !currentTag;
+      if (currentTag && activeTagName) activeTagName.textContent = '#' + currentTag;
+    }
 
     function filterArticles() {
       let visibleCount = 0;
@@ -2115,59 +1795,181 @@
       articleItems.forEach(item => {
         const title = (item.getAttribute('data-title') || '').toLowerCase();
         const summary = (item.getAttribute('data-summary') || '').toLowerCase();
-        const tags = (item.getAttribute('data-tags') || '').toLowerCase();
+        const tags = readList(item, 'data-tags');
+        const presets = readList(item, 'data-presets');
+        const matchesPreset = currentPreset === 'all' || presets.indexOf(currentPreset) !== -1;
+        const matchesTag = !currentTag || tags.indexOf(currentTag) !== -1;
+        const matchesQuery = !query || title.indexOf(query) !== -1 || summary.indexOf(query) !== -1 || tags.some(tag => String(tag).toLowerCase().indexOf(query) !== -1);
 
-        const matchesTag = currentTag === 'all' || tags.includes(currentTag.toLowerCase());
-        const matchesQuery = !query || title.includes(query) || summary.includes(query) || tags.includes(query);
-
-        if (matchesTag && matchesQuery) {
-          item.style.display = 'block';
+        if (matchesPreset && matchesTag && matchesQuery) {
+          item.style.display = '';
           visibleCount++;
         } else {
           item.style.display = 'none';
         }
       });
 
-      if (articleCount) articleCount.textContent = `총 ${visibleCount}편`;
-      if (emptyState) {
-        if (visibleCount === 0) {
-          emptyState.classList.add('active');
-        } else {
-          emptyState.classList.remove('active');
-        }
+      if (articleCount) articleCount.textContent = '총 ' + visibleCount + '편';
+      if (emptyState) emptyState.classList.toggle('active', visibleCount === 0);
+    }
+
+    function applyFilter() {
+      syncControls();
+      filterArticles();
+      writeUrl();
+    }
+
+    function filterSheetRows() {
+      const query = tagSheetSearch ? tagSheetSearch.value.trim().toLowerCase() : '';
+      let visible = 0;
+      let singletonVisible = 0;
+      tagRows.forEach(row => {
+        const name = (row.getAttribute('data-tag') || '').toLowerCase();
+        const match = !query || name.indexOf(query) !== -1;
+        row.hidden = !match;
+        if (!match) return;
+        visible++;
+        if (row.closest('#singleton-list')) singletonVisible++;
+      });
+      if (singletonDetails) {
+        const singletonTotal = tagRows.filter(row => row.closest('#singleton-list')).length;
+        singletonDetails.hidden = singletonTotal === 0 || (query && singletonVisible === 0);
+        singletonDetails.open = query.length > 0 && singletonVisible > 0;
       }
+      if (tagSheetEmpty) tagSheetEmpty.hidden = visible !== 0;
+    }
+
+    function setSheet(open) {
+      if (!tagSheet) return;
+      tagSheet.hidden = !open;
+      if (tagSheetBackdrop) tagSheetBackdrop.hidden = !open;
+      if (presetWrap) presetWrap.classList.toggle('is-open', open);
+      if (openTagSheetBtn) openTagSheetBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open && tagSheetSearch) {
+        tagSheetSearch.value = '';
+        filterSheetRows();
+        tagSheetSearch.focus();
+      }
+    }
+
+    function readUrl() {
+      let params;
+      try {
+        params = new URLSearchParams(location.search);
+      } catch (err) {
+        return;
+      }
+      hadFilterParam = params.has('tag') || params.has('preset');
+      const tag = params.get('tag');
+      const preset = params.get('preset');
+      if (tag && knownTag(tag)) {
+        currentTag = tag;
+        currentPreset = 'all';
+        return;
+      }
+      if (preset && preset !== 'all' && knownPreset(preset)) {
+        currentPreset = preset;
+        currentTag = '';
+      }
+    }
+
+    function updateScrollHint() {
+      if (!presetScroller) return;
+      const overflow = presetScroller.scrollWidth - presetScroller.clientWidth > 4;
+      const atEnd = presetScroller.scrollLeft + presetScroller.clientWidth >= presetScroller.scrollWidth - 4;
+      presetScroller.classList.toggle('can-scroll', overflow && !atEnd);
     }
 
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value;
-        if (searchClear) {
-          searchClear.classList.toggle('active', searchQuery.length > 0);
-        }
+        if (searchClear) searchClear.classList.toggle('active', searchQuery.length > 0);
         filterArticles();
       });
     }
 
     if (searchClear) {
       searchClear.addEventListener('click', () => {
-        if (searchInput) {
-          searchInput.value = '';
-          searchQuery = '';
-          searchClear.classList.remove('active');
-          searchInput.focus();
-          filterArticles();
-        }
+        if (!searchInput) return;
+        searchInput.value = '';
+        searchQuery = '';
+        searchClear.classList.remove('active');
+        searchInput.focus();
+        filterArticles();
       });
     }
 
-    tagButtons.forEach(btn => {
+    presetButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        tagButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentTag = btn.getAttribute('data-tag');
-        filterArticles();
+        currentPreset = btn.getAttribute('data-preset') || 'all';
+        currentTag = '';
+        setSheet(false);
+        applyFilter();
       });
     });
+
+    tagRows.forEach(row => {
+      row.addEventListener('click', () => {
+        currentTag = row.getAttribute('data-tag') || '';
+        currentPreset = 'all';
+        setSheet(false);
+        applyFilter();
+        if (activeTagClear) activeTagClear.focus();
+      });
+    });
+
+    if (activeTagClear) {
+      activeTagClear.addEventListener('click', () => {
+        currentTag = '';
+        applyFilter();
+        if (openTagSheetBtn) openTagSheetBtn.focus();
+      });
+    }
+
+    if (openTagSheetBtn) {
+      openTagSheetBtn.addEventListener('click', () => {
+        setSheet(tagSheet.hidden);
+      });
+    }
+
+    if (closeTagSheetBtn) {
+      closeTagSheetBtn.addEventListener('click', () => {
+        setSheet(false);
+        if (openTagSheetBtn) openTagSheetBtn.focus();
+      });
+    }
+
+    if (tagSheetBackdrop) {
+      tagSheetBackdrop.addEventListener('click', () => setSheet(false));
+    }
+
+    if (tagSheetSearch) {
+      tagSheetSearch.addEventListener('input', filterSheetRows);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && tagSheet && !tagSheet.hidden) {
+        setSheet(false);
+        if (openTagSheetBtn) openTagSheetBtn.focus();
+      }
+    });
+
+    if (presetScroller) {
+      presetScroller.addEventListener('scroll', updateScrollHint, { passive: true });
+      window.addEventListener('resize', updateScrollHint);
+      window.addEventListener('load', updateScrollHint);
+    }
+
+    readUrl();
+    syncControls();
+    filterArticles();
+    updateScrollHint();
+    if (hadFilterParam && !currentTag && currentPreset === 'all') writeUrl();
+    if (currentPreset !== 'all') {
+      const activePreset = presetButtons.find(btn => btn.getAttribute('data-preset') === currentPreset);
+      if (activePreset) activePreset.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+    }
   </script>
 </body>
 </html>
