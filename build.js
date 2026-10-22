@@ -501,6 +501,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "유전자는 설계도가 아니다, 데니스 노블이 다시 묻는 생명의 인과",
+      subtitle: "스스로 뛰는 심장 모델에서 중심 원리, 이기적 유전자, 생물학적 상대성, 다유전자 점수, 행위자성까지",
+      date: "2026-10-22",
+      summary: "스스로 뛰는 심장 세포 모델을 만든 생리학자 데니스 노블의 주장을 따라, 크릭의 중심 원리와 그 위에 덧쌓인 '유전자 설계도' 해석, 세포에 기대는 DNA 복제, 이기적 유전자 논쟁, 특권적 인과 층위가 없다는 생물학적 상대성을 살피고, 그의 말 가운데 단단한 대목과 과장된 대목을 갈라 읽습니다.",
+      tags: ["생물학", "과학철학", "유전학", "시스템생물학", "데니스노블"],
+      tag_string: "생물학 과학철학 유전학 시스템생물학 데니스노블",
+      reading_time: 30,
+      url: "noble_genes_not_blueprint.html",
+      _timestamp: new Date("2026-10-22T08:20:00Z").getTime()
+    },
+    {
       title: "만들었다고 이해한 것은 아니다, 언어 모델의 속을 들여다보는 일",
       subtitle: "앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠이 말하는 개념, 계획, 정렬, 그리고 의인화",
       date: "2026-10-18",
