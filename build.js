@@ -501,6 +501,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "예측하는 기계는 왜 압축하는 기계인가",
+      subtitle: "섀넌의 엔트로피에서 산술 부호화, 솔로모노프와 후터를 거쳐 두 편의 LLM 압축 논문까지",
+      date: "2026-10-22",
+      summary: "다음 기호를 잘 예측하는 모델은 곧 좋은 압축기라는 생각을 따라, 섀넌의 엔트로피와 허프만·산술 부호화, 솔로모노프와 후터의 이론을 거쳐 언어 모델을 압축기로 쓰는 두 편의 LLM 압축 논문까지 살피고, 압축률이 지능을 얼마나 비추는지 정리합니다.",
+      tags: ["AI", "언어모델", "정보이론", "압축", "지능"],
+      tag_string: "AI 언어모델 정보이론 압축 지능",
+      reading_time: 44,
+      url: "language_modeling_compression_intelligence.html",
+      _timestamp: new Date("2026-10-22T13:15:00Z").getTime()
+    },
+    {
       title: "유전자는 설계도가 아니다, 데니스 노블이 다시 묻는 생명의 인과",
       subtitle: "스스로 뛰는 심장 모델에서 중심 원리, 이기적 유전자, 생물학적 상대성, 다유전자 점수, 행위자성까지",
       date: "2026-10-22",
