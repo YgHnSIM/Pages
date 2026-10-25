@@ -1,0 +1,3188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>경쟁을 없애는 것이 목적인 단체 — 노무제공자의 노동조합 활동과 공정거래법의 경계 심화 분석</title>
+  <meta name="description" content="건설기계 노무제공자의 노동조합이 보수를 함께 정하고 비조합원과의 거래를 끊으라고 요구하자, 공정거래위원회는 이를 사업자단체의 담합과 거래거절 강요로 제재했다. 노동조합법상 근로자이면서 공정거래법상 사업자일 수 있는 사람들의 단체행동은 어디까지 노동3권인가. 서울고등법원 판결 네 건, 이태현의 논문(2026)이 제안하는 '사업자적 행위' 기준과 다섯 가지 판단 기준, 미국·캐나다·EU 비교, 2026년의 법 개정 움직임을 짧은 문장과 도표로 정리한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">경쟁을 없애는 것이 목적인 단체 — 노무제공자의 노동조합 활동과 공정거래법의 경계 심화 분석</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-핵심-질문과-논문의-답" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 핵심 질문과 논문의 답</span></a></li><li class="depth-2"><a href="#2-한-사람-두-지위" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 한 사람, 두 지위</span></a></li><li class="depth-2"><a href="#3-서울고등법원-판결-네-건" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 서울고등법원 판결 네 건</span></a></li><li class="depth-2"><a href="#4-해석의-출발점-학설-제116조-헌법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 해석의 출발점 — 학설, 제116조, 헌법</span></a></li><li class="depth-2"><a href="#5-노동조합의-본성과-39사업자적-행위39" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 노동조합의 본성과 &#39;사업자적 행위&#39;</span></a></li><li class="depth-3"><a href="#51-바닥을-향한-경쟁" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 바닥을 향한 경쟁</span></a></li><li class="depth-3"><a href="#52-사업자와-39사업자적-행위39" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 사업자와 &#39;사업자적 행위&#39;</span></a></li><li class="depth-3"><a href="#53-경계선-위의-종속성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 경계선 위의 종속성</span></a></li><li class="depth-2"><a href="#6-다섯-가지-판단-기준-논문의-제안" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 다섯 가지 판단 기준 — 논문의 제안</span></a></li><li class="depth-2"><a href="#7-보호되는-활동" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 보호되는 활동</span></a></li><li class="depth-3"><a href="#71-활동별-정리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 활동별 정리</span></a></li><li class="depth-3"><a href="#72-안쪽과-바깥쪽은-나눌-수-없다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 안쪽과 바깥쪽은 나눌 수 없다</span></a></li><li class="depth-2"><a href="#8-그래도-공정거래법이-적용되는-경우" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 그래도 공정거래법이 적용되는 경우</span></a></li><li class="depth-2"><a href="#9-미국캐나다eu-비교" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 미국·캐나다·EU 비교</span></a></li><li class="depth-3"><a href="#91-미국" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 미국</span></a></li><li class="depth-3"><a href="#92-캐나다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 캐나다</span></a></li><li class="depth-3"><a href="#93-eu" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.3 EU</span></a></li><li class="depth-2"><a href="#10-2026년의-제도-움직임" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 2026년의 제도 움직임</span></a></li><li class="depth-2"><a href="#11-평가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11. 평가</span></a></li><li class="depth-3"><a href="#111-층위별-정리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.1 층위별 정리</span></a></li><li class="depth-3"><a href="#112-논문이-바로-세운-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.2 논문이 바로 세운 것</span></a></li><li class="depth-3"><a href="#113-논문이-남긴-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.3 논문이 남긴 것</span></a></li><li class="depth-3"><a href="#114-논문의-오류와-불일치" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">11.4 논문의 오류와 불일치</span></a></li><li class="depth-2"><a href="#12-맺음" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">12. 맺음</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-02</span>
+          <span class="meta-badge">⏱️ 약 57분</span>
+          <span class="meta-badge">✍️ Pages 노동법 해설</span>
+        </div>
+        <h1 class="article-title">경쟁을 없애는 것이 목적인 단체 — 노무제공자의 노동조합 활동과 공정거래법의 경계 심화 분석</h1>
+        <p class="article-subtitle">건설기계 노동조합 사건, '사업자적 행위'라는 기준, 그리고 경계선 위의 종속성</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#노동법</span>
+          
+          <span class="tag-pill">#경쟁법</span>
+          
+          <span class="tag-pill">#공정거래법</span>
+          
+          <span class="tag-pill">#노동3권</span>
+          
+          <span class="tag-pill">#노무제공자</span>
+          
+          <span class="tag-pill">#건설기계</span>
+          
+          <span class="tag-pill">#노동면제</span>
+          
+          <span class="tag-pill">#비교노동법</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <p><strong>굴착기 한 대를 가진 사람이 건설 현장에서 그 장비를 직접 운전한다. 작업 시간과 장소와 작업량은 건설업자가 정하고, 그는 임대료를 받는다.</strong> 그와 동료들이 노동조합을 만들어 적정 임대료를 정하고, 일감을 나누고, 조합원 장비를 쓰라고 요구했다. 공정거래위원회(공정위)는 이를 사업자단체의 금지행위로 보고 시정명령과 과징금을 내렸다. 고용된 운전기사들이 같은 일을 했다면 임금 교섭이고 단체행동이다. 장비 소유와 사업자등록이 무엇을 바꾸는가.</p>
+<p>화물차주, 택배기사, 배달 기사처럼 근로계약 없이 일하는 사람도 노동조합법상 근로자가 될 수 있다. 이들은 동시에 사업자의 외형을 가진다. 노동조합법은 이들의 단체행동을 보장한다. 공정거래법은 사업자의 가격 담합과 경쟁자 배제를 금지한다.</p>
+<p>이 글의 뼈대는 이태현의 논문 「노무제공자의 노동조합 활동에 대한 공정거래법 적용의 경계」(『노동법학』 제98호, 한국노동법학회, 2026. 6., 169–250쪽)다. 논문의 결론은 이렇다. 노동조합 활동에 공정거래법을 적용할 수 있는 것은 그 활동이 &#39;사업자적 행위&#39;일 때뿐이다. 그 경계선 위에 종속성이 있다.</p>
+<blockquote>
+<p><strong>읽는 법.</strong> 괄호 안 쪽수는 논문의 쪽수다. 논문 밖의 자료에는 &#39;보충&#39;을 붙였다. 법령·판결은 원문으로 확인했고, 보도에 기댄 것은 그렇게 밝혔다. 확인하지 못한 사실에는 [확인 필요]를 붙였다. 이 글은 ① 현행법 ② 판결이 그 사건에서 판단한 것 ③ 논문의 제안 ④ 이 글의 평가를 나누어 적는다. &#39;사업자적 행위&#39;와 종속성 기준은 판례의 법리가 아니라 논문의 제안이다. 법령상 지위는 &#39;근로자&#39;, 사회·역사적 맥락은 &#39;노동자&#39;로 쓴다. 계약 형식과 관계없이 타인에게 노무를 제공하는 사람은 &#39;노무제공자&#39;다. 공정거래법 조문은 2020년 전부개정 이후 번호다.</p>
+</blockquote>
+<hr>
+<h2 id="1-핵심-질문과-논문의-답"><a href="#1-핵심-질문과-논문의-답" class="heading-anchor" aria-hidden="true">#</a> 1. 핵심 질문과 논문의 답</h2><p>노동조합은 노동력 판매자 사이의 경쟁을 멈추게 하는 단체다. 노동자들이 서로 더 낮은 임금을 부르지 않게 하는 것이 단결의 출발점이다. 경쟁법의 외형으로 보면 이것은 판매자들의 가격 담합과 닮았다. 그래서 주요 국가는 근로자의 단체행동을 경쟁법에서 빼거나 조정하는 법리를 만들었다(9장). 근로자의 범위가 넓어지면서 이 문제가 다시 열렸다.</p>
+<p>논문의 답은 네 줄로 요약된다.</p>
+<ol>
+<li>두 법은 진정으로 충돌하지 않는다. 수범자가 겹칠 때 외견상 충돌할 뿐이다(2장).</li>
+<li>해석은 헌법에서 출발한다. 효율성을 이유로 노동3권을 제약하는 해석은 헌법에 맞지 않는다(4장).</li>
+<li>경쟁 제한은 노동조합의 본질이다. 공정거래법의 대상은 상대방을 배제해 이윤을 늘리는 &#39;사업자적 행위&#39;뿐이다. 둘을 가르는 기준은 종속성이다(5–8장).</li>
+<li>해석만으로는 근로조건이 오르지 않는다. 현장에 맞는 단체교섭 제도가 필요하다(10장).</li>
+</ol>
+<p>논문은 공정거래법이 노동조합에 절대 적용되지 않는다고 말하지 않는다. 사용자와 손잡고 경쟁사업자를 몰아내거나 소비자 가격을 함께 올리면 적용을 인정한다(8장). 논문이 반대하는 것은 외형만 보고 경쟁법을 적용하는 방식이다.</p>
+<hr>
+<h2 id="2-한-사람-두-지위"><a href="#2-한-사람-두-지위" class="heading-anchor" aria-hidden="true">#</a> 2. 한 사람, 두 지위</h2><p>노동조합법 제2조 제1호는 근로자를 &quot;직업의 종류를 불문하고 임금·급료 기타 이에 준하는 수입에 의하여 생활하는 자&quot;로 정의한다. 대법원은 이 정의를 노무제공관계의 실질에 적용한다(보충: 대법원 2018. 6. 15. 선고 2014두12598, 2014두12604 판결). 장비 소유나 사업자등록만으로 근로자성이 부정되지 않는다. 같은 사람이 공정거래법 제2조 제1호의 사업자일 수도 있다. 근로자라고 사업자성이 당연히 부정되지도, 인정되지도 않는다. 사업자성은 따로 판단한다(5.2).</p>
+<p>논문은 이 겸유를 가정하고 출발한다(170쪽 각주 1). 다루는 대상은 단체협약이 아니라 노동조합의 일방적 활동, 곧 단결권·단체행동권 행사와 교섭 요구다(170쪽 각주 2).</p>
+<blockquote>
+<p><strong>보충 — 법원도 겸유를 인정했다.</strong> 서울고등법원 2023누44810 판결(2025. 11. 19.)은 부산·경남 건설기계대여업자 단체를 노동조합이자 사업자단체로 보았다. 근로자로 본 이유: 임대료에 노무 대가가 들어 있고, 건설업자의 지휘에 따라 일한다. 사업자로 본 이유: 사업자등록을 했고, 여러 건설업자와 계약하며, 유류비·수리비를 스스로 낸다.</p>
+</blockquote>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 392" role="img" aria-label="노동조합법상 근로자와 공정거래법상 사업자의 범위가 겹치는 영역: 겸유하는 노무제공자">
+  <rect x="8" y="8" width="764" height="376" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">한 사람, 두 지위: 두 법의 범위가 겹치는 곳</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">이태현(2026) 170 · 197–198 · 203–205쪽과 서울고법 2023누44810 판결(보충)을 바탕으로 한 도식</text>
+  <ellipse cx="290" cy="200" rx="210" ry="120" fill="#dbeafe" fill-opacity="0.75" stroke="#1e3a8a" stroke-width="1.5"/>
+  <ellipse cx="490" cy="200" rx="210" ry="120" fill="#e2e8f0" fill-opacity="0.6" stroke="#475569" stroke-width="1.5"/>
+  <text x="210" y="128" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">노동조합법상 근로자</text>
+  <text x="210" y="146" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">노무제공관계의 실질로 판단</text>
+  <text x="570" y="128" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">공정거래법상 사업자</text>
+  <text x="570" y="146" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">손익 귀속 · 독자적 결정</text>
+  <text x="168" y="196" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">근로기준법상 근로자</text>
+  <text x="168" y="216" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사업자가 아니다</text>
+  <text x="168" y="234" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">공정거래법 적용 없음</text>
+  <text x="168" y="252" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">(논문 197–198쪽)</text>
+  <text x="390" y="186" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">겸유하는 노무제공자</text>
+  <text x="390" y="206" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">예: 건설기계 대여업자</text>
+  <text x="390" y="224" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동3권 주체이면서</text>
+  <text x="390" y="242" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">담합 규제의 외형 아래</text>
+  <text x="612" y="196" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">일반 사업자</text>
+  <text x="612" y="216" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">가격 담합 · 거래거절 금지</text>
+  <text x="612" y="234" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">(제40조 · 제45조 · 제51조)</text>
+  <rect x="60" y="334" width="660" height="36" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="357" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">겹치는 곳에서 두 법은 같은 행위를 반대로 평가할 수 있다. 논문은 이를 외견상 충돌이라 부른다(175쪽)</text>
+</svg>
+</div>
+
+<p>논문은 이 상황을 규범충돌로 보지 않는다. 노동조합법은 활동을 보장할 뿐 명령하지 않는다. 공정거래법은 금지할 뿐이다. 그래서 두 법은 &quot;규범충돌 상황에 있다고 보기는 어렵다&quot;(172쪽). 수범자가 겹칠 때 생기는 &quot;외견상 충돌&quot;일 뿐이다(175쪽). 외견상 충돌은 두 법을 조화시키는 해석으로 풀 수 있다. 논문은 근거로 제정 순서도 든다. 근로기준법과 구 노동조합법(1953)은 공정거래법(1980)보다 약 30년 앞서고, 공정거래법 제정 때 노동법과의 충돌을 고려한 자료는 찾기 어렵다(171쪽).</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>노동3권</th>
+<th>활동의 예</th>
+<th>외형상 해당할 수 있는 공정거래법 규정</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>단결권</td>
+<td>보수 결정·일감 분배 규칙을 어긴 조합원 징계</td>
+<td>사업자단체 금지행위(제51조)</td>
+</tr>
+<tr>
+<td>단체교섭권·단체행동권</td>
+<td>보수 공동 결정, 조합원 채용 요구, 노무 제공 거부</td>
+<td>부당한 공동행위(제40조), 불공정거래행위(제45조), 제51조</td>
+</tr>
+<tr>
+<td>단체협약</td>
+<td>노사 합의</td>
+<td>제40조, 제45조</td>
+</tr>
+</tbody></table>
+</div><blockquote>
+<p><strong>보충 — 조문 번호.</strong> 2020. 12. 29. 전부개정(법률 제17799호, 2021. 12. 30. 시행)으로 번호가 바뀌었다. 부당한 공동행위는 제19조에서 제40조로, 불공정거래행위는 제23조에서 제45조로, 사업자단체 금지행위는 제26조에서 제51조로, 정당한 행위는 제58조에서 제116조로 옮겨졌다. 인용 조문은 2026. 10. 2. 시행 법률(법률 제22043호)로 다시 확인했다.</p>
+</blockquote>
+<hr>
+<h2 id="3-서울고등법원-판결-네-건"><a href="#3-서울고등법원-판결-네-건" class="heading-anchor" aria-hidden="true">#</a> 3. 서울고등법원 판결 네 건</h2><p>논문은 건설기계 노동조합에 대한 공정위 처분의 취소소송 네 건을 다룬다(174–175쪽). 네 건 모두 상고되었다(174쪽 각주 10). 2026년 10월 초까지 대법원 판결은 찾지 못했다(보충). 모두 확정되지 않은 사건별 판단이다. 하나의 법리로 묶어 읽으면 안 된다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>사건(선고)</th>
+<th>문제 된 행위</th>
+<th>법원의 판단</th>
+<th>상고</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2023누38440 (2024. 12. 12.)</td>
+<td>수급사업자에게 비조합원 장비와의 거래를 끊으라고 장비 운행 중단·집회로 압박</td>
+<td>근로조건 유지·개선 목적 행위에는 공정거래법이 적용되지 않는다고 전제했다. 그러나 이 거래 단절 요구는 근로조건과 무관한 &#39;거래조건&#39;이라 보고 적용을 인정했다. 노동조합법 제45조 제2항의 절차도 거치지 않았다고 했다. 시정명령 적법, 과징금 1억 원 취소(보충)</td>
+<td>2025두30042</td>
+</tr>
+<tr>
+<td>2023누44810 (2025. 11. 19.)</td>
+<td>① 일감 분배 규칙을 어긴 조합원 제명 ② 비조합원 장비와의 거래 중단 요구와 레미콘 운송 중단</td>
+<td>①은 단결권에 따른 내부통제로서 구법 제58조(현행 제116조)의 정당한 행위(시정명령 취소). ②는 부당한 거래거절 강요(시정명령 적법). 과징금 1억 6,900만 원 적법(보충)</td>
+<td>2025두35891</td>
+</tr>
+<tr>
+<td>2024누39570 (2026. 1. 22.)</td>
+<td>울산 노동조합의 적정임대료 결정, 배차 요구, 비조합원 거래 중단 요구</td>
+<td>시정명령과 과징금 4,300만 원 모두 취소. 거래 중단 요구도 그 사건의 경위(쟁의 중 대체 투입 장비 항의, 조합원 복직, 단체협약 체결 과정)상 부당성이 없다(보충)</td>
+<td>2026두30442</td>
+</tr>
+<tr>
+<td>2023누43176 (2026. 1. 22.)</td>
+<td>울릉 노동조합의 임대단가 인상 결정 등</td>
+<td>시정명령 모두 취소(보충)</td>
+<td>논문 표기는 첫 사건과 같은 번호. [확인 필요]</td>
+</tr>
+</tbody></table>
+</div><div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 452" role="img" aria-label="서울고등법원 판결 네 건의 비교: 유형 1 안쪽의 제한, 유형 2 바깥쪽의 제한, 처분 결과">
+  <rect x="8" y="8" width="764" height="436" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">서울고법 판결 네 건: 같은 유형, 다른 결론</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">판결문과 보도로 확인한 사건별 판단(보충). 네 건 모두 상고되어 확정되지 않았다</text>
+  <text x="99" y="92" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">사건</text>
+  <text x="280" y="86" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">유형 1 · 안쪽의 제한</text>
+  <text x="280" y="102" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">보수 결정 · 조합원 통제</text>
+  <text x="486" y="86" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">유형 2 · 바깥쪽의 제한</text>
+  <text x="486" y="102" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">비조합원 거래 중단 요구</text>
+  <text x="674" y="92" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">처분 결과</text>
+  <line x1="24" y1="112" x2="756" y2="112" stroke="#cbd5e1" stroke-width="1.2"/>
+  <rect x="24" y="120" width="150" height="62" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="99" y="146" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">2023누38440</text>
+  <text x="99" y="165" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2024. 12. 12.</text>
+  <rect x="182" y="120" width="196" height="62" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="280" y="156" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">이 사건의 쟁점 아님</text>
+  <rect x="388" y="120" width="196" height="62" rx="10" fill="#475569" stroke="#475569" stroke-width="1.2"/>
+  <text x="486" y="146" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">적용 인정</text>
+  <text x="486" y="165" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#e2e8f0">근로조건과 무관한 '거래조건'</text>
+  <text x="674" y="146" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">시정명령 적법</text>
+  <text x="674" y="165" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">과징금 1억 원 취소</text>
+  <rect x="24" y="190" width="150" height="62" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="99" y="216" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">2023누44810</text>
+  <text x="99" y="235" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2025. 11. 19.</text>
+  <rect x="182" y="190" width="196" height="62" rx="10" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="280" y="216" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">적용 부정</text>
+  <text x="280" y="235" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#0f172a">제명은 단결권의 내부통제</text>
+  <rect x="388" y="190" width="196" height="62" rx="10" fill="#475569" stroke="#475569" stroke-width="1.2"/>
+  <text x="486" y="216" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">적용 인정</text>
+  <text x="486" y="235" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#e2e8f0">부당한 거래거절 강요</text>
+  <text x="674" y="216" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">제명 부분 시정명령 취소</text>
+  <text x="674" y="235" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#0f172a">과징금 1억 6,900만 원 적법</text>
+  <rect x="24" y="260" width="150" height="62" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="99" y="286" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">2024누39570</text>
+  <text x="99" y="305" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2026. 1. 22. · 울산</text>
+  <rect x="182" y="260" width="196" height="62" rx="10" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="280" y="286" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">위법 아님</text>
+  <text x="280" y="305" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#0f172a">적정임대료 결정 · 징계는 정당</text>
+  <rect x="388" y="260" width="196" height="62" rx="10" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="486" y="286" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">부당성 부정</text>
+  <text x="486" y="305" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#0f172a">그 사건의 경위에 비추어</text>
+  <text x="674" y="286" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">시정명령 · 과징금 모두 취소</text>
+  <text x="674" y="305" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">과징금은 4,300만 원이었다</text>
+  <rect x="24" y="330" width="150" height="62" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="99" y="356" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">2023누43176</text>
+  <text x="99" y="375" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2026. 1. 22. · 울릉</text>
+  <rect x="182" y="330" width="196" height="62" rx="10" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="280" y="356" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">위법 아님</text>
+  <text x="280" y="375" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#0f172a">임대단가 인상 결정 등</text>
+  <rect x="388" y="330" width="196" height="62" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="486" y="366" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">이 글이 확인한 쟁점 없음</text>
+  <text x="674" y="356" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">시정명령 모두 취소</text>
+  <text x="674" y="375" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">상고번호 [확인 필요]</text>
+  <rect x="24" y="404" width="14" height="14" rx="3" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="44" y="415" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동조합 쪽 판단</text>
+  <rect x="150" y="404" width="14" height="14" rx="3" fill="#475569"/>
+  <text x="170" y="415" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">공정위 처분 유지</text>
+  <text x="756" y="415" text-anchor="end" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">두 유형을 가르는 일반 법리는 확립되지 않았다</text>
+</svg>
+</div>
+
+<blockquote>
+<p><strong>보충 — 2026년 1월 판결의 논리.</strong> 판결문과 보도로 확인했다. 법원은 적정임대료 결정이 사업자단체 금지행위가 아니라고 보았다. 조합원을 구속하지 않았고, 비조합원이 조합원을 대체할 수 있었기 때문이다. 해당하더라도 제116조의 정당한 행위라고 했다. 그러나 노동조합이라는 이유만으로 적용을 전면 배제하지는 않았다. 2024누39570 판결은 제116조와 부당성을 판단할 때 노동3권의 헌법적 가치를 충분히 반영해야 한다고 밝혔다.</p>
+</blockquote>
+<p>논문은 행위를 두 유형으로 나눈다(176–177쪽). 유형 1은 <strong>안쪽의 제한</strong>이다. 규칙을 어긴 조합원을 통제한다. 유형 2는 <strong>바깥쪽의 제한</strong>이다. 사용자에게 비조합원과의 거래를 끊으라고 실력을 행사한다. 둘 다 근로자 사이의 경쟁을 제한한다. 유형 2는 비조합원에게 피해를 줄 수 있다. 2023누44810 판결은 유형 1에 적용을 부정하고 유형 2에 인정했다. 그러나 2024누39570 판결은 유형 2 행위에도 부당성을 부정했다. 두 유형을 가르는 일반 법리는 아직 없다. 논문은 두 유형을 나누는 것 자체를 비판한다(7.2).</p>
+<hr>
+<h2 id="4-해석의-출발점-학설-제116조-헌법"><a href="#4-해석의-출발점-학설-제116조-헌법" class="heading-anchor" aria-hidden="true">#</a> 4. 해석의 출발점 — 학설, 제116조, 헌법</h2><p><strong>학설.</strong> 대체로 학문 분야에 따라 갈린다(177–181쪽). 노동법학은 보호영역 안의 노동조합 활동에 공정거래법을 적용하지 않는다고 본다(정영훈, 조현주, 김린 등). 경쟁법학은 노동조합법상 적법해도 공정거래법이 적용된다고 본다(나호연 등). 논문은 경쟁법학계에서는 이 견해가 주류로 보인다고 정리한다(180쪽).</p>
+<p><strong>제116조.</strong> 공정거래법 제116조는 &quot;사업자 또는 사업자단체가 다른 법령에 따라 하는 정당한 행위&quot;에는 이 법을 적용하지 않는다고 정한다. 대법원은 구법 제58조의 &#39;정당한 행위&#39;를 좁게 본다. 곧 &quot;자유경쟁의 예외를 구체적으로 인정하고 있는 법률 또는 그 법률에 의한 명령의 범위 내에서 행하는 필요·최소한의 행위&quot;다(보충: 대법원 2011. 4. 14. 선고 2009두7912 판결 등). 이 기준을 노동조합 활동에 어떻게 적용할지는 판례로 정리되지 않았다(이 글의 평가). 논문은 제116조의 &#39;정당성&#39; 해석을 다음 연구로 미룬다(183쪽). 대신 그 해석이 따를 헌법 기준을 세운다.</p>
+<p><strong>헌법.</strong> 헌법 제33조 제1항은 노동3권을 보장한다. 공정거래법의 헌법 근거로는 경제의 규제·조정을 정한 제119조 제2항이 꼽힌다(186쪽). 논문의 핵심 논거는 근로조건 법정주의(제32조 제3항)다. 기준이 경제적 유불리에 따라 바뀌면 기준이 아니다. 노동3권도 같다. 그래서 노동3권 행사는 효율성을 이유로 한 개입으로부터 &quot;두텁게 보장되어야&quot; 한다(189쪽). 이것은 무제한 보장이 아니다. 기본권은 제37조 제2항에 따라 제한될 수 있고, 논문도 사업자적 행위에는 적용을 인정한다.</p>
+<p><strong>노동법의 자리.</strong> 논문은 노동시장의 기본법이 공정거래법이 아니라 노동법이라고 본다(189–190쪽). 최저기준은 근로조건을 깎는 경쟁을 막는다. 노동법은 처음부터 경쟁에 개입했다. 또 공정거래법은 사법관계에 소극적으로 개입하는 법이다(196쪽). 이런 법이 계약을 적극적으로 고치려는 권리 행사를 막아서는 안 된다(196–198쪽).</p>
+<hr>
+<h2 id="5-노동조합의-본성과-39사업자적-행위39"><a href="#5-노동조합의-본성과-39사업자적-행위39" class="heading-anchor" aria-hidden="true">#</a> 5. 노동조합의 본성과 &#39;사업자적 행위&#39;</h2><h3 id="51-바닥을-향한-경쟁"><a href="#51-바닥을-향한-경쟁" class="heading-anchor" aria-hidden="true">#</a> 5.1 바닥을 향한 경쟁</h3><p>논문은 아치볼드 콕스(Archibald Cox, 1955)를 인용한다. &quot;모든 노동조직의 목적과 효과는 노동시장에서 경쟁을 제거하는 것이다.&quot; &quot;모든 노동조합은 공언된 독점체다&quot;(198쪽). 경쟁 제한은 노동조합의 일탈이 아니라 존재 이유다. 일감을 매번 새로 따야 하는 노무제공자에게는 경쟁 제한 없이 근로조건 향상이 불가능하다.</p>
+<p>사용자들은 인건비로 경쟁한다. 노무제공자들은 일감을 얻으려 더 낮은 보수를 부른다. 한 현장에서 보수를 올려도 그 사용자가 밀리면 피해는 노무제공자에게 돌아온다(199–200쪽). 그래서 노동조합은 노무제공자 사이의 경쟁과, 근로조건 차이를 무기로 한 사용자 사이의 경쟁을 함께 제한해야 한다(미국 Apex 판결 인용, 200쪽 각주 68).</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 500" role="img" aria-label="바닥을 향한 경쟁의 고리와 노동조합이 개입하는 두 방향: 노무제공자 사이의 경쟁 제한과 근로조건 차이에 따른 사용자 사이의 경쟁 제한">
+  <defs>
+    <marker id="ua-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <marker id="ua-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#1e3a8a"/>
+    </marker>
+  </defs>
+  <rect x="8" y="8" width="764" height="484" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">바닥을 향한 경쟁, 그리고 노동조합이 끊으려는 두 개의 고리</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">이태현(2026) 199–202쪽, 227–232쪽의 논지를 바탕으로 한 도식</text>
+  <rect x="40" y="80" width="220" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="150" y="104" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">사용자 사이의 경쟁</text>
+  <text x="150" y="123" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">원청은 더 싼 하청을, 하청은 더 싼 장비를</text>
+  <rect x="520" y="80" width="220" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="630" y="104" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">인건비 인하 압력</text>
+  <text x="630" y="123" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">가장 낮은 값을 부르는 사람에게 일감</text>
+  <rect x="520" y="200" width="220" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="630" y="224" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">노무제공자 사이의 출혈 경쟁</text>
+  <text x="630" y="243" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">일감을 얻으려 서로 더 낮은 보수를 부른다</text>
+  <rect x="40" y="200" width="220" height="56" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="150" y="224" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">근로조건의 하향</text>
+  <text x="150" y="243" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">조직된 현장일수록 일감을 잃는다</text>
+  <line x1="262" y1="108" x2="516" y2="108" stroke="#64748b" stroke-width="2" marker-end="url(#ua-arr)"/>
+  <line x1="630" y1="138" x2="630" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#ua-arr)"/>
+  <line x1="518" y1="228" x2="264" y2="228" stroke="#64748b" stroke-width="2" marker-end="url(#ua-arr)"/>
+  <line x1="150" y1="198" x2="150" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#ua-arr)"/>
+  <text x="390" y="172" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">되풀이되는 고리</text>
+  <rect x="24" y="290" width="356" height="132" rx="12" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="202" y="314" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">① 노무제공자 사이의 경쟁 제한</text>
+  <text x="202" y="340" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" fill="#0f172a">안쪽: 보수 공동 결정 · 일감 분배 규칙 · 일탈 조합원 통제</text>
+  <text x="202" y="362" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" fill="#0f172a">안팎: 조합원 채용 요구 · 비조합원과의 거래 단절 요구</text>
+  <text x="202" y="388" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">공정거래법의 외형: 가격 담합(제40조),</text>
+  <text x="202" y="406" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">구성사업자 제한 · 거래거절 강요(제51조 · 제45조)</text>
+  <rect x="400" y="290" width="356" height="132" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="578" y="314" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">② 근로조건 차이에 따른 사용자 경쟁 제한</text>
+  <text x="578" y="340" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" fill="#0f172a">미조직 현장 조직 요구 · 조직된 하청업체로 발주 요구</text>
+  <text x="578" y="362" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" fill="#0f172a">제도의 예: 노동조합법 제36조 지역적 구속력</text>
+  <text x="578" y="388" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">논문: 근로조건 차이를 지우는 데 그치면 정당,</text>
+  <text x="578" y="406" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">상품시장 경쟁을 직접 제한하면 공정거래법의 대상</text>
+  <line x1="202" y1="288" x2="560" y2="258" stroke="#1e3a8a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ua-arr-blue)"/>
+  <line x1="578" y1="288" x2="230" y2="142" stroke="#1e3a8a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ua-arr-blue)"/>
+  <rect x="90" y="438" width="600" height="40" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="463" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">안쪽의 제한만 허용하면 제명된 조합원이 더 낮은 값으로 바깥에서 경쟁한다(232쪽)</text>
+</svg>
+</div>
+
+<p>제도도 이 구조를 인정한다. 노동조합법 제36조의 지역적 구속력은 한 지역 동종 근로자 3분의 2 이상에 적용되는 단체협약을 나머지에게도 확장할 수 있게 한다. 근로조건을 깎는 사용자 간 경쟁을 막는 장치다(201쪽).</p>
+<h3 id="52-사업자와-39사업자적-행위39"><a href="#52-사업자와-39사업자적-행위39" class="heading-anchor" aria-hidden="true">#</a> 5.2 사업자와 &#39;사업자적 행위&#39;</h3><p>판례상 사업자는 대가를 받고 재화·용역을 공급하며, 손익의 귀속주체이고, 경제활동을 독자적으로 결정하는 자다(BC카드 사건: 서울고등법원 2003. 5. 27. 선고 2001누15193 판결, 대법원 2005. 12. 9. 선고 2003두6283 판결로 확정). 논문은 영업성과 독립성을 사업자의 본질로 본다. 타인의 지시에 따라 일하는 근로자는 사업자가 아니다(204–205쪽).</p>
+<p>&#39;사업자적 행위&#39;는 법률 용어가 아니다. 논문의 분석 개념이다. 경쟁·거래관계에서 우위를 차지해 이윤을 극대화하려는 행위다. 거래상대방은 수단일 뿐이고, 행위는 다른 경제주체를 &quot;영구적 혹은 일시적&quot;으로 배제하려는 성격을 가진다(206–207쪽). 노동3권은 다르다. 근로자는 &quot;사용자의 불이익을 매개하여서만&quot; 근로조건을 높일 수 있다. 임금이 지나치게 오르면 일자리가 사라지므로, 노동3권은 사용자와의 공존을 모색할 수밖에 없다(207–208쪽).</p>
+<h3 id="53-경계선-위의-종속성"><a href="#53-경계선-위의-종속성" class="heading-anchor" aria-hidden="true">#</a> 5.3 경계선 위의 종속성</h3><p>논문의 결론 명제는 이렇다(209쪽). 노동3권은 사용자의 이익을 근로자에게 옮기라고 요구하는 권리다. 그러므로 사용자의 경쟁사업자를 상대로 행사해서는 안 된다. 사용자와 손잡고 경쟁사업자를 방해하면, 근로자는 사업자 간 경쟁에 직접 참여하는 것이다. &quot;노동법과 경쟁법의 경계선상에는 노동법의 출발인 종속성이 위치하고 있는 것이다&quot;(209쪽).</p>
+<p>이 명제는 판례가 확립한 기준이 아니다. 검토한 판결들은 종속성을 근로자성 판단에만 썼다. 경계 설정에 쓰자는 것은 논문의 제안이다. 이 글은 그 제안이 기능적으로 설득력이 있다고 본다. 한계는 11.3에서 다룬다. 종속을 단결로 상쇄한다는 생각의 계보는 <a href="sinzheimer_subordination_genealogy.html">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</a>에서 다루었다.</p>
+<hr>
+<h2 id="6-다섯-가지-판단-기준-논문의-제안"><a href="#6-다섯-가지-판단-기준-논문의-제안" class="heading-anchor" aria-hidden="true">#</a> 6. 다섯 가지 판단 기준 — 논문의 제안</h2><p>아래 기준은 판례가 확립한 기준이 아니다. 논문의 해석론이다. 원칙은 하나다. 노동조합의 행위가 &#39;사업자적 행위&#39;일 때만 공정거래법 적용 가능성을 인정한다(210쪽). 행위의 성격이 모호하면 다섯 기준으로 판단한다(210–216쪽).</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>기준</th>
+<th>묻는 것</th>
+<th>보호 쪽 사정</th>
+<th>적용 쪽 사정</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>① 관련성</td>
+<td>경쟁 제한과 근로조건 향상이 시기·수단·목적에서 실질적으로 관련되는가</td>
+<td>조합원의 임금·근로시간. 조합원 채용과 시기적으로 밀접한 거래거절 요구</td>
+<td>조합원 채용과 무관한 거래거절 요구</td>
+</tr>
+<tr>
+<td>② 상품시장</td>
+<td>상품시장의 사업자 간 경쟁을 직접 제한하는가</td>
+<td>근로조건 차이에서 생긴 경쟁만 없앰</td>
+<td>상품 수량·가격 통제. 사용자와 결합하거나 사용자의 이익을 위해 움직임</td>
+</tr>
+<tr>
+<td>③ 거래관계</td>
+<td>사업자 중심의 거래·경쟁관계를 제한하는가</td>
+<td>근로자 사이나 소비자 사이의 경쟁 제한</td>
+<td>사업자 중심의 거래·경쟁관계 제한</td>
+</tr>
+<tr>
+<td>④ 불이익의 귀속</td>
+<td>불이익을 누가 지는가</td>
+<td>요구가 사용자에게만 향하고, 거래 단절은 사용자의 결단으로 생김(간접적 효과)</td>
+<td>교섭 상대가 아닌 제3자가 불이익을 짐. 다만 일률적으로 정하기 어렵다</td>
+</tr>
+<tr>
+<td>⑤ 동기</td>
+<td>목적이 불분명할 때 무엇을 보는가</td>
+<td>모호한 기준은 노동3권 행사를 위축시킨다</td>
+<td>남용의 외관에서 상대방에 대한 해의(害意)를 추인할 수 있음</td>
+</tr>
+</tbody></table>
+</div><p>그래도 판단이 서지 않으면, 논문은 &quot;공정거래법 적용이 불가피한 경우에 한하여&quot; 적용하자고 제안한다(216–217쪽). 이 &#39;불가피성&#39; 기준은 현행법에 명문이 없다. 헌법적 조화에서 끌어낸 논문의 원칙이다. 피해는 민사 손해배상으로 구제하고, 제재가 필요하면 노동조합법으로 하는 것이 낫다고 본다(217쪽).</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 560" role="img" aria-label="노무제공자 노동조합 활동에 대한 공정거래법 적용 판단 흐름: 사용자의 불이익을 매개하는가, 사업자적 행위인가, 사업자 중심 거래관계의 경쟁 제한인가, 모호하면 불가피한 경우에만 적용">
+  <defs>
+    <marker id="ua-flow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="8" y="8" width="764" height="544" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">경계는 어떻게 그어지는가: 논문의 판단 흐름</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">이태현(2026) 209–220쪽, 237–243쪽을 바탕으로 한 도식</text>
+  <rect x="230" y="72" width="320" height="44" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="390" y="99" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">노무제공자 노동조합의 활동</text>
+  <line x1="390" y1="118" x2="390" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#ua-flow)"/>
+  <rect x="150" y="144" width="480" height="58" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="390" y="168" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">사용자의 불이익을 매개로 근로조건 향상을 꾀하는가</text>
+  <text x="390" y="189" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">요구와 실력행사의 상대가 사용자인가, 사용자와의 공존을 모색하는가</text>
+  <line x1="150" y1="174" x2="104" y2="174" stroke="#64748b" stroke-width="2"/>
+  <line x1="104" y1="174" x2="104" y2="238" stroke="#64748b" stroke-width="2" marker-end="url(#ua-flow)"/>
+  <text x="122" y="164" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">예</text>
+  <rect x="24" y="242" width="220" height="118" rx="12" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="134" y="266" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">노동3권의 보호영역</text>
+  <text x="134" y="290" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">공정거래법 적용 불가</text>
+  <text x="134" y="310" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동조합법 위반이 있어도 마찬가지</text>
+  <text x="134" y="330" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">제재가 필요하면 노동조합법으로,</text>
+  <text x="134" y="348" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">피해는 손해배상 · 가처분으로</text>
+  <line x1="630" y1="174" x2="676" y2="174" stroke="#64748b" stroke-width="2"/>
+  <line x1="676" y1="174" x2="676" y2="238" stroke="#64748b" stroke-width="2" marker-end="url(#ua-flow)"/>
+  <text x="656" y="164" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">아니오</text>
+  <rect x="536" y="242" width="220" height="118" rx="12" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+  <text x="646" y="266" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">사업자적 행위의 징표</text>
+  <text x="646" y="290" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사용자와 결합해 경쟁사업자 배제</text>
+  <text x="646" y="310" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">상품시장의 가격 · 수량 직접 통제</text>
+  <text x="646" y="330" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">경쟁자를 시장 전체에서 배제</text>
+  <text x="646" y="348" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사용자와 함께 시장을 봉쇄</text>
+  <line x1="390" y1="204" x2="390" y2="238" stroke="#64748b" stroke-width="2" marker-end="url(#ua-flow)"/>
+  <text x="430" y="226" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">모호함</text>
+  <rect x="262" y="242" width="256" height="118" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="390" y="266" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">다섯 가지 기준으로 검토</text>
+  <text x="390" y="290" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">① 관련성 ② 상품시장 ③ 거래관계</text>
+  <text x="390" y="310" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">④ 불이익의 귀속 ⑤ 동기</text>
+  <text x="390" y="334" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">그래도 모호하면</text>
+  <text x="390" y="352" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">적용이 불가피한 경우에만</text>
+  <line x1="646" y1="362" x2="646" y2="398" stroke="#64748b" stroke-width="2" marker-end="url(#ua-flow)"/>
+  <rect x="460" y="402" width="296" height="62" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="608" y="426" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">사업자 중심 거래 · 경쟁관계의 경쟁 제한인가</text>
+  <text x="608" y="448" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">효과가 특정 사용자와의 노동시장에 그치면 아니다</text>
+  <line x1="608" y1="466" x2="608" y2="488" stroke="#64748b" stroke-width="2" marker-end="url(#ua-flow)"/>
+  <rect x="460" y="492" width="296" height="44" rx="10" fill="#1e3a8a" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="608" y="519" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">공정거래법 적용 가능</text>
+  <rect x="24" y="402" width="414" height="134" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="231" y="426" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">판단이 어려운 회색지대(논문이 인정)</text>
+  <text x="231" y="450" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사용자의 거래처를 상대로 한 보이콧: 비교형량</text>
+  <text x="231" y="470" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">상품 가격과 근로조건이 얽힌 경우</text>
+  <text x="231" y="490" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">제3자가 피해를 감수해야 하는 범위</text>
+  <text x="231" y="516" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">제재가 필요하다면 가급적 노동조합법으로</text>
+</svg>
+</div>
+
+<hr>
+<h2 id="7-보호되는-활동"><a href="#7-보호되는-활동" class="heading-anchor" aria-hidden="true">#</a> 7. 보호되는 활동</h2><h3 id="71-활동별-정리"><a href="#71-활동별-정리" class="heading-anchor" aria-hidden="true">#</a> 7.1 활동별 정리</h3><p>논문에 따르면 노동3권의 보호영역은 노동조합법상 적법성보다 넓다. 노동조합법을 위반했어도 사업자적 행위가 아니면 공정거래법을 적용해서는 안 된다(219–220쪽). 이것은 절차 위반을 근거로 든 2023누38440 판결과 다른, 논문의 해석론이다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>활동</th>
+<th>외형상 해당할 수 있는 규정</th>
+<th>논문의 평가</th>
+<th>판결</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>일감 분배 규칙·최저보수 결정, 위반 조합원 징계</td>
+<td>구성사업자 활동 제한(제51조 제1항 제3호)</td>
+<td>노동조합이 기능하기 위한 전제다. 시장 배제가 아니다(221–222쪽)</td>
+<td>2023누44810: 제명은 정당한 행위</td>
+</tr>
+<tr>
+<td>보수의 공동 결정과 교섭 요구</td>
+<td>가격 담합(제40조 제1항 제1호·제2호)</td>
+<td>단체교섭권의 전형적 보호영역이다(222쪽)</td>
+<td>2024누39570: 적정임대료 결정은 정당</td>
+</tr>
+<tr>
+<td>조합원 우선 고용·배정 요구</td>
+<td>거래거절 강요(제51조·제45조)</td>
+<td>사용자를 매개로 한 근로조건 향상이다(222–226쪽)</td>
+<td>2023누38440도 조합원 고용 부분은 근로조건 관련 행위로 봄</td>
+</tr>
+<tr>
+<td>조직된 하청업체로 발주 요구</td>
+<td>거래거절 강요와 같은 외형</td>
+<td>근로조건 차이에 따른 경쟁만 없애는 범위라면 대상이 아니다(227–228쪽)</td>
+<td>직접 다룬 판결 없음</td>
+</tr>
+</tbody></table>
+</div><p>조합원 우선 고용·배정 요구에 대한 논문의 근거는 두 가지다. 단기 노무제공자에게 가장 중요한 근로조건은 고용 기회다(223쪽). 그리고 노무제공자 사이에 경쟁이 남으면 일감 분쟁이 &quot;도돌이표처럼&quot; 되풀이된다(224쪽). 논문은 이 요구를 &#39;클로즈드숍&#39;이라 부르지만, 표준 정의(조합원만 고용)보다 넓은 뜻으로 쓴다(222–223쪽). 논문은 한계도 인정한다. &quot;노동조합 소속 근로자의 일감이 경쟁관계에 있는 근로자의 일감에 관한 권리보다 우월하다고 볼 수 없기 때문이다&quot;(224쪽). 논문의 답은 이렇다. 비조합원의 불이익은 사용자의 결단을 거쳐 &quot;간접적, 반사적으로&quot; 생긴다(225–226쪽).</p>
+<h3 id="72-안쪽과-바깥쪽은-나눌-수-없다"><a href="#72-안쪽과-바깥쪽은-나눌-수-없다" class="heading-anchor" aria-hidden="true">#</a> 7.2 안쪽과 바깥쪽은 나눌 수 없다</h3><p>논문은 유형 1과 유형 2를 달리 본 2023누44810 판결을 비판한다(231–232쪽). 노동조합이 조합원을 제명하면 그는 비조합원이 되어 바깥에서 더 낮은 값을 부른다. 바깥의 경쟁을 제한하지 못하면 조합원은 내부 규칙을 지킬 이유가 없다. 그래서 &quot;양 방향의 경쟁제한적 행위가 불가분의 관계에 있으므로 공정거래법 적용에 있어서 달리 취급될 성질의 것이 아니다&quot;(232쪽).</p>
+<p>논문은 일감 분쟁과 임금 분쟁도 다르지 않다고 본다. 노무제공자에게 일감은 근로조건과 &quot;직결&quot;된다(233쪽). 이것은 현행법상 확정된 명제가 아니라 논문의 기능적 주장이다. 근로조건과 거래조건의 구별은 2023누38440 판결을 둘러싼 논쟁의 핵심이기도 하다.</p>
+<hr>
+<h2 id="8-그래도-공정거래법이-적용되는-경우"><a href="#8-그래도-공정거래법이-적용되는-경우" class="heading-anchor" aria-hidden="true">#</a> 8. 그래도 공정거래법이 적용되는 경우</h2><p>논문은 노동조합 활동이 사업자적 행위가 되는 경우가 &quot;매우 드물다&quot;고 본다(237쪽 각주 125). 그래도 적용될 수 있는 경우는 상대방에 따라 나뉜다(237–243쪽).</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>상대방</th>
+<th>행위</th>
+<th>논문의 평가</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>사용자의 경쟁사업자</td>
+<td>사용자와 손잡고 경쟁사업자에게 실력을 행사한다</td>
+<td>적용이 불가피하다(238쪽)</td>
+</tr>
+<tr>
+<td>소비자</td>
+<td>소비자 판매가격을 함께 정한다. 예: 가맹점주들의 판매가 공동 인상</td>
+<td>적용이 불가피하다. 단 사업자성이 먼저 인정되어야 한다(238–239쪽)</td>
+</tr>
+<tr>
+<td>사용자의 거래처</td>
+<td>거래처를 보이콧한다</td>
+<td>판단이 어렵다. 필요성과 경쟁 제한 효과를 비교형량한다(239–240쪽)</td>
+</tr>
+<tr>
+<td>경쟁 노무제공자</td>
+<td>경쟁 노무제공자에게 직접 실력을 행사한다</td>
+<td>특정 사용자와의 노동시장 안이면 금지행위로 보기 어렵다. 시장 전체에서 배제하면 적용 대상이다(240–241쪽)</td>
+</tr>
+<tr>
+<td>시장 전체</td>
+<td>노사가 함께 다른 사용자와의 거래를 막아 시장을 닫는다</td>
+<td>적용될 수 있다(242쪽)</td>
+</tr>
+</tbody></table>
+</div><p>노동조합 자체가 사업자인 경우도 있다. 대법원 2023. 7. 13. 선고 2022두62888 판결(항운노조 사건)은 근로자공급사업을 하는 노동조합이 경쟁 노동조합의 사업을 봉쇄한 사건이다. 판결은 &quot;적어도 노동조합이 직업안정법에 따라 근로자공급사업 허가를 받아 이를 영위하는 범위 내에서는&quot; 사업자라고 했다(241–242쪽 각주 128, 판시 문언 보충). 노동조합 일반이 사업자라는 뜻이 아니다.</p>
+<p>반대로 조합원 채용 요구 과정에서 비조합원이 간접적으로 일감을 잃는 경우는 대상이 아니다. 논문은 이 기준으로 2023누38440 판결을 비판한다(243쪽 각주 131). 또 사용자들이 임금을 낮추려 담합하면 공정거래법의 대상이 될 수 있다고 덧붙인다(242쪽 각주 130).</p>
+<hr>
+<h2 id="9-미국캐나다eu-비교"><a href="#9-미국캐나다eu-비교" class="heading-anchor" aria-hidden="true">#</a> 9. 미국·캐나다·EU 비교</h2><h3 id="91-미국"><a href="#91-미국" class="heading-anchor" aria-hidden="true">#</a> 9.1 미국</h3><p>미국 반독점법은 처음에 노동조합을 자주 겨누었다(234–236쪽). 1914년 클레이턴법 제6조는 &quot;인간의 노동은 상품이나 거래 물품이 아니다&quot;라고 선언했다(15 U.S.C. §17). 1940년 Apex 판결은 노동력 제공의 제한이 셔먼법상 거래 제한이 아니라고 했다. 다만 상품시장에 직접 영향을 미치거나 그런 의도가 있으면 셔먼법이 적용될 수 있다. 1941년 Hutcheson 판결은 노동조합이 스스로의 이익을 위해 행동하고 비노동단체와 결합하지 않는 한 면제된다고 했다. 이것이 법률에 근거한 법정 면제(statutory exemption)다. 노사 단체협약에 관한 판례상 비법정 면제와 구별된다. 1945년 Allen Bradley 판결은 노동조합이 사용자와 결합해 상품시장을 독점하면 셔먼법 위반이라고 했다(보충). 논문의 첫째 선(8장)과 같은 방향이다. 1975년 Connell 판결은 차등 근로조건에 따른 경쟁 우위를 줄이는 정도를 넘는 반경쟁적 효과가 있으면 비법정 면제를 잃는다고 했다(228쪽 각주 110).</p>
+<p>논문은 Hutcheson 기준을 그대로 받지 않는다. 노동조합은 비노동단체와 결합하지 않고도 경쟁사업자를 배제할 수 있기 때문이다(218쪽). 다만 형식적 기준이 노동조합 탄압을 막는다는 장점은 인정한다(218–219쪽). 한국에는 명시적 면제 규정이 없다. 대신 헌법이 노동3권을 직접 보장한다. 그래서 논문은 헌법 조항 사이의 관계에서 출발한다(236쪽).</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 420" role="img" aria-label="미국에서 노동조합과 반독점법의 관계가 형성된 연표: 셔먼법에서 Connell 판결까지">
+  <defs>
+    <marker id="ua-time" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="8" y="8" width="764" height="404" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">미국: 반독점법이 노동조합을 겨누다가 물러서기까지</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">논문 234–236쪽, 228–230쪽과 보충 자료를 바탕으로 한 연표 (회색 글씨는 보충)</text>
+  <line x1="40" y1="200" x2="744" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ua-time)"/>
+  <circle cx="60" cy="200" r="6" fill="#94a3b8"/>
+  <text x="60" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">1890</text>
+  <text x="60" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">셔먼법</text>
+  <circle cx="130" cy="200" r="6" fill="#475569"/>
+  <text x="130" y="228" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">1908</text>
+  <text x="130" y="244" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">Loewe</text>
+  <text x="130" y="258" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">2차 보이콧에 적용</text>
+  <circle cx="200" cy="200" r="7" fill="#1e3a8a"/>
+  <text x="200" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">1914</text>
+  <text x="200" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">클레이턴법 §6 · §20</text>
+  <text x="200" y="148" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">노동은 상품이 아니다</text>
+  <circle cx="265" cy="200" r="6" fill="#475569"/>
+  <text x="265" y="228" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">1921</text>
+  <text x="265" y="244" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">Duplex</text>
+  <text x="265" y="258" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">면제를 좁힘</text>
+  <circle cx="330" cy="200" r="7" fill="#1e3a8a"/>
+  <text x="330" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">1932</text>
+  <text x="330" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">노리스-라과디아법</text>
+  <circle cx="390" cy="200" r="6" fill="#94a3b8"/>
+  <text x="390" y="228" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">1935</text>
+  <text x="390" y="244" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">NLRA(와그너법)</text>
+  <circle cx="450" cy="200" r="7" fill="#1e3a8a"/>
+  <text x="450" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">1940 · 1941</text>
+  <text x="450" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">Apex · Hutcheson</text>
+  <text x="450" y="148" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">상품시장 기준 · 법정 면제</text>
+  <circle cx="515" cy="200" r="6" fill="#94a3b8"/>
+  <text x="515" y="228" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">1945</text>
+  <text x="515" y="244" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">Allen Bradley</text>
+  <text x="515" y="258" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#64748b">사용자와 결합하면 위반</text>
+  <circle cx="585" cy="200" r="6" fill="#94a3b8"/>
+  <text x="585" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">1959</text>
+  <text x="585" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">NLRA §8(e) 단서 · §8(f)</text>
+  <text x="585" y="148" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#64748b">건설업 특례</text>
+  <circle cx="650" cy="200" r="6" fill="#94a3b8"/>
+  <text x="650" y="228" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#475569">1961</text>
+  <text x="650" y="244" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#64748b">Local 357</text>
+  <text x="650" y="258" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#64748b">고용사무소 그 자체는 적법</text>
+  <circle cx="715" cy="200" r="7" fill="#1e3a8a"/>
+  <text x="712" y="180" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">1975</text>
+  <text x="712" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#1e3a8a">Connell</text>
+  <text x="712" y="148" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">차등 근로조건을 넘으면</text>
+  <rect x="40" y="290" width="340" height="104" rx="12" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="210" y="314" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">미국 법리가 남긴 두 개의 선</text>
+  <text x="210" y="338" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동시장의 일정한 경쟁 제한에는 면제가 인정된다</text>
+  <text x="210" y="358" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사용자와 결합하거나 상품시장을 직접 제한하면</text>
+  <text x="210" y="378" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">면제를 잃는다</text>
+  <rect x="400" y="290" width="340" height="104" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="570" y="314" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">한국과의 차이(논문 236쪽)</text>
+  <text x="570" y="338" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">한국에는 명시적 면제 규정이 없다</text>
+  <text x="570" y="358" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">대신 헌법이 노동3권을 직접 보장한다</text>
+  <text x="570" y="378" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">그래서 출발점은 헌법 조항 사이의 관계다</text>
+</svg>
+</div>
+
+<p><strong>건설업 특례.</strong> 1959년 랜드럼-그리핀법은 NLRA에 건설업 특례를 넣었다(229–230쪽, 조문은 보충). 노동조합이 다수 지지를 확인받기 전에도 협약을 맺을 수 있다(제8조(f)(1)). 채용이나 협약 발효 뒤 7일이 지나면 노동조합 가입을 고용 조건으로 할 수 있다(제8조(f)(2)). 사용자가 결원을 노동조합에 알리고 배정을 요청하게 할 수 있다(제8조(f)(3)). 미조직 하청업체에 하도급하지 않기로 협약할 수 있다(제8조(e) 단서). 그러나 채용 전부터 조합원만 고용하는 클로즈드숍은 1947년 이후 건설업에서도 금지된다(보충). 논문은 이런 특례가 없는 한국에서는 근로자 사이의 다툼이 불가피하다고 본다(230쪽).</p>
+<blockquote>
+<p><strong>보충 — 고용사무소에 관한 정정.</strong> 논문은 제8조(f)(3)이 &quot;비건설 산업에서 금지되는 배타적 노조 구직사무소 협약을 인정&quot;했다고 쓴다(229쪽). 정확하지 않다. 연방대법원은 Local 357, Teamsters v. NLRB, 365 U.S. 667 (1961)에서 비건설 산업의 배타적 고용사무소 협약도 그 자체로는 위법하지 않다고 판시했다. 조합원 여부로 차별할 때 위법이다(NLRA 제8조(a)(3)·(b)(2)).</p>
+</blockquote>
+<h3 id="92-캐나다"><a href="#92-캐나다" class="heading-anchor" aria-hidden="true">#</a> 9.2 캐나다</h3><p>논문은 기준 ②(상품시장)의 예로 캐나다 Winnipeg Bread 사례를 든다(212쪽 각주 87). 빵 배달 판매원들이 슈퍼마켓 공급을 거부하는 파업에 참여했고, 당시 결합금지 당국은 이를 소매 빵값 경쟁 제한으로 보아 위법이라고 했다. 1965년 아서스(H. W. Arthurs)의 글이 소개한 당시 판단이다. 현재 캐나다 법의 일반적 태도로 읽으면 안 된다.</p>
+<h3 id="93-eu"><a href="#93-eu" class="heading-anchor" aria-hidden="true">#</a> 9.3 EU</h3><blockquote>
+<p><strong>보충 — EU 경쟁법과 단체협약.</strong> 논문은 EU 법을 다루지 않는다. EU 사법재판소는 Albany 판결(C-67/96, 1999)에서 근로조건 개선을 위한 단체협약은 경쟁법(현 EU 기능조약 제101조)의 대상이 아니라고 보았다. FNV Kunsten 판결(C-413/13, 2014)은 자영업자에 관한 협약은 그들이 &#39;위장 자영업자&#39;일 때만 제101조를 벗어난다고 했다. 집행위원회의 2022년 지침(2022/C 374/02)은 1인 자영업자 가운데 경제적으로 의존하는 사람, 근로자와 나란히 같은 일을 하는 사람, 디지털 노동 플랫폼을 통해 일하는 사람의 단체협약을 제101조 밖에 둔다. 그러나 소비자에게 부과되는 가격에 관한 합의는 대상이 아니다(집행위원회 Q&amp;A).</p>
+</blockquote>
+<p>유럽은 논문과 두 곳에서 만난다. 초점이 계약의 이름이 아니라 종속적 상황에 있다. 근로조건 교섭은 보호하되 소비자 가격 결정은 보호하지 않는다. 차이도 있다. EU 지침은 특정 범주의 단체협약만 다룬다. 논문의 초점은 노동조합의 일방적 실력행사다.</p>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 470" role="img" aria-label="미국, EU, 한국의 노동조합 활동과 경쟁법 경계선 비교: 근거, 보호되는 것, 선을 넘는 것, 건설업 특례">
+  <rect x="8" y="8" width="764" height="454" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">세 법역의 경계선: 미국 · EU · 한국</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">논문 229–236쪽과 보충 자료. 제도의 근거와 범위가 달라 그대로 겹치지 않는다</text>
+  <rect x="132" y="72" width="204" height="32" rx="8" fill="#475569"/>
+  <text x="234" y="93" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">미국</text>
+  <rect x="344" y="72" width="204" height="32" rx="8" fill="#3b82f6"/>
+  <text x="446" y="93" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">EU (보충)</text>
+  <rect x="556" y="72" width="200" height="32" rx="8" fill="#1e3a8a"/>
+  <text x="656" y="93" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">한국</text>
+  <rect x="24" y="112" width="100" height="78" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="74" y="155" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">근거</text>
+  <rect x="132" y="112" width="204" height="78" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="234" y="131" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">법정 면제: 클레이턴법 ·</text>
+  <text x="234" y="147" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노리스-라과디아법 + Hutcheson</text>
+  <text x="234" y="163" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">비법정 면제: 단체협약 판례</text>
+  <text x="234" y="179" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">(Connell 등)</text>
+  <rect x="344" y="112" width="204" height="78" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2"/>
+  <text x="446" y="139" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">단체협약 판례(Albany, 1999)</text>
+  <text x="446" y="155" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">자영업자 판례(FNV Kunsten)</text>
+  <text x="446" y="171" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">집행위원회 지침(2022)</text>
+  <rect x="556" y="112" width="200" height="78" rx="8" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="656" y="139" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">명시적 면제 규정 없음</text>
+  <text x="656" y="155" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">제116조 해석과</text>
+  <text x="656" y="171" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">헌법 제33조에 의존</text>
+  <rect x="24" y="196" width="100" height="78" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="74" y="239" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">보호되는 것</text>
+  <rect x="132" y="196" width="204" height="78" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="234" y="223" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">스스로의 이익을 위한</text>
+  <text x="234" y="239" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동조합 단독행동</text>
+  <text x="234" y="255" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">비노동단체와 결합하지 않을 것</text>
+  <rect x="344" y="196" width="204" height="78" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2"/>
+  <text x="446" y="223" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">근로조건에 관한 단체협약</text>
+  <text x="446" y="239" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">위장 자영업자의 협약</text>
+  <text x="446" y="255" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">지침상 세 범주 1인 자영업자</text>
+  <rect x="556" y="196" width="200" height="78" rx="8" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="656" y="223" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">논문: 사업자적 행위가 아닌</text>
+  <text x="656" y="239" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동조합 활동(제안)</text>
+  <text x="656" y="255" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">판결: 사건별로 갈림</text>
+  <rect x="24" y="280" width="100" height="78" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="74" y="323" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">선을 넘는 것</text>
+  <rect x="132" y="280" width="204" height="78" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="234" y="299" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사용자와 결합한 시장 독점</text>
+  <text x="234" y="315" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">(Allen Bradley, 보충)</text>
+  <text x="234" y="331" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">차등 근로조건을 넘는</text>
+  <text x="234" y="347" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">반경쟁 효과(Connell)</text>
+  <rect x="344" y="280" width="204" height="78" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2"/>
+  <text x="446" y="307" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">소비자 가격처럼</text>
+  <text x="446" y="323" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">소비자에게 부과되는</text>
+  <text x="446" y="339" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">조건의 공동 결정</text>
+  <rect x="556" y="280" width="200" height="78" rx="8" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="656" y="307" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">논문: 사용자와 결합한 배제,</text>
+  <text x="656" y="323" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">소비자 판매가격 공동 결정,</text>
+  <text x="656" y="339" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">시장 봉쇄</text>
+  <rect x="24" y="364" width="100" height="78" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="74" y="407" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">건설업</text>
+  <rect x="132" y="364" width="204" height="78" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="234" y="383" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">NLRA 제8조(e) 단서 · 제8조(f)</text>
+  <text x="234" y="399" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">채용 전 협약 · 7일 가입 조건</text>
+  <text x="234" y="415" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">결원 통지 · 배정 요청</text>
+  <text x="234" y="431" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">클로즈드숍은 여전히 금지</text>
+  <rect x="344" y="364" width="204" height="78" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2"/>
+  <text x="446" y="407" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">해당 없음</text>
+  <rect x="556" y="364" width="200" height="78" rx="8" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.2"/>
+  <text x="656" y="399" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">특례 없음</text>
+  <text x="656" y="415" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">논문: 도입이 필요하다</text>
+</svg>
+</div>
+
+<hr>
+<h2 id="10-2026년의-제도-움직임"><a href="#10-2026년의-제도-움직임" class="heading-anchor" aria-hidden="true">#</a> 10. 2026년의 제도 움직임</h2><p>먼저 현행법이다. 2026년 10월 초의 현행 공정거래법은 2026. 10. 2. 시행된 법률 제22043호(2026. 9. 29. 일부개정)다. 이 개정은 동의의결 절차 조문(제90조 제3항) 등을 고쳤다. 노동조합 활동에 관한 적용 제외 규정은 여전히 없다. 이 글이 인용한 제2조, 제40조, 제45조, 제51조, 제116조도 그대로다(보충).</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>내용</th>
+<th>법적 지위</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>개정 노동조합법(법률 제21045호, 2026. 3. 10. 시행)</td>
+<td>근로조건을 실질적이고 구체적으로 지배·결정할 수 있는 자를 그 범위에서 사용자로 본다(제2조 제2호 후단). 노동쟁의 대상을 넓히고 손해배상 청구를 제한한다. 제2조 제1호의 근로자 정의는 그대로다</td>
+<td>현행법(보충)</td>
+</tr>
+<tr>
+<td>공정위 &#39;을의 협상력 강화를 위한 제도 개편방안&#39;(2026. 6. 30. 국무회의 보고)</td>
+<td>신고한 노동조합, 법원·노동위원회가 노동조합으로 인정한 단체, 산재보험법상 18개 직종 노무제공자의 단체행동을 조사·제재 대상에서 빼는 방향. 연내 법 개정 추진</td>
+<td>정부 방침. 현행법이 아니다(보충, 보도)</td>
+</tr>
+<tr>
+<td>공정거래법 개정안(강준현 의원 대표발의, 2026. 9. 10.)</td>
+<td>제118조의2를 신설해 신고증을 받은 노동조합과 조합원, 산재보험법·고용보험법상 노무제공자 등의 행위를 적용에서 뺀다고 보도되었다</td>
+<td>발의 단계. 세부 요건은 법안 원문으로 확인하지 못했다 <a href="%EB%B3%B4%EC%B6%A9">확인 필요</a></td>
+</tr>
+</tbody></table>
+</div><p>논문은 같은 방향의 검토 소식(한겨레 2026. 2. 9. 보도)을 두고, 원론적으로 타당하지만 근본 해결책은 아니라고 평가했다(230–231쪽). 적용을 빼도 건설 현장의 덤핑 경쟁은 그대로이기 때문이다. 논문은 현장에 맞는 단체교섭 제도가 시급한데 &quot;안타깝게도 이에 대한 논의는 없는 상황&quot;이라고 맺는다(244쪽).</p>
+<p>이 글의 평가는 이렇다. 정부 방안과 법안은 신분을 기준으로 적용을 뺀다. 그 범위 안에서는 겸유 문제가 입법으로 정리된다. 범위 밖의 노무제공자와 경계 사례에는 여전히 행위의 성격을 가를 기준이 필요하다. 개정 노동조합법은 원청 등을 사용자로 포섭할 근거를 명확히 해서 &#39;사용자를 매개로 한 근로조건 향상&#39;의 경로를 넓힐 수 있다. 그러나 현장의 채용·배정 질서를 설계하지는 않는다.</p>
+<hr>
+<h2 id="11-평가"><a href="#11-평가" class="heading-anchor" aria-hidden="true">#</a> 11. 평가</h2><h3 id="111-층위별-정리"><a href="#111-층위별-정리" class="heading-anchor" aria-hidden="true">#</a> 11.1 층위별 정리</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>쟁점</th>
+<th>현행 법·판례</th>
+<th>이태현 논문</th>
+<th>이 글의 평가</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>공정거래법상 사업자</td>
+<td>제2조 제1호. 서울고법은 겸유를 인정</td>
+<td>겸유를 가정하되 영업성·독립성을 본질로 봄</td>
+<td>둘 사이에 긴장이 있다</td>
+</tr>
+<tr>
+<td>적용 범위</td>
+<td>명시적 면제 없음. 제116조 해석과 사건별 판단</td>
+<td>사업자적 행위에 한정</td>
+<td>판례로 확립되지 않은 제안이다</td>
+</tr>
+<tr>
+<td>종속성</td>
+<td>근로자성 판단의 요소</td>
+<td>경계 설정의 일차 기준</td>
+<td>행위 기준으로 쓰려면 연결고리가 더 필요하다</td>
+</tr>
+<tr>
+<td>제116조</td>
+<td>&#39;필요·최소한의 행위&#39;(2009두7912 등). 2024누39570은 노동3권의 헌법적 가치 반영을 요구</td>
+<td>해석은 다음 연구로 미룸</td>
+<td>노동조합 활동에 관한 해석은 아직 판례로 정리되지 않았다</td>
+</tr>
+<tr>
+<td>비조합원 거래거절 요구</td>
+<td>2023누38440·2023누44810은 적용 인정, 2024누39570은 부당성 부정</td>
+<td>채용 요구와 불가분, 효과는 간접적</td>
+<td>가장 큰 쟁점이다. 사실관계에 따라 달라진다</td>
+</tr>
+<tr>
+<td>소비자 가격 공동 결정</td>
+<td>사업자 사이라면 부당한 공동행위의 전형(제40조 제1항 제1호)</td>
+<td>적용 불가피</td>
+<td>비교적 명확하다. 사업자성이 먼저다</td>
+</tr>
+</tbody></table>
+</div><h3 id="112-논문이-바로-세운-것"><a href="#112-논문이-바로-세운-것" class="heading-anchor" aria-hidden="true">#</a> 11.2 논문이 바로 세운 것</h3><ul>
+<li><strong>질문의 순서를 바꿨다.</strong> 기존 구도는 담합의 외형에서 출발하고 노동3권을 예외로 다룬다. 논문은 먼저 노동3권의 행사인지 사업자적 행위인지 묻는다.</li>
+<li><strong>기준을 노동법 안에서 찾았다.</strong> 이 구분은 미국 법리와 EU 지침의 선과 구조가 닮았다. 그대로 겹치지는 않지만 고립된 주장은 아니다.</li>
+<li><strong>한계를 스스로 밝혔다.</strong> 비조합원의 일감 문제(224쪽), 제3자 피해의 범위(215쪽), 거래처 보이콧(239–240쪽), 해석론의 한계(243–244쪽)를 논문이 직접 인정한다.</li>
+</ul>
+<h3 id="113-논문이-남긴-것"><a href="#113-논문이-남긴-것" class="heading-anchor" aria-hidden="true">#</a> 11.3 논문이 남긴 것</h3><ol>
+<li><strong>기준이 추상적이다.</strong> 다섯 기준이 서로 다른 방향을 가리킬 때 어떻게 저울질할지 말하지 않는다(213·215·239쪽).</li>
+<li><strong>논증의 한 단계가 비어 있다.</strong> 종속성은 행위자의 지위를 설명한다. 집단행위의 성격을 자동으로 정하지 않는다. 이 글은 아래 네 단계 점검을 제안한다. 논문의 기준을 대체하지 않고, 각 기준이 무엇을 묻는지 드러낸다.</li>
+<li><strong>실무와의 접점이 비어 있다.</strong> 실무의 도구는 제116조인데, 논문은 그 해석을 미룬다(183쪽).</li>
+<li><strong>&#39;간접적·반사적&#39;이라는 평가는 사실관계에 따라 흔들린다.</strong> 2023누44810 판결이 인정한 사실에 따르면 노동조합은 수급사업자의 계열회사가 시공하는 다른 현장의 레미콘 운송을 43일 동안 중단시켰다(보충). 교섭 상대가 아닌 회사가 불이익을 진 것이다. 논문의 기준 ④로 보아도 경고 신호다. 그런데 논문은 네 판결의 행위를 채용 요구 과정의 행위로 일반화한다(243쪽 각주 131).</li>
+<li><strong>겸유 가정이 긴장을 남긴다.</strong> 영업성·독립성을 사업자의 본질로 보는 논문의 입장을 끝까지 밀면 겸유 자체가 성립하기 어렵다.</li>
+</ol>
+<div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 488" role="img" aria-label="이 글이 제안하는 네 단계 점검: 행위자, 행위, 상대방, 시장 효과, 그리고 사례의 네 무리">
+  <defs>
+    <marker id="ua-fw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="8" y="8" width="764" height="472" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">네 단계 점검: 종속성을 행위 중심의 판단으로 옮기기</text>
+  <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">이 글의 평가(11.3). 판례나 논문이 세운 기준이 아니다</text>
+  <rect x="24" y="74" width="172" height="86" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="110" y="100" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">① 행위자</text>
+  <text x="110" y="122" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동조합법상</text>
+  <text x="110" y="140" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">근로자인가</text>
+  <line x1="198" y1="117" x2="212" y2="117" stroke="#64748b" stroke-width="2" marker-end="url(#ua-fw)"/>
+  <rect x="214" y="74" width="172" height="86" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="300" y="100" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">② 행위</text>
+  <text x="300" y="122" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동3권의</text>
+  <text x="300" y="140" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">행사인가</text>
+  <line x1="388" y1="117" x2="402" y2="117" stroke="#64748b" stroke-width="2" marker-end="url(#ua-fw)"/>
+  <rect x="404" y="74" width="172" height="86" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="490" y="100" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">③ 상대방</text>
+  <text x="490" y="122" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">사용자 · 제3 사업자 ·</text>
+  <text x="490" y="140" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">소비자 중 누구인가</text>
+  <line x1="578" y1="117" x2="592" y2="117" stroke="#64748b" stroke-width="2" marker-end="url(#ua-fw)"/>
+  <rect x="594" y="74" width="172" height="86" rx="10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="680" y="100" text-anchor="middle" font-size="13" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">④ 시장 효과</text>
+  <text x="680" y="122" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동력시장에 그치나,</text>
+  <text x="680" y="140" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">상품시장을 직접 제한하나</text>
+  <text x="390" y="186" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">논문 기준과의 대응: 관련성은 ②에, 상품시장 · 거래관계 · 불이익의 귀속은 ③과 ④에 대체로 대응한다</text>
+  <line x1="40" y1="218" x2="740" y2="218" stroke="#64748b" stroke-width="2" marker-end="url(#ua-fw)"/>
+  <text x="40" y="208" text-anchor="start" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#1e3a8a">노동3권 보호가 강하다</text>
+  <text x="740" y="208" text-anchor="end" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">경쟁법 문제가 전면에 선다</text>
+  <rect x="24" y="236" width="360" height="50" rx="10" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="204" y="257" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">근로자가 사용자를 상대로 근로조건을 다툰다</text>
+  <text x="204" y="275" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">노동3권 보호가 강하게 작동한다</text>
+  <rect x="140" y="296" width="380" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="330" y="317" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">사용자를 상대로 하되 비조합원 배제가 따른다</text>
+  <text x="330" y="335" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">가장 어려운 경계 사례로 남는다</text>
+  <rect x="256" y="356" width="380" height="50" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <text x="446" y="377" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">근로자라도 제3의 사업자를 상대로 상품시장을 제한한다</text>
+  <text x="446" y="395" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#0f172a">공정거래법 적용 가능성이 상당히 높아진다</text>
+  <rect x="396" y="416" width="360" height="50" rx="10" fill="#475569" stroke="#475569" stroke-width="1.5"/>
+  <text x="576" y="437" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#ffffff">사용자와 결합해 경쟁사업자를 배제한다</text>
+  <text x="576" y="455" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#ffffff">노동3권 보호가 약해지고 경쟁법 문제가 전면에 선다</text>
+</svg>
+</div>
+
+<h3 id="114-논문의-오류와-불일치"><a href="#114-논문의-오류와-불일치" class="heading-anchor" aria-hidden="true">#</a> 11.4 논문의 오류와 불일치</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>쪽</th>
+<th>논문의 서술</th>
+<th>바르게 읽으면</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>174 각주 10</td>
+<td>2023누43176 판결의 상고 사건번호를 &quot;2025두30042&quot;로 적음. 2023누38440 사건의 번호와 같다</td>
+<td>옮겨 적기 오류로 보인다. 올바른 번호는 [확인 필요]</td>
+</tr>
+<tr>
+<td>190</td>
+<td>&quot;근로조건 법정주의는 헌법 제32조 제1항을 통해&quot;</td>
+<td>헌법 제32조 제3항. 같은 논문의 다른 곳도 제3항으로 적는다</td>
+</tr>
+<tr>
+<td>210</td>
+<td>&quot;다른 조합원과의 거래거절&quot;</td>
+<td>문맥상 &#39;비조합원과의 거래거절&#39;</td>
+</tr>
+<tr>
+<td>215</td>
+<td>&#39;반대로&#39; 앞뒤 절이 모두 &quot;경로를 넓게 인정한다면&quot;</td>
+<td>뒤 절은 &#39;좁게 인정하면 … 넓게 인정될 것&#39;</td>
+</tr>
+<tr>
+<td>221 각주 97</td>
+<td>고시(사업자단체활동지침) 제목 아래 법률 조문을 옮김</td>
+<td>공정거래법 제51조</td>
+</tr>
+<tr>
+<td>229</td>
+<td>배타적 고용사무소 협약은 &quot;비건설 산업에서 금지&quot;</td>
+<td>그 자체로는 위법하지 않다(Local 357, 보충)</td>
+</tr>
+</tbody></table>
+</div><p>이 밖에 영문 철자 오기(234–236쪽)와 서지 표기 불일치(171쪽 각주 5, 229쪽 각주 111)가 있다. 모두 논지에는 영향이 없다.</p>
+<hr>
+<h2 id="12-맺음"><a href="#12-맺음" class="heading-anchor" aria-hidden="true">#</a> 12. 맺음</h2><p>굴착기 운전자의 행위는 경쟁법으로 보면 담합과 닮았다. 노동법으로 보면 노동조합이 늘 해 온 일이다. 논문의 기준에서 둘을 가르는 것은 장비 소유가 아니다. 그가 종속된 채 사용자의 불이익을 매개로 근로조건을 높이려 하는지, 아니면 사용자와 손잡거나 소비자를 상대로 시장에서 이기려 하는지다.</p>
+<p>이 구분은 노동조합에 면죄부를 주지 않는다. 경쟁사업자 배제, 소비자 가격 공동 인상, 시장 봉쇄는 여전히 경쟁법의 대상이 될 수 있다. 다만 노동조합의 존재 이유를 위법의 근거로 삼을 수는 없다. 그리고 제재를 걷어도 덤핑 경쟁은 남는다. 미국은 1959년 건설업 특례로 이 문제에 대응했다. 한국은 아직 그런 제도가 없다.</p>
+<hr>
+<h2 id="출처"><a href="#출처" class="heading-anchor" aria-hidden="true">#</a> 출처</h2><p>URL 열람일은 2026-10-02 또는 2026-10-06(한국 시간)이다.</p>
+<ul>
+<li><strong>참고 문헌</strong><ul>
+<li>이태현, 「노무제공자의 노동조합 활동에 대한 공정거래법 적용의 경계」, 『노동법학』 제98호, 한국노동법학회, 2026. 6., 169–250쪽. 논문이 인용한 문헌과 판례는 논문의 인용에 따랐다.</li>
+</ul>
+</li>
+<li><strong>한국 법령·판례·보도(보충)</strong><ul>
+<li>독점규제 및 공정거래에 관한 법률(법률 제22043호, 2026. 10. 2. 시행). <a href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=290153">https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=290153</a>; 전부개정(법률 제17799호) 이력. <a href="https://govbrief.kr/scan/001591/history/">https://govbrief.kr/scan/001591/history/</a></li>
+<li>노동조합 및 노동관계조정법(법률 제21045호, 2026. 3. 10. 시행). <a href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=273667">https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=273667</a>; 개정 이력. <a href="https://www.law.go.kr/LSW/lsRvsDocListP.do?chrClsCd=010202&lsId=000143&lsRvsGubun=all">https://www.law.go.kr/LSW/lsRvsDocListP.do?chrClsCd=010202&amp;lsId=000143&amp;lsRvsGubun=all</a>; 대한민국 정책브리핑. <a href="https://www.korea.kr/news/policyNewsView.do?newsId=148948875">https://www.korea.kr/news/policyNewsView.do?newsId=148948875</a></li>
+<li>대법원 2011. 4. 14. 선고 2009두7912 판결. <a href="https://lbox.kr/case/%EB%8C%80%EB%B2%95%EC%9B%90/2009%EB%91%907912">https://lbox.kr/case/대법원/2009두7912</a>; 대법원 2023. 7. 13. 선고 2022두62888 판결. <a href="https://lbox.kr/case/%EB%8C%80%EB%B2%95%EC%9B%90/2022%EB%91%9062888">https://lbox.kr/case/대법원/2022두62888</a>; 대법원 2018. 6. 15. 선고 2014두12598, 2014두12604 판결. <a href="https://www.law.go.kr/LSW/precInfoP.do?mode=0&precSeq=198442">https://www.law.go.kr/LSW/precInfoP.do?mode=0&amp;precSeq=198442</a></li>
+<li>서울고등법원 2023누38440 판결. <a href="https://lbox.kr/case/%EC%84%9C%EC%9A%B8%EA%B3%A0%EB%93%B1%EB%B2%95%EC%9B%90/2023%EB%88%8438440">https://lbox.kr/case/서울고등법원/2023누38440</a>; 2023누44810 판결. <a href="https://lbox.kr/case/%EC%84%9C%EC%9A%B8%EA%B3%A0%EB%93%B1%EB%B2%95%EC%9B%90/2023%EB%88%8444810">https://lbox.kr/case/서울고등법원/2023누44810</a>; 2024누39570 판결. <a href="https://lbox.kr/case/%EC%84%9C%EC%9A%B8%EA%B3%A0%EB%93%B1%EB%B2%95%EC%9B%90/2024%EB%88%8439570">https://lbox.kr/case/서울고등법원/2024누39570</a>; 2023누43176 판결. <a href="https://lfind.kr/cases/%EC%84%9C%EC%9A%B8%EA%B3%A0%EB%93%B1%EB%B2%95%EC%9B%90/2023%EB%88%8443176">https://lfind.kr/cases/서울고등법원/2023누43176</a></li>
+<li>한국일보, 2024. 12. 15. <a href="https://www.hankookilbo.com/news/article/A2024121515410002319">https://www.hankookilbo.com/news/article/A2024121515410002319</a>; 매일노동뉴스, 2026. 1. 26. <a href="https://www.labortoday.co.kr/news/articleView.html?idxno=232411">https://www.labortoday.co.kr/news/articleView.html?idxno=232411</a>; 아주경제, 2024. 3. 14. <a href="https://www.ajunews.com/view/20240314111653269">https://www.ajunews.com/view/20240314111653269</a></li>
+<li>공정위 제도 개편방안: 연합뉴스, 2026. 6. 30. <a href="https://www.yna.co.kr/view/AKR20260630048800002">https://www.yna.co.kr/view/AKR20260630048800002</a>; 중앙일보. <a href="https://www.joongang.co.kr/article/25441384">https://www.joongang.co.kr/article/25441384</a>; 서울신문. <a href="https://www.seoul.co.kr/news/economy/2026/06/30/20260630500098">https://www.seoul.co.kr/news/economy/2026/06/30/20260630500098</a></li>
+<li>공정거래법 개정안 발의: 아이뉴스24, 2026. 9. 11. <a href="https://www.inews24.com/view/2004604">https://www.inews24.com/view/2004604</a></li>
+</ul>
+</li>
+<li><strong>미국</strong><ul>
+<li>Clayton Act §6, 15 U.S.C. §17. <a href="https://www.law.cornell.edu/uscode/text/15/17">https://www.law.cornell.edu/uscode/text/15/17</a>; NLRA §8, 29 U.S.C. §158(보충). <a href="https://www.law.cornell.edu/uscode/text/29/158">https://www.law.cornell.edu/uscode/text/29/158</a></li>
+<li>Allen Bradley Co. v. Local Union No. 3, 325 U.S. 797 (1945)(보충). <a href="https://supreme.justia.com/cases/federal/us/325/797/">https://supreme.justia.com/cases/federal/us/325/797/</a>; Local 357, Teamsters v. NLRB, 365 U.S. 667 (1961)(보충). <a href="https://supreme.justia.com/cases/federal/us/365/667/">https://supreme.justia.com/cases/federal/us/365/667/</a>; Connell Construction Co. v. Plumbers Local 100, 421 U.S. 616 (1975). <a href="https://supreme.justia.com/cases/federal/us/421/616/">https://supreme.justia.com/cases/federal/us/421/616/</a></li>
+</ul>
+</li>
+<li><strong>EU(보충)</strong><ul>
+<li>Guidelines on collective agreements regarding the working conditions of solo self-employed persons (2022/C 374/02). <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52022XC0930(02)">https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52022XC0930(02)</a>; Commission Q&amp;A (QANDA/22/5805). <a href="https://ec.europa.eu/commission/presscorner/detail/en/qanda_22_5805">https://ec.europa.eu/commission/presscorner/detail/en/qanda_22_5805</a></li>
+<li>Case C-67/96, Albany. <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:61996CJ0067">https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:61996CJ0067</a>; Case C-413/13, FNV Kunsten. <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62013CJ0413">https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62013CJ0413</a></li>
+</ul>
+</li>
+<li><strong>함께 읽을 글</strong><ul>
+<li><a href="sinzheimer_subordination_genealogy.html">타인의 처분권 아래의 노동 — 휴고 진츠하이머와 &#39;종속성&#39; 개념의 계보 심화 분석</a></li>
+<li><a href="algorithmic_control_heteronomy.html">누가 내 일을 정하는가 — 알고리즘이 통제하는 노동과 타인결정성 심화 분석</a></li>
+<li><a href="us_germany_labor_law_comparison.html">같은 해고, 정반대의 법 — 미국과 독일 노동법의 기능적 비교 심화 분석</a></li>
+</ul>
+</li>
+</ul>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>

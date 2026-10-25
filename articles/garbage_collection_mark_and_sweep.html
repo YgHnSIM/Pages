@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>가비지 컬렉션 심화 분석: 수동 관리에서 마크 앤 스윕(Mark &amp; Sweep)까지</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans KR"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --article-font-size: 1.05rem;
+      --article-line-height: 1.85;
+    }
+    body {
+      font-family: 'Noto Sans KR', 'Inter', system-ui, -apple-system, sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .prose-body p {
+      font-size: var(--article-font-size);
+      line-height: var(--article-line-height);
+      margin-bottom: 1.25rem;
+    }
+    .prose-body li {
+      font-size: var(--article-font-size);
+      line-height: 1.75;
+    }
+    .node-transition {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .edge-transition {
+      transition: stroke 0.4s ease, stroke-width 0.4s ease, opacity 0.4s ease;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.06); opacity: 0.35; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-active {
+      animation: pulse-ring 2s infinite ease-in-out;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Reading Progress Bar -->
+  <div class="fixed top-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 z-50">
+    <div id="readingProgress" class="h-full bg-gradient-to-r from-indigo-600 via-blue-500 to-emerald-500 w-0 transition-all duration-150"></div>
+  </div>
+
+  <!-- Top Navigation Header (Preserving & Elevating Blog UX) -->
+  <header class="sticky top-1 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="#top" id="backToTopNav" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition shrink-0">
+          <span>&lt;</span>
+          <span>맨 위로</span>
+        </a>
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate hidden sm:inline">
+          가비지 컬렉션 심화 분석: 수동 관리에서 마크 앤 스윕까지
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- Font Size Cycle Button -->
+        <button id="fontSizeBtn" type="button" title="본문 글자 크기 조절" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+          <span class="text-sm font-bold">가</span>
+          <span id="fontSizeLabel" class="text-[11px] text-slate-500 dark:text-slate-400">100%</span>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" type="button" title="라이트/다크 테마 전환" class="inline-flex items-center justify-center w-9 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+          <span id="themeIcon" class="text-sm">🌙</span>
+        </button>
+
+        <!-- TOC Drawer Toggle Button -->
+        <button id="tocOpenBtn" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
+          <span>≡</span>
+          <span>목차</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slide-out Table of Contents Drawer -->
+  <div id="tocBackdrop" class="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 hidden opacity-0 transition-opacity duration-200"></div>
+  <aside id="tocDrawer" class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+      <div>
+        <h2 class="text-sm font-bold text-slate-900 dark:text-white">문서 목차 (Table of Contents)</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">클릭하면 해당 섹션으로 이동합니다</p>
+      </div>
+      <button id="tocCloseBtn" type="button" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold">
+        ✕
+      </button>
+    </div>
+    <nav class="p-4 overflow-y-auto flex-1 space-y-1 text-sm" id="tocList">
+      <a href="#sec-intro" class="toc-link block px-3 py-2 rounded-lg font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/40">0. 핵심 요약: 질문을 바꾼 발상의 전환</a>
+      <a href="#sec-1" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">1. 왜 메모리를 미리 정해 둘 수 없나</a>
+      <a href="#sec-2" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">2. 수동 관리의 시대: malloc, free와 3대 재앙</a>
+      <a href="#sec-3" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">3. 첫 번째 자동화: 참조 횟수 계산과 순환 참조</a>
+      <a href="#sec-4" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">4. 마크 앤 스윕: 도달 가능성(Reachability)의 미학</a>
+      <a href="#sec-sim" class="toc-link block px-3 py-2 rounded-lg text-emerald-700 dark:text-emerald-400 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 pl-6">↳ [시뮬레이터] 루트 탐색 &amp; 삼색 마킹</a>
+      <a href="#sec-bitflip" class="toc-link block px-3 py-2 rounded-lg text-emerald-700 dark:text-emerald-400 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 pl-6">↳ [심화] 1비트 헤더와 불리언 플립</a>
+      <a href="#sec-5" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">5. GC의 그림자: 잊힌 루트, 단편화, Stop-The-World</a>
+      <a href="#sec-frag" class="toc-link block px-3 py-2 rounded-lg text-emerald-700 dark:text-emerald-400 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 pl-6">↳ [실습] 힙 단편화와 Compaction</a>
+      <a href="#sec-6" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">6. 종합 비교 매트릭스 및 아키텍처적 함의</a>
+      <a href="#sec-ref" class="toc-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">7. 참고 자료 및 출처</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content Container -->
+  <main id="top" class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 prose-body">
+
+    <!-- Hero Header Card -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8 relative overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-3">
+        <span class="px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60">컴퓨터과학 심화 아티클</span>
+        <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">인터랙티브 시각화 포함</span>
+      </div>
+
+      <a href="../index.html" class="inline-block mb-4 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">← 목록으로</a>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight mb-3">
+        가비지 컬렉션 심화 분석: 수동 관리에서 마크 앤 스윕(Mark &amp; Sweep)까지
+      </h1>
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium mb-6 leading-relaxed">
+        킹스 칼리지 런던 Laurence Tratt 교수의 Computerphile 강의를 바탕으로, 왜 인간의 기억력에 기댄 수동 메모리 제어가 한계에 부딪혔는지, 그리고 <strong>"나를 몇 명이 가리키는가"</strong>에서 <strong>"루트로부터 나에게 닿을 수 있는가"</strong>로 질문을 바꾼 마크 앤 스윕(Mark &amp; Sweep) 알고리즘이 현대 프로그래밍 언어의 메모리 관리를 어떻게 완성했는지 인터랙티브 시뮬레이션과 함께 해부합니다.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+        <div class="flex flex-wrap items-center gap-4">
+          <span>📅 <strong>작성·개정일:</strong> 2026-10-15</span>
+          <span>⏱️ <strong>읽기 및 실습:</strong> 약 20분</span>
+          <span>🎥 <strong>원작 강의:</strong> <a href="https://youtu.be/c32zXYAK7CI" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-500">Laurence Tratt (Computerphile)</a></span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">#메모리관리</span>
+          <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">#MarkAndSweep</span>
+          <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">#Reachability</span>
+          <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">#런타임시스템</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 0: Executive Narrative Overview -->
+    <section id="sec-intro" class="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-md mb-10">
+      <div class="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
+        <span>Core Thesis</span>
+        <span>•</span>
+        <span>핵심 논증 구조</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold mb-4">
+        자동 메모리 관리의 역사는 곧 "질문을 바꾸는 과정"이다
+      </h2>
+      <p class="text-slate-200 text-sm sm:text-base leading-relaxed mb-6">
+        프로그램이 실행 중에 메모리를 빌려 쓰고 반납하는 일은 단순해 보이지만, 수십 년간 소프트웨어 공학에서 가장 치명적인 버그와 보안 취약점의 온상이었습니다. 이 글은 메모리 관리가 발전해 온 세 단계의 패러다임을 하나의 일관된 논증 흐름으로 추적합니다.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white/10 backdrop-blur-xs rounded-xl p-4 border border-white/15">
+          <div class="text-xs font-mono text-amber-300 mb-1">STAGE 01 · 수동 관리 (C)</div>
+          <div class="font-bold text-base mb-1.5">"내가 언제 다 썼는가?"</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            개발자가 <code class="text-amber-200">malloc</code>과 <code class="text-amber-200">free</code>로 직접 수명을 결정합니다. 최고 성능을 내지만 <strong>메모리 누수, Use-After-Free, Double Free</strong>라는 3대 재앙을 피하기 어렵습니다.
+          </p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-xs rounded-xl p-4 border border-white/15">
+          <div class="text-xs font-mono text-sky-300 mb-1">STAGE 02 · 참조 횟수 계산</div>
+          <div class="font-bold text-base mb-1.5">"나를 몇 명이 가리키는가?"</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            객체마다 참조 카운터를 두어 <code class="text-sky-200">count == 0</code>이 되는 순간 즉시 회수합니다. 직관적이지만 <strong>순환 참조(Circular Reference)</strong> 덩어리를 스스로 회수하지 못합니다.
+          </p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-xs rounded-xl p-4 border border-emerald-400/30 ring-1 ring-emerald-400/30">
+          <div class="text-xs font-mono text-emerald-300 mb-1">STAGE 03 · 마크 앤 스윕 GC</div>
+          <div class="font-bold text-base mb-1.5">"루트에서 닿을 수 있는가?"</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            국소적 카운터 대신 스택·전역 변수 등 <strong>루트(Root Set)</strong>에서 출발해 그래프 탐색으로 생존 여부를 판별합니다. 고립된 순환 참조까지 완벽히 청소합니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 1: Why Dynamic Allocation? -->
+    <article id="sec-1" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="px-2.5 py-1 rounded-md bg-indigo-600 text-white text-xs font-mono font-bold">PART 01</span>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">동적 할당과 운영체제 생태계</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-5">
+        1. 왜 메모리를 처음부터 미리 정해 둘 수 없을까?
+      </h2>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">1.1 실행 전에는 알 수 없는 세계: 정적 할당의 한계</h3>
+      <p>
+        컴파일러가 프로그램을 기계어로 번역할 때, 모든 변수의 크기를 미리 알 수 있다면 메모리 관리는 놀라울 만큼 단순할 것입니다. 그러나 현실의 소프트웨어는 실행되기 전까지 사용자가 어떤 데이터를 입력할지 전혀 예측할 수 없습니다.
+      </p>
+      <ul class="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
+        <li><strong>이미지 편집기:</strong> 사용자가 100×100 픽셀짜리 작은 아이콘을 열지, 8K 해상도의 수백 메가바이트짜리 원본 사진 20장을 동시에 열어 레이어를 합성할지 미리 알 수 없습니다.</li>
+        <li><strong>웹 브라우저:</strong> 텍스트만 있는 가벼운 문서를 띄울 때와 수천 개의 DOM 노드 및 고화질 비디오 스트림이 포함된 웹앱을 실행할 때 필요한 메모리는 수백 배 차이 납니다.</li>
+        <li><strong>전자상거래 장바구니:</strong> 사용자가 물건을 1개 담을지 500개 담을지, 혹은 담았다가 다시 삭제할지는 오직 <strong>런타임(Runtime, 실행 시간)</strong>에만 결정됩니다.</li>
+      </ul>
+      <p>
+        따라서 프로그램은 실행 도중 데이터가 늘어날 때마다 운영체제(OS) 및 언어 런타임의 <strong>힙(Heap) 영역</strong>에 필요한 만큼 메모리를 요청하여 할당받고, 작업이 끝나면 이를 다시 반납하는 <strong>동적 메모리 할당(Dynamic Memory Allocation)</strong> 모델을 사용해야만 합니다.
+      </p>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-8 mb-2">1.2 운영체제 위의 "좋은 시민(Good Citizen)" 딜레마</h3>
+      <p>
+        그렇다면 왜 프로그램이 시작할 때 아예 시스템의 여유 메모리를 수십 기가바이트씩 미리 독점해 두지 않을까요? 현대 컴퓨터는 수십~수백 개의 프로세스가 제한된 물리 RAM을 나누어 쓰는 멀티태스킹 환경이기 때문입니다. Laurence Tratt 교수는 이를 <strong>"좋은 시민(Good Citizen)의 균형"</strong>이라는 비유로 설명합니다.
+      </p>
+
+      <blockquote class="border-l-4 border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/30 px-5 py-4 rounded-r-xl my-5 text-sm sm:text-base text-slate-700 dark:text-slate-200">
+        "좋은 시민인 프로세스는 자신이 당장 처리해야 할 작업에 필요한 만큼만 메모리를 요청해 사용하고, 그 작업이 끝나는 즉시 메모리를 반납하여 컴퓨터 안의 다른 프로세스들이 자원을 쓸 수 있게 양보해야 합니다."
+      </blockquote>
+
+      <!-- Interactive Good Citizen Workload Visualizer -->
+      <div class="my-6 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>📊 프로세스 메모리 파동 비교: 좋은 시민 vs 나쁜 시민</span>
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">작업 단계에 따라 동적 메모리를 할당·반납할 때와 반납을 잊었을 때(누수)의 시스템 RAM 점유율 비교</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" id="citizenGoodBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-xs transition">정상 반납 (좋은 시민)</button>
+            <button type="button" id="citizenBadBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-600 hover:text-white transition">반납 누락 (메모리 누수)</button>
+          </div>
+        </div>
+
+        <svg id="citizenSvg" viewBox="0 0 680 185" class="w-full h-auto bg-white dark:bg-slate-900 rounded-lg border border-slate-200/80 dark:border-slate-800 p-2">
+          <!-- Grid lines -->
+          <line x1="55" y1="25" x2="650" y2="25" stroke="#ef4444" stroke-dasharray="4 4" stroke-width="1.2" />
+          <text x="60" y="20" fill="#ef4444" font-size="10" font-weight="bold">OS 물리 RAM 한계선 (Out Of Memory / Swap 구간)</text>
+          <line x1="55" y1="80" x2="650" y2="80" stroke="#94a3b8" stroke-opacity="0.25" stroke-width="1" />
+          <line x1="55" y1="145" x2="650" y2="145" stroke="#64748b" stroke-width="1.5" />
+          <text x="12" y="30" fill="#64748b" font-size="10">100%</text>
+          <text x="18" y="84" fill="#64748b" font-size="10">50%</text>
+          <text x="24" y="148" fill="#64748b" font-size="10">0%</text>
+
+          <!-- Timeline labels -->
+          <text x="90" y="168" fill="#64748b" font-size="10" text-anchor="middle">1. 앱 시작</text>
+          <text x="210" y="168" fill="#64748b" font-size="10" text-anchor="middle">2. 고해상도 사진 열기</text>
+          <text x="340" y="168" fill="#64748b" font-size="10" text-anchor="middle">3. 필터 연산 완료·해제</text>
+          <text x="480" y="168" fill="#64748b" font-size="10" text-anchor="middle">4. 두 번째 사진 편집</text>
+          <text x="600" y="168" fill="#64748b" font-size="10" text-anchor="middle">5. 창 닫기·대기</text>
+
+          <!-- Dynamic Area & Path -->
+          <path id="citizenArea" d="M90,130 L210,60 L340,115 L480,55 L600,125 L600,145 L90,145 Z" fill="rgba(16, 185, 129, 0.16)" />
+          <path id="citizenLine" d="M90,130 L210,60 L340,115 L480,55 L600,125" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- Data points -->
+          <circle id="cp1" cx="90" cy="130" r="5" fill="#10b981" />
+          <circle id="cp2" cx="210" cy="60" r="5" fill="#10b981" />
+          <circle id="cp3" cx="340" cy="115" r="5" fill="#10b981" />
+          <circle id="cp4" cx="480" cy="55" r="5" fill="#10b981" />
+          <circle id="cp5" cx="600" cy="125" r="5" fill="#10b981" />
+        </svg>
+        <p id="citizenCaption" class="text-xs text-emerald-700 dark:text-emerald-400 font-medium mt-2.5">
+          ✅ 정상 반납 시: 사진 편집이나 필터 연산이 끝날 때마다 임시 버퍼를 즉시 반납하므로 메모리 사용량이 파도처럼 오르내리며 안정적인 수준을 유지합니다.
+        </p>
+      </div>
+    </article>
+
+    <!-- Section 2: Manual Memory Management (malloc & free) -->
+    <article id="sec-2" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="px-2.5 py-1 rounded-md bg-amber-600 text-white text-xs font-mono font-bold">PART 02</span>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">명시적 제어의 양날의 검</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-5">
+        2. 수동 관리의 시대: <code class="font-mono text-amber-600 dark:text-amber-400">malloc</code>과 <code class="font-mono text-amber-600 dark:text-amber-400">free</code>, 그리고 세 가지 고전적 재앙
+      </h2>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">2.1 두 개의 기본 동작으로 이루어진 계약</h3>
+      <p>
+        C 언어를 비롯한 전통적인 시스템 프로그래밍 언어에서는 개발자가 직접 메모리 할당기(Allocator)와 계약을 맺습니다. 이 계약은 단 두 개의 기본 함수로 요약됩니다.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <code class="text-sm font-bold text-indigo-600 dark:text-indigo-400">void* ptr = malloc(32 * 1024);</code>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold">할당 (Allocate)</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-0">
+            "나에게 32KB(32,768바이트)의 여유 메모리 블록을 찾아 빌려달라." 할당기는 힙의 빈 공간(Free List)에서 적당한 블록을 찾아 <strong>시작 메모리 주소(포인터)</strong>를 반환합니다.
+          </p>
+        </div>
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <code class="text-sm font-bold text-rose-600 dark:text-rose-400">free(ptr);</code>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-semibold">반납 (Deallocate)</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-0">
+            "이 주소(<code class="font-mono">ptr</code>)가 가리키는 메모리 블록을 다 썼으니 반납한다." 할당기는 해당 영역을 다시 빈 공간 목록에 등록해 다른 <code class="font-mono">malloc</code> 요청이 재사용할 수 있게 합니다.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-8 mb-3">2.2 인간이기에 범하는 세 가지 치명적 오류 (The 3 Deadly Sins)</h3>
+      <p>
+        코드가 수십만 줄로 늘어나고 조건문, 예외 처리, 비동기 콜백이 얽히기 시작하면 <em>"정확히 모든 실행 경로에서, 단 한 번씩만, 더 이상 쓰지 않는 시점에 <code class="font-mono">free</code>를 호출한다"</em>는 규칙을 지키는 것은 사실상 불가능에 가까워집니다. 여기서 세 가지 고전적 재앙이 탄생합니다. 아래 탭을 클릭해 각 오류가 실제 메모리 주소 공간에서 어떤 참사를 일으키는지 확인해 보세요.
+      </p>
+
+      <!-- Interactive 3 Deadly Sins Explorer -->
+      <div class="my-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 overflow-hidden">
+        <div class="grid grid-cols-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <button type="button" data-sin="leak" class="sin-tab py-3 px-3 text-xs sm:text-sm font-bold border-b-2 border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-950/20 transition">
+            ① 메모리 누수 (Memory Leak)
+          </button>
+          <button type="button" data-sin="uaf" class="sin-tab py-3 px-3 text-xs sm:text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition">
+            ② 반환 후 사용 (Use-After-Free)
+          </button>
+          <button type="button" data-sin="dfree" class="sin-tab py-3 px-3 text-xs sm:text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition">
+            ③ 이중 반환 (Double Free)
+          </button>
+        </div>
+
+        <div class="p-5 sm:p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+            <!-- Code & Explanation -->
+            <div class="lg:col-span-6 space-y-3">
+              <div class="flex items-center gap-2">
+                <span id="sinBadge" class="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">자원 고갈형 버그</span>
+                <h4 id="sinTitle" class="text-base font-bold text-slate-900 dark:text-white">free() 호출을 잊어버린 경우</h4>
+              </div>
+              <pre id="sinCode" class="bg-slate-900 text-slate-100 p-3.5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">void process_image() {
+  uint8_t* buf = malloc(32 * 1024); // 0x4A00 할당
+  if (header_invalid(buf)) {
+    return; // ❌ 조기 리턴하며 free(buf) 누락!
+  }
+  free(buf);
+}</pre>
+              <p id="sinDesc" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-0">
+                함수에서 조기 리턴하거나 포인터 변수 <code class="font-mono">buf</code>가 스코프를 벗어나 사라지면, 힙의 <code class="font-mono">0x4A00</code> 블록은 주소를 아는 변수가 없는데도 할당 상태로 남습니다. 누수가 누적되면 시스템 RAM이 바닥나 디스크 스왑(Swap)으로 급격히 느려지거나 OS의 OOM Killer에 의해 강제 종료됩니다.
+              </p>
+            </div>
+
+            <!-- Visual Memory Block Diagram -->
+            <div class="lg:col-span-6 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div class="text-xs font-mono text-slate-400 mb-2">HEAP MEMORY STATE (Address 0x4A00)</div>
+              <div id="sinVisualContainer" class="space-y-3">
+                <!-- Dynamically rendered by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-sm text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/60 p-4 rounded-xl">
+        💡 <strong>왜 Use-After-Free와 Double Free가 특히 위험한가요?</strong><br>
+        Laurence Tratt 교수가 비유했듯, 이중 반환(Double Free)은 <em>"내가 이미 판 집을 부동산에 또 팔아넘겨서, 그 집을 새로 사서 입주해 살던 고담시의 선량한 시민(다른 정상 객체)이 갑자기 철거반에 의해 길거리로 내쫓기는 상황"</em>과 같습니다. 특히 해제된 주소에 보안 인증 정보나 함수 포인터가 새로 들어왔을 때 예전 포인터로 값을 덮어쓰면 심각한 <strong>원격 코드 실행(RCE) 보안 취약점</strong>이나 타 데이터 오염으로 직결됩니다. Microsoft와 Google 크롬 보안팀의 통계에 따르면 전체 심각한 보안 취약점의 약 <strong>70%</strong>가 이러한 수동 메모리 안전성 오류에서 비롯됩니다.
+      </p>
+    </article>
+
+    <!-- Section 3: Reference Counting -->
+    <article id="sec-3" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="px-2.5 py-1 rounded-md bg-sky-600 text-white text-xs font-mono font-bold">PART 03</span>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">자동화의 첫 번째 시도</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-5">
+        3. 참조 횟수 계산(Reference Counting): 직관적인 자동화와 순환 참조의 덫
+      </h2>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">3.1 왜 운영체제(OS)가 아니라 프로그래밍 언어가 나섰는가?</h3>
+      <p>
+        인간에게 <code class="font-mono">free()</code>를 맡기는 것이 위험하다면, 왜 운영체제가 알아서 안 쓰는 메모리를 회수해 주지 않을까요? 운영체제 입장에서는 프로세스의 메모리가 그저 수십억 개의 바이트 배열(<code class="font-mono">0x00</code>~<code class="font-mono">0xFF</code>)로 보일 뿐입니다. 어떤 8바이트 숫자가 단순한 정수 데이터(<code class="font-mono">long</code>)인지, 아니면 다른 힙 객체를 가리키는 메모리 주소(포인터)인지 OS 커널은 구분할 수 없습니다.
+      </p>
+      <p>
+        반면 <strong>프로그래밍 언어의 컴파일러와 런타임(Runtime)</strong>은 변수의 타입, 스코프(Scope), 객체 간 참조 구조를 정확히 알고 있습니다. 그래서 1960년 조지 콜린스(George E. Collins)가 제안한 <strong>참조 횟수 계산(Reference Counting)</strong>을 시작으로, 메모리 관리의 책임은 인간 개발자에서 <strong>언어 런타임</strong>으로 넘어오게 됩니다.
+      </p>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-8 mb-2">3.2 원리: "나를 가리키는 화살표가 몇 개인가?"</h3>
+      <p>
+        참조 횟수 계산의 규칙은 매우 단순합니다. 모든 힙 객체 헤더에 <strong>참조 카운터(<code class="font-mono">ref_count</code>)</strong>라는 정수 칸을 하나 추가합니다.
+      </p>
+      <ul class="list-disc pl-6 space-y-1.5 mb-6 text-slate-700 dark:text-slate-300">
+        <li>새로운 변수나 다른 객체의 필드가 이 객체를 가리키면 <code class="font-mono text-emerald-600 dark:text-emerald-400">ref_count += 1</code></li>
+        <li>가리키던 변수가 다른 값으로 덮어써지거나 함수가 종료되어 스코프를 벗어나면 <code class="font-mono text-rose-600 dark:text-rose-400">ref_count -= 1</code></li>
+        <li><code class="font-mono font-bold">ref_count == 0</code>이 되는 그 즉시, 아무도 이 객체를 참조하지 않는다고 판단하여 메모리를 해제합니다.</li>
+      </ul>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-8 mb-3">3.3 참조 횟수 계산이 치러야 하는 네 가지 대가</h3>
+      <p>
+        참조 카운팅은 객체가 쓸모없어지는 즉시 회수된다는 큰 장점이 있어 오늘날에도 <strong>Python(CPython의 기본 메모리 관리자), Swift/Objective-C(ARC), C++(<code class="font-mono">std::shared_ptr</code>), Rust(<code class="font-mono">Rc/Arc</code>)</strong> 등에서 널리 쓰입니다. 하지만 그 대가로 네 가지 무거운 한계를 안고 있습니다.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 mb-1">COST 01 · 구현 복잡성</div>
+          <div class="font-bold text-sm mb-1">컴파일러·런타임의 엄격한 장부 관리</div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-0 leading-relaxed">
+            모든 포인터 대입, 인자 전달, 스코프 이탈 시점마다 증감 코드를 한 치의 오차도 없이 삽입해야 합니다. 런타임 내부 코드에서 실수가 나면 즉시 Use-After-Free나 누수로 이어집니다.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 mb-1">COST 02 · 공간 오버헤드</div>
+          <div class="font-bold text-sm mb-1">모든 객체마다 붙는 카운터 필드</div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-0 leading-relaxed">
+            극단적으로 수억 개의 객체가 한 객체를 가리킬 수도 있으므로, 각 객체 헤더마다 워드 크기(64비트 기준 8바이트, 최소 4바이트)의 카운터 공간이 추가로 소비됩니다.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 mb-1">COST 03 · 시간 및 멀티스레드 오버헤드</div>
+          <div class="font-bold text-sm mb-1">단순 대입조차 메모리 쓰기 연산을 유발</div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-0 leading-relaxed">
+            <code class="font-mono">p = q</code> 한 줄을 실행할 때도 이전 객체의 카운터를 깎고 새 객체의 카운터를 올려야 합니다. 특히 멀티스레드 환경에서는 <strong>원자적 연산(Atomic Increment/Decrement)</strong>과 CPU 캐시 라인 무효화가 발생해 처리량이 크게 저하됩니다.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl border border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30">
+          <div class="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 mb-1">COST 04 · 구조적 아킬레스건</div>
+          <div class="font-bold text-sm text-rose-900 dark:text-rose-200 mb-1">순환 참조 (Circular Reference) 회수 불능</div>
+          <p class="text-xs text-slate-700 dark:text-slate-300 mb-0 leading-relaxed">
+            객체 A가 B를 가리키고 B가 다시 A를 가리키면(<code class="font-mono">A ↔ B</code>), 외부의 모든 스택 변수가 연결을 끊어도 서로가 서로의 카운터를 <code class="font-mono">1</code>로 지탱해 주어 영원히 <code class="font-mono">0</code>이 되지 않는 <strong>고립된 섬(Isolated Island)</strong>이 됩니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Mini Interactive Reference Counting & Cycle Trap Demo -->
+      <div class="my-6 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">🔄 순환 참조의 함정 직접 실험하기</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">스택 변수 <code class="font-mono">root</code>가 끊어졌을 때 일반 연결과 순환 참조(<code class="font-mono">Node A ↔ Node B</code>)의 참조 카운트 비교</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" id="rcStep1Btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white transition">1. 초기 할당 (root → A → B)</button>
+            <button type="button" id="rcStep2Btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-sky-600 hover:text-white transition">2. 순환 고리 생성 (B.prev = A)</button>
+            <button type="button" id="rcStep3Btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-rose-600 hover:text-white transition">3. 외부 참조 해제 (root = null)</button>
+          </div>
+        </div>
+
+        <svg id="rcSvg" viewBox="0 0 650 165" class="w-full h-auto bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
+          <defs>
+            <marker id="rcArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+            </marker>
+            <marker id="rcArrowCycle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+            </marker>
+          </defs>
+
+          <!-- Stack Root Box -->
+          <rect x="30" y="52" width="105" height="60" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2" />
+          <text x="82" y="75" font-size="11" font-weight="bold" fill="#334155" text-anchor="middle">STACK 변수</text>
+          <text id="rcRootText" x="82" y="96" font-size="12" font-family="JetBrains Mono" font-weight="bold" fill="#0284c7" text-anchor="middle">root = &amp;A</text>
+
+          <!-- Root -> A Arrow -->
+          <line id="rcEdgeRootA" x1="135" y1="82" x2="235" y2="82" stroke="#64748b" stroke-width="2.5" marker-end="url(#rcArrow)" class="edge-transition" />
+
+          <!-- Node A -->
+          <g id="rcNodeA">
+            <rect id="rcBoxA" x="245" y="42" width="130" height="80" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5" class="node-transition" />
+            <text x="310" y="68" font-size="13" font-weight="bold" fill="#0f172a" text-anchor="middle">Heap Object A</text>
+            <rect x="265" y="80" width="90" height="26" rx="6" fill="#0284c7" />
+            <text id="rcCountA" x="310" y="97" font-size="12" font-family="JetBrains Mono" font-weight="bold" fill="#ffffff" text-anchor="middle">ref_cnt: 1</text>
+          </g>
+
+          <!-- A -> B Arrow -->
+          <path id="rcEdgeAB" d="M 375 70 Q 430 45 480 70" fill="none" stroke="#64748b" stroke-width="2.5" marker-end="url(#rcArrow)" />
+          <text x="428" y="50" font-size="10" font-family="JetBrains Mono" fill="#64748b" text-anchor="middle">A.next</text>
+
+          <!-- B -> A Cycle Arrow -->
+          <path id="rcEdgeBA" d="M 485 100 Q 430 130 380 100" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#rcArrowCycle)" opacity="0" class="edge-transition" />
+          <text id="rcEdgeBALabel" x="428" y="136" font-size="10" font-family="JetBrains Mono" font-weight="bold" fill="#f43f5e" text-anchor="middle" opacity="0">B.prev (순환!)</text>
+
+          <!-- Node B -->
+          <g id="rcNodeB">
+            <rect id="rcBoxB" x="485" y="42" width="130" height="80" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5" class="node-transition" />
+            <text x="550" y="68" font-size="13" font-weight="bold" fill="#0f172a" text-anchor="middle">Heap Object B</text>
+            <rect x="505" y="80" width="90" height="26" rx="6" fill="#0284c7" />
+            <text id="rcCountB" x="550" y="97" font-size="12" font-family="JetBrains Mono" font-weight="bold" fill="#ffffff" text-anchor="middle">ref_cnt: 1</text>
+          </g>
+        </svg>
+
+        <div id="rcStatusBanner" class="mt-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-xs text-slate-700 dark:text-slate-200">
+          <strong>상태 설명:</strong> 스택의 <code class="font-mono">root</code> 변수가 A를 가리키고(<code class="font-mono">ref_cnt=1</code>), A가 B를 가리킵니다(<code class="font-mono">ref_cnt=1</code>). 이 상태에서 <code class="font-mono">root = null</code>이 되면 A와 B는 차례대로 카운트가 0이 되어 정상 회수됩니다. <strong>'2. 순환 고리 생성'</strong> 버튼을 눌러보세요!
+        </div>
+      </div>
+    </article>
+
+    <!-- Section 4: Mark & Sweep Deep Dive -->
+    <article id="sec-4" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="px-2.5 py-1 rounded-md bg-emerald-600 text-white text-xs font-mono font-bold">PART 04</span>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">추적 기반 가비지 컬렉션(Tracing GC)의 핵심</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-5">
+        4. 마크 앤 스윕(Mark &amp; Sweep): "루트로부터 닿을 수 있는가?"
+      </h2>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">4.1 국소적 카운터에서 전역적 도달 가능성(Reachability)으로</h3>
+      <p>
+        1960년 존 매카시(John McCarthy)가 Lisp 언어를 위해 고안한 <strong>마크 앤 스윕(Mark &amp; Sweep)</strong> 알고리즘은 참조 횟수 계산이 빠졌던 함정을 정면으로 돌파합니다. 흔히 학술 문헌과 현업에서 좁은 의미로 <strong>"가비지 컬렉션(Garbage Collection, GC)"</strong>이라 부를 때는 바로 이 마크 앤 스윕 계열의 <strong>추적 기반 가비지 컬렉션(Tracing GC)</strong>을 가리킵니다.
+      </p>
+      <p>
+        핵심 통찰은 질문을 완전히 바꾸는 데 있습니다. 각 객체에게 <em>"너를 가리키는 화살표가 몇 개니?"</em>라고 묻는 대신, <strong>"현재 실행 중인 프로그램의 출발점(Root)에서 시작해 포인터 사슬을 따라가면 저 객체에 도달할 수 있는가(Reachable)?"</strong>를 묻는 것입니다. 아무리 객체 A와 B가 서로를 백 번씩 참조하고 있더라도, 프로그램의 출발점(Root)에서 그 섬으로 건너가는 다리가 끊어졌다면 프로그램은 절대로 그 객체들을 다시 읽거나 쓸 수 없습니다. 즉, <strong>도달 불가능(Unreachable)한 객체는 곧 가비지(Garbage)</strong>입니다.
+      </p>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-8 mb-3">4.2 루트 집합(Root Set)이란 무엇인가?</h3>
+      <p>
+        그렇다면 탐색의 출발점이 되는 <strong>루트(Roots)</strong>는 구체적으로 어디에 있는 변수들일까요? 가비지 컬렉터가 마크(Mark) 단계를 시작할 때 가장 먼저 스캔하는 <strong>Root Set</strong>은 다른 객체를 거치지 않고 코드에서 즉시 접근할 수 있는 네 가지 영역으로 구성됩니다.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-5">
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">ROOT 01</div>
+          <div class="font-bold text-sm mb-1">콜 스택 프레임 (Call Stack)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-0">현재 실행 중인 모든 함수들의 지역 변수(Local Variables)와 매개변수(Parameters)</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">ROOT 02</div>
+          <div class="font-bold text-sm mb-1">CPU 레지스터 (Registers)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-0">현재 스레드가 연산을 위해 CPU 레지스터에 올려둔 객체 참조 포인터</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">ROOT 03</div>
+          <div class="font-bold text-sm mb-1">전역·정적 변수 (Globals/Statics)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-0">프로그램 종료 시까지 수명이 유지되는 모듈 전역 변수, 클래스 정적 필드, 싱글톤</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">ROOT 04</div>
+          <div class="font-bold text-sm mb-1">런타임·네이티브 핸들 (JNI 등)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-0">C/C++ 네이티브 확장 코드나 VM 내부 시스템이 직접 붙잡고 있는 외부 참조</p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-8 mb-3">4.3 두 단계의 협주곡: Mark(표시)와 Sweep(청소), 그리고 삼색 추상화</h3>
+      <p>
+        평소에는 참조 횟수 계산처럼 매번 카운터를 증감하며 실행 속도를 깎아먹지 않고, 프로그램이 빠르게 메모리를 할당하며 달리게 둡니다. 그러다 힙의 여유 공간이 일정 임계치 아래로 떨어지면 가비지 컬렉터가 깨어나 <strong>Mark</strong>와 <strong>Sweep</strong>의 두 단계를 수행합니다.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
+        <div class="p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/80 bg-emerald-50/40 dark:bg-emerald-950/20">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-600 text-white">PHASE 1 · MARK</span>
+            <span class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold">시간 복잡도: O(살아있는 객체 수 + 간선 수)</span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 dark:text-white mb-2">루트에서 출발하는 그래프 탐색 (DFS / Worklist)</h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-0">
+            모든 루트 변수에서 출발하여 포인터를 따라가며 도달 가능한 모든 객체의 헤더에 <strong>마크 비트(<code class="font-mono">mark = 1</code>)</strong>를 켭니다. 이때 실제 GC 엔진은 <strong>삼색 마킹(Tri-color Marking)</strong> 추상화를 사용합니다:
+            <br>• ⚪ <strong>White(백색):</strong> 아직 방문하지 않은 객체 (Mark 종료 시까지 백색이면 가비지 확정)
+            <br>• 🟡 <strong>Grey(회색):</strong> 자신은 방문되어 마크되었으나, 자신이 가리키는 자식 객체들을 아직 다 확인하지 않아 탐색 대기열(Worklist)에 들어있는 객체
+            <br>• 🟢 <strong>Black(흑색):</strong> 자신과 직속 자식들까지 모두 탐색을 마친 생존 확정 객체
+          </p>
+        </div>
+
+        <div class="p-5 rounded-xl border border-indigo-200 dark:border-indigo-900/80 bg-indigo-50/40 dark:bg-indigo-950/20">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-600 text-white">PHASE 2 · SWEEP</span>
+            <span class="text-xs text-indigo-700 dark:text-indigo-400 font-semibold">시간 복잡도: O(전체 힙 크기)</span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 dark:text-white mb-2">전체 힙의 선형 스캔 및 일괄 회수</h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-0">
+            그래프 탐색(Mark)이 끝나 더 이상 회색(Grey) 노드가 남지 않으면, 가비지 컬렉터는 힙 메모리의 처음 주소부터 끝 주소까지 선형으로 훑습니다(Sweep).
+            <br>• <strong>마크가 없는(White) 객체:</strong> 루트에서 도달할 수 없는 가비지이므로 즉시 해제하여 <strong>자유 공간 연결 리스트(Free List)</strong>에 반환합니다.
+            <br>• <strong>마크가 있는(Black) 객체:</strong> 살아남은 객체이므로 그대로 보존하고, 다음 GC 주기를 위해 마크 상태를 초기화합니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE SIMULATOR: Laurence Tratt's Chalkboard Trace + Tri-Color Mark & Sweep -->
+      <div id="sec-sim" class="my-8 rounded-2xl border-2 border-indigo-500/30 dark:border-indigo-500/40 bg-slate-50 dark:bg-slate-950 p-5 sm:p-6 shadow-md">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-1">
+              <span>🧪 INTERACTIVE LAB 01</span>
+              <span>•</span>
+              <span>Laurence Tratt 칠판 시연 + 순환 참조 스윕 시뮬레이터</span>
+            </div>
+            <h4 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
+              코드 실행과 GC(Mark → Sweep) 전 과정 단계별 시뮬레이션
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              원작 강의의 <code class="font-mono">x, y</code> 변수 변화 시나리오 5단계와 삼색 마킹(White → Grey → Black) 및 Sweep 과정을 직접 실행해 보세요.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="simPrevBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition">◀ 이전 단계</button>
+            <button type="button" id="simNextBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition">다음 단계 ▶</button>
+            <button type="button" id="simAutoBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition">▶ 자동 재생</button>
+            <button type="button" id="simResetBtn" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 transition">초기화</button>
+          </div>
+        </div>
+
+        <!-- Scenario Step Pills -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 my-4" id="simStepPills">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          <!-- Left: Python-like Code Trace & Worklist State -->
+          <div class="lg:col-span-5 flex flex-col justify-between bg-slate-900 text-slate-100 rounded-xl p-4 font-mono text-xs">
+            <div>
+              <div class="flex items-center justify-between text-[11px] text-slate-400 pb-2 mb-2 border-b border-slate-800">
+                <span>PROGRAM TRACE (Python/Pseudo)</span>
+                <span id="simPhaseBadge" class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">MUTATOR</span>
+              </div>
+              <div class="space-y-1.5" id="simCodeLines">
+                <div data-line="1" class="sim-code-line px-2 py-1 rounded">1: x = Obj("Obj1"); y = Obj("Obj2")</div>
+                <div data-line="2" class="sim-code-line px-2 py-1 rounded">2: y = None  # Obj2 연결 끊김</div>
+                <div data-line="3" class="sim-code-line px-2 py-1 rounded">3: # [GC #1] Mark(x) &amp; Sweep(Obj2)</div>
+                <div data-line="4" class="sim-code-line px-2 py-1 rounded">4: y = Obj("Obj3"); x.ref = y</div>
+                <div data-line="5" class="sim-code-line px-2 py-1 rounded">5: y = None  # 하지만 x.ref가 Obj3 유지!</div>
+                <div data-line="6" class="sim-code-line px-2 py-1 rounded">6: # [GC #2] x → Obj1 → Obj3 생존!</div>
+                <div data-line="7" class="sim-code-line px-2 py-1 rounded">7: # 고립된 순환 참조 섬 (Obj4 ↔ Obj5)</div>
+                <div data-line="8" class="sim-code-line px-2 py-1 rounded">8: # [GC #3] 순환 참조 통째로 Sweep!</div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800">
+              <div class="text-[11px] text-slate-400 mb-1">GC WORKLIST / 상태 모니터</div>
+              <div id="simWorklistBox" class="p-2.5 rounded-lg bg-slate-950 text-emerald-300 text-xs leading-relaxed">
+                대기 중: 코드 실행 단계
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Heap Graph SVG -->
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-3 flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2 px-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-[11px]">
+              <span class="font-bold text-slate-600 dark:text-slate-300">STACK ROOTS &amp; HEAP OBJECT GRAPH</span>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-400 inline-block"></span>미방문(White)</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-300 border border-amber-600 inline-block"></span>탐색중(Grey)</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-emerald-700 inline-block"></span>생존(Black)</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-300 border border-rose-600 inline-block"></span>가비지(Sweep)</span>
+              </div>
+            </div>
+
+            <svg id="simGraphSvg" viewBox="0 0 540 270" class="w-full h-auto my-1">
+              <defs>
+                <marker id="simArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+                </marker>
+                <marker id="simArrowActive" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+                </marker>
+              </defs>
+
+              <!-- Stack Zone Background -->
+              <rect x="12" y="15" width="105" height="240" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="4 4" />
+              <text x="64" y="36" font-size="11" font-weight="bold" fill="#475569" text-anchor="middle">STACK (Roots)</text>
+
+              <!-- Heap Zone Background -->
+              <rect x="135" y="15" width="393" height="240" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="4 4" />
+              <text x="331" y="36" font-size="11" font-weight="bold" fill="#475569" text-anchor="middle">HEAP MEMORY (Objects)</text>
+
+              <!-- Root x -->
+              <rect x="26" y="58" width="76" height="44" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2" />
+              <text x="64" y="77" font-size="12" font-family="JetBrains Mono" font-weight="bold" fill="#312e81" text-anchor="middle">Root: x</text>
+              <text id="simRootXVal" x="64" y="93" font-size="10" font-family="JetBrains Mono" fill="#4338ca" text-anchor="middle">→ Obj1</text>
+
+              <!-- Root y -->
+              <rect x="26" y="138" width="76" height="44" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2" />
+              <text x="64" y="157" font-size="12" font-family="JetBrains Mono" font-weight="bold" fill="#312e81" text-anchor="middle">Root: y</text>
+              <text id="simRootYVal" x="64" y="173" font-size="10" font-family="JetBrains Mono" fill="#4338ca" text-anchor="middle">→ Obj2</text>
+
+              <!-- Dynamic Edges Layer -->
+              <g id="simEdgesLayer"></g>
+
+              <!-- Dynamic Nodes Layer -->
+              <g id="simNodesLayer"></g>
+            </svg>
+
+            <div id="simNarrativeBox" class="p-3 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/70 text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subsection 4.4: 1-bit Header & Boolean Flip Optimization -->
+      <div id="sec-bitflip" class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+          4.4 표시는 메모리를 얼마나 쓰나: 객체 헤더의 1비트와 '불리언 플립(Boolean Flip)' 최적화
+        </h3>
+        <p>
+          참조 횟수 계산에서는 객체마다 최소 32~64비트의 카운터 공간이 필요했습니다. 반면 마크 앤 스윕은 <em>"루트에서 닿았는가, 아닌가"</em>라는 예/아니오(Boolean)만 기록하면 되므로, 각 객체 헤더(Object Header)에 <strong>단 1비트(Mark Bit)</strong>만 있으면 충분합니다. 게다가 실제 가상머신(JVM, V8 등)에서는 객체 크기가 8바이트 단위로 정렬(Alignment)되면서 남는 하위 여유 비트에 이 1비트를 숨겨 넣기 때문에 추가 메모리 오버헤드가 사실상 <strong>0바이트</strong>에 가깝습니다.
+        </p>
+        <p>
+          여기서 한 가지 날카로운 질문이 등장합니다: <strong>"Sweep이 끝난 뒤, 살아남은 객체들에 켜져 있는 <code class="font-mono">mark = 1</code> 비트를 다음 GC 주기 전에 다시 <code class="font-mono">0</code>으로 리셋하려면 또 시간을 써야 하지 않나요?"</strong>
+        </p>
+        <p>
+          이를 해결하는 우아한 기법이 바로 <strong>불리언 플립(Boolean Flip, 비트 의미 뒤집기)</strong>입니다. 살아남은 객체의 비트를 매번 초기화하는 대신, 가비지 컬렉터가 전역 변수 하나(<code class="font-mono">ALIVE_BIT_MEANING</code>)만 들고 있다가 <strong>GC 주기가 끝날 때마다 '살아있음(Marked)'을 뜻하는 비트 값(1 또는 0)의 해석을 정반대로 뒤집는 것</strong>입니다!
+        </p>
+
+        <!-- Interactive Boolean Flip Demo -->
+        <div class="my-5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">⚡ 불리언 플립(Boolean Flip) 인터랙티브 토글</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400">살아남은 객체들의 비트를 0으로 일일이 지우지 않고, 사이클의 기준 비트만 <code class="font-mono">1 ↔ 0</code>으로 뒤집어 초기화 비용을 O(1)로 만듭니다.</p>
+            </div>
+            <button type="button" id="flipCycleBtn" class="px-4 py-2 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition shrink-0">
+              🔄 다음 GC 사이클로 전환 (Flip Meaning!)
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="p-3.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <div class="text-slate-400 font-mono mb-1">CURRENT GC CYCLE</div>
+              <div id="flipCycleName" class="text-base font-extrabold text-indigo-600 dark:text-indigo-400">홀수 주기 (Cycle #1)</div>
+              <div id="flipRuleText" class="mt-1 text-slate-600 dark:text-slate-300">
+                현재 생존 기준: <code class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">mark_bit == 1</code> 이면 생존!
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <div class="text-slate-400 font-mono mb-1">SURVIVING OBJECT A (새 주기 시작 직후)</div>
+              <div class="flex items-center justify-between mt-1">
+                <span class="font-bold">헤더 저장 비트: <code id="flipObjBit" class="font-mono text-sm font-bold text-indigo-600 dark:text-indigo-400">0</code></span>
+                <span id="flipObjState" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">미방문 (Unmarked)</span>
+              </div>
+              <p id="flipObjDesc" class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 mb-0">
+                이전 주기를 통과하며 비트가 그대로 남아있지만, 새 주기에서는 기준이 바뀌었으므로 별도의 초기화 없이도 자동으로 '미방문' 상태가 됩니다!
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <div class="text-slate-400 font-mono mb-1">MARK 단계에서 방문 시 동작</div>
+              <div id="flipActionText" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm mt-1">
+                obj.mark_bit = 1 로 기록
+              </div>
+              <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 mb-0">
+                Sweep 후에도 비트 초기화 루프를 돌릴 필요가 없어 힙 스캔 오버헤드가 절감됩니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Section 5: Beyond Basic Mark & Sweep (Forgotten Roots, Fragmentation, STW & Generational GC) -->
+    <article id="sec-5" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="px-2.5 py-1 rounded-md bg-rose-600 text-white text-xs font-mono font-bold">PART 05</span>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">현실 세계의 한계와 현대 GC의 진화</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-5">
+        5. GC가 있어도 왜 메모리가 새고 멈칫거릴까? (잊힌 루트, 단편화, Stop-The-World)
+      </h2>
+
+      <p>
+        마크 앤 스윕은 수동 관리의 <code class="font-mono">Use-After-Free</code>와 <code class="font-mono">Double Free</code>를 원천 차단하고 순환 참조까지 깔끔히 해결했습니다. 그렇다면 마크 앤 스윕 언어를 쓰면 메모리 걱정은 완전히 끝난 것일까요? 현업 엔지니어들이 겪는 세 가지 현실적 문제를 통해 GC의 한계와 진화 방향을 짚어봅니다.
+      </p>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-7 mb-2">
+        5.1 "잊힌 루트(Forgotten Roots)"와 왜 '껐다 켜면' 고쳐지는가
+      </h3>
+      <p>
+        Java, JavaScript, Python으로 작성된 서버나 웹앱에서도 여전히 메모리 누수(Memory Leak)가 발생합니다. 왜일까요? 컴퓨터과학에서는 쓰레기 객체를 두 종류로 구분합니다.
+      </p>
+      <ul class="list-disc pl-6 space-y-2 mb-4 text-slate-700 dark:text-slate-300">
+        <li><strong>구문적 가비지 (Syntactic Garbage):</strong> 루트에서 포인터 경로로 <strong>도달 불가능한</strong> 객체. 마크 앤 스윕이 100% 완벽하게 회수합니다.</li>
+        <li><strong>의미적 가비지 (Semantic Garbage):</strong> 루트에서 여전히 <strong>도달 가능하지만</strong>, 개발자의 논리상 앞으로 다시는 읽지 않을 객체. 어떤 자동 GC도 프로그램의 미래 의도를 독심술로 읽을 수 없으므로 절대 회수하지 못합니다!</li>
+      </ul>
+      <p>
+        가장 흔한 원인은 <strong>잊힌 루트(Forgotten Root)</strong>입니다. 예를 들어 전역 <code class="font-mono">Map</code>이나 캐시 리스트에 데이터를 계속 넣기만 하고 삭제(Eviction)하지 않거나, DOM 요소를 지웠는데 전역 이벤트 리스너가 그 요소를 참조하고 있는 경우입니다. 단 하나의 잊힌 루트 화살표가 남아 있으면, 그 끝에 매달린 수백 메가바이트짜리 객체 그래프 전체가 매번 Mark 단계에서 성실하게 체크 표시를 받아 살아남습니다.
+      </p>
+      <p>
+        <strong>그렇다면 왜 프로그램을 껐다 켜면(프로세스 재시작) 감쪽같이 해결될까요?</strong><br>
+        개별 객체를 하나씩 추적하던 언어 런타임과 달리, 운영체제(OS) 커널은 프로세스 단위로 <strong>가상 주소 공간(Virtual Address Space)</strong>의 페이지 테이블을 관리합니다. 프로세스가 종료되는 순간 OS는 그 안에 있던 잊힌 루트든 순환 참조든 상관하지 않고 해당 프로세스에 매핑된 물리 RAM 프레임 전체를 단번에 회수하기 때문입니다.
+      </p>
+
+      <!-- Subsection 5.2: Heap Fragmentation & Compaction Interactive Lab -->
+      <div id="sec-frag" class="mt-9 pt-6 border-t border-slate-200 dark:border-slate-800">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+          5.2 스위스 치즈가 된 힙: 메모리 단편화(Fragmentation)와 Compaction
+        </h3>
+        <p>
+          순수한 마크 앤 스윕에는 또 하나의 물리적 약점이 있습니다. 살아있는 객체는 원래 자리에 그대로 둔 채 중간중간의 가비지만 지우다 보면(Sweep), 힙 메모리가 구멍 뚫린 스위스 치즈처럼 잘게 쪼개지는 <strong>외부 단편화(External Fragmentation)</strong>가 발생합니다.
+        </p>
+        <p>
+          아래 시뮬레이터에서 확인하듯, 힙 전체의 빈칸 합계는 <strong>6칸(24KB)</strong>으로 충분한데도, 빈칸들이 2칸씩 흩어져 있어 연속된 <strong>4칸(16KB)짜리 배열</strong> 할당 요청이 들어오면 할당에 실패(<code class="font-mono">OutOfMemoryError</code>)합니다. 이를 해결하기 위해 현대 GC는 살아남은 객체들을 힙의 한쪽 끝으로 차곡차곡 밀어 모으고 포인터 주소를 일괄 갱신하는 <strong>컴팩션(Compaction, Mark-Sweep-Compact)</strong> 단계를 결합합니다.
+        </p>
+
+        <div class="my-5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">🧱 인터랙티브 실습: Sweep 직후의 단편화 vs Compaction(압축)</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400">총 12블록(48KB) 힙에서 연속된 4블록(16KB) 객체 할당을 시도해 보세요.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" id="fragSweepBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white transition">1. Sweep 직후 (단편화 상태)</button>
+              <button type="button" id="fragAllocBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600 text-white transition">2. 4칸 연속 할당 시도</button>
+              <button type="button" id="fragCompactBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white transition">3. Compaction 실행 후 할당!</button>
+            </div>
+          </div>
+
+          <div id="fragBlocksGrid" class="grid grid-cols-12 gap-1.5 p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-3 text-xs">
+            <div id="fragStatusText" class="font-medium text-slate-700 dark:text-slate-200">
+              현재 상태: 살아남은 객체 6칸(초록) 사이사이에 Sweep으로 비워진 빈 공간 6칸(회색)이 2칸씩 쪼개져 있습니다.
+            </div>
+            <div class="font-mono text-slate-500">총 여유 공간: <strong>24KB (6칸)</strong> / 최대 연속 빈칸: <strong id="fragMaxContig" class="text-amber-600">8KB (2칸)</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-9 mb-2">
+        5.3 Stop-The-World(STW)와 세대별 가설(Generational Hypothesis)로의 도약
+      </h3>
+      <p>
+        만약 가비지 컬렉터가 루트에서부터 객체 그래프를 한창 탐색(Mark)하고 있는데, 동시에 사용자 프로그램(Mutator)이 뒤에서 포인터 연결을 이리저리 바꿔버리면 어떻게 될까요? 방금 살아있다고 판단해야 할 객체를 미처 마크하지 못해 <strong>살아있는 객체를 Sweep에서 지워버리는 대참사</strong>가 일어납니다.
+      </p>
+      <p>
+        그래서 고전적인 마크 앤 스윕은 GC가 도는 동안 애플리케이션의 모든 작업 스레드를 일시 정지시키는 <strong>Stop-The-World(STW)</strong> 방식을 택합니다. 힙이 수십 기가바이트로 커지면 이 멈춤 시간이 수백 밀리초에서 수 초에 달해 게임 프레임이 끊기거나 금융·웹 서버 응답 지연이 발생합니다. 이를 극복하기 위해 현대 런타임(JVM의 G1/ZGC, V8, Go, .NET 등)은 마크 앤 스윕 위에 세 가지 핵심 기법을 얹어 진화했습니다.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-5">
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">EVOLUTION 01</div>
+          <div class="font-bold text-sm mb-1.5">세대별 GC (Generational GC)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-0 leading-relaxed">
+            <em>"대부분의 객체는 생성된 직후 금방 죽는다(Weak Generational Hypothesis)."</em> 힙을 신생(Young) 영역과 고령(Old) 영역으로 나누어, 금방 죽는 작은 Young 영역만 자주 빠르게 청소(Minor GC)합니다.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">EVOLUTION 02</div>
+          <div class="font-bold text-sm mb-1.5">점진적·동시성 마킹 (Concurrent GC)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-0 leading-relaxed">
+            프로그램을 통째로 멈추는 대신, <strong>쓰기 장벽(Write Barrier)</strong>을 통해 애플리케이션이 포인터를 바꿀 때마다 회색(Grey) 큐에 기록하게 하여 프로그램 실행과 마킹을 동시에 수행합니다.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mb-1">EVOLUTION 03</div>
+          <div class="font-bold text-sm mb-1.5">하이브리드 조합 (RC + Cycle GC)</div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-0 leading-relaxed">
+            CPython처럼 평소에는 참조 카운팅으로 90% 이상의 객체를 즉시 회수하고, 컨테이너 객체들 사이에 생기는 순환 참조만 주기적인 추적(Tracing) 알고리즘으로 잡아내는 절충안입니다.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Section 6: Synthesis Matrix & Engineering Takeaways -->
+    <article id="sec-6" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="px-2.5 py-1 rounded-md bg-slate-800 dark:bg-slate-700 text-white text-xs font-mono font-bold">PART 06</span>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">종합 비교 및 엔지니어링 함의</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-5">
+        6. 메모리 관리 패러다임 종합 비교 매트릭스
+      </h2>
+
+      <p>
+        수동 관리, 참조 횟수 계산, 그리고 마크 앤 스윕 가비지 컬렉션은 어느 하나가 다른 하나를 완전히 대체한 것이 아니라, 각각의 <strong>시간·공간·안전성 트레이드오프</strong>에 따라 오늘날 서로 다른 영역을 지배하고 있습니다.
+      </p>
+
+      <div class="overflow-x-auto my-6 rounded-xl border border-slate-200 dark:border-slate-800">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700">
+              <th class="py-3.5 px-4 font-bold">비교 기준</th>
+              <th class="py-3.5 px-4 font-bold">수동 관리 (<code class="font-mono">malloc/free</code>)</th>
+              <th class="py-3.5 px-4 font-bold">참조 횟수 계산 (Ref Counting)</th>
+              <th class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">마크 앤 스윕 (Mark &amp; Sweep GC)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">핵심 판정 질문</td>
+              <td class="py-3 px-4">개발자가 언제 <code class="font-mono">free</code>를 호출했는가?</td>
+              <td class="py-3 px-4">나를 가리키는 참조 수(<code class="font-mono">rc</code>)가 0인가?</td>
+              <td class="py-3 px-4 font-medium">루트(Root Set)에서 출발해 닿을 수 있는가?</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">회수 시점</td>
+              <td class="py-3 px-4"><code class="font-mono">free()</code> 호출 즉시 (결정론적)</td>
+              <td class="py-3 px-4">카운터가 0이 되는 즉시 (결정론적)</td>
+              <td class="py-3 px-4">메모리 부족 등으로 GC 주기가 실행될 때 (비결정론적)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">메모리 안전성 오류<br><span class="text-[11px] text-slate-400">(Use-After-Free / Double Free)</span></td>
+              <td class="py-3 px-4 text-rose-600 dark:text-rose-400 font-semibold">발생 가능 (치명적 보안 취약점)</td>
+              <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-semibold">런타임이 원천 차단</td>
+              <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-semibold">런타임이 원천 차단</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">순환 참조 (<code class="font-mono">A ↔ B</code>)</td>
+              <td class="py-3 px-4">개발자가 순서를 맞춰 직접 해제해야 함</td>
+              <td class="py-3 px-4 text-rose-600 dark:text-rose-400 font-semibold">자체 회수 불가 (<code class="font-mono">weak</code> 참조나 보조 GC 필요)</td>
+              <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-semibold">루트에서 끊기면 자연스럽게 일괄 회수</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">객체당 공간 오버헤드</td>
+              <td class="py-3 px-4">할당기 블록 헤더만 존재</td>
+              <td class="py-3 px-4">객체마다 정수 카운터(4~8B) 필수</td>
+              <td class="py-3 px-4">객체당 1비트 (Boolean Flip 적용 시 최소)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">런타임 성능 특성</td>
+              <td class="py-3 px-4">런타임 오버헤드 최소, 예측 가능</td>
+              <td class="py-3 px-4">포인터 변경마다 상시 증감 비용 분산</td>
+              <td class="py-3 px-4">평소엔 최고 속도, GC 시 일시 정지(Pause) 발생</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-semibold">대표 언어 및 환경</td>
+              <td class="py-3 px-4">C, C++(Raw), Zig (cf. Rust는 컴파일 타임 소유권)</td>
+              <td class="py-3 px-4">Swift(ARC), Objective-C, C++ <code class="font-mono">shared_ptr</code></td>
+              <td class="py-3 px-4">Java(JVM), JS(V8), Go, C#, Python(보조 Cycle GC)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="p-5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/70">
+        <h3 class="text-base font-bold text-indigo-950 dark:text-indigo-200 mb-2">
+          🎯 개발자에게 남는 마지막 질문: "내가 어떤 참조를 붙잡고 있는가?"
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-0">
+          가비지 컬렉션은 개발자의 어깨에서 <em>"이 객체를 정확히 언제 파괴할 것인가?"</em>라는 무거운 짐을 내려주었습니다. 그러나 그 대신 개발자의 책임을 <strong>"더 이상 쓰지 않는 객체로 향하는 루트 참조(전역 컬렉션, 캐시, 클로저, 리스너)를 제때 끊어주었는가?"</strong>라는 아키텍처적 질문으로 이동시켰습니다. 도달 가능성(Reachability)의 원리를 이해하는 순간, GC는 더 이상 알 수 없는 블랙박스가 아니라 내 코드의 참조 그래프를 따라 움직이는 투명하고 든든한 동반자가 됩니다.
+        </p>
+      </div>
+    </article>
+
+    <!-- Section 7: Sources & Further Reading -->
+    <footer id="sec-ref" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">7. 참고 자료 및 출처</h2>
+      <ul class="space-y-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+        <li>
+          🎥 <strong>원작 강연:</strong> Laurence Tratt (King's College London), <a href="https://youtu.be/c32zXYAK7CI" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">"Garbage Collection (Mark &amp; Sweep) - Computerphile"</a>, YouTube (16분 21초).
+        </li>
+        <li>
+          📚 <strong>표준 전공서:</strong> Richard Jones, Antony Hosking, Eliot Moss, <em>The Garbage Collection Handbook: The Art of Automatic Memory Management (2nd Edition)</em>, CRC Press (2023). — 세대별 수집(Generational GC), 삼색 마킹, 동시성 GC 및 Compaction 알고리즘의 심화 레퍼런스.
+        </li>
+        <li>
+          📄 <strong>역사적 원전 논문:</strong> John McCarthy (1960), <em>"Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I"</em>, Communications of the ACM (최초의 Mark &amp; Sweep GC 제안) / George E. Collins (1960), <em>"A method for overlapping and erasure of lists"</em> (최초의 Reference Counting 제안).
+        </li>
+      </ul>
+    </footer>
+
+  </main>
+
+  <!-- Floating Back-to-Top Button -->
+  <button id="floatingTopBtn" type="button" title="맨 위로 이동" class="fixed bottom-6 right-6 w-11 h-11 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg flex items-center justify-center font-bold text-lg transition opacity-0 pointer-events-none z-40">
+    ↑
+  </button>
+
+  <script>
+    // =========================================================================
+    // 1. Theme, Font Size, Reading Progress & TOC Drawer Controls
+    // =========================================================================
+    (function initReaderUI() {
+      const htmlEl = document.documentElement;
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const themeIcon = document.getElementById('themeIcon');
+      const fontSizeBtn = document.getElementById('fontSizeBtn');
+      const fontSizeLabel = document.getElementById('fontSizeLabel');
+      const tocOpenBtn = document.getElementById('tocOpenBtn');
+      const tocCloseBtn = document.getElementById('tocCloseBtn');
+      const tocBackdrop = document.getElementById('tocBackdrop');
+      const tocDrawer = document.getElementById('tocDrawer');
+      const floatingTopBtn = document.getElementById('floatingTopBtn');
+      const readingProgress = document.getElementById('readingProgress');
+
+      // Theme toggle
+      let isDark = false;
+      try {
+        isDark = localStorage.getItem('gc_article_theme') === 'dark';
+      } catch (e) {}
+      function applyTheme(dark) {
+        isDark = dark;
+        if (dark) {
+          htmlEl.classList.add('dark');
+          themeIcon.textContent = '☀️';
+        } else {
+          htmlEl.classList.remove('dark');
+          themeIcon.textContent = '🌙';
+        }
+        try {
+          localStorage.setItem('gc_article_theme', dark ? 'dark' : 'light');
+        } catch (e) {}
+      }
+      applyTheme(isDark);
+      themeToggleBtn.addEventListener('click', () => applyTheme(!isDark));
+
+      // Font size cycle
+      const fontSizes = [
+        { size: '0.975rem', label: '95%' },
+        { size: '1.05rem', label: '100%' },
+        { size: '1.15rem', label: '110%' },
+        { size: '1.25rem', label: '120%' }
+      ];
+      let fontIdx = 1;
+      fontSizeBtn.addEventListener('click', () => {
+        fontIdx = (fontIdx + 1) % fontSizes.length;
+        document.documentElement.style.setProperty('--article-font-size', fontSizes[fontIdx].size);
+        fontSizeLabel.textContent = fontSizes[fontIdx].label;
+      });
+
+      // TOC Drawer
+      function openToc() {
+        tocBackdrop.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          tocBackdrop.classList.remove('opacity-0');
+          tocDrawer.classList.remove('translate-x-full');
+        });
+      }
+      function closeToc() {
+        tocBackdrop.classList.add('opacity-0');
+        tocDrawer.classList.add('translate-x-full');
+        setTimeout(() => tocBackdrop.classList.add('hidden'), 250);
+      }
+      tocOpenBtn.addEventListener('click', openToc);
+      tocCloseBtn.addEventListener('click', closeToc);
+      tocBackdrop.addEventListener('click', closeToc);
+      document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', closeToc);
+      });
+
+      // Scroll Progress & Floating Top Button
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+        readingProgress.style.width = pct + '%';
+
+        if (scrollTop > 320) {
+          floatingTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+          floatingTopBtn.classList.add('opacity-0', 'pointer-events-none');
+        }
+      });
+
+      floatingTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+
+    // =========================================================================
+    // 2. Part 1: Good Citizen vs Memory Leak Workload Chart
+    // =========================================================================
+    (function initCitizenChart() {
+      const goodBtn = document.getElementById('citizenGoodBtn');
+      const badBtn = document.getElementById('citizenBadBtn');
+      const area = document.getElementById('citizenArea');
+      const line = document.getElementById('citizenLine');
+      const caption = document.getElementById('citizenCaption');
+      const points = [
+        document.getElementById('cp1'),
+        document.getElementById('cp2'),
+        document.getElementById('cp3'),
+        document.getElementById('cp4'),
+        document.getElementById('cp5')
+      ];
+
+      const coordsGood = [
+        [90, 130], [210, 60], [340, 115], [480, 55], [600, 125]
+      ];
+      const coordsBad = [
+        [90, 130], [210, 65], [340, 62], [480, 24], [600, 18]
+      ];
+
+      function renderCitizen(isGood) {
+        const pts = isGood ? coordsGood : coordsBad;
+        const color = isGood ? '#10b981' : '#f43f5e';
+        const fill = isGood ? 'rgba(16, 185, 129, 0.16)' : 'rgba(244, 63, 94, 0.18)';
+
+        const lineD = pts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(' ');
+        const areaD = `${lineD} L600,145 L90,145 Z`;
+
+        line.setAttribute('d', lineD);
+        line.setAttribute('stroke', color);
+        area.setAttribute('d', areaD);
+        area.setAttribute('fill', fill);
+
+        pts.forEach((p, idx) => {
+          points[idx].setAttribute('cx', p[0]);
+          points[idx].setAttribute('cy', p[1]);
+          points[idx].setAttribute('fill', color);
+        });
+
+        if (isGood) {
+          goodBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-xs transition';
+          badBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-600 hover:text-white transition';
+          caption.className = 'text-xs text-emerald-700 dark:text-emerald-400 font-medium mt-2.5';
+          caption.textContent = '✅ 정상 반납 시: 사진 편집이나 필터 연산이 끝날 때마다 임시 버퍼를 즉시 반납하므로 메모리 사용량이 파도처럼 오르내리며 안정적인 수준을 유지합니다.';
+        } else {
+          badBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 text-white shadow-xs transition';
+          goodBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-600 hover:text-white transition';
+          caption.className = 'text-xs text-rose-600 dark:text-rose-400 font-medium mt-2.5';
+          caption.textContent = '🚨 반납 누락(메모리 누수) 시: 작업이 끝나도 메모리가 내려오지 않고 계단식으로 누적되어 결국 OS 물리 RAM 한계선을 돌파(Swap 발생 및 강제 종료)합니다.';
+        }
+      }
+
+      goodBtn.addEventListener('click', () => renderCitizen(true));
+      badBtn.addEventListener('click', () => renderCitizen(false));
+    })();
+
+    // =========================================================================
+    // 3. Part 2: The 3 Deadly Sins of Manual Memory Management
+    // =========================================================================
+    (function initDeadlySins() {
+      const tabs = document.querySelectorAll('.sin-tab');
+      const badge = document.getElementById('sinBadge');
+      const title = document.getElementById('sinTitle');
+      const code = document.getElementById('sinCode');
+      const desc = document.getElementById('sinDesc');
+      const visual = document.getElementById('sinVisualContainer');
+
+      const sinData = {
+        leak: {
+          badge: '자원 고갈형 버그',
+          badgeClass: 'px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
+          title: '① 메모리 누수 (Memory Leak): free() 호출 누락',
+          code: `void process_image() {\n  uint8_t* buf = malloc(32 * 1024); // 0x4A00 할당\n  if (header_invalid(buf)) {\n    return; // ❌ 조기 리턴하며 free(buf) 누락!\n  }\n  free(buf);\n}`,
+          desc: '함수에서 조기 리턴하거나 포인터 변수 buf가 사라지면, 힙의 0x4A00 블록은 주소를 아는 변수가 없는데도 "사용 중" 상태로 영구 방치됩니다. 누수가 쌓이면 시스템 전체가 스왑(Swap)에 빠져 느려지거나 강제 종료됩니다.',
+          html: `
+            <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-between text-xs font-mono">
+              <span class="line-through text-slate-400">Stack: buf (소멸됨)</span>
+              <span class="text-rose-500 font-bold">✕ 참조 연결 끊김</span>
+              <span class="px-2.5 py-1.5 rounded bg-amber-500/20 border border-amber-500 text-amber-700 dark:text-amber-300 font-bold">Heap 0x4A00 (32KB 점유 중)</span>
+            </div>
+            <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-200">
+              ⚠️ <strong>결과:</strong> 누구도 접근할 수 없지만 OS/할당기는 아직 쓰는 줄 알고 다른 객체에게 내어주지 못하는 '유령 점유지'가 됩니다.
+            </div>
+          `
+        },
+        uaf: {
+          badge: '치명적 보안 취약점 / 데이터 오염',
+          badgeClass: 'px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+          title: '② 반환 후 사용 (Use-After-Free): Dangling Pointer 역참조',
+          code: `User* u = malloc(sizeof(User)); // 0x4A00 할당\nfree(u); // 0x4A00 반납 완료!\n\n// 직후 다른 모듈이 0x4A00을 새로 할당받아 비밀번호 저장\nSecret* s = malloc(sizeof(Secret)); // 같은 0x4A00 재사용!\nstrcpy(u->name, "HACKED"); // ❌ 이미 반납한 u에 쓰기 수행!`,
+          desc: 'free(u)로 메모리를 반납했지만 포인터 변수 u에는 여전히 옛 주소(0x4A00)가 남아 있습니다(Dangling Pointer). 그사이 할당기가 0x4A00을 다른 중요한 객체(Secret)에게 내어주었는데 u를 통해 읽거나 쓰면, 남의 메모리를 몰래 훔쳐보거나 덮어쓰게 됩니다.',
+          html: `
+            <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800 flex flex-col gap-2 text-xs font-mono">
+              <div class="flex items-center justify-between">
+                <span class="text-rose-600 dark:text-rose-400 font-bold">구 포인터 u (0x4A00)</span>
+                <span>── 불법 쓰기 침범 ──▶</span>
+                <span class="px-2 py-1 rounded bg-rose-500 text-white font-bold">0x4A00: Secret 객체 파괴!</span>
+              </div>
+              <div class="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
+                <span>신규 포인터 s (0x4A00)</span>
+                <span>── 정상 소유권 ──▶</span>
+                <span>(데이터가 오염됨)</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-200">
+              🚨 <strong>결과:</strong> 전혀 상관없는 모듈에서 알 수 없는 크래시가 터지거나, 공격자가 함수 포인터를 덮어써 시스템을 장악합니다.
+            </div>
+          `
+        },
+        dfree: {
+          badge: '힙 할당기 파괴 / 무고한 객체 철거',
+          badgeClass: 'px-2 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300',
+          title: '③ 이중 반환 (Double Free): 같은 주소를 두 번 free()',
+          code: `void cleanup(Node* p) {\n  free(p); // 1차 반납 (0x4A00이 Free List로 이동)\n  // ... 그사이 다른 스레드가 0x4A00을 할당받아 사용 중 ...\n  free(p); // ❌ 2차 중복 반납! 새 입주자의 메모리를 강제 해제!\n}`,
+          desc: '이미 반납한 포인터 p를 실수로 한 번 더 free(p)하면, 그사이 해당 주소를 정상적으로 분양받아 입주해 있던 다른 객체가 강제로 해체되거나, 할당기의 Free List 연결 구조 자체가 깨져 버립니다.',
+          html: `
+            <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800 space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between">
+                <span>1차 free(p)</span>
+                <span>→</span>
+                <span class="text-slate-500">0x4A00 반납 후 새 객체 입주</span>
+              </div>
+              <div class="flex items-center justify-between text-purple-600 dark:text-purple-400 font-bold">
+                <span>2차 free(p)</span>
+                <span>→</span>
+                <span class="px-2 py-1 rounded bg-purple-600 text-white">새 입주자 강제 퇴거 &amp; Free List 손상!</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-xs text-purple-800 dark:text-purple-200">
+              💥 <strong>결과:</strong> Laurence Tratt 교수의 비유처럼 "고담시의 선량한 시민이 이유도 모른 채 쓰러지는" 메모리 생태계 붕괴가 일어납니다.
+            </div>
+          `
+        }
+      };
+
+      function selectSin(key) {
+        tabs.forEach(t => {
+          const active = t.getAttribute('data-sin') === key;
+          t.className = active
+            ? 'sin-tab py-3 px-3 text-xs sm:text-sm font-bold border-b-2 border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-950/20 transition'
+            : 'sin-tab py-3 px-3 text-xs sm:text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition';
+        });
+        const item = sinData[key];
+        badge.className = item.badgeClass;
+        badge.textContent = item.badge;
+        title.textContent = item.title;
+        code.textContent = item.code;
+        desc.textContent = item.desc;
+        visual.innerHTML = item.html;
+      }
+
+      tabs.forEach(t => {
+        t.addEventListener('click', () => selectSin(t.getAttribute('data-sin')));
+      });
+      selectSin('leak');
+    })();
+
+    // =========================================================================
+    // 4. Part 3: Reference Counting Circular Reference Demo
+    // =========================================================================
+    (function initRcDemo() {
+      const btn1 = document.getElementById('rcStep1Btn');
+      const btn2 = document.getElementById('rcStep2Btn');
+      const btn3 = document.getElementById('rcStep3Btn');
+      const rootText = document.getElementById('rcRootText');
+      const edgeRootA = document.getElementById('rcEdgeRootA');
+      const edgeBA = document.getElementById('rcEdgeBA');
+      const edgeBALabel = document.getElementById('rcEdgeBALabel');
+      const countA = document.getElementById('rcCountA');
+      const countB = document.getElementById('rcCountB');
+      const boxA = document.getElementById('rcBoxA');
+      const boxB = document.getElementById('rcBoxB');
+      const banner = document.getElementById('rcStatusBanner');
+
+      function setRcStep(step) {
+        [btn1, btn2, btn3].forEach((b, idx) => {
+          b.className = (idx + 1 === step)
+            ? 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white shadow-xs transition'
+            : 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-sky-600 hover:text-white transition';
+        });
+
+        if (step === 1) {
+          rootText.textContent = 'root = &A';
+          edgeRootA.setAttribute('opacity', '1');
+          edgeBA.setAttribute('opacity', '0');
+          edgeBALabel.setAttribute('opacity', '0');
+          countA.textContent = 'ref_cnt: 1';
+          countB.textContent = 'ref_cnt: 1';
+          boxA.setAttribute('stroke', '#0284c7');
+          boxB.setAttribute('stroke', '#0284c7');
+          banner.className = 'mt-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-xs text-slate-700 dark:text-slate-200';
+          banner.innerHTML = '<strong>1단계 (단방향 연결):</strong> <code class="font-mono">root → A → B</code> 상태입니다. A와 B 모두 참조 횟수가 1입니다.';
+        } else if (step === 2) {
+          rootText.textContent = 'root = &A';
+          edgeRootA.setAttribute('opacity', '1');
+          edgeBA.setAttribute('opacity', '1');
+          edgeBALabel.setAttribute('opacity', '1');
+          countA.textContent = 'ref_cnt: 2';
+          countB.textContent = 'ref_cnt: 1';
+          boxA.setAttribute('stroke', '#f59e0b');
+          boxB.setAttribute('stroke', '#f59e0b');
+          banner.className = 'mt-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-slate-700 dark:text-slate-200';
+          banner.innerHTML = '<strong>2단계 (순환 참조 형성):</strong> <code class="font-mono">B.prev = A</code>가 추가되면서 A를 가리키는 화살표가 2개(<code class="font-mono">root</code>와 <code class="font-mono">B.prev</code>)가 되어 A의 <code class="font-mono">ref_cnt</code>가 <strong>2</strong>로 올라갔습니다.';
+        } else {
+          rootText.textContent = 'root = null';
+          edgeRootA.setAttribute('opacity', '0.15');
+          edgeBA.setAttribute('opacity', '1');
+          edgeBALabel.setAttribute('opacity', '1');
+          countA.textContent = 'ref_cnt: 1';
+          countB.textContent = 'ref_cnt: 1';
+          boxA.setAttribute('stroke', '#f43f5e');
+          boxB.setAttribute('stroke', '#f43f5e');
+          banner.className = 'mt-3 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-200';
+          banner.innerHTML = '🚨 <strong>3단계 (순환 참조 누수 발생!):</strong> 스택 변수 <code class="font-mono">root = null</code>로 연결을 끊어 A의 카운트가 <code class="font-mono">2 → 1</code>로 줄었지만, <strong>A와 B가 서로를 가리키고 있어 둘 다 카운트가 1에서 멈춥니다!</strong> 프로그램 어디에서도 접근할 수 없는데 영원히 해제되지 않습니다.';
+        }
+      }
+
+      btn1.addEventListener('click', () => setRcStep(1));
+      btn2.addEventListener('click', () => setRcStep(2));
+      btn3.addEventListener('click', () => setRcStep(3));
+    })();
+
+    // =========================================================================
+    // 5. Part 4: Interactive Mark & Sweep + Tri-Color Graph Simulator
+    // =========================================================================
+    (function initMarkSweepSimulator() {
+      const pillsContainer = document.getElementById('simStepPills');
+      const nodesLayer = document.getElementById('simNodesLayer');
+      const edgesLayer = document.getElementById('simEdgesLayer');
+      const rootXVal = document.getElementById('simRootXVal');
+      const rootYVal = document.getElementById('simRootYVal');
+      const phaseBadge = document.getElementById('simPhaseBadge');
+      const worklistBox = document.getElementById('simWorklistBox');
+      const narrativeBox = document.getElementById('simNarrativeBox');
+      const prevBtn = document.getElementById('simPrevBtn');
+      const nextBtn = document.getElementById('simNextBtn');
+      const autoBtn = document.getElementById('simAutoBtn');
+      const resetBtn = document.getElementById('simResetBtn');
+      const codeLines = document.querySelectorAll('.sim-code-line');
+
+      const steps = [
+        {
+          short: '1. x, y 할당',
+          phase: 'MUTATOR',
+          codeLine: 1,
+          rootX: '→ Obj1',
+          rootY: '→ Obj2',
+          worklist: 'Mutator 실행 중: 스택 루트 x는 Obj1을, y는 Obj2를 가리킵니다.',
+          narrative: '<strong>[Step 1] 초기 객체 할당:</strong> 변수 <code class="font-mono">x</code>와 <code class="font-mono">y</code>에 각각 <code class="font-mono">Obj1</code>, <code class="font-mono">Obj2</code>를 할당했습니다. 두 객체 모두 스택 루트에서 직접 닿을 수 있는 상태입니다.',
+          nodes: [
+            { id: 'Obj1', x: 220, y: 78, state: 'white', mark: 0, label: 'Obj1' },
+            { id: 'Obj2', x: 220, y: 162, state: 'white', mark: 0, label: 'Obj2' }
+          ],
+          edges: [
+            { from: [102, 80], to: [172, 78], active: false },
+            { from: [102, 160], to: [172, 162], active: false }
+          ]
+        },
+        {
+          short: '2. y = None',
+          phase: 'MUTATOR',
+          codeLine: 2,
+          rootX: '→ Obj1',
+          rootY: '= None',
+          worklist: 'y = None 실행됨! Obj2로 가는 유일한 다리가 끊어졌습니다.',
+          narrative: '<strong>[Step 2] 참조 해제 (<code class="font-mono">y = None</code>):</strong> <code class="font-mono">y</code>가 더 이상 <code class="font-mono">Obj2</code>를 가리키지 않습니다. 하지만 참조 카운팅과 달리 마크 앤 스윕은 이 순간 즉시 <code class="font-mono">Obj2</code>를 지우지 않고 프로그램 실행을 계속 이어갑니다.',
+          nodes: [
+            { id: 'Obj1', x: 220, y: 78, state: 'white', mark: 0, label: 'Obj1' },
+            { id: 'Obj2', x: 220, y: 162, state: 'white', mark: 0, label: 'Obj2 (고립)' }
+          ],
+          edges: [
+            { from: [102, 80], to: [172, 78], active: false }
+          ]
+        },
+        {
+          short: '3. GC#1 Mark & Sweep',
+          phase: 'MARK & SWEEP',
+          codeLine: 3,
+          rootX: '→ Obj1',
+          rootY: '= None',
+          worklist: 'Mark: Root(x) → Obj1(Black, mark=1) 완료 | Sweep: Obj2(White, mark=0) 회수!',
+          narrative: '<strong>[Step 3] 첫 번째 GC 실행:</strong> 루트 <code class="font-mono">x</code>에서 출발해 닿는 <code class="font-mono">Obj1</code>에는 체크 표시(<code class="font-mono">mark=1</code>, 초록색)를 남깁니다. 이어지는 <strong>Sweep</strong> 단계에서 마크가 없는 <code class="font-mono">Obj2</code>(빨간 점선)를 발견해 메모리를 회수합니다!',
+          nodes: [
+            { id: 'Obj1', x: 220, y: 78, state: 'black', mark: 1, label: 'Obj1 ✓' },
+            { id: 'Obj2', x: 220, y: 162, state: 'swept', mark: 0, label: 'Obj2 (회수됨)' }
+          ],
+          edges: [
+            { from: [102, 80], to: [172, 78], active: true }
+          ]
+        },
+        {
+          short: '4. x.ref = y 연결',
+          phase: 'MUTATOR',
+          codeLine: 4,
+          rootX: '→ Obj1',
+          rootY: '→ Obj3',
+          worklist: '새 객체 Obj3 할당 후, Obj1.ref → Obj3 포인터 연결 생성!',
+          narrative: '<strong>[Step 4] 객체 간 간접 참조 생성:</strong> <code class="font-mono">y</code>에 새 객체 <code class="font-mono">Obj3</code>를 만든 뒤, <code class="font-mono">x</code>가 가리키는 <code class="font-mono">Obj1</code> 내부 필드가 <code class="font-mono">Obj3</code>를 가리키도록(<code class="font-mono">x.ref = y</code>) 연결했습니다.',
+          nodes: [
+            { id: 'Obj1', x: 220, y: 78, state: 'white', mark: 0, label: 'Obj1' },
+            { id: 'Obj3', x: 365, y: 125, state: 'white', mark: 0, label: 'Obj3' }
+          ],
+          edges: [
+            { from: [102, 80], to: [172, 78], active: false },
+            { from: [102, 160], to: [317, 132], active: false },
+            { from: [268, 86], to: [317, 115], active: false }
+          ]
+        },
+        {
+          short: '5. 다시 y = None',
+          phase: 'MARK (Tri-color)',
+          codeLine: 5,
+          rootX: '→ Obj1',
+          rootY: '= None',
+          worklist: 'Worklist 큐: [Obj1(Grey)] → 자식 탐색 중 (Obj3 발견 대기)',
+          narrative: '<strong>[Step 5] 다시 <code class="font-mono">y = None</code> 설정 후 Mark 시작:</strong> <code class="font-mono">y</code> 변수는 끊어졌습니다! 과연 <code class="font-mono">Obj3</code>는 죽었을까요? GC가 루트 <code class="font-mono">x</code>에서 출발해 먼저 <code class="font-mono">Obj1</code>을 방문하여 <strong>탐색 대기열(Grey, 노란색)</strong>에 넣습니다.',
+          nodes: [
+            { id: 'Obj1', x: 220, y: 78, state: 'grey', mark: 1, label: 'Obj1 (탐색중)' },
+            { id: 'Obj3', x: 365, y: 125, state: 'white', mark: 0, label: 'Obj3' }
+          ],
+          edges: [
+            { from: [102, 80], to: [172, 78], active: true },
+            { from: [268, 86], to: [317, 115], active: false }
+          ]
+        },
+        {
+          short: '6. 간접 도달 생존!',
+          phase: 'MARK COMPLETE',
+          codeLine: 6,
+          rootX: '→ Obj1',
+          rootY: '= None',
+          worklist: 'Worklist: [] (비었음) | Root(x) → Obj1 → Obj3 모두 생존 확정!',
+          narrative: '<strong>[Step 6] 간접 도달(Transitive Reachability) 확인:</strong> <code class="font-mono">Obj1</code>의 내부 참조를 따라가 <code class="font-mono">Obj3</code>까지 마크(<code class="font-mono">mark=1</code>)했습니다! 비록 <code class="font-mono">y = None</code>이 되었어도 <code class="font-mono">x.ref</code>를 통해 접근할 수 있으므로 <code class="font-mono">Obj3</code>는 Sweep에서 안전하게 보호됩니다.',
+          nodes: [
+            { id: 'Obj1', x: 220, y: 78, state: 'black', mark: 1, label: 'Obj1 ✓' },
+            { id: 'Obj3', x: 365, y: 125, state: 'black', mark: 1, label: 'Obj3 ✓' }
+          ],
+          edges: [
+            { from: [102, 80], to: [172, 78], active: true },
+            { from: [268, 86], to: [317, 115], active: true }
+          ]
+        },
+        {
+          short: '7. 고립된 순환 참조',
+          phase: 'MUTATOR',
+          codeLine: 7,
+          rootX: '→ Obj1',
+          rootY: '= None',
+          worklist: '힙 우측 하단에 서로를 가리키는 순환 참조 섬 (Obj4 ↔ Obj5) 존재',
+          narrative: '<strong>[Step 7] 순환 참조 섬 등장:</strong> 이제 힙 한쪽에 서로가 서로를 가리키는 <code class="font-mono">Obj4 ↔ Obj5</code> 순환 참조 그룹이 있지만, 스택 루트(<code class="font-mono">x, y</code>)에서의 연결은 끊어진 상태라고 가정해 봅시다.',
+          nodes: [
+            { id: 'Obj1', x: 215, y: 72, state: 'white', mark: 0, label: 'Obj1' },
+            { id: 'Obj3', x: 355, y: 72, state: 'white', mark: 0, label: 'Obj3' },
+            { id: 'Obj4', x: 235, y: 195, state: 'white', mark: 0, label: 'Obj4' },
+            { id: 'Obj5', x: 405, y: 195, state: 'white', mark: 0, label: 'Obj5' }
+          ],
+          edges: [
+            { from: [102, 80], to: [167, 72], active: false },
+            { from: [263, 72], to: [307, 72], active: false },
+            { from: [283, 187], to: [357, 187], active: false },
+            { from: [357, 205], to: [283, 205], active: false }
+          ]
+        },
+        {
+          short: '8. 순환 참조 일괄 Sweep!',
+          phase: 'SWEEP COMPLETE',
+          codeLine: 8,
+          rootX: '→ Obj1',
+          rootY: '= None',
+          worklist: 'Mark: Obj1, Obj3 (mark=1) | Sweep: 고립된 순환 참조 Obj4 ↔ Obj5 일괄 회수!',
+          narrative: '<strong>[Step 8] 순환 참조의 완벽한 청소:</strong> 마크 앤 스윕은 루트에서 출발해 닿는 <code class="font-mono">Obj1 → Obj3</code>만 마크합니다. <code class="font-mono">Obj4 ↔ Obj5</code>가 서로를 아무리 가리켜도 루트에서 갈 수 없으므로 <code class="font-mono">mark=0</code>으로 남아 <strong>Sweep 단계에서 단번에 통째로 회수됩니다!</strong>',
+          nodes: [
+            { id: 'Obj1', x: 215, y: 72, state: 'black', mark: 1, label: 'Obj1 ✓' },
+            { id: 'Obj3', x: 355, y: 72, state: 'black', mark: 1, label: 'Obj3 ✓' },
+            { id: 'Obj4', x: 235, y: 195, state: 'swept', mark: 0, label: 'Obj4 (Sweep!)' },
+            { id: 'Obj5', x: 405, y: 195, state: 'swept', mark: 0, label: 'Obj5 (Sweep!)' }
+          ],
+          edges: [
+            { from: [102, 80], to: [167, 72], active: true },
+            { from: [263, 72], to: [307, 72], active: true },
+            { from: [283, 187], to: [357, 187], active: false, dashed: true },
+            { from: [357, 205], to: [283, 205], active: false, dashed: true }
+          ]
+        }
+      ];
+
+      let currentIdx = 0;
+      let autoTimer = null;
+
+      // Render step pills
+      steps.forEach((st, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = st.short;
+        btn.addEventListener('click', () => {
+          stopAuto();
+          renderSimStep(idx);
+        });
+        pillsContainer.appendChild(btn);
+      });
+
+      function renderSimStep(idx) {
+        currentIdx = idx;
+        const st = steps[idx];
+
+        // Update pills
+        Array.from(pillsContainer.children).forEach((btn, i) => {
+          btn.className = (i === idx)
+            ? 'px-2 py-1.5 rounded-lg text-[11px] font-bold bg-indigo-600 text-white shadow-xs transition truncate'
+            : 'px-2 py-1.5 rounded-lg text-[11px] font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 transition truncate';
+        });
+
+        // Update code highlight
+        codeLines.forEach(lineEl => {
+          const lineNo = parseInt(lineEl.getAttribute('data-line'), 10);
+          if (lineNo === st.codeLine) {
+            lineEl.className = 'sim-code-line px-2 py-1 rounded bg-indigo-600/40 text-white font-bold border-l-2 border-indigo-400';
+          } else {
+            lineEl.className = 'sim-code-line px-2 py-1 rounded text-slate-400';
+          }
+        });
+
+        phaseBadge.textContent = st.phase;
+        rootXVal.textContent = st.rootX;
+        rootYVal.textContent = st.rootY;
+        worklistBox.textContent = st.worklist;
+        narrativeBox.innerHTML = st.narrative;
+
+        // Render Edges
+        edgesLayer.innerHTML = st.edges.map(e => {
+          const stroke = e.active ? '#10b981' : '#64748b';
+          const marker = e.active ? 'url(#simArrowActive)' : 'url(#simArrow)';
+          const dash = e.dashed ? 'stroke-dasharray="4 4" opacity="0.35"' : '';
+          return `<line x1="${e.from[0]}" y1="${e.from[1]}" x2="${e.to[0]}" y2="${e.to[1]}" stroke="${stroke}" stroke-width="${e.active ? 3 : 2}" marker-end="${marker}" ${dash} class="edge-transition" />`;
+        }).join('');
+
+        // Render Nodes
+        nodesLayer.innerHTML = st.nodes.map(n => {
+          let fill = '#ffffff';
+          let stroke = '#64748b';
+          let textColor = '#0f172a';
+          let badgeFill = '#e2e8f0';
+          let badgeText = '#475569';
+          let extraAttr = '';
+
+          if (n.state === 'grey') {
+            fill = '#fef3c7';
+            stroke = '#d97706';
+            badgeFill = '#f59e0b';
+            badgeText = '#ffffff';
+            extraAttr = 'class="pulse-active"';
+          } else if (n.state === 'black') {
+            fill = '#d1fae5';
+            stroke = '#059669';
+            badgeFill = '#059669';
+            badgeText = '#ffffff';
+          } else if (n.state === 'swept') {
+            fill = '#ffe4e6';
+            stroke = '#e11d48';
+            badgeFill = '#e11d48';
+            badgeText = '#ffffff';
+            extraAttr = 'stroke-dasharray="5 3" opacity="0.65"';
+          }
+
+          return `
+            <g ${extraAttr}>
+              <rect x="${n.x - 48}" y="${n.y - 26}" width="96" height="52" rx="12" fill="${fill}" stroke="${stroke}" stroke-width="2.5" />
+              <text x="${n.x}" y="${n.y - 4}" font-size="12" font-weight="bold" fill="${textColor}" text-anchor="middle">${n.label}</text>
+              <rect x="${n.x - 34}" y="${n.y + 4}" width="68" height="16" rx="4" fill="${badgeFill}" />
+              <text x="${n.x}" y="${n.y + 15}" font-size="10" font-family="JetBrains Mono" font-weight="bold" fill="${badgeText}" text-anchor="middle">mark: ${n.mark}</text>
+            </g>
+          `;
+        }).join('');
+      }
+
+      function stopAuto() {
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+          autoBtn.textContent = '▶ 자동 재생';
+          autoBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition';
+        }
+      }
+
+      prevBtn.addEventListener('click', () => {
+        stopAuto();
+        renderSimStep((currentIdx - 1 + steps.length) % steps.length);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        stopAuto();
+        renderSimStep((currentIdx + 1) % steps.length);
+      });
+
+      resetBtn.addEventListener('click', () => {
+        stopAuto();
+        renderSimStep(0);
+      });
+
+      autoBtn.addEventListener('click', () => {
+        if (autoTimer) {
+          stopAuto();
+        } else {
+          autoBtn.textContent = '⏸ 일시 정지';
+          autoBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white transition';
+          autoTimer = setInterval(() => {
+            renderSimStep((currentIdx + 1) % steps.length);
+          }, 2200);
+        }
+      });
+
+      renderSimStep(0);
+    })();
+
+    // =========================================================================
+    // 6. Part 4.4: Boolean Flip Interactive Toggle
+    // =========================================================================
+    (function initBooleanFlip() {
+      const btn = document.getElementById('flipCycleBtn');
+      const cycleName = document.getElementById('flipCycleName');
+      const ruleText = document.getElementById('flipRuleText');
+      const objBit = document.getElementById('flipObjBit');
+      const actionText = document.getElementById('flipActionText');
+
+      let cycleCount = 1;
+      btn.addEventListener('click', () => {
+        cycleCount++;
+        const isOdd = (cycleCount % 2 === 1);
+        const aliveBit = isOdd ? 1 : 0;
+        const prevBit = isOdd ? 0 : 1;
+
+        cycleName.textContent = `${isOdd ? '홀수' : '짝수'} 주기 (Cycle #${cycleCount})`;
+        ruleText.innerHTML = `현재 생존 기준: <code class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">mark_bit == ${aliveBit}</code> 이면 생존!`;
+        objBit.textContent = String(prevBit);
+        actionText.textContent = `obj.mark_bit = ${aliveBit} 로 기록`;
+      });
+    })();
+
+    // =========================================================================
+    // 7. Part 5.2: Heap Fragmentation vs Compaction Visualizer
+    // =========================================================================
+    (function initFragmentationLab() {
+      const grid = document.getElementById('fragBlocksGrid');
+      const sweepBtn = document.getElementById('fragSweepBtn');
+      const allocBtn = document.getElementById('fragAllocBtn');
+      const compactBtn = document.getElementById('fragCompactBtn');
+      const statusText = document.getElementById('fragStatusText');
+      const maxContig = document.getElementById('fragMaxContig');
+
+      // 12 blocks representation
+      const layouts = {
+        swept: [
+          { type: 'live', label: 'A' }, { type: 'live', label: 'A' },
+          { type: 'free', label: '빈칸' }, { type: 'free', label: '빈칸' },
+          { type: 'live', label: 'B' }, { type: 'live', label: 'B' },
+          { type: 'free', label: '빈칸' }, { type: 'free', label: '빈칸' },
+          { type: 'live', label: 'C' }, { type: 'live', label: 'C' },
+          { type: 'free', label: '빈칸' }, { type: 'free', label: '빈칸' }
+        ],
+        failed: [
+          { type: 'live', label: 'A' }, { type: 'live', label: 'A' },
+          { type: 'fail', label: '부족!' }, { type: 'fail', label: '부족!' },
+          { type: 'live', label: 'B' }, { type: 'live', label: 'B' },
+          { type: 'fail', label: '부족!' }, { type: 'fail', label: '부족!' },
+          { type: 'live', label: 'C' }, { type: 'live', label: 'C' },
+          { type: 'fail', label: '부족!' }, { type: 'fail', label: '부족!' }
+        ],
+        compacted: [
+          { type: 'live', label: 'A' }, { type: 'live', label: 'A' },
+          { type: 'live', label: 'B' }, { type: 'live', label: 'B' },
+          { type: 'live', label: 'C' }, { type: 'live', label: 'C' },
+          { type: 'new', label: '신규D' }, { type: 'new', label: '신규D' },
+          { type: 'new', label: '신규D' }, { type: 'new', label: '신규D' },
+          { type: 'free', label: '빈칸' }, { type: 'free', label: '빈칸' }
+        ]
+      };
+
+      function renderBlocks(mode) {
+        const blocks = layouts[mode];
+        grid.innerHTML = blocks.map((b, idx) => {
+          let cls = '';
+          if (b.type === 'live') {
+            cls = 'bg-emerald-500 text-white border-emerald-600';
+          } else if (b.type === 'free') {
+            cls = 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700 border-dashed';
+          } else if (b.type === 'fail') {
+            cls = 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300 border-rose-400 animate-pulse';
+          } else if (b.type === 'new') {
+            cls = 'bg-indigo-600 text-white border-indigo-700 shadow-xs';
+          }
+          return `
+            <div class="h-14 rounded-lg border flex flex-col items-center justify-center text-[11px] font-bold transition-all ${cls}">
+              <span>${b.label}</span>
+              <span class="text-[9px] opacity-75 font-mono">#${idx}</span>
+            </div>
+          `;
+        }).join('');
+
+        if (mode === 'swept') {
+          statusText.className = 'font-medium text-slate-700 dark:text-slate-200';
+          statusText.textContent = '1. Sweep 직후: 살아있는 객체(A, B, C) 사이사이에 빈 공간이 2칸(8KB)씩 조각나 흩어져 있습니다.';
+          maxContig.className = 'text-amber-600 font-bold';
+          maxContig.textContent = '8KB (2칸)';
+        } else if (mode === 'failed') {
+          statusText.className = 'font-bold text-rose-600 dark:text-rose-400';
+          statusText.textContent = '🚨 2. 할당 실패(OutOfMemory!): 총 여유 공간은 6칸(24KB)이지만, 연속된 4칸(16KB)이 없어 신규 객체 D를 넣을 수 없습니다!';
+          maxContig.className = 'text-rose-600 font-bold';
+          maxContig.textContent = '8KB (2칸 < 필요 4칸)';
+        } else {
+          statusText.className = 'font-bold text-emerald-600 dark:text-emerald-400';
+          statusText.textContent = '✅ 3. Compaction 완료: 살아있는 객체 A, B, C를 왼쪽으로 압축해 연속된 6칸(24KB)을 확보하고 4칸짜리 신규 객체 D를 즉시 할당했습니다!';
+          maxContig.className = 'text-emerald-600 font-bold';
+          maxContig.textContent = '24KB (6칸 연속 확보)';
+        }
+      }
+
+      sweepBtn.addEventListener('click', () => renderBlocks('swept'));
+      allocBtn.addEventListener('click', () => renderBlocks('failed'));
+      compactBtn.addEventListener('click', () => renderBlocks('compacted'));
+
+      renderBlocks('swept');
+    })();
+  </script>
+</body>
+</html>

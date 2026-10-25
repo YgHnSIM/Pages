@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>빅뱅의 잔향을 찾는 실험가 브라이언 키팅이 말하는 시간, 신, 시뮬레이션</title>
+  <meta name="description" content="UC 샌디에이고의 관측 우주론학자 브라이언 키팅의 생각을 따라간다. 사이먼스 옵서버토리와 우주배경복사 관측 장비, 시간의 정의와 빅뱅 이전, 시뮬레이션 가설과 미세조정 논증, 유대교와 '실천하는 독실한 불가지론', 자유의지, AI의 한계, 외계 생명, 노벨상까지, 반증 가능성이라는 한 가지 잣대로 묶어 읽는다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">빅뱅의 잔향을 찾는 실험가 브라이언 키팅이 말하는 시간, 신, 시뮬레이션</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-무엇을-짓고-있나-사이먼스-옵서버토리" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 무엇을 짓고 있나: 사이먼스 옵서버토리</span></a></li><li class="depth-2"><a href="#2-가장-오래된-빛을-보는-장비" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 가장 오래된 빛을 보는 장비</span></a></li><li class="depth-3"><a href="#21-망원경은-타임머신이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 망원경은 타임머신이다</span></a></li><li class="depth-3"><a href="#22-최초의-원자와-우주배경복사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 최초의 원자와 우주배경복사</span></a></li><li class="depth-3"><a href="#23-장비가-다루는-빛" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 장비가 다루는 빛</span></a></li><li class="depth-2"><a href="#3-시간은-무엇이고-빅뱅-이전은-있는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 시간은 무엇이고, 빅뱅 이전은 있는가</span></a></li><li class="depth-3"><a href="#31-합의된-정의는-없다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 합의된 정의는 없다</span></a></li><li class="depth-3"><a href="#32-남극의-남쪽" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 남극의 남쪽</span></a></li><li class="depth-3"><a href="#33-과학이-답할-수-없는-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 과학이 답할 수 없는 것</span></a></li><li class="depth-2"><a href="#4-시뮬레이션-가설-솜사탕" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 시뮬레이션 가설: 솜사탕</span></a></li><li class="depth-3"><a href="#41-왜-사람들은-이-생각에-끌리나" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 왜 사람들은 이 생각에 끌리나</span></a></li><li class="depth-3"><a href="#42-키팅의-반론" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 키팅의 반론</span></a></li><li class="depth-3"><a href="#43-증명할-수-있는-길이-있다면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 증명할 수 있는 길이 있다면</span></a></li><li class="depth-2"><a href="#5-미세조정은-얼마나-미세한가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 미세조정은 얼마나 미세한가</span></a></li><li class="depth-2"><a href="#6-신-토라-계명" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 신, 토라, 계명</span></a></li><li class="depth-3"><a href="#61-가톨릭-복사에서-무신론자로-다시-독실한-불가지론자로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 가톨릭 복사에서 무신론자로, 다시 독실한 불가지론자로</span></a></li><li class="depth-3"><a href="#62-왜-토라는-창조로-시작하는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 왜 토라는 창조로 시작하는가</span></a></li><li class="depth-3"><a href="#63-계명을-실천하는-이유" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 계명을 실천하는 이유</span></a></li><li class="depth-3"><a href="#64-신정론-왜-고통이-있는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.4 신정론: 왜 고통이 있는가</span></a></li><li class="depth-2"><a href="#7-자유의지-들이받는-소-사형" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 자유의지, 들이받는 소, 사형</span></a></li><li class="depth-3"><a href="#71-자유의지는-의심할-여지-없이-있다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 자유의지는 의심할 여지 없이 있다</span></a></li><li class="depth-3"><a href="#72-들이받는-소" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 들이받는 소</span></a></li><li class="depth-3"><a href="#73-죽이지-말라가-아니라-살인하지-말라" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 죽이지 말라가 아니라 살인하지 말라</span></a></li><li class="depth-2"><a href="#8-ai는-물리학의-새-통찰을-만들-수-있나" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. AI는 물리학의 새 통찰을 만들 수 있나</span></a></li><li class="depth-3"><a href="#81-1911년의-언어-모델" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 1911년의 언어 모델</span></a></li><li class="depth-3"><a href="#82-끈-이론과-반증-가능성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 끈 이론과 반증 가능성</span></a></li><li class="depth-2"><a href="#9-외계-생명과-화성-운석" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 외계 생명과 화성 운석</span></a></li><li class="depth-2"><a href="#10-노벨상과-남는-것" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 노벨상과 남는 것</span></a></li><li class="depth-2"><a href="#더-읽을거리" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">더 읽을거리</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-18</span>
+          <span class="meta-badge">⏱️ 약 28분</span>
+          <span class="meta-badge">✍️ Pages 과학·철학 분석</span>
+        </div>
+        <h1 class="article-title">빅뱅의 잔향을 찾는 실험가 브라이언 키팅이 말하는 시간, 신, 시뮬레이션</h1>
+        <p class="article-subtitle">증명할 수 없는 것은 안다고 말하지 않고, 쓸모 있는 것은 실천한다</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#우주론</span>
+          
+          <span class="tag-pill">#우주배경복사</span>
+          
+          <span class="tag-pill">#과학철학</span>
+          
+          <span class="tag-pill">#종교</span>
+          
+          <span class="tag-pill">#시뮬레이션가설</span>
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#노벨상</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <p><strong>&quot;빅뱅은 왜 &#39;뱅&#39; 했는가.&quot; 브라이언 키팅은 이 질문에 답할 흔적을 찾는 망원경을 짓는 실험가다.</strong> UC 샌디에이고의 관측 우주론학자인 그는 경력 동안 2억 달러를 모아 실험을 이끌어 왔고, 지금은 사이먼스 옵서버토리(Simons Observatory)를 공동으로 이끈다. 그의 관심은 망원경 부품에서 시작해 시간의 정의, 시뮬레이션 가설, 신, 자유의지, AI, 외계 생명, 노벨상, 죽음으로 넓어진다. 이 모든 주제를 꿰는 태도는 하나다. <strong>증명할 수 없는 것은 안다고 말하지 않고, 쓸모 있는 것은 실천한다.</strong></p>
+<p>키팅의 생각은 여섯 갈래로 정리된다.</p>
+<ol>
+<li><strong>실험</strong>: 빅뱅 직후 급팽창이 남긴 시공간의 잔향, 곧 중력파의 흔적을 우주배경복사에서 찾는다.</li>
+<li><strong>시간과 시뮬레이션</strong>: 시간에는 합의된 정의가 없다. 시뮬레이션 가설은 신 논증을 기술 용어로 바꾼 것에 가깝고, &quot;솜사탕처럼 맛은 있지만 가치는 없다&quot;.</li>
+<li><strong>미세조정</strong>: 우주는 흔히 말하는 것보다 훨씬 &quot;거칠게&quot; 조율돼 있다.</li>
+<li><strong>신과 윤리</strong>: 그는 스스로를 &quot;실천하는 독실한 불가지론자&quot;라 부른다. 신의 존재는 증명하지 못하지만 계명의 지혜는 실천한다.</li>
+<li><strong>AI</strong>: 지금의 언어 모델은 시킨 문제는 잘 풀지만, 아인슈타인 같은 통찰을 스스로 끌어내지는 못하는 것으로 보인다.</li>
+<li><strong>노벨상</strong>: 그에게 노벨상은 &quot;숭배해도 괜찮은 우상&quot;이었고, 그 우상과 마주한 기록이 『Losing the Nobel Prize』다.</li>
+</ol>
+<hr>
+<h2 id="1-무엇을-짓고-있나-사이먼스-옵서버토리"><a href="#1-무엇을-짓고-있나-사이먼스-옵서버토리" class="heading-anchor" aria-hidden="true">#</a> 1. 무엇을 짓고 있나: 사이먼스 옵서버토리</h2><p>사이먼스 옵서버토리는 키팅의 분야에서 가장 큰 실험 가운데 하나다. 칠레 아타카마 사막의 고지대에 자리 잡았고, 키팅에 따르면 프린스턴, 버클리, 시카고 대학, UC 샌디에이고를 중심으로 일곱 대륙 중 여섯 대륙의 과학자, 엔지니어, 연구자 약 450명이 함께한다.</p>
+<p>목표는 빅뱅의 빛이나 폭발 자체가 아니다. 키팅이 찾는 것은 &quot;시공간이라는 천의 잔향&quot;, 곧 중력파다. 그는 이것을 &quot;빅뱅의 파편(shrapnel)&quot;이라고도 부른다. 이 흔적은 <strong>급팽창(inflation)</strong> 이론과 이어진다. 우주가 탄생 직후 아주 짧은 시간에 급격히 팽창했다는 이론이다. 키팅은 이 이론을 &quot;많은 과학자가 믿지만 증명되지는 않았다&quot;고 소개한다. 그는 약 30년 전에 기술로 이 측정을 할 수 있다는 아이디어를 냈고, 이 흔적을 찾는 최초의 실험을 제안했다고 말한다.</p>
+<p>여기서 키팅의 첫 번째 원칙이 나온다. <strong>&quot;과학에서는 증명할 수 없다. 대안을 반증할 수 있을 뿐이다.&quot;</strong> 이 문장은 그가 다루는 모든 주제에서 되풀이된다.</p>
+<p>이 분야에는 그 원칙을 실감하게 하는 사건이 있다. 2014년 BICEP2 연구진은 원시 중력파의 신호를 찾았다고 발표했지만, 그 신호는 우리은하의 먼지에서 나온 것으로 밝혀졌고 발표는 철회됐다. 찾고 싶은 신호와 그것을 흉내 내는 잡음을 가르는 일이 이 실험의 본질이다.</p>
+<hr>
+<h2 id="2-가장-오래된-빛을-보는-장비"><a href="#2-가장-오래된-빛을-보는-장비" class="heading-anchor" aria-hidden="true">#</a> 2. 가장 오래된 빛을 보는 장비</h2><h3 id="21-망원경은-타임머신이다"><a href="#21-망원경은-타임머신이다" class="heading-anchor" aria-hidden="true">#</a> 2.1 망원경은 타임머신이다</h3><p>망원경의 기본 요소는 둘이다. 빛을 모으는 렌즈(광학계)와 빛을 재는 검출기다. 갈릴레오의 첫 망원경도 이 구조였다. 빛에는 도달 시간이 있으므로, 6피트 떨어진 사람도 6나노초 전의 모습으로 보이고, 태양은 8.3분 전의 모습으로 보인다. 그래서 키팅은 &quot;모든 망원경은 타임머신&quot;이라고 말한다.</p>
+<h3 id="22-최초의-원자와-우주배경복사"><a href="#22-최초의-원자와-우주배경복사" class="heading-anchor" aria-hidden="true">#</a> 2.2 최초의 원자와 우주배경복사</h3><p>초기 우주는 양성자와 전자가 흩어진 플라스마였다. 빛은 구름 속에서처럼 계속 산란돼 멀리 나아가지 못했다. 우주가 팽창하며 식자 양성자와 전자가 결합해 수소 원자가 됐고, 이때 우주가 투명해졌다. 빅뱅 후 약 38만 년 무렵의 일이다. 그때 풀려난 빛이 그 시기의 &quot;스냅샷&quot;이고, 지금은 마이크로파가 되어 우주 전체에서 관측된다. 이것이 <strong>우주배경복사(CMB)</strong> 다. 우주의 나이는 약 138억 년이다.</p>
+<h3 id="23-장비가-다루는-빛"><a href="#23-장비가-다루는-빛" class="heading-anchor" aria-hidden="true">#</a> 2.3 장비가 다루는 빛</h3><p>우주배경복사를 보는 장비는 눈에 익은 카메라와 많이 다르다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>요소</th>
+<th>키팅의 설명</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>검출기 묶음</td>
+<td>16×16, 256개 검출기. 크기는 아이폰 정도지만 아이폰 카메라는 4,800만 화소다. 화소가 큰 이유는 보려는 빛의 파장이 그 칸 크기와 비슷하기 때문이다</td>
+</tr>
+<tr>
+<td>파장</td>
+<td>우주배경복사가 가장 밝은 파장은 약 2mm다. 눈이 보는 빛은 약 500nm다</td>
+</tr>
+<tr>
+<td>렌즈</td>
+<td>유리가 아니라 고밀도 폴리에틸렌 플라스틱이다. 눈에는 불투명하지만 마이크로파는 굴절시킨다</td>
+</tr>
+<tr>
+<td>장소</td>
+<td>빛 대신 열을 재므로, 천문학의 &quot;어두운 곳&quot;에 해당하는 것은 &quot;추운 곳&quot;이다. 남극, 칠레의 산, 때로는 우주다</td>
+</tr>
+</tbody></table>
+</div><p>검출기는 흡수한 복사의 열을 온도 변화로 재는 <strong>볼로미터</strong>이고, 그래서 아주 차갑게 식혀야 한다.</p>
+<p>키팅이 찾는 신호는 빛의 <strong>편광</strong> 무늬에 숨어 있다. 우주 초기의 밀도 요동은 소용돌이가 없는 E-모드 무늬를 남기고, 원시 중력파는 소용돌이 모양의 B-모드 무늬를 남긴다. 그래서 B-모드를 찾으면 급팽창을 뒷받침하는 강력한 증거가 된다.</p>
+<p>관측이 끝나면 더 어려운 일이 시작된다. 키팅은 장비를 짓는 것만큼 많은 사람과 시간이 데이터 분석에 든다고 말한다.</p>
+<hr>
+<h2 id="3-시간은-무엇이고-빅뱅-이전은-있는가"><a href="#3-시간은-무엇이고-빅뱅-이전은-있는가" class="heading-anchor" aria-hidden="true">#</a> 3. 시간은 무엇이고, 빅뱅 이전은 있는가</h2><h3 id="31-합의된-정의는-없다"><a href="#31-합의된-정의는-없다" class="heading-anchor" aria-hidden="true">#</a> 3.1 합의된 정의는 없다</h3><p>일상의 시간은 엔트로피가 늘어나는 방향과 짝지어진다. 커피가 식고 크림이 섞이는 쪽이 미래다. 계가 평형에 이르면 변화가 없으므로 흐른 시간을 잴 수도 없다.</p>
+<p>노벨상 수상자 빌 필립스와 프랭크 윌첵은 &quot;시간은 시계가 재는 것&quot;이라고 했다. 키팅은 시계란 원래 시간을 재는 장치이므로 이 정의가 동어반복이라고 지적한다. 시간, 질량, 에너지, 공간 모두 확정된 정의가 없다. 그래도 우리는 이것들을 측정하고 쓴다. 트랜지스터도 원리를 다 이해하기 전에 썼다.</p>
+<h3 id="32-남극의-남쪽"><a href="#32-남극의-남쪽" class="heading-anchor" aria-hidden="true">#</a> 3.2 남극의 남쪽</h3><p>스티븐 호킹은 빅뱅 이전을 묻는 것이 &quot;남극의 남쪽을 묻는 것&quot;과 같다고 했다. 남극에서는 어느 쪽으로 움직여도 북쪽이다. 남극은 좌표계가 끝나는 곳일 뿐, 그곳에서 무언가 폭발하는 것은 아니다. 이 비유는 하틀과 호킹이 1983년에 내놓은 무경계 제안과 이어진다. 남극에 두 번 가 본 키팅은 이 답이 &quot;만족스럽지는 않다&quot;고 덧붙인다.</p>
+<h3 id="33-과학이-답할-수-없는-것"><a href="#33-과학이-답할-수-없는-것" class="heading-anchor" aria-hidden="true">#</a> 3.3 과학이 답할 수 없는 것</h3><p>키팅에게 과학은 &quot;우리의 무지를 기록하는 장부&quot;에 가깝다. 지구가 평평하지 않다는 것은 보일 수 있지만, 둥글다는 것을 증명할 수는 없다. 아는 것은 모르는 것에 비해 아주 작다.</p>
+<p>빅뱅 이론의 출발점은 가톨릭 사제 조르주 르메트르의 &quot;원시 원자&quot;였다. 우주가 정적이라고 믿던 아인슈타인은 허블의 관측을 보고서야 이 생각을 받아들였다. 키팅에 따르면 2,000년 넘게 대부분의 문명은 영원하거나 순환하는 우주를 상상했다.</p>
+<p>&quot;왜 아무것도 없지 않고 무언가가 있는가&quot;라는 질문에도 물리학은 부분적인 답만 준다. 물리학의 진공은 비어 있지 않다. 입자가 생기고 사라지는 것을 허락하는 구조가 있다. 키팅의 표현으로는 &quot;무는 불안정하다&quot;. 물질과 반물질은 만나서 빛이 되고, 반대로 빛 두 개가 물질과 반물질 쌍을 만들기도 한다. 하지만 &quot;애초의 에너지는 어디서 왔는가&quot;는 여전히 열린 질문이고, 그의 연구가 향하는 곳도 바로 이 질문이다. 그래서 그는 &quot;우주는 양자 요동에서 생겼다&quot;는 주장에 &quot;그럼 양자 요동은 어디서 왔나&quot;라고 되묻는다.</p>
+<hr>
+<h2 id="4-시뮬레이션-가설-솜사탕"><a href="#4-시뮬레이션-가설-솜사탕" class="heading-anchor" aria-hidden="true">#</a> 4. 시뮬레이션 가설: 솜사탕</h2><h3 id="41-왜-사람들은-이-생각에-끌리나"><a href="#41-왜-사람들은-이-생각에-끌리나" class="heading-anchor" aria-hidden="true">#</a> 4.1 왜 사람들은 이 생각에 끌리나</h3><p>우리는 날씨, 양자 진공, 검출기, 광자를 시뮬레이션한다. 그리고 우리에게 흥미로운 것을 시뮬레이션한다. 16대 위 할머니를 시뮬레이션해 몇 시간 만나 볼 수 있다면 많은 사람이 큰돈을 낼 것이다.</p>
+<p>조종사이기도 한 키팅은 비행 시뮬레이터를 예로 든다. 아무도 착륙하지 않을 남극의 얼음 활주로는 시뮬레이션하지 않는다. 사람은 쓸모 있는 것을 시뮬레이션한다. 기술이 지수적으로 자란다면, 미래의 시뮬레이터가 조상인 우리를 시뮬레이션하고 있을 수도 있다. 이것이 이 가설의 호소력이다.</p>
+<h3 id="42-키팅의-반론"><a href="#42-키팅의-반론" class="heading-anchor" aria-hidden="true">#</a> 4.2 키팅의 반론</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>반론</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>오래된 논증의 재탕</td>
+<td>데카르트나 &quot;통 속의 뇌&quot;처럼 오래전부터 있던 논증을 되풀이한다</td>
+</tr>
+<tr>
+<td>종교 틀의 재현</td>
+<td>조상을 시뮬레이션하기로 한 &quot;마스터 시뮬레이터&quot;는 신의 자리와 같다</td>
+</tr>
+<tr>
+<td>무한 퇴행</td>
+<td>시뮬레이터를 시뮬레이션하는 시뮬레이터가 끝없이 이어진다</td>
+</tr>
+<tr>
+<td>실용성 없음</td>
+<td>매트릭스나 트루먼 쇼에서 일어나는 일은 전능한 신도 할 수 있다. 물리학 학회에서 신을 그렇게 논하지 않듯, 이 가설도 &quot;솜사탕처럼 맛은 있지만 가치는 없다&quot;</td>
+</tr>
+</tbody></table>
+</div><p>이 가설을 정식으로 정리한 사람은 철학자 닉 보스트롬이다. 그는 2003년 논문에서 몇 가지 가능성 가운데 적어도 하나는 참이어야 한다는 삼자택일을 내놓았다. 키팅은 보스트롬의 논증이 &quot;시뮬레이션이 있거나 없거나, 시뮬레이터가 신경 쓰거나 안 쓰거나&quot; 같은 경우 나누기라고 짧게 평한다.</p>
+<p>그래도 키팅은 시뮬레이션에 드는 계산 비용(메모리, GPU)을 따지는 &quot;메타 연구&quot;는 흥미로울 수 있다고 본다. 야구 카드 한 장은 하찮아도 야구 카드 시장의 경제학은 진지한 사업인 것과 같다.</p>
+<h3 id="43-증명할-수-있는-길이-있다면"><a href="#43-증명할-수-있는-길이-있다면" class="heading-anchor" aria-hidden="true">#</a> 4.3 증명할 수 있는 길이 있다면</h3><p>키팅이 생각하는 유일한 길은 수학의 성질에서 나온다. 컴퓨터는 유한하고 이산적이어야 한다. 그러나 실수는 두 수 사이에 무한히 많다. 500nm와 501nm 사이의 파장도 무한히 많다. 그러니 우리가 시뮬레이션 안에 있다면, 별빛이 도착하는 각도나 파장 같은 연속량에서 근본적인 <strong>이산화(discretization)</strong>, 곧 값이 일정한 간격으로만 존재하는 흔적이 보여야 한다. 실제로 그런 실험을 제안한 사람들도 있다.</p>
+<p>하지만 키팅은 여기서 멈춘다. 그런 흔적이 나오지 않아도 &quot;그것조차 시뮬레이션의 일부&quot;라고 말할 수 있다. 반증할 수 없는 주장이라는 점에서, 시뮬레이션 가설은 결국 신 논증과 같은 자리에 선다.</p>
+<hr>
+<h2 id="5-미세조정은-얼마나-미세한가"><a href="#5-미세조정은-얼마나-미세한가" class="heading-anchor" aria-hidden="true">#</a> 5. 미세조정은 얼마나 미세한가</h2><p>드라마 〈영 셸던〉에는 어린 셸던이 중력이 조금만 강하거나 약해도, 전자기력과 강력의 비가 조금만 달라도 생명이 없었을 것이라며 창조자를 추론하는 장면이 있다. 이것이 <strong>미세조정(fine-tuning)</strong> 논증이다. 물리 상수가 생명이 가능한 좁은 범위에 맞춰져 있다는 주장이다.</p>
+<p>키팅은 이 논증에 네 가지로 답한다.</p>
+<ul>
+<li><strong>선결문제 요구</strong>: 이 논증은 신의 존재를 먼저 가정하고 거꾸로 추론하는 호교론이다. 논리학에서 말하는 &quot;선결문제 요구(begging the question)&quot;다.</li>
+<li><strong>실제로는 거칠게 조율돼 있다</strong>: 지금 암흑에너지를 10배로 올려도 당장 우리, 은하, 태양계에는 아무 일도 일어나지 않는다. 1조 년 뒤라면 다르다. 우주의 질량을 두세 배로 늘려도 지금의 우리에게는 아무 일도 없다.</li>
+<li><strong>체리피킹</strong>: &quot;초기 우주에 1kg당 양성자 하나가 더 있었다면 우리는 없었다&quot;는 말은 맞다. 하지만 지금 양성자 하나는 아무 영향이 없다. 같은 양도 어느 시점에서 고르느냐에 따라 결론이 바뀐다. 비행기 시간 1시간 차이도 일찍 가면 괜찮고 늦으면 비행기를 놓친다.</li>
+<li><strong>조율의 기준</strong>: 바이올린의 440Hz와 444Hz는 1% 차이인데, 귀가 아주 좋은 사람만 구별한다. Wi-Fi 주파수는 10억분의 1 수준으로 관리된다. 이 기준으로 보면 1–2%는 &quot;아주 거친&quot; 조율이다.</li>
+</ul>
+<hr>
+<h2 id="6-신-토라-계명"><a href="#6-신-토라-계명" class="heading-anchor" aria-hidden="true">#</a> 6. 신, 토라, 계명</h2><h3 id="61-가톨릭-복사에서-무신론자로-다시-독실한-불가지론자로"><a href="#61-가톨릭-복사에서-무신론자로-다시-독실한-불가지론자로" class="heading-anchor" aria-hidden="true">#</a> 6.1 가톨릭 복사에서 무신론자로, 다시 독실한 불가지론자로</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>시기</th>
+<th>키팅의 이야기</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7세</td>
+<td>부모가 이혼하고, 어머니가 아일랜드계 가톨릭 신자와 재혼한다</td>
+</tr>
+<tr>
+<td>8세 무렵</td>
+<td>세례와 첫영성체를 받고, 뉴욕 채퍼콰 성당의 복사가 된다</td>
+</tr>
+<tr>
+<td>13세 무렵</td>
+<td>첫 망원경을 갖는다. 영웅 갈릴레오가 교회 때문에 생애 마지막 9년을 갇혀 지냈다는 사실에 실망해 무신론자가 된다</td>
+</tr>
+<tr>
+<td>성인</td>
+<td>히브리어를 혼자 익히고 토라와 주석을 읽는다. 종교 자체보다 사회적, 공동체적, 문화적 측면에 끌린다</td>
+</tr>
+</tbody></table>
+</div><p>지금 그는 자신을 &quot;실천하는 독실한 불가지론자(practicing devout agnostic)&quot;라 부른다. 무신론자는 신이 없다고 선언하고, 유신론자는 신이 있다는 것을 안다고 선언한다. 과학자는 &quot;중력을 믿는다&quot;고 하지 않고 &quot;중력의 증거가 있다&quot;고 한다. 신에 대해서는 반증 가능한 증거가 없고, 그런 증거가 있다면 믿음이 필요 없을 것이다. 그는 &quot;신은 브라이언 키팅이 자기를 믿는지 이빨 요정만큼 신경 쓸 것&quot;이라고 농담한다.</p>
+<h3 id="62-왜-토라는-창조로-시작하는가"><a href="#62-왜-토라는-창조로-시작하는가" class="heading-anchor" aria-hidden="true">#</a> 6.2 왜 토라는 창조로 시작하는가</h3><p>키팅에 따르면 신이 의미를 갖는 것은 신이 &quot;자연 법칙과 이웃을 대하는 법칙 사이의 경계를 넘기&quot; 때문이다.</p>
+<p>토라는 대부분이 법과 이야기다. 그런데 왜 우주 창조로 시작할까. 이 물음은 11세기 주석가 라시(Rashi)가 창세기 첫 구절에 붙인 주석으로 잘 알려져 있다. 키팅의 답은 이렇다. 우주를 만든 입법자만이 &quot;이웃의 아내를 탐하지 말라&quot;고 말할 궁극의 관할권을 갖는다. 창조 이야기는 법의 근거다.</p>
+<p>키팅은 토라에서 우주의 기원을 다루는 대목이 아주 짧다는 점을 강조한다. 창세기 1:1부터 2:3까지의 창조 기사는 34절로, 흔히 5,845절로 세는 모세 5경 전체에서 아주 작은 몫이다. 그는 미국 독립선언문과도 비교한다. 독립선언문 역시 법과 정치의 문서이지만 &quot;창조주가 부여한&quot; 권리에 호소한다.</p>
+<h3 id="63-계명을-실천하는-이유"><a href="#63-계명을-실천하는-이유" class="heading-anchor" aria-hidden="true">#</a> 6.3 계명을 실천하는 이유</h3><p><strong>미츠바(mitzvah)</strong> 는 흔히 &quot;선행&quot;으로 알려져 있지만 본뜻은 &quot;계명&quot;, 곧 꼭 해야 하는 것이다. 키팅은 믿음보다 실천을 앞세운다.</p>
+<ul>
+<li><strong>소득 10% 기부</strong>: 그는 세전 급여의 10%를 자선에 낸다. 해마다 1월 1일에 그냥 써서 낸다. &quot;좋아서 하는 건 아니지만 한다.&quot; 유대 전통에서는 세후 소득을 기준으로 삼는 견해가 많은 것으로 알려져 있어, 그의 방식은 더 엄격한 쪽이다.</li>
+<li><strong>안식일</strong>: 토요일에는 어떤 공개 대담도 하지 않는다. 쉬는 하루 덕에 나머지 엿새가 더 생산적이 되고, 가족과 공동체와 이어진다. 그는 손꼽히는 인기 대담 프로그램 진행자에게도 안식일을 처방했다고 한다.</li>
+<li><strong>기도</strong>: 기도와의 관계는 어렵다고 털어놓는다. 대신 안식일 회당에서 전화기 없이 명상한다. &quot;유대인(Jew)&quot;이라는 말은 &quot;감사하다&quot;는 뜻과 이어진 히브리어 이름 예후다에서 왔다. 그는 가족부터 시작해 감사의 원을 넓혀 간다.</li>
+</ul>
+<h3 id="64-신정론-왜-고통이-있는가"><a href="#64-신정론-왜-고통이-있는가" class="heading-anchor" aria-hidden="true">#</a> 6.4 신정론: 왜 고통이 있는가</h3><p><strong>신정론(theodicy)</strong> 은 선하고 전능한 신이 있는데 왜 악과 고통이 있는지를 따지는 논의다. 전쟁과 대부분의 기근은 사람이 만든다. 하지만 암은 그렇지 않다.</p>
+<p>키팅은 자신이 들은 논증 하나를 소개한다. 암세포는 생명이 스스로 복제하고 번식하는 능력의 부산물일 수 있다. 오류 없는 복제만 허락하는 자연이라면 세포 분열 같은 다른 것도 막혔을 것이다. 논리적이고 일관된 물리 법칙을 원하면 의도하지 않은 결과도 함께 따른다. 다만 그는 이 논증이 고해를 들어 주는 &quot;인격신&quot;을 뜻하지는 않는다고 선을 긋는다.</p>
+<hr>
+<h2 id="7-자유의지-들이받는-소-사형"><a href="#7-자유의지-들이받는-소-사형" class="heading-anchor" aria-hidden="true">#</a> 7. 자유의지, 들이받는 소, 사형</h2><h3 id="71-자유의지는-의심할-여지-없이-있다"><a href="#71-자유의지는-의심할-여지-없이-있다" class="heading-anchor" aria-hidden="true">#</a> 7.1 자유의지는 의심할 여지 없이 있다</h3><p>키팅은 샘 해리스, 로버트 사폴스키, 대니얼 데닛, 데이비드 차머스, 닉 보스트롬과 이 문제를 이야기했지만, 설득력 있는 자유의지의 정의는 듣지 못했다고 한다. 데닛은 생전 마지막 인터뷰를 키팅과 했다.</p>
+<p>그의 시험은 단순하다. &quot;자유의지가 없다는 듯이 행동하는 정상인을 본 적 있나?&quot; 가족을 해친 사람에게 아무 처벌도 원하지 않는다고 답한 사람은 없었다. 사폴스키만 그렇다고 답했는데, 키팅은 이를 &quot;완전한 회피&quot;로 본다. 그의 결론은 이렇다. &quot;우리는 자유의지가 있는 것처럼 작동한다.&quot; 초결정론은 이 가장 기본적인 시험을 통과하지 못한다.</p>
+<h3 id="72-들이받는-소"><a href="#72-들이받는-소" class="heading-anchor" aria-hidden="true">#</a> 7.2 들이받는 소</h3><p>토라에서 소는 권리를 가졌다. 소를 학대할 수 없었고, 안식일에는 일을 시킬 수 없었다. 농경 경제에서 이는 매주 일주일의 7분의 1을 포기하는 일이었다. 그런 소가 이웃 아이를 들이받아 죽였다면, 주인에게 고의가 없어도 소를 죽인다(출애굽기 21:28). 그 고기를 먹거나 그것으로 이익을 얻는 것도 금지된다. 아이를 죽인 소가 남은 평생 동네를 걸어 다니는 것을 이웃이 지켜봐야 한다면 그것은 인간 정신에 대한 모욕이기 때문이다. 키팅이 이 법에서 읽는 뜻은 &quot;인간의 무게는 무한대&quot;라는 것이다.</p>
+<h3 id="73-죽이지-말라가-아니라-살인하지-말라"><a href="#73-죽이지-말라가-아니라-살인하지-말라" class="heading-anchor" aria-hidden="true">#</a> 7.3 죽이지 말라가 아니라 살인하지 말라</h3><p>키팅은 토라의 계명이 &quot;죽이지 말라&quot;가 아니라 &quot;살인하지 말라&quot;라는 점을 강조한다. 그는 이스라엘의 사형 논의를 예로 든다. 이스라엘은 1954년 민간 범죄에 대한 사형을 폐지했고, 공식 처형은 1948년 토비안스키와 1962년 아이히만 두 건뿐이다. 2023년 10월 7일 이후 사형을 되살리자는 법안이 논의됐지만, 정식 법률로 복원됐는지는 [확인 필요].</p>
+<hr>
+<h2 id="8-ai는-물리학의-새-통찰을-만들-수-있나"><a href="#8-ai는-물리학의-새-통찰을-만들-수-있나" class="heading-anchor" aria-hidden="true">#</a> 8. AI는 물리학의 새 통찰을 만들 수 있나</h2><p>키팅은 AI가 잘하는 것과 못하는 것을 분명히 나눈다.</p>
+<ul>
+<li><strong>잘하는 것</strong>: 시킨 문제 풀기. 이제는 영어든 어떤 언어든 말로 프로그래밍할 수 있다. 키팅은 Claude에 생물학 도구 36개가 든 과학 논문 패키지를 설치했는데, 우주론 도구는 없어서 직접 바꿔 보려 한다.</li>
+<li><strong>못하는 것</strong>: 새 언어, 새 게임, 셰익스피어 같은 울림. 1997년 딥 블루가 카스파로프를 이긴 뒤에도 사람들은 여전히 체스를 둔다. 하지만 그는 컴퓨터가 4,000년을 이어 갈 규칙의 게임을 발명할지 의심한다.</li>
+</ul>
+<h3 id="81-1911년의-언어-모델"><a href="#81-1911년의-언어-모델" class="heading-anchor" aria-hidden="true">#</a> 8.1 1911년의 언어 모델</h3><p>약 4년 전 키팅은 한 가지 실험을 구상했다. 1911년 이후의 지식을 모두 지운 언어 모델이, 그로부터 4년 뒤 아인슈타인이 해낸 일을 다시 끌어낼 수 있을까. 그는 학생들과 이 방향을 연구했지만 다른 AI 연구자들이 먼저 결과를 냈다. 그가 본 답은 &quot;그럴 수 없는 것 같다&quot;이다. 모델은 수치로는 얼마든지 정답에 가까워진다. 하지만 &quot;중력은 힘이 아니라 시공간 곡률의 표현&quot;이라는 통찰은 내지 못한다.</p>
+<p>아인슈타인은 자유낙하하는 사람이 중력을 느끼지 않는다는 사고실험을 &quot;생애 가장 행복한 생각&quot;이라 불렀다. 키팅은 묻는다. &quot;컴퓨터는 어떻게 행복한 생각을 하나?&quot; 지금 언어 모델이 85개쯤 있지만 모두 인간의 지식으로 학습했으니 서로 크게 다르지 않다. 그가 보기에 필요한 것은 인공 지능이 아니라 &quot;인공 지혜&quot;다. 그래서 그는 AI에 비관적이지만, 물리학자에게 할 일이 남는다는 점에서는 들떠 있다.</p>
+<h3 id="82-끈-이론과-반증-가능성"><a href="#82-끈-이론과-반증-가능성" class="heading-anchor" aria-hidden="true">#</a> 8.2 끈 이론과 반증 가능성</h3><p>&quot;끈 이론이 물리학을 망쳤다&quot;는 서사에 키팅은 동의하지 않는다. 끈 이론은 아직 시험할 수 있는 영역에 들어오지 못했으므로 일반적 기준의 반증 가능성은 없다. 그러나 UC 샌디에이고에는 끈 이론 연구자가 없고, 끈 이론이 생긴 뒤에도 노벨상은 50번 나왔다. 물리학 전체가 끈 이론에 묶여 있지는 않다는 것이다. 호킹의 &quot;신의 마음&quot;이라는 표현은 책을 팔기 위한 수사였다고 그는 본다.</p>
+<hr>
+<h2 id="9-외계-생명과-화성-운석"><a href="#9-외계-생명과-화성-운석" class="heading-anchor" aria-hidden="true">#</a> 9. 외계 생명과 화성 운석</h2><p>1996년 빌 클린턴은 백악관 잔디밭에서, 남극에서 찾은 화성 운석에 미생물의 흔적이 있을 수 있다고 발표했다. 운석은 얼음 위에 놓인 돌이라 남극에서 찾기 쉽다. 키팅은 달에서 온 운석 조각과 화성 운석 조각을 갖고 있다.</p>
+<p>그의 평가는 담담하다. &quot;철회되지는 않았다. 지금도 논쟁 중이지만 진지하게 받아들이는 사람은 없다.&quot; 약 10년 동안 많은 사람이 지구 밖에 생명이 있다고 생각했지만, 그 때문에 삶이 바뀌지는 않았다.</p>
+<p>외계 생명의 증거를 꾸준히 제시해 온 에비 로브에 대해서도 키팅은 존중하는 투로 말한다. 로브는 많은 증거를 내놓았지만 그조차 그것이 외계인이라고 확신하지는 않는다. 끈 이론을 비판하면서도 논문을 757편이나 쓴 사람이라는 것이다.</p>
+<p>여기서도 키팅의 기준은 반증 가능성이다. 보여 줄 수 없다는 주장은 반증할 수 없고, 목격담은 믿을 수 없다. 태양계 안에서도 아직 다른 생명을 찾지 못했다. 그래도 반박할 수 없는 증거가 나온다면 &quot;아마 사상 최대의 발견&quot;이 될 것이다. 그렇다고 그가 기부하고 이웃을 대하는 방식이 바뀌지는 않는다.</p>
+<hr>
+<h2 id="10-노벨상과-남는-것"><a href="#10-노벨상과-남는-것" class="heading-anchor" aria-hidden="true">#</a> 10. 노벨상과 남는 것</h2><p>키팅에게 노벨상은 월드컵과 오스카를 합친 것 같은, &quot;숭배해도 괜찮은 우상&quot;이었다. 그 우상을 숭배하던 자신과 마주한 기록이 2018년에 낸 『Losing the Nobel Prize』다. 그는 노벨상 수상자 26명을 인터뷰했고, 그들이 신이 아니라 평범한 사람이며 &quot;불행히도 대부분 남성&quot;이라고 말한다. 노벨상은 한 분야에서 최대 3명에게만 주어지는데, 수백 명이 함께하는 지금의 거대 과학과는 잘 맞지 않는다. 아이가 &quot;아빠가 노벨상을 받으면 책을 회수해야 하느냐&quot;고 묻자, 그는 &quot;그때 가서 생각하겠다&quot;고 답했다.</p>
+<p>젊을 때 그는 노벨상을 받고 대단한 사람이 되고 싶었다. 지금은 데이비드 브룩스가 말한 두 이력서 가운데, 이력서에 쓰는 덕목보다 추도사에 남는 덕목이 더 중요하다고 말한다. 생물학적 유산보다 생각을 전하는 것이 중요하고, 자신보다 사랑하는 사람들에게 더 큰 야망을 품는다.</p>
+<p>내일 우주가 끝난다면 무엇을 하겠느냐는 물음에 그는 이렇게 답한다. &quot;후회할 일을 하지 않으려 한다.&quot; 증명할 수 없는 것 앞에서 겸손하고, 쓸모 있는 것은 실천한다는 그의 태도가 이 짧은 답에도 담겨 있다.</p>
+<hr>
+<h2 id="더-읽을거리"><a href="#더-읽을거리" class="heading-anchor" aria-hidden="true">#</a> 더 읽을거리</h2><ul>
+<li>Brian Keating, 『Losing the Nobel Prize: A Story of Cosmology, Ambition, and the Perils of Science&#39;s Highest Honor』, W. W. Norton, 2018.</li>
+</ul>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>

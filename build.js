@@ -450,16 +450,16 @@ async function build() {
     const { html: contentHtml, headings } = compileMarkdown(content, { title, subtitle });
     const tocHtml = renderTOC(headings);
 
-    const outSubdir = isPreview ? 'preview' : '';
-    const outDir = outSubdir ? path.join(OUTPUT_DIR, outSubdir) : OUTPUT_DIR;
+    const outSubdir = isPreview ? 'preview' : 'articles';
+    const outDir = path.join(OUTPUT_DIR, outSubdir);
     if (!fs.existsSync(outDir)) {
       fs.mkdirSync(outDir, { recursive: true });
     }
     const outFileName = `${slug}.html`;
     const outFilePath = path.join(outDir, outFileName);
-    const publicUrl = outSubdir ? `${outSubdir}/${outFileName}` : outFileName;
-    const homeUrl = isPreview ? '../index.html' : 'index.html';
-    const rootPath = isPreview ? '../' : '';
+    const publicUrl = `${outSubdir}/${outFileName}`;
+    const homeUrl = '../index.html';
+    const rootPath = '../';
     const robotsMeta = unlisted
       ? '<meta name="robots" content="noindex, nofollow">'
       : '';
@@ -508,7 +508,7 @@ async function build() {
       tags: ["AI", "언어모델", "정보이론", "압축", "지능"],
       tag_string: "AI 언어모델 정보이론 압축 지능",
       reading_time: 44,
-      url: "language_modeling_compression_intelligence.html",
+      url: "articles/language_modeling_compression_intelligence.html",
       _timestamp: new Date("2026-10-22T13:15:00Z").getTime()
     },
     {
@@ -519,7 +519,7 @@ async function build() {
       tags: ["생물학", "과학철학", "유전학", "시스템생물학", "데니스노블"],
       tag_string: "생물학 과학철학 유전학 시스템생물학 데니스노블",
       reading_time: 30,
-      url: "noble_genes_not_blueprint.html",
+      url: "articles/noble_genes_not_blueprint.html",
       _timestamp: new Date("2026-10-22T08:20:00Z").getTime()
     },
     {
@@ -530,7 +530,7 @@ async function build() {
       tags: ["AI", "해석가능성", "언어모델", "정렬", "앤트로픽"],
       tag_string: "AI 해석가능성 언어모델 정렬 앤트로픽",
       reading_time: 41,
-      url: "inside_the_black_box_how_llms_think.html",
+      url: "articles/inside_the_black_box_how_llms_think.html",
       _timestamp: new Date("2026-10-18T14:20:00Z").getTime()
     },
     {
@@ -541,7 +541,7 @@ async function build() {
       tags: ["AI", "코딩에이전트", "Go", "워크숍", "GeoffreyHuntley"],
       tag_string: "AI 코딩에이전트 Go 워크숍 GeoffreyHuntley",
       reading_time: 35,
-      url: "build_a_coding_agent_workshop.html",
+      url: "articles/build_a_coding_agent_workshop.html",
       _timestamp: new Date("2026-10-15T19:50:00Z").getTime()
     },
     {
@@ -552,7 +552,7 @@ async function build() {
       tags: ["AI", "에이전틱엔지니어링", "소프트웨어개발", "영한대조", "GeoffreyHuntley"],
       tag_string: "AI 에이전틱엔지니어링 소프트웨어개발 영한대조 GeoffreyHuntley",
       reading_time: 50,
-      url: "huntley_nobody_should_type_code_by_hand.html",
+      url: "articles/huntley_nobody_should_type_code_by_hand.html",
       _timestamp: new Date("2026-10-15T13:00:00Z").getTime()
     },
     {
@@ -563,7 +563,7 @@ async function build() {
       tags: ["컴퓨터과학", "메모리관리", "가비지컬렉션", "프로그래밍언어", "Computerphile"],
       tag_string: "컴퓨터과학 메모리관리 가비지컬렉션 프로그래밍언어 Computerphile",
       reading_time: 20,
-      url: "garbage_collection_mark_and_sweep.html",
+      url: "articles/garbage_collection_mark_and_sweep.html",
       _timestamp: new Date("2026-10-15T12:00:00Z").getTime()
     },
     {
@@ -574,7 +574,7 @@ async function build() {
       tags: ["AI", "디자인", "품질", "장인정신", "Stripe"],
       tag_string: "AI 디자인 품질 장인정신 Stripe",
       reading_time: 20,
-      url: "digital_craftsmanship_ai_era.html",
+      url: "articles/digital_craftsmanship_ai_era.html",
       _timestamp: new Date("2026-10-13T12:00:00Z").getTime()
     },
     {
@@ -585,7 +585,7 @@ async function build() {
       tags: ["Python", "CPython", "메모리모델", "BoundMethod", "디스크립터", "시스템프로그래밍"],
       tag_string: "Python CPython 메모리모델 BoundMethod 디스크립터 시스템프로그래밍",
       reading_time: 18,
-      url: "python_object_creation_and_binding.html",
+      url: "articles/python_object_creation_and_binding.html",
       _timestamp: new Date("2026-09-15T12:00:00Z").getTime()
     },
     {
@@ -596,7 +596,7 @@ async function build() {
       tags: ["Python", "CPython", "vectorcall", "callable", "바이트코드", "인터프리터"],
       tag_string: "Python CPython vectorcall callable 바이트코드 인터프리터",
       reading_time: 22,
-      url: "python_callable_and_execution_engine.html",
+      url: "articles/python_callable_and_execution_engine.html",
       _timestamp: new Date("2026-09-15T12:01:00Z").getTime()
     },
     {
@@ -607,7 +607,7 @@ async function build() {
       tags: ["컴퓨터 구조", "DRAM", "Memory Controller", "PHY", "다이어그램"],
       tag_string: "컴퓨터 구조 DRAM Memory Controller PHY 다이어그램",
       reading_time: 15,
-      url: "cpu_dram_memory_interface.html",
+      url: "articles/cpu_dram_memory_interface.html",
       _timestamp: new Date("2026-09-01").getTime()
     }
   ];

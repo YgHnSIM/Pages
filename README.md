@@ -36,7 +36,8 @@ Pages/
 ├── build.js                         # 정적 사이트 빌더 스크립트
 ├── package.json                     # 프로젝트 설정 및 실행 스크립트
 ├── index.html                       # 생성된 메인 타임라인 홈 페이지
-└── *.html                           # 생성된 아티클 HTML 파일들
+└── articles/                        # 생성 및 보관된 아티클 HTML 파일들
+    └── *.html                       # 개별 아티클 페이지들
 ```
 
 ---

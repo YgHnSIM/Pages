@@ -1,0 +1,2679 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>예측하는 기계는 왜 압축하는 기계인가</title>
+  <meta name="description" content="섀넌 엔트로피와 산술 부호화, 콜모고로프 복잡도, 솔로모노프 귀납, 후터의 AIXI에서 출발해, 텍스트만 배운 대형 언어 모델이 사진과 소리까지 전용 압축기보다 잘 줄인다는 딥마인드의 「Language Modeling Is Compression」과 31개 모델의 압축 효율이 벤치마크 점수와 거의 한 직선 위에 놓인다는 「Compression Represents Intelligence Linearly」를 기초부터 차근차근 읽는다. 모델 크기를 셈한 조정 압축률, 토크나이저, 압축기로 생성하기, 데이터 오염과 Min-K% Prob, 그리고 두 결과의 한계까지 정리한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">예측하는 기계는 왜 압축하는 기계인가</span>
+    </div>
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-놀람의-양을-재는-법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 놀람의 양을 재는 법: 확률과 부호 길이</span></a></li><li class="depth-3"><a href="#엔트로피-평균-놀람" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">엔트로피: 평균 놀람</span></a></li><li class="depth-3"><a href="#모든-것을-줄이는-압축기는-없다" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">모든 것을 줄이는 압축기는 없다</span></a></li><li class="depth-2"><a href="#2-산술-부호화-확률을-비트로-바꾸는-기계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 산술 부호화: 확률을 비트로 바꾸는 기계</span></a></li><li class="depth-2"><a href="#3-언어-모델의-학습-목표는-처음부터-압축이었다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 언어 모델의 학습 목표는 처음부터 압축이었다</span></a></li><li class="depth-3"><a href="#측정-단위-bpc와-토큰당-비트" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">측정 단위: BPC와 토큰당 비트</span></a></li><li class="depth-3"><a href="#반대-방향-압축기로-예측하기" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">반대 방향: 압축기로 예측하기</span></a></li><li class="depth-2"><a href="#4-연구사-가장-짧은-설명을-찾는-일" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 연구사: 가장 짧은 설명을 찾는 일</span></a></li><li class="depth-3"><a href="#섀넌-1951-사람도-예측기다" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">섀넌 1951: 사람도 예측기다</span></a></li><li class="depth-3"><a href="#콜모고로프-복잡도-가장-짧은-프로그램" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">콜모고로프 복잡도: 가장 짧은 프로그램</span></a></li><li class="depth-3"><a href="#솔로모노프-귀납-모든-가설의-가중-평균" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">솔로모노프 귀납: 모든 가설의 가중 평균</span></a></li><li class="depth-3"><a href="#후터의-aixi와-후터-상" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">후터의 AIXI와 후터 상</span></a></li><li class="depth-3"><a href="#ppm에서-llm까지-예측-압축기의-계보" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">PPM에서 LLM까지: 예측 압축기의 계보</span></a></li><li class="depth-2"><a href="#5-언어-모델로-압축하기-실험의-설정" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 언어 모델로 압축하기: 실험의 설정</span></a></li><li class="depth-2"><a href="#6-텍스트만-배운-모델이-사진과-소리를-줄이다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 텍스트만 배운 모델이 사진과 소리를 줄이다</span></a></li><li class="depth-3"><a href="#문맥이-길어질수록-좋아지는-압축" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">문맥이 길어질수록 좋아지는 압축</span></a></li><li class="depth-2"><a href="#7-모델-크기를-계산에-넣으면-조정-압축률" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 모델 크기를 계산에 넣으면: 조정 압축률</span></a></li><li class="depth-3"><a href="#데이터-크기가-모델-크기의-상한을-정한다" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">데이터 크기가 모델 크기의 상한을 정한다</span></a></li><li class="depth-2"><a href="#8-토크나이저는-미리-한-번-하는-압축이다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 토크나이저는 미리 한 번 하는 압축이다</span></a></li><li class="depth-2"><a href="#9-압축기를-생성-모델로-쓰기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 압축기를 생성 모델로 쓰기</span></a></li><li class="depth-2"><a href="#10-압축을-잘하면-더-똑똑한가-질문과-설계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 압축을 잘하면 더 똑똑한가: 질문과 설계</span></a></li><li class="depth-3"><a href="#지능을-무엇으로-잴까" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">지능을 무엇으로 잴까</span></a></li><li class="depth-3"><a href="#압축을-어떻게-잴까" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">압축을 어떻게 잴까</span></a></li><li class="depth-3"><a href="#31개-모델" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">31개 모델</span></a></li><li class="depth-2"><a href="#11-압축과-점수는-한-직선-위에-있다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">11. 압축과 점수는 한 직선 위에 있다</span></a></li><li class="depth-2"><a href="#12-직선에서-벗어난-점들-데이터-오염과-형식-과적합" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">12. 직선에서 벗어난 점들: 데이터 오염과 형식 과적합</span></a></li><li class="depth-3"><a href="#min-k-prob-커닝-탐지기" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">Min-K% Prob: 커닝 탐지기</span></a></li><li class="depth-3"><a href="#mmlu-객관식-형식에-대한-과적합" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">MMLU: 객관식 형식에 대한 과적합</span></a></li><li class="depth-2"><a href="#13-남은-질문들-어떤-글을-압축하느냐가-중요하다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">13. 남은 질문들: 어떤 글을 압축하느냐가 중요하다</span></a></li><li class="depth-2"><a href="#14-한계와-조심해서-읽을-점" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">14. 한계와 조심해서 읽을 점</span></a></li><li class="depth-2"><a href="#15-핵심-통찰과-키포인트" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">15. 핵심 통찰과 키포인트</span></a></li><li class="depth-3"><a href="#다섯-가지-통찰" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">다섯 가지 통찰</span></a></li><li class="depth-3"><a href="#외워-둘-개념과-숫자" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">외워 둘 개념과 숫자</span></a></li><li class="depth-3"><a href="#스스로-점검하기" class="toc-link"><span class="toc-badge badge-h3">소주제</span><span class="toc-text">스스로 점검하기</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-22</span>
+          <span class="meta-badge">⏱️ 약 44분</span>
+          <span class="meta-badge">✍️ Pages AI 이론 분석</span>
+        </div>
+        <h1 class="article-title">예측하는 기계는 왜 압축하는 기계인가</h1>
+        <p class="article-subtitle">섀넌의 엔트로피에서 산술 부호화, 솔로모노프와 후터를 거쳐 두 편의 LLM 압축 논문까지</p>
+        <div class="tag-list">
+          <span class="tag-pill">#정보이론</span><span class="tag-pill">#압축</span><span class="tag-pill">#언어모델</span><span class="tag-pill">#산술부호화</span><span class="tag-pill">#콜모고로프복잡도</span><span class="tag-pill">#솔로모노프</span><span class="tag-pill">#AIXI</span><span class="tag-pill">#데이터오염</span>
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+<p><strong>"땅콩버터와 ○○○." 빈칸에 들어갈 말을 대부분 바로 떠올린다. 그렇게 뻔한 말이라면 굳이 다 적어 보낼 필요가 있을까.</strong> 받는 사람도 같은 짐작을 한다면, '예상대로'라는 짧은 신호 하나로 충분하다. 다음에 올 것을 잘 맞히는 능력과 정보를 적은 비트로 줄이는 능력은 같은 능력의 두 얼굴이다. 이 생각은 1948년 클로드 섀넌의 정보 이론에서 시작해 콜모고로프, 솔로모노프, 후터를 거치며 '압축하는 능력이 곧 지능'이라는 대담한 가설로 자랐다. 2023–2024년에 나온 두 논문이 이 가설을 대형 언어 모델(LLM) 위에서 직접 시험했다. 구글 딥마인드의 「Language Modeling Is Compression」(Delétang 외, ICLR 2024)은 텍스트만 배운 모델이 사진과 소리까지 전용 압축기보다 잘 줄인다는 것을 보였다. 홍콩과기대와 텐센트의 「Compression Represents Intelligence Linearly」(Huang 외, COLM 2024)는 31개 공개 모델의 압축 효율과 벤치마크 점수가 거의 한 직선 위에 놓인다는 것을 보였다. 이 글은 두 논문을 제대로 읽는 데 필요한 기초 개념부터 하나씩 쌓아 올린 뒤, 두 논문의 결과와 그 한계를 차례로 따라간다.</p>
+
+<div class="callout-box info">
+  <div class="callout-title">이 글의 길</div>
+  <p>① 정보량과 엔트로피 → ② 산술 부호화 → ③ 언어 모델의 학습 목표가 곧 압축 목표인 이유 → ④ 콜모고로프·솔로모노프·후터로 이어지는 연구사 → ⑤ 딥마인드 논문: 범용 압축기, 모델 크기의 대가, 토크나이저, 생성 → ⑥ HKUST 논문: 압축과 벤치마크의 선형 관계, 데이터 오염 → ⑦ 한계 → ⑧ 핵심 통찰 정리</p>
+</div>
+
+<h2 id="1-놀람의-양을-재는-법"><a href="#1-놀람의-양을-재는-법" class="heading-anchor" aria-hidden="true">#</a> 1. 놀람의 양을 재는 법: 확률과 부호 길이</h2>
+<p>정보 이론의 출발점은 "정보란 놀람의 양"이라는 생각이다. 매일 아침 해가 뜬다는 소식은 아무것도 알려 주지 않는다. 확률이 1에 가깝기 때문이다. 반대로 거의 일어나지 않는 일이 일어났다는 소식은 많은 것을 알려 준다. 섀넌은 확률이 p인 사건이 담은 정보량을 이렇게 정의했다.</p>
+<div class="callout-box tip">
+  <div class="callout-title">정보량(놀람)</div>
+  <p style="text-align:center;font-size:1.15em;"><strong>I(x) = −log<sub>2</sub> p(x)</strong> &nbsp;비트</p>
+  <p>확률 1/2 → 1비트, 1/4 → 2비트, 1/8 → 3비트, 1/1024 → 10비트. 확률이 절반으로 줄 때마다 1비트씩 늘어난다.</p>
+</div>
+<p>로그를 쓰는 이유는 직관적이다. 동전 한 번 결과를 알리는 데 1비트가 들고, 동전 두 번이면 경우가 네 가지라 2비트가 든다. 경우의 수가 곱해질 때 비트 수는 더해져야 자연스럽고, 곱을 합으로 바꾸는 함수가 로그다. 밑을 2로 잡으면 단위가 '예/아니오 질문의 개수', 곧 비트가 된다.</p>
+<p>이 정의를 그대로 압축에 옮기면 핵심 원칙 하나가 나온다. <strong>자주 나오는 것에는 짧은 부호를, 드문 것에는 긴 부호를 준다.</strong> 모스 부호가 영어에서 가장 흔한 글자 E에 점 하나만 준 것과 같은 발상이다. 확률이 p인 기호에 대략 −log<sub>2</sub> p 비트짜리 부호를 주면 평균 길이가 가장 짧아진다.</p>
+
+<h3 id="엔트로피-평균-놀람"><a href="#엔트로피-평균-놀람" class="heading-anchor" aria-hidden="true">#</a> 엔트로피: 평균 놀람</h3>
+<p>기호마다 놀람의 양이 다르니, 평균을 내면 그 정보원(source)이 한 기호당 평균 얼마의 정보를 내는지 알 수 있다. 이것이 <strong>섀넌 엔트로피</strong>다.</p>
+<p style="text-align:center;font-size:1.1em;"><strong>H(p) = Σ p(x) · (−log<sub>2</sub> p(x))</strong></p>
+<p>공정한 동전의 엔트로피는 1비트다. 앞면이 90% 나오는 찌그러진 동전이라면 0.9×0.152 + 0.1×3.32 ≈ 0.47비트가 된다. 결과가 뻔할수록 평균 놀람이 작다. 섀넌의 <strong>원천 부호화 정리</strong>는 이 값이 무손실 압축의 바닥이라고 말한다. 어떤 영리한 방법을 써도 한 기호당 평균 H비트보다 짧게, 원본을 완벽히 되살릴 수 있도록 줄일 수는 없다. 그리고 확률을 정확히 알면 그 바닥에 거의 닿을 수 있다.</p>
+
+<h3 id="모든-것을-줄이는-압축기는-없다"><a href="#모든-것을-줄이는-압축기는-없다" class="heading-anchor" aria-hidden="true">#</a> 모든 것을 줄이는 압축기는 없다</h3>
+<p>여기서 중요한 사실 하나를 짚어 두자. 무손실 압축기는 서로 다른 입력을 서로 다른 출력으로 보내야 한다(그래야 되살릴 수 있다). 그런데 n비트 문자열은 2<sup>n</sup>개인데 n비트보다 짧은 문자열은 모두 합쳐도 2<sup>n</sup>−1개뿐이다. 비둘기집 원리에 따라 <strong>모든 입력을 줄이는 압축기는 존재할 수 없다.</strong> 어떤 데이터를 줄이면 다른 어떤 데이터는 늘어난다. 그래서 압축기는 언제나 "세상의 데이터는 대개 이렇게 생겼을 것"이라는 가정, 곧 확률 모형을 품고 있다. PNG는 이웃 픽셀이 비슷하다는 가정을, FLAC은 소리 파형이 앞 샘플로부터 예측된다는 가정을 품는다. 압축 성능은 결국 그 가정이 얼마나 맞느냐, 곧 <strong>예측이 얼마나 정확하냐</strong>의 문제다. 순수한 난수는 어떤 가정으로도 줄일 수 없다. 뒤에 나올 표에서 난수(Random) 열이 늘 100% 근처이거나 그보다 큰 것은 이 때문이다.</p>
+
+<h2 id="2-산술-부호화-확률을-비트로-바꾸는-기계"><a href="#2-산술-부호화-확률을-비트로-바꾸는-기계" class="heading-anchor" aria-hidden="true">#</a> 2. 산술 부호화: 확률을 비트로 바꾸는 기계</h2>
+<p>원리는 알았지만, 실제로 "확률 p인 기호에 −log<sub>2</sub> p 비트"를 주는 방법이 필요하다. 1952년의 <strong>허프만 부호</strong>는 기호마다 정수 비트 길이의 부호를 준다. 그래서 확률이 0.9인 기호에도 최소 1비트를 줘야 해서 손해를 본다(이상적인 길이는 0.15비트다). 1976–1977년 리사넨(Rissanen)과 파스코(Pasco)가 내놓은 <strong>산술 부호화(arithmetic coding)</strong>는 기호 하나하나에 부호를 주는 대신 메시지 전체를 0과 1 사이의 실수 하나로 표현해 이 손해를 없앤다.</p>
+<p>방법은 피자를 계속 잘라 들어가는 것과 비슷하다. 처음엔 구간 [0, 1) 전체가 있다. 모델이 첫 글자의 확률을 말하면 구간을 그 비율대로 나누고, 실제로 나온 글자의 조각만 남긴다. 다음 글자에서는 남은 조각을 다시 다음 확률대로 나눈다. 글자가 이어질수록 구간은 좁아지고, 끝까지 남은 좁은 구간 안에 들어가는 가장 짧은 이진 소수를 골라 그 자릿수를 전송한다. 딥마인드 논문의 그림 1이 바로 이 과정을 네 글자 문자열 <code>AIXI</code>로 보여 준다.</p>
+
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>단계</th><th>모델의 예측</th><th>나온 글자</th><th>남는 구간</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>P(A)=0.45, P(I)=0.3, P(X)=0.25</td><td>A</td><td>[0, 0.45)</td></tr>
+<tr><td>2</td><td>P(A|A)=0.2, P(I|A)=0.6, P(X|A)=0.2</td><td>I</td><td>[0.09, 0.36)</td></tr>
+<tr><td>3–4</td><td>같은 방식으로 계속</td><td>X, I</td><td>[0.322, 0.341)</td></tr>
+</tbody>
+</table>
+</div>
+<p>마지막 구간의 폭은 약 0.019다. 이제 [0, 1)을 반씩 쪼개 가며 이 구간 안에 완전히 들어가는 이진 구간을 찾는다. 0 → [0, 0.5), 01 → [0.25, 0.5), 010, 0101, 01010, 010101을 거쳐 <code>0101010</code> → [0.328125, 0.3359375)에 이르면 이 이진 구간이 [0.322, 0.341) 안에 쏙 들어간다. 결과는 <strong>7비트</strong>다. 원래 <code>AIXI</code>는 4바이트, 곧 32비트였다.</p>
+<p>왜 하필 7비트일까. 구간의 폭은 네 글자 확률을 모두 곱한 값, 곧 모델이 이 문자열 전체에 준 확률이다. −log<sub>2</sub> 0.019 ≈ 5.7비트가 이상적인 길이이고, 산술 부호는 이론상 ⌈−log<sub>2</sub> p⌉ + 1비트 안에 끝난다. ⌈5.7⌉ + 1 = 7. 확률 계산을 무한 정밀도로 한다고 가정한 값이지만, 32비트나 64비트 연산에서 생기는 추가 손실은 무시할 만큼 작다. 결론은 분명하다. <strong>산술 부호화는 사실상 최적이므로, 압축 성능은 전적으로 모델이 얼마나 예측을 잘하느냐에 달려 있다.</strong></p>
+<p>풀 때도 같은 모델이 필요하다. 받는 쪽은 숫자 0.328…을 받아 첫 구간 분할에서 그 수가 A 영역에 있음을 보고 A를 복원하고, 다시 같은 모델로 다음 분할을 만들어 I를 복원하는 식으로 진행한다. 보내는 쪽과 받는 쪽이 <strong>똑같은 예측 모델</strong>을 가지고 있어야 한다는 점이 뒤에서 '모델 크기를 계산에 넣어야 하는가'라는 문제로 돌아온다.</p>
+
+<h2 id="3-언어-모델의-학습-목표는-처음부터-압축이었다"><a href="#3-언어-모델의-학습-목표는-처음부터-압축이었다" class="heading-anchor" aria-hidden="true">#</a> 3. 언어 모델의 학습 목표는 처음부터 압축이었다</h2>
+<p>현실에서는 데이터의 진짜 확률 분포 p를 모른다. 대신 모델이 추정한 분포 q로 부호를 만든다. 그러면 평균 부호 길이는 엔트로피 H(p)가 아니라 <strong>교차 엔트로피</strong>가 된다.</p>
+<p style="text-align:center;font-size:1.1em;"><strong>H(p, q) = 𝔼<sub>x∼p</sub> [ Σ<sub>i</sub> −log<sub>2</sub> q(x<sub>i</sub> | x<sub>&lt;i</sub>) ]</strong></p>
+<p>이 식을 보고 놀라야 한다. GPT든 라마든, 오늘날 언어 모델을 사전 학습시킬 때 최소화하는 손실 함수가 바로 이 식, 다음 토큰에 대한 로그 손실(log-loss, 교차 엔트로피)이다. 로그의 밑이 e냐 2냐의 차이뿐이다. 즉 <strong>언어 모델 학습은 정의상 "이 데이터를 산술 부호화로 압축했을 때의 길이"를 줄이는 일</strong>이다. 딥마인드 논문의 표현을 빌리면 현재의 언어 모델 학습 절차는 최대 압축이라는 목표를 쓰고 있다. 교차 엔트로피는 언제나 엔트로피보다 크거나 같고, 그 차이(KL 발산)가 모델이 틀린 만큼 내는 '벌금'이다.</p>
+<p>체인 룰도 함께 기억해 두면 좋다. 문자열 전체의 확률은 각 위치의 조건부 확률의 곱 q(x<sub>1:n</sub>) = Π q(x<sub>i</sub> | x<sub>&lt;i</sub>)이고, 로그를 취하면 각 위치의 부호 길이를 더한 값이 된다. 언어 모델이 한 토큰씩 다음을 예측하는 구조는 산술 부호화가 한 글자씩 구간을 좁히는 구조와 정확히 맞물린다.</p>
+
+<h3 id="측정-단위-bpc와-토큰당-비트"><a href="#측정-단위-bpc와-토큰당-비트" class="heading-anchor" aria-hidden="true">#</a> 측정 단위: BPC와 토큰당 비트</h3>
+<p>압축 성능은 보통 두 가지로 적는다. 하나는 <strong>압축률</strong>(압축 후 크기 ÷ 원본 크기, 낮을수록 좋음)이고, 다른 하나는 <strong>BPC(bits per character, 글자당 비트)</strong>다. 토큰당 비트는 모델마다 토크나이저가 달라 서로 비교할 수 없다. 한 모델은 '압축'을 한 토큰으로, 다른 모델은 두 토큰으로 자를 수 있기 때문이다. 그래서 전체 로그 손실의 합을 토큰 수가 아니라 원문 글자 수로 나눈 BPC를 쓴다. ASCII 텍스트는 글자당 8비트이니, BPC가 0.53이라면 원래 크기의 약 6.6%로 줄였다는 뜻이다. 뒤에 나올 두 번째 논문에서 라마 2 70B가 웹 텍스트에서 기록한 값이 0.527이다.</p>
+
+<h3 id="반대-방향-압축기로-예측하기"><a href="#반대-방향-압축기로-예측하기" class="heading-anchor" aria-hidden="true">#</a> 반대 방향: 압축기로 예측하기</h3>
+<p>등가 관계는 양쪽으로 성립한다. 예측기가 있으면 산술 부호화로 압축기를 만들 수 있고, 반대로 압축기가 있으면 예측기를 만들 수 있다. 부호 길이 l(x)를 확률 2<sup>−l(x)</sup>로 읽으면 된다. 지금까지의 문자열 x 뒤에 글자 b를 붙여 압축해 보고, 늘어난 비트 수로 확률을 정한다.</p>
+<p style="text-align:center;font-size:1.1em;"><strong>q(b | x) = 2<sup>l(x) − l(xb)</sup></strong></p>
+<p>b를 붙였는데 압축 결과가 거의 늘지 않았다면 압축기 입장에서 b는 '뻔한' 다음 글자, 곧 확률이 높은 글자다. 이 식으로 gzip 같은 평범한 압축기도 다음 글자를 뽑는 생성 모델이 된다. 2000년 무렵부터 압축기로 문서를 분류하는 연구가 있었고, 2023년에는 gzip과 최근접 이웃만으로 텍스트를 분류해 화제가 된 연구도 나왔다. 모두 이 등가 관계 위에 서 있다.</p>
+
+<h2 id="4-연구사-가장-짧은-설명을-찾는-일"><a href="#4-연구사-가장-짧은-설명을-찾는-일" class="heading-anchor" aria-hidden="true">#</a> 4. 연구사: 가장 짧은 설명을 찾는 일</h2>
+<p>섀넌의 엔트로피는 확률 분포가 이미 주어진 상황의 이야기다. 그런데 분포를 모른다면, 아니 데이터가 어떤 분포에서 왔는지조차 말하기 어렵다면 어떻게 할까. 1960년대에 세 사람이 거의 동시에 다른 각도에서 답을 냈다.</p>
+
+<h3 id="섀넌-1951-사람도-예측기다"><a href="#섀넌-1951-사람도-예측기다" class="heading-anchor" aria-hidden="true">#</a> 섀넌 1951: 사람도 예측기다</h3>
+<p>섀넌은 1951년 논문에서 사람에게 영어 문장의 다음 글자를 맞히게 하는 실험으로 영어의 엔트로피를 추정했다. 사람이 다음 글자를 잘 맞힐수록 영어는 덜 놀랍고, 따라서 더 많이 줄일 수 있다. 예측과 압축을 같은 것으로 보는 관점은 이렇게 처음부터 '언어를 이해하는 존재가 얼마나 잘 맞히는가'라는 질문과 묶여 있었다. 두 번째 논문이 배경에서 섀넌 1948과 1951을 함께 드는 이유다.</p>
+
+<h3 id="콜모고로프-복잡도-가장-짧은-프로그램"><a href="#콜모고로프-복잡도-가장-짧은-프로그램" class="heading-anchor" aria-hidden="true">#</a> 콜모고로프 복잡도: 가장 짧은 프로그램</h3>
+<p>문자열 <code>010101…01</code>(100만 자)과 동전을 100만 번 던진 결과를 비교해 보자. 길이는 같지만 앞의 것은 "01을 50만 번 출력하라"는 짧은 프로그램으로 다시 만들 수 있다. 뒤의 것은 결과를 통째로 적는 것보다 짧은 방법이 없다. <strong>콜모고로프 복잡도</strong> K(x)는 고정된 범용 컴퓨터에서 x를 출력하고 멈추는 가장 짧은 프로그램의 길이다. 확률 분포 없이 개별 문자열 하나의 '정보량'을 정의한 것이다. 원주율 π의 숫자 1억 자리는 무작위처럼 보이지만 짧은 프로그램으로 만들 수 있으니 K가 작다. 데이터에 숨은 규칙성을 모두 찾아낸 궁극의 압축기가 도달하는 길이가 바로 K(x)다.</p>
+<p>문제는 K(x)가 <strong>계산 불가능</strong>하다는 점이다. 어떤 프로그램이 x를 출력하고 멈출지 일반적으로 판정할 수 없다(정지 문제). 그래서 실제 압축기는 모두 K(x)의 위쪽 근사치다. gzip은 반복되는 문자열을 찾는 방식으로, 언어 모델은 학습된 예측으로 그 근사를 한다.</p>
+
+<h3 id="솔로모노프-귀납-모든-가설의-가중-평균"><a href="#솔로모노프-귀납-모든-가설의-가중-평균" class="heading-anchor" aria-hidden="true">#</a> 솔로모노프 귀납: 모든 가설의 가중 평균</h3>
+<p>레이 솔로모노프는 1964년 귀납 추론, 곧 "지금까지 본 것으로 다음을 예측하는 일"의 형식 이론을 내놓았다. 착상은 이렇다. 관찰된 데이터를 설명할 수 있는 모든 컴퓨터 프로그램을 가설로 놓는다. 길이가 l(q)비트인 프로그램 q에는 사전 가중치 2<sup>−l(q)</sup>를 준다. 짧은 설명일수록 무겁게, 오컴의 면도날을 수식으로 쓴 셈이다. 그리고 모든 가설의 예측을 가중 평균한다.</p>
+<p style="text-align:center;font-size:1.1em;"><strong>S(x) = Σ<sub>q</sub> 2<sup>−l(q)</sup> · q(x)</strong></p>
+<p>이 합에는 계산 가능한 모든 예측기가 들어 있으므로, 어떤 예측기 q에 대해서도 S의 부호 길이는 q의 부호 길이에 q 자신의 길이 l(q)만 더한 것을 넘지 않는다. −log<sub>2</sub> S(x) ≤ −log<sub>2</sub> q(x) + l(q). l(q)는 데이터 길이와 무관한 상수이므로, 데이터가 길어지면 솔로모노프 예측기는 어떤 계산 가능한 예측기 못지않게 압축하고 예측한다. 딥마인드 논문은 부호 길이로 콜모고로프 복잡도를 쓰면 이 솔로모노프 예측기가 복원된다고 정리한 뒤 "최적으로 압축하는 것과 최적으로 예측하는 것은 같다"는 후터(2005)의 결론을 인용한다. 이것 역시 계산 불가능한 이상형이지만, 좋은 예측기가 무엇을 향해 가는지 알려 주는 북극성 노릇을 한다.</p>
+<p>같은 시기의 실용적 짝으로 리사넨의 <strong>최소 기술 길이(MDL)</strong> 원리가 있다. 모델을 설명하는 비트와 그 모델로 데이터를 설명하는 비트의 합이 가장 작은 모델을 고르라는 원리다. 뒤에 나올 '조정 압축률'이 바로 이 두 부분 부호(two-part code)의 발상이다.</p>
+
+<h3 id="후터의-aixi와-후터-상"><a href="#후터의-aixi와-후터-상" class="heading-anchor" aria-hidden="true">#</a> 후터의 AIXI와 후터 상</h3>
+<p>마르쿠스 후터는 솔로모노프의 예측을 의사결정과 결합해 <strong>AIXI</strong>라는 이론적 에이전트를 정의했다(2005년 책 『Universal Artificial Intelligence』). AIXI는 환경에 대한 모든 계산 가능한 가설을 솔로모노프 방식으로 가중 평균해 미래를 예측하고, 기대 보상이 가장 큰 행동을 고른다. 계산 불가능하지만 "가장 일반적인 의미의 지능적 에이전트"의 수학적 정의로 자주 인용된다. 딥마인드 논문이 산술 부호화 예시 문자열로 하필 <code>AIXI</code>를 고른 것도, 후터가 이 논문의 공저자인 것도 우연이 아니다.</p>
+<p>후터는 2006년 이 이론을 실험장으로 끌어냈다. 영어 위키백과 덤프의 앞 1억 바이트(enwik8)를 얼마나 작게 무손실 압축하느냐를 겨루는 <strong>후터 상(Hutter Prize)</strong>이다. 그 근거는 "인류 지식을 잘 압축하려면 그 지식을 이해해야 한다"는 것이었다. 나중에 대상은 10억 바이트의 enwik9로 커졌고, 상금은 50만 유로 규모로 알려져 있다. 그리고 셰인 레그와 후터는 2007년 지능을 "<em>폭넓은 환경에서 목표를 달성하는 에이전트의 능력</em>"으로 정의했다. 두 번째 논문은 이 정의를 빌려 '여러 벤치마크의 평균 점수'를 지능의 대리 지표로 삼는다.</p>
+
+<h3 id="ppm에서-llm까지-예측-압축기의-계보"><a href="#ppm에서-llm까지-예측-압축기의-계보" class="heading-anchor" aria-hidden="true">#</a> PPM에서 LLM까지: 예측 압축기의 계보</h3>
+<p>실용 압축의 역사도 같은 길을 걸었다. 1984년의 PPM(부분 일치 예측)은 앞 몇 글자의 문맥으로 다음 글자 확률을 세어 산술 부호화에 넣었다. 1995년의 CTW는 여러 마르코프 모델의 예측을 섞었고, 2000년대의 PAQ 계열은 수많은 모델을 가중 결합했다. 1990년대 중반 슈미트후버는 신경망 예측기로 텍스트를 압축했고, 2014년의 cmix, 파브리스 벨라르의 트랜스포머 기반 NNCP(2019·2021)로 이어지며 신경망이 압축 순위표의 최상단을 차지했다. 2023년의 LLMzip은 라마 2 7B로 텍스트를 압축했다. 정리하면, <strong>"좋은 압축기 = 좋은 예측기"는 수십 년 된 상식이었고, 2020년대에는 가장 좋은 예측기가 거대 언어 모델이 되었다.</strong> 두 논문은 이 지점에서 출발한다.</p>
+
+<h2 id="5-언어-모델로-압축하기-실험의-설정"><a href="#5-언어-모델로-압축하기-실험의-설정" class="heading-anchor" aria-hidden="true">#</a> 5. 언어 모델로 압축하기: 실험의 설정</h2>
+<p>딥마인드 논문의 질문은 간단하다. 이미 학습된 거대 언어 모델을 산술 부호화기에 붙이면 얼마나 좋은 압축기가 되는가. 몇 가지 설정을 알아 두어야 결과를 바르게 읽을 수 있다.</p>
+<ul>
+<li><strong>오프라인(문맥 내) 압축</strong>: 모델은 압축할 데이터와 다른 데이터로 미리 학습되어 있고, 압축하는 동안 파라미터는 고정된다. 모델은 오직 입력 문맥을 보고 그 자리에서 적응한다. 압축할 데이터로 모델을 그때그때 학습시키는 온라인 방식(NNCP 같은)과 구별된다.</li>
+<li><strong>세 가지 데이터, 각 1GB</strong>: 텍스트는 enwik9(위키백과 앞 10억 바이트), 이미지는 ImageNet 사진에서 잘라 낸 32×64 흑백 패치(픽셀 하나가 1바이트, 패치 하나가 2048바이트), 소리는 LibriSpeech 영어 낭독 음성(16kHz)을 2048바이트씩 자른 조각이다. 패치와 조각은 각각 488,821개씩이다.</li>
+<li><strong>2048바이트 단위</strong>: 트랜스포머의 문맥 길이 한계 때문에 데이터를 2048바이트씩 잘라 하나씩, 앞 조각의 기억 없이 압축한다. 공정하게 비교하려고 gzip, LZMA2, PNG, FLAC도 같은 크기로 잘라 압축한 결과와 자르지 않은 결과를 함께 보고한다.</li>
+<li><strong>바이트를 텍스트처럼</strong>: 모델은 ASCII 범위(0–127)만 입력으로 받으므로 이미지와 소리의 각 바이트를 2로 나눠 7비트로 만들고, 버린 최하위 비트는 압축 결과 뒤에 그대로 덧붙여 계산에 넣었다. 사전 학습 모델은 다음 토큰 확률 중 상위 100개만 받아 다시 정규화해 썼다.</li>
+</ul>
+<p>비교 대상인 모델은 enwik8로 직접 학습시킨 작은 트랜스포머(20만~320만 파라미터)와 텍스트로 사전 학습된 Llama 2 7B, Chinchilla 1B·7B·70B다. 친칠라의 학습 데이터는 웹 텍스트, 위키백과, 깃허브, 책이다. 이미지와 소리를 배운 적은 없다(웹 어딘가에 그런 데이터가 텍스트로 적혀 있었을 가능성은 낮지만 0은 아니라고 논문은 덧붙인다).</p>
+
+<h2 id="6-텍스트만-배운-모델이-사진과-소리를-줄이다"><a href="#6-텍스트만-배운-모델이-사진과-소리를-줄이다" class="heading-anchor" aria-hidden="true">#</a> 6. 텍스트만 배운 모델이 사진과 소리를 줄이다</h2>
+<p>결과는 논문 표 1에 있다. 숫자는 압축 후 크기가 원본의 몇 %인지이며 낮을수록 좋다. 먼저 모델 크기를 계산에 넣지 않은 '원시(raw)' 압축률이다.</p>
+
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>압축기</th><th>분할</th><th>텍스트<br>(enwik9)</th><th>이미지<br>(ImageNet)</th><th>소리<br>(LibriSpeech)</th><th>난수</th></tr></thead>
+<tbody>
+<tr><td>gzip</td><td>없음</td><td>32.3</td><td>70.7</td><td>36.4</td><td>100.0</td></tr>
+<tr><td>LZMA2</td><td>없음</td><td>23.0</td><td>57.9</td><td>29.9</td><td>100.0</td></tr>
+<tr><td>PNG</td><td>없음</td><td>42.9</td><td>58.5</td><td>32.2</td><td>100.0</td></tr>
+<tr><td>FLAC</td><td>없음</td><td>89.5</td><td>61.9</td><td>30.9</td><td>107.8</td></tr>
+<tr><td>gzip</td><td>2048</td><td>48.1</td><td>68.6</td><td>38.5</td><td>100.1</td></tr>
+<tr><td>PNG</td><td>2048</td><td>80.6</td><td>61.7</td><td>37.6</td><td>103.2</td></tr>
+<tr><td>FLAC</td><td>2048</td><td>88.9</td><td>60.9</td><td>30.3</td><td>107.2</td></tr>
+<tr><td>트랜스포머 3.2M (enwik8 학습)</td><td>2048</td><td>17.0</td><td>215.8</td><td>228.2</td><td>224.0</td></tr>
+<tr><td>Llama 2 7B</td><td>2048</td><td>8.9</td><td>53.4</td><td>23.1</td><td>103.2</td></tr>
+<tr><td>Chinchilla 1B</td><td>2048</td><td>11.3</td><td>62.2</td><td>24.9</td><td>108.8</td></tr>
+<tr><td>Chinchilla 7B</td><td>2048</td><td>10.2</td><td>54.7</td><td>23.6</td><td>101.6</td></tr>
+<tr><td><strong>Chinchilla 70B</strong></td><td>2048</td><td><strong>8.3</strong></td><td><strong>48.0</strong></td><td><strong>21.0</strong></td><td>100.8</td></tr>
+</tbody>
+</table>
+</div>
+<p>세 가지가 눈에 띈다. 첫째, <strong>텍스트에서 LLM은 압도적이다.</strong> 친칠라 70B는 위키백과를 원래의 8.3%로 줄였다. gzip(32.3%)의 4분의 1 수준이다. 둘째, <strong>이미지와 소리에서도 LLM이 1등이다.</strong> 친칠라 70B는 사진 패치를 48.0%로 줄여 자르지 않은 PNG(58.5%)를 이겼고, 음성을 21.0%로 줄여 FLAC(같은 2048바이트 분할 30.3%, 분할 없이 30.9%)을 이겼다. 논문 초록과 서론은 같은 비교를 이미지 43.4%, 소리 16.4%로 적고 있는데, 본문 표에는 48.0%와 21.0%로 실려 있다. 어느 쪽 숫자로 읽어도 결론은 같다. 텍스트만 본 모델이 해당 분야 전용 압축기를 이긴다. 셋째, <strong>enwik8로만 학습한 작은 트랜스포머는 텍스트 밖에서 무너진다.</strong> 이미지와 소리에서 압축률이 200%를 넘는다. 줄이기는커녕 두 배로 늘렸다는 뜻이다. 좁은 데이터에 과적합된 예측기는 낯선 데이터를 '엉뚱하게 확신'하고, 그 대가로 비트를 낭비한다.</p>
+<p>어떻게 이런 일이 가능할까. 논문의 설명은 <strong>문맥 내 학습(in-context learning)</strong>이다. 거대 모델은 텍스트로 '메타 학습'되어, 주어진 문맥에서 데이터의 통계를 재빨리 읽어 내고 거기에 맞춰 예측하는 일반적인 능력을 갖췄다. 픽셀 밝기 바이트들이 이어지면 "이 수열은 천천히 변한다", "이 값 근처가 반복된다" 같은 규칙을 2048바이트 안에서 즉석으로 잡아낸다. PNG나 FLAC은 사람이 미리 정해 둔 하나의 가정에 묶여 있지만, LLM은 입력을 보고 가정을 바꾼다. 앞 절의 비둘기집 원리를 떠올리면, 특정 분야 압축기는 다른 분야에서 실패하기 마련인데(FLAC이 텍스트를 89.5%로밖에 못 줄인다), LLM은 여러 분야에서 고르게 강한 <strong>범용 압축기</strong>처럼 행동한다.</p>
+
+<h3 id="문맥이-길어질수록-좋아지는-압축"><a href="#문맥이-길어질수록-좋아지는-압축" class="heading-anchor" aria-hidden="true">#</a> 문맥이 길어질수록 좋아지는 압축</h3>
+<p>논문 그림 4는 이 적응을 직접 보여 준다. 2048바이트 조각 안에서 앞부분을 많이 볼수록, 곧 문맥이 길어질수록 압축률이 빠르게 좋아진다. 경사하강법 학습 없이 문맥만으로 데이터 통계를 배운다는 증거다. 여기서 고전 압축기와 LLM의 전략 차이가 드러난다. gzip(최대 32KB)이나 LZMA2(사실상 무한)는 프로그램은 작고 문맥은 길다. LLM은 수십억 개 파라미터라는 거대한 '사전 지식'을 들고 짧은 문맥에서 빠르게 적응한다. 그래서 문맥 길이가 LLM 압축의 핵심 제약이 된다. 한 번에 몇 킬로바이트밖에 압축하지 못하고, 그마저 계산량이 막대하다.</p>
+
+<h2 id="7-모델-크기를-계산에-넣으면-조정-압축률"><a href="#7-모델-크기를-계산에-넣으면-조정-압축률" class="heading-anchor" aria-hidden="true">#</a> 7. 모델 크기를 계산에 넣으면: 조정 압축률</h2>
+<p>여기서 날카로운 반문이 나온다. 2절에서 본 것처럼 압축을 풀려면 받는 쪽도 똑같은 모델이 있어야 한다. 1GB짜리 사진 폴더를 줄였다고 자랑하면서 140GB짜리 모델을 함께 보내야 한다면 배보다 배꼽이 크지 않은가. 논문은 이 비용을 정면으로 계산한다. <strong>조정 압축률(adjusted compression rate)</strong>은 압축 결과에 모델 파라미터의 크기(파라미터 하나당 float16 2바이트)를 더한 뒤 원본 크기로 나눈 값이다. 4절에서 본 MDL의 두 부분 부호와 같은 발상이다.</p>
+
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>모델</th><th>파라미터 크기</th><th>텍스트 조정</th><th>이미지 조정</th><th>소리 조정</th></tr></thead>
+<tbody>
+<tr><td>gzip (분할 없음)</td><td>수 KB</td><td>32.3</td><td>70.7</td><td>36.4</td></tr>
+<tr><td>트랜스포머 3.2M</td><td>약 6.4MB</td><td>17.7</td><td>216.5</td><td>228.9</td></tr>
+<tr><td>Chinchilla 1B</td><td>약 2GB</td><td>211.3</td><td>262.2</td><td>224.9</td></tr>
+<tr><td>Llama 2 7B</td><td>약 14GB</td><td>1408.9</td><td>1453.4</td><td>1423.1</td></tr>
+<tr><td>Chinchilla 70B</td><td>약 140GB</td><td>14008.3</td><td>14048.0</td><td>14021.0</td></tr>
+</tbody>
+</table>
+</div>
+<p>계산은 단순하다. 14GB짜리 모델을 1GB 데이터에 얹으면 그것만으로 1,400%가 더해진다. Llama 2 7B의 조정 압축률이 1,400%를 넘고 Chinchilla 70B는 14,000%를 넘는다. 1GB 규모에서는 거대 모델이 쓸모없는 압축기다. 논문은 파라미터를 gzip이나 LZMA2로 더 줄여 봐도 거의 줄지 않는다는 것도 확인했다(3800만 파라미터 모델에서 각각 92.2%, 89.1%). 거대 모델이 조정 압축률에서도 이기려면 테라바이트 이상의 데이터를 압축해야 한다.</p>
+
+<h3 id="데이터-크기가-모델-크기의-상한을-정한다"><a href="#데이터-크기가-모델-크기의-상한을-정한다" class="heading-anchor" aria-hidden="true">#</a> 데이터 크기가 모델 크기의 상한을 정한다</h3>
+<p>그렇다면 데이터 양이 주어졌을 때 가장 좋은 모델 크기가 있을 것이다. 논문은 enwik8로 학습한 여러 크기의 트랜스포머로 enwik7(1천만 바이트), enwik8, enwik9를 압축해 조정 압축률을 그렸다(그림 2). 모든 곡선은 처음엔 모델이 커질수록 내려가다가 어느 지점부터 다시 올라간다. 모델이 데이터를 더 잘 예측해 아끼는 비트보다 모델 자체의 비트가 더 빨리 늘기 때문이다. <strong>데이터셋마다 최적의 모델 크기가 있고, 데이터가 클수록 더 큰 모델을 감당할 수 있다.</strong></p>
+<p>이 결과는 스케일링 법칙에 대한 해석을 바꾼다. 일반적인 스케일링 법칙은 로그 손실만 보므로 모델이 클수록 계속 좋아 보인다. 압축 관점에서 모델 크기까지 셈하면 "크게 만들면 언제나 낫다"는 은탄환이 아니며, 데이터 크기가 모델 크기의 사실상 상한을 정한다. 압축을 잘하는 모델이 일반화도 잘한다는 후터의 관점에서 보면, 조정 압축률은 과적합을 벌하는 일반화 지표다. 다만 이것은 두 부분 부호로 계산한 오프라인 관점의 이야기다. 논문은 학습 스크립트의 길이만 셈하는 <strong>순차(prequential) 부호화</strong>라는 다른 계산법이 있고, 과잉 파라미터 신경망에는 그쪽이 더 유리하다는 점도 밝힌다(다만 압축과 해제 때 모두 모델을 학습시켜야 해서 비용이 크다).</p>
+
+<h2 id="8-토크나이저는-미리-한-번-하는-압축이다"><a href="#8-토크나이저는-미리-한-번-하는-압축이다" class="heading-anchor" aria-hidden="true">#</a> 8. 토크나이저는 미리 한 번 하는 압축이다</h2>
+<p>언어 모델은 원문 바이트가 아니라 토큰을 입력받는다. BPE(바이트 쌍 부호화) 같은 토크나이저는 자주 나오는 글자 묶음을 하나의 기호로 바꾼다. 무손실이고 길이를 줄이므로 그 자체로 압축이다. 모델은 이미 한 번 압축된 데이터를 배우는 셈이다. 그렇다면 토크나이저가 최종 압축 성능에도 도움이 될까. 논문은 enwik8로 여러 토크나이저를 써서 트랜스포머를 학습시키고 enwik9에서 원시 압축률을 쟀다(표 2).</p>
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>토크나이저</th><th>20만 파라미터</th><th>640만 파라미터</th><th>3,800만 파라미터</th></tr></thead>
+<tbody>
+<tr><td>ASCII (토큰화 없음)</td><td>22.9</td><td><strong>13.6</strong></td><td><strong>6.4</strong></td></tr>
+<tr><td>BPE 1K</td><td>25.4</td><td>14.8</td><td>6.9</td></tr>
+<tr><td>BPE 2K</td><td>25.6</td><td>15.7</td><td>7.4</td></tr>
+<tr><td>BPE 5K</td><td>23.1</td><td>17.1</td><td>8.7</td></tr>
+<tr><td>BPE 10K</td><td>21.3</td><td>17.0</td><td>8.9</td></tr>
+<tr><td>BPE 20K</td><td><strong>19.3</strong></td><td>16.4</td><td>9.0</td></tr>
+</tbody>
+</table>
+</div>
+<p>두 힘이 줄다리기를 한다. 어휘가 커지면 같은 내용이 더 짧은 토큰열이 되어 문맥 창에 더 많은 정보가 들어간다. 대신 매 걸음 골라야 할 선택지가 늘어 다음 토큰 하나를 맞히기가 어려워진다. 이론상 토큰화는 무손실이므로 두 효과가 상쇄되어야 한다. 실제로는 <strong>작은 모델(20만)에서는 큰 어휘가 도움이 되고(22.9 → 19.3), 큰 모델(3,800만)에서는 오히려 손해다(6.4 → 9.0).</strong> 표를 종합하면 큰 모델일수록 토큰화 없이 바이트를 그대로 받을 때 압축이 가장 좋았다. 그런데도 왜 실제 LLM은 토크나이저를 쓸까. 논문의 답은 예측 성능과 효율이다. 짧은 시퀀스는 문맥 창에 더 많은 내용을 담게 해 주고, 트랜스포머의 계산량은 문맥 길이의 제곱으로 늘며, 트랜스포머는 긴 문맥으로 일반화하는 데도 약하다. 토크나이저는 압축률을 위한 장치가 아니라 이런 현실적 제약을 위한 장치다.</p>
+
+<h2 id="9-압축기를-생성-모델로-쓰기"><a href="#9-압축기를-생성-모델로-쓰기" class="heading-anchor" aria-hidden="true">#</a> 9. 압축기를 생성 모델로 쓰기</h2>
+<p>등가 관계의 반대 방향, 곧 압축기로 예측하기도 실험했다. 3절의 식 q(b|x) = 2<sup>l(x)−l(xb)</sup>로 gzip의 다음 바이트 확률을 만들고, 거기서 한 바이트씩 뽑아 이어 붙이면 gzip도 생성 모델이 된다. 이것이 '언어 모델링은 압축'이라는 제목을 양방향으로 완성하는 실험이다.</p>
+<p>이미지 실험에서는 높이 290, 너비 500인 ImageNet 사진의 각 행마다 앞 250픽셀을 보여 주고 나머지 250픽셀을 생성하게 했다(행끼리는 서로 독립으로 취급하는 단순화다). gzip의 결과는 노이즈에 가까웠다. 친칠라 70B는 선과 명암이 그럴듯하게 이어지는 흔적을 보였지만, 생성이 길어질수록 오류가 쌓여 흐트러졌다. 텍스트에서는 차이가 더 극명하다. 위키백과 문단 1,948바이트를 문맥으로 주고 100바이트를 생성하게 하자, gzip은 철자 조각이 뒤섞인 문자열을 내놓았다. 친칠라는 영국 상원 의원직에 관한 원문 흐름을 이어받아 문법적으로 매끄럽고 그럴듯한 문장을 썼다. 소리에서는 친칠라가 같은 패턴을 되풀이하는 자기회귀 생성 특유의 '루프'를 보였다.</p>
+<p>주의할 점도 있다. 압축률이 좋다고 생성 품질이 좋다는 이론적 보장은 없다. 경험적으로 로그 손실이 낮을수록 생성이 좋아지는 경향이 있을 뿐이다. 또 한 걸음씩만 앞을 보는 이 샘플링은 gzip에 불리하다. gzip은 여러 바이트짜리 반복 문자열을 사전 번호로 압축하는데, 한 바이트씩 확률을 재면 그 장점을 쓰지 못한다. 그래서 이 실험은 압축기 성능을 눈으로 보여 주는 시연에 가깝다.</p>
+
+<h2 id="10-압축을-잘하면-더-똑똑한가-질문과-설계"><a href="#10-압축을-잘하면-더-똑똑한가-질문과-설계" class="heading-anchor" aria-hidden="true">#</a> 10. 압축을 잘하면 더 똑똑한가: 질문과 설계</h2>
+<p>첫 번째 논문이 "언어 모델은 압축기"임을 보였다면, 두 번째 논문은 오래된 믿음을 직접 시험한다. <em>언어 모델이 텍스트를 더 적은 비트로 무손실 부호화할 수 있다면, 그것은 더 높은 지능을 뜻하는가?</em> 같은 모델 계열 안에서 검증 손실과 벤치마크 점수가 함께 움직인다는 관찰은 이전에도 있었다. 이 논문의 새로운 점은 <strong>크기, 토크나이저, 문맥 길이, 학습 데이터, 구조가 모두 다른 모델들</strong>을 한자리에 놓고 비교했다는 데 있다.</p>
+
+<h3 id="지능을-무엇으로-잴까"><a href="#지능을-무엇으로-잴까" class="heading-anchor" aria-hidden="true">#</a> 지능을 무엇으로 잴까</h3>
+<p>'지능'은 철학적으로 정의하기 어려우므로, 논문은 레그와 후터의 정의("폭넓은 환경에서 목표를 달성하는 능력")를 따라 여러 과제의 평균 점수를 대리 지표로 삼는다. 세 분야, 12개 벤치마크다.</p>
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>능력</th><th>벤치마크</th><th>압축용 말뭉치</th><th>분량</th><th>수집 시기</th></tr></thead>
+<tbody>
+<tr><td>지식·상식</td><td>NaturalQuestions, TriviaQA, ARC-Challenge, HellaSwag, MMLU</td><td>Common Crawl (2023-40 덤프)</td><td>1억 3,100만 자</td><td>2023년 9–10월</td></tr>
+<tr><td>코딩</td><td>HumanEval, MBPP, DS-1000</td><td>깃허브 파이썬 저장소</td><td>9,800만 자</td><td>2023년 6–9월</td></tr>
+<tr><td>수학 추론</td><td>GSM8K, MATH, SAT-Math, MMLU-Math</td><td>arXiv 수학 논문</td><td>1억 100만 자</td><td>2023년 9–10월</td></tr>
+</tbody>
+</table>
+</div>
+<p>말뭉치를 실험 시점 기준으로 갓 나온 자료로 모은 이유는 <strong>오염 방지</strong>다. 모델이 학습 때 이미 본 텍스트라면 잘 압축하는 게 당연하다. 학습 데이터가 수집된 뒤에 생긴 텍스트라야 진짜 실력을 잴 수 있다.</p>
+
+<h3 id="압축을-어떻게-잴까"><a href="#압축을-어떻게-잴까" class="heading-anchor" aria-hidden="true">#</a> 압축을 어떻게 잴까</h3>
+<ul>
+<li><strong>BPC</strong>: 3절에서 본 대로, 토크나이저가 달라도 비교할 수 있도록 전체 로그 손실 합을 글자 수로 나눈다. BPC = Σ −log<sub>2</sub> q(x<sub>i</sub> | x<sub>&lt;i</sub>) ÷ 글자 수.</li>
+<li><strong>문맥 통일</strong>: 벤치마크 과제의 문맥이 짧은 편이라 모든 모델의 문맥 창을 1,900토큰으로 맞추고, 512토큰씩 미끄러지는 슬라이딩 창으로 계산했다. 창의 경계에서 앞 문맥이 사라져 손실이 튀는 것을 줄이기 위해서다.</li>
+<li><strong>기초(base) 모델만</strong>: 지시 따르기나 대화로 미세 조정된 모델은 일반적인 텍스트 분포를 모델링하지 않으므로 제외했다. 핵심 능력은 사전 학습에서 생긴다고 보았다.</li>
+<li><strong>모델 크기는 셈하지 않음</strong>: 첫 번째 논문과 달리 파라미터 비용은 넣지 않는다. 데이터가 아주 많으면 그 비용이 상각되어 무시할 수 있다는 오프라인 관점이다.</li>
+</ul>
+
+<h3 id="31개-모델"><a href="#31개-모델" class="heading-anchor" aria-hidden="true">#</a> 31개 모델</h3>
+<p>평가한 모델은 31개다. 범용 모델로 Llama 1·2, Qwen, Mistral, Mixtral-8x7B(전문가 혼합 구조), Falcon, Yi, Deepseek-llm, Jamba(맘바와 트랜스포머를 섞은 520억 파라미터 모델)가 있고, 코드 모델로 CodeLlama, Deepseek-coder, StarCoderBase, StarCoder2, 수학 모델로 Deepseek-math, Llemma가 들어갔다. 가장 작은 모델은 Deepseek-coder 1.3B, 가장 큰 모델은 Qwen 72B다. 분야마다 해당 분야를 다룰 만한 모델을 골라 넣었기 때문에 분야별 표에 들어간 모델 수는 조금씩 다르다.</p>
+
+<h2 id="11-압축과-점수는-한-직선-위에-있다"><a href="#11-압축과-점수는-한-직선-위에-있다" class="heading-anchor" aria-hidden="true">#</a> 11. 압축과 점수는 한 직선 위에 있다</h2>
+<p>결과는 논문 제목 그대로다. 가로축에 BPC(낮을수록 압축을 잘함), 세로축에 평균 벤치마크 점수를 찍으면 점들이 오른쪽 아래로 내려가는 거의 곧은 직선 위에 놓인다. <strong>피어슨 상관계수</strong>는 두 변수가 얼마나 한 직선에 가깝게 함께 움직이는지 나타내는 값으로, −1이면 완벽한 반비례 직선, 0이면 직선 관계가 없음을 뜻한다.</p>
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>비교</th><th>피어슨 ρ</th><th>RMSE</th></tr></thead>
+<tbody>
+<tr><td>지식·상식 평균 ↔ Common Crawl BPC</td><td>−0.935</td><td>0.019</td></tr>
+<tr><td>코딩 평균 ↔ 파이썬 BPC</td><td>−0.937</td><td>0.040</td></tr>
+<tr><td>수학 평균 ↔ arXiv 수학 BPC (Qwen 제외)</td><td>−0.953</td><td>0.031</td></tr>
+<tr><td>12개 전체 평균 ↔ 전체 말뭉치 평균 BPC</td><td>−0.931</td><td>0.031</td></tr>
+</tbody>
+</table>
+</div>
+<p>세 분야 모두 약 −0.95 근처다. 직선이 개별 벤치마크에서도 대체로 유지된다는 점이 더 놀랍다. 지식 분야에서 TriviaQA는 −0.951, NaturalQuestions −0.925, ARC-Challenge −0.913, MMLU −0.890, HellaSwag −0.881이었다. 코딩에서는 HumanEval −0.903, MBPP −0.916, DS-1000 −0.946, 수학에서는 GSM8K −0.922, MATH −0.899, SAT-Math −0.933, MMLU-Math −0.916이었다.</p>
+<p>구체적인 점 두 개를 보면 감이 온다. 지식 분야에서 Falcon 7B는 BPC 0.649에 평균 47.9점, Llama 2 70B는 BPC 0.527에 평균 63.1점이었다. BPC 0.12 차이가 점수 15점 차이로 이어진다. 같은 70억 파라미터급 안에서도 Mistral 7B(0.605, 57.1점)는 Llama 2 7B(0.612, 51.1점)보다 압축도 점수도 앞섰다. 덩치가 아니라 압축 효율이 점수를 가른다. 말뭉치를 다시 뽑아 BPC를 세 번 재면 표준편차가 평균 0.002 안팎이어서 측정값 자체도 안정적이었다.</p>
+<p>이 결과가 의미 있는 이유는 비교한 모델들이 서로 너무 다르기 때문이다. 라마와 큐엔과 미스트랄은 토크나이저도, 구조도, 학습 데이터도 다르다. 그런데도 'BPC'라는 숫자 하나가 이들의 능력 순서를 거의 정확히 예측한다. 압축 효율이 모델 설계의 세부를 넘어서는 공통 척도처럼 작동한다는 뜻이다. 논문은 이를 "우수한 압축이 더 높은 지능을 나타낸다는 오랜 믿음에 대한 경험적 증거"라고 부른다.</p>
+
+<h2 id="12-직선에서-벗어난-점들-데이터-오염과-형식-과적합"><a href="#12-직선에서-벗어난-점들-데이터-오염과-형식-과적합" class="heading-anchor" aria-hidden="true">#</a> 12. 직선에서 벗어난 점들: 데이터 오염과 형식 과적합</h2>
+<p>직선이 이렇게 곧다면, 거기서 크게 벗어난 점은 그 자체로 신호가 된다. 압축 실력에 비해 시험 점수만 유난히 높다면 무언가 시험에 특화된 일이 있었을 가능성이 있다. 굿하트의 법칙 그대로다. "측정치가 목표가 되면 좋은 측정치가 아니게 된다."</p>
+
+<h3 id="min-k-prob-커닝-탐지기"><a href="#min-k-prob-커닝-탐지기" class="heading-anchor" aria-hidden="true">#</a> Min-K% Prob: 커닝 탐지기</h3>
+<p>논문은 벤치마크 문제가 학습 데이터에 섞였는지 보려고 Shi 외(2024)의 <strong>Min-K% Prob</strong> 기법을 k = 20으로 썼다. 원리는 이렇다. 처음 보는 문장이라면 모델은 그 안의 몇몇 단어에 크게 놀란다. 문장에서 모델이 가장 낮은 확률을 준 하위 20% 토큰들을 골라 그 확률을 살핀다. 처음 보는 텍스트라면 이 '가장 의외인 단어들'에서 확률이 매우 낮게 나와야 정상이다. 그런데 가장 의외여야 할 단어들조차 술술 맞힌다면, 모델이 그 문장을 통째로 본 적이 있다고 의심할 수 있다. 저녁 메뉴 이야기에서 "피자 대신 우라늄"이 나왔는데 그 '우라늄'까지 높은 확률로 맞힌다면, 그 문장을 외운 것이다. 논문은 이 탐지 점수가 눈에 띄게 낮게(곧 의심스럽게) 나온 경우를 노출 흔적으로 읽었다.</p>
+<ul>
+<li><strong>Qwen과 수학</strong>: Qwen 계열(7B, 14B, 72B)은 GSM8K와 MATH에서 Min-K% 점수가 비정상적으로 낮았다. 사전 학습 데이터에 해당 벤치마크 데이터가 섞였을 가능성을 뜻한다. 실제로 Qwen 72B는 수학 평균 58.1점으로 표에서 가장 높았지만 BPC(0.415)는 Mixtral-8x7B(0.394, 48.9점)보다 나빴다. 논문은 Qwen을 이상치로 빼고 수학 분야의 상관(−0.953)을 계산했다.</li>
+<li><strong>Deepseek-coder와 코딩</strong>: Deepseek-coder 모델들은 HumanEval과 MBPP에서 직선 예측보다 조금 높게 나왔다. 논문은 관련 데이터에 노출되었을 가능성을 시사한다.</li>
+</ul>
+
+<h3 id="mmlu-객관식-형식에-대한-과적합"><a href="#mmlu-객관식-형식에-대한-과적합" class="heading-anchor" aria-hidden="true">#</a> MMLU: 객관식 형식에 대한 과적합</h3>
+<p>MMLU는 원래 A~D 중 정답 기호를 고르는 객관식이다. 논문은 이 기본 형식 대신 보기 내용을 직접 문장으로 채워 넣는 빈칸(cloze) 형식으로 평가했다. 두 형식을 비교한 부록 표를 보면 차이가 크다. Qwen 72B는 기본 형식 77.4%에서 빈칸 형식 54.5%로 22.9점 떨어졌고, Yi 34B는 76.4%에서 55.0%로 21.4점, Qwen 14B는 19.3점 떨어졌다. 반면 Falcon 7B는 오히려 빈칸 형식에서 14.2점 높았다. 기본 객관식 점수로 상관을 계산하면 ρ는 −0.660으로 크게 무너지고 오차(RMSE)는 0.098로 커진다. 일부 모델이 지식 자체보다 'ABCD 고르기'라는 형식에 맞춰져 있었다는 뜻이다. 빈칸 형식으로 바꾸면 점수가 압축 실력이 예측하는 자리로 돌아온다.</p>
+<div class="callout-box info">
+  <div class="callout-title">왜 압축이 오염에 강한가</div>
+  <p>벤치마크는 문제 세트가 고정되어 있어 학습 데이터에 섞이거나 형식에 맞춰 최적화되기 쉽다. 압축 평가는 정답 레이블이 필요 없는 비지도 지표라서, 새로 나온 원문 텍스트만 모으면 언제든 새 시험지를 만들 수 있다. 프롬프트 문구에 따라 점수가 흔들리는 문제도 없다. 논문이 압축 효율을 "안정적이고 유연하며 신뢰할 만한" 평가 지표로 제안하는 이유다.</p>
+</div>
+
+<h2 id="13-남은-질문들-어떤-글을-압축하느냐가-중요하다"><a href="#13-남은-질문들-어떤-글을-압축하느냐가-중요하다" class="heading-anchor" aria-hidden="true">#</a> 13. 남은 질문들: 어떤 글을 압축하느냐가 중요하다</h2>
+<p><strong>말뭉치와 능력의 짝이 맞아야 한다.</strong> 수학 벤치마크 점수를 웹 텍스트(Common Crawl) BPC와 비교하면 상관이 −0.623으로 떨어진다. 지식 벤치마크를 파이썬 코드 BPC와 비교하면 −0.826이다. 압축 실력이라고 해서 아무 텍스트로 재도 되는 단일한 '일반 지능' 숫자가 아니다. 재려는 능력과 같은 분야의 텍스트를 압축시켜야 직선이 나온다. 같은 맥락에서 MMLU를 웹 텍스트 대신 교과서 텍스트의 BPC와 비교하면 상관이 −0.930, 오차 0.017로 더 단단해졌다. MMLU가 교과서식 지식을 묻기 때문이다.</p>
+<p><strong>여러 능력이 섞인 과제는 말뭉치도 섞는다.</strong> PAL-GSM8K는 수학 문제를 파이썬 프로그램을 짜서 푸는 과제로, 수학 추론과 코딩이 함께 필요하다. 파이썬 BPC만 쓰면 상관이 −0.731, arXiv 수학 BPC만 쓰면 −0.787이었지만, 두 말뭉치를 섞은 BPC를 쓰면 −0.929로 올라갔다. 재고 싶은 능력의 '배합'대로 말뭉치를 배합하면 된다는 뜻이다.</p>
+<p><strong>말뭉치는 생각보다 작아도 된다.</strong> 말뭉치 크기를 줄여 가며 보니 약 300만 자 정도에서 상관이 안정되고 포화했다. 논문이 쓴 수천만~1억 자 규모는 넉넉한 편이다. 새 텍스트를 조금만 모아도 오염 걱정 없는 평가를 자주 새로 할 수 있다.</p>
+
+<h2 id="14-한계와-조심해서-읽을-점"><a href="#14-한계와-조심해서-읽을-점" class="heading-anchor" aria-hidden="true">#</a> 14. 한계와 조심해서 읽을 점</h2>
+<p>두 논문의 결론은 강하지만, 제목만 기억하면 오해하기 쉽다. 경계선을 분명히 그어 두자.</p>
+<ul>
+<li><strong>거대 모델은 실용 압축기가 아니다.</strong> 원시 압축률은 훌륭하지만 모델 크기를 넣은 조정 압축률로는 1GB 규모에서 gzip에 크게 진다. 계산량도 막대하고 한 번에 몇 KB밖에 처리하지 못한다. 첫 번째 논문의 요점은 "LLM으로 압축하자"가 아니라 "압축이라는 렌즈로 LLM을 이해하자"다.</li>
+<li><strong>'범용'의 범위도 한정되어 있다.</strong> 이미지 실험은 32×64 흑백 패치를 한 줄로 편 것이라 2차원 구조를 일부 잃었고, 소리도 1바이트 샘플로 줄였다. 이미지·소리 학습 데이터가 웹 텍스트에 섞였을 가능성도 낮지만 배제되지 않는다.</li>
+<li><strong>상관은 인과가 아니다.</strong> 두 번째 논문이 보인 것은 강한 선형 상관이다. 압축을 잘하게 만드는 무언가(규모, 데이터 품질, 학습량)가 벤치마크 점수도 함께 올린다는 해석과 양립한다. "압축하면 지능이 생긴다"는 인과 주장으로 바로 넘어가면 안 된다.</li>
+<li><strong>지능의 대리 지표는 벤치마크다.</strong> 지식, 코딩, 수학이라는 세 분야의 점수 평균을 지능으로 본 것이다. 계획, 장기 기억, 행동, 대화 능력은 다루지 않았다.</li>
+<li><strong>조건이 붙은 결과다.</strong> 논문이 직접 꼽은 한계는 셋이다. 기초 모델에만 해당하고(미세 조정된 대화 모델은 일반 텍스트 압축기가 아니다), 1,900토큰 이하의 짧거나 중간 길이 문맥만 평가했으며, 핵심 능력이 이미 나타난 충분히 학습된 모델에 대한 결과다. 능력이 막 생겨나는 작은 모델에서도 직선이 유지되는지는 보장하지 않는다.</li>
+<li><strong>직선은 분야마다 따로 그려진다.</strong> 같은 BPC라도 말뭉치가 다르면 값의 의미가 다르다. 분야가 맞지 않으면 상관이 −0.6대까지 떨어진다. '압축 점수 하나 = 지능 점수 하나'가 아니다.</li>
+<li><strong>압축률 자체도 목표가 되면 망가질 수 있다.</strong> 굿하트의 법칙은 압축 지표에도 적용된다. 평가용 말뭉치가 학습 데이터에 들어가면 BPC도 오염된다. 그래서 '늘 새로 모은 텍스트'라는 조건이 핵심이다.</li>
+</ul>
+
+<h2 id="15-핵심-통찰과-키포인트"><a href="#15-핵심-통찰과-키포인트" class="heading-anchor" aria-hidden="true">#</a> 15. 핵심 통찰과 키포인트</h2>
+<h3 id="다섯-가지-통찰"><a href="#다섯-가지-통찰" class="heading-anchor" aria-hidden="true">#</a> 다섯 가지 통찰</h3>
+<ol>
+<li><strong>예측과 압축은 같은 일이다.</strong> 확률 p인 사건의 최적 부호 길이는 −log<sub>2</sub> p비트다. 산술 부호화가 이 길이에 거의 닿으므로, 압축 성능은 예측 성능으로 완전히 환원된다. 반대로 압축기의 부호 길이는 확률로 읽을 수 있어서 압축기는 예측기·생성기가 된다.</li>
+<li><strong>언어 모델은 처음부터 압축을 배우고 있었다.</strong> 사전 학습의 교차 엔트로피 손실은 산술 부호화로 그 데이터를 압축한 길이와 같은 식이다. 다음 토큰 예측을 잘하게 만드는 일이 곧 압축을 잘하게 만드는 일이다.</li>
+<li><strong>대형 모델은 문맥 안에서 적응하는 범용 압축기다.</strong> 텍스트만 배운 친칠라 70B가 2048바이트 단위로 사진 패치를 48.0%, 음성을 21.0%로 줄여 PNG(58.5%)와 FLAC(30.3%)을 이겼다. 좁게 배운 작은 모델은 낯선 데이터를 두 배로 부풀렸다.</li>
+<li><strong>모델의 크기까지 셈하면 '크게'가 언제나 정답은 아니다.</strong> 조정 압축률로 보면 데이터 크기마다 최적의 모델 크기가 있다. 1GB에서 Llama 2 7B는 1,400%를, Chinchilla 70B는 14,000%를 넘는다. 압축 관점은 일반화와 과적합을 함께 보는 MDL의 눈이다.</li>
+<li><strong>압축 효율은 능력의 선형 지표다.</strong> 31개 모델, 12개 벤치마크에서 분야별로 맞춘 말뭉치의 BPC와 평균 점수의 상관은 약 −0.95(전체 평균 −0.931)였다. 직선에서 벗어난 점은 오염과 형식 과적합의 신호였고, 새로 모은 텍스트의 압축률은 오염되기 어려운 평가 지표가 된다.</li>
+</ol>
+
+<h3 id="외워-둘-개념과-숫자"><a href="#외워-둘-개념과-숫자" class="heading-anchor" aria-hidden="true">#</a> 외워 둘 개념과 숫자</h3>
+<div class="table-wrapper" data-scroll-hint="옆으로 밀어서 보기">
+<table>
+<thead><tr><th>개념·항목</th><th>한 줄 정리</th></tr></thead>
+<tbody>
+<tr><td>정보량</td><td>−log<sub>2</sub> p. 확률이 절반이 될 때마다 1비트 증가</td></tr>
+<tr><td>섀넌 엔트로피 (1948)</td><td>평균 놀람. 무손실 압축의 하한</td></tr>
+<tr><td>교차 엔트로피</td><td>틀린 모델 q로 부호화할 때의 평균 길이 = 언어 모델의 학습 손실</td></tr>
+<tr><td>산술 부호화 (1976–77)</td><td>구간을 확률대로 좁혀 메시지 전체를 실수 하나로. AIXI 4바이트 → 7비트</td></tr>
+<tr><td>콜모고로프 복잡도</td><td>x를 출력하는 가장 짧은 프로그램의 길이. 계산 불가능</td></tr>
+<tr><td>솔로모노프 귀납 (1964)</td><td>모든 프로그램을 2<sup>−길이</sup>로 가중 평균한 이상적 예측기</td></tr>
+<tr><td>AIXI·후터 상</td><td>솔로모노프 예측 + 보상 최대화 에이전트(2005) / 위키백과 압축 대회(2006~)</td></tr>
+<tr><td>조정 압축률</td><td>(압축 결과 + 파라미터 크기) ÷ 원본. 두 부분 부호, MDL</td></tr>
+<tr><td>토크나이저</td><td>사전 압축. 작은 모델엔 도움, 큰 모델엔 압축률 손해. 쓰는 이유는 문맥과 계산 효율</td></tr>
+<tr><td>BPC</td><td>로그 손실 합 ÷ 글자 수. 토크나이저가 달라도 비교 가능</td></tr>
+<tr><td>Min-K% Prob (k=20)</td><td>가장 의외여야 할 하위 20% 토큰까지 잘 맞히면 본 적 있는 텍스트로 의심</td></tr>
+<tr><td>도메인 정렬</td><td>수학 점수 ↔ 웹 BPC는 −0.623. 능력과 같은 분야 텍스트를 압축시켜야 한다</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 id="스스로-점검하기"><a href="#스스로-점검하기" class="heading-anchor" aria-hidden="true">#</a> 스스로 점검하기</h3>
+<ol>
+<li>확률 1/8인 기호의 이상적인 부호 길이는? (3비트)</li>
+<li>언어 모델의 학습 손실을 낮추는 것이 왜 압축률을 낮추는 것과 같은가? (교차 엔트로피가 산술 부호의 평균 길이이므로)</li>
+<li>1GB 데이터에 70억 파라미터 모델을 쓰면 조정 압축률에 얼마가 더해지나? (float16 14GB, 약 1,400%)</li>
+<li>모든 파일을 줄이는 압축기가 없는 이유는? (비둘기집 원리)</li>
+<li>BPC를 토큰당 비트 대신 쓰는 이유는? (토크나이저가 모델마다 달라서)</li>
+<li>Qwen의 수학 점수를 직선에서 뺀 근거는? (Min-K% Prob에서 GSM8K·MATH 노출 흔적)</li>
+<li>코딩 능력을 재려면 무엇을 압축시켜야 하나? (깃허브 파이썬 코드처럼 같은 분야의 새 텍스트)</li>
+</ol>
+<p>섀넌이 사람에게 다음 글자를 맞히게 하던 실험에서 75년이 지났다. 이제는 기계가 다음 토큰을 맞히고, 그 맞히는 능력이 얼마나 잘 줄이는가로, 다시 얼마나 시험을 잘 보는가로 이어진다는 것을 숫자로 확인했다. 다만 그 직선은 어떤 글을 줄이게 했는지, 무엇을 시험으로 삼았는지에 따라 그려졌다. 압축은 지능을 재는 좋은 자가 될 수 있다. 그 자가 무엇을 재고 무엇은 재지 못하는지까지 함께 알고 쓸 때 그렇다.</p>
+
+<h2 id="출처"><a href="#출처" class="heading-anchor" aria-hidden="true">#</a> 출처</h2>
+<ul>
+<li>G. Delétang, A. Ruoss, T. Genewein, C. Mattern, M. Aitchison, L. Orseau, P.-A. Duquenne, E. Catt, J. Grau-Moya, M. Hutter, L. K. Wenliang, J. Veness, 「Language Modeling Is Compression」, <em>ICLR</em> 2024. <a href="https://arxiv.org/abs/2309.10668" class="ext-link" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2309.10668</a></li>
+<li>Y. Huang, J. Zhang, Z. Shan, J. He, 「Compression Represents Intelligence Linearly」, <em>COLM</em> 2024. <a href="https://arxiv.org/abs/2404.09937" class="ext-link" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2404.09937</a></li>
+<li>C. E. Shannon, 「A Mathematical Theory of Communication」, <em>Bell System Technical Journal</em>, 1948.</li>
+<li>R. J. Solomonoff, 「A Formal Theory of Inductive Inference, Part I·II」, <em>Information and Control</em>, 1964.</li>
+<li>M. Hutter, <em>Universal Artificial Intelligence</em>, Springer, 2005. / Hutter Prize. <a href="http://prize.hutter1.net" class="ext-link" target="_blank" rel="noopener noreferrer">http://prize.hutter1.net</a></li>
+<li>W. Shi 외, 「Detecting Pretraining Data from Large Language Models」(Min-K% Prob), <em>ICLR</em> 2024.</li>
+</ul>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>

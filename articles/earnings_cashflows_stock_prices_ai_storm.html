@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부</title>
+  <meta name="description" content="2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다. 1962년 이후 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 그런데도 2026년 초에 상장돼 있던 미국 주식의 시가총액은 9월 말까지 12.25% 늘었다. 아스워스 다모다란의 분석을 바탕으로, AI 설비투자가 빌더(하이퍼스케일러)와 공급자를 거치며 어떻게 합산 이익을 키우는지, 왜 배당과 자사주 매입은 그만큼 늘지 않는지, 장부가 얼마나 무거워졌는지, 투자의 수익률이 자본비용에 못 미치면 무슨 일이 생기는지, 그리고 투자자가 고를 수 있는 4가지 경로를 정리한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.5em 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      max-width: 100%;
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 48px 48px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 750;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(19px, 4.2vw, 23px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(17px, 3.6vw, 19.5px);
+    }
+
+    .content h4 {
+      font-size: 16.5px;
+      color: var(--text-muted);
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.4em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 750;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-54bp-금리-급등과-버틴-증시" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 54bp 금리 급등과 버틴 증시</span></a></li><li class="depth-3"><a href="#11-1962년-이후-상위-10의-월간-금리-상승" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 1962년 이후 상위 10%의 월간 금리 상승</span></a></li><li class="depth-3"><a href="#12-지수는-강했지만-고르지-않았다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 지수는 강했지만 고르지 않았다</span></a></li><li class="depth-3"><a href="#13-내재-주식-위험-프리미엄-4-아래로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.3 내재 주식 위험 프리미엄: 4% 아래로</span></a></li><li class="depth-2"><a href="#2-빌더와-공급자-이익이-커지는-회계-경로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 빌더와 공급자: 이익이 커지는 회계 경로</span></a></li><li class="depth-3"><a href="#21-빌더-지출은-자산이-된다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 빌더: 지출은 자산이 된다</span></a></li><li class="depth-3"><a href="#22-공급자-지출은-매출이-된다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 공급자: 지출은 매출이 된다</span></a></li><li class="depth-3"><a href="#23-상장사-합계로-보면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 상장사 합계로 보면</span></a></li><li class="depth-2"><a href="#3-이익은-늘고-환원은-천천히" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 이익은 늘고 환원은 천천히</span></a></li><li class="depth-3"><a href="#31-순이익의-급증" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 순이익의 급증</span></a></li><li class="depth-3"><a href="#32-배당과-자사주-매입이-보여-주는-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 배당과 자사주 매입이 보여 주는 것</span></a></li><li class="depth-2"><a href="#4-장부가-무거워졌다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 장부가 무거워졌다</span></a></li><li class="depth-2"><a href="#5-자본비용을-넘지-못하면" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 자본비용을 넘지 못하면</span></a></li><li class="depth-3"><a href="#51-가치의-조건" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 가치의 조건</span></a></li><li class="depth-3"><a href="#52-잘될-때와-안-될-때" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 잘될 때와 안 될 때</span></a></li><li class="depth-2"><a href="#6-투자자의-4가지-경로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 투자자의 4가지 경로</span></a></li><li class="depth-3"><a href="#경로-1-ai가-이긴다에-올인한다-그것도-곧" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">경로 1: AI가 이긴다에 올인한다 (그것도 곧)</span></a></li><li class="depth-3"><a href="#경로-2-시장-합의를-따른다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">경로 2: 시장 합의를 따른다</span></a></li><li class="depth-3"><a href="#경로-3-ai-회의론자가-된다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">경로 3: AI 회의론자가 된다</span></a></li><li class="depth-3"><a href="#경로-4-ai-이야기에서-뛰어내린다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">경로 4: AI 이야기에서 뛰어내린다</span></a></li><li class="depth-2"><a href="#7-다모다란의-포지션과-인적-자본" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 다모다란의 포지션과 인적 자본</span></a></li><li class="depth-3"><a href="#71-몸통은-시장-합의-새-돈은-단기-국채" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 몸통은 시장 합의, 새 돈은 단기 국채</span></a></li><li class="depth-3"><a href="#72-계좌-밖의-자산-인적-자본" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 계좌 밖의 자산: 인적 자본</span></a></li><li class="depth-2"><a href="#8-이-글의-근거와-한계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 이 글의 근거와 한계</span></a></li><li class="depth-2"><a href="#출처" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">출처</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-11</span>
+          <span class="meta-badge">⏱️ 약 42분</span>
+          <span class="meta-badge">✍️ Pages 금융·기업가치평가 분석팀</span>
+        </div>
+        <h1 class="article-title">수익, 현금흐름, 그리고 주가 — AI 폭풍이 휩쓸고 간 자본시장의 회계학적·금융학적 해부</h1>
+        <p class="article-subtitle">아스워스 다모다란의 2026년 10월 분석을 중심으로 본 AI 설비투자의 회계 경로, 이익과 주주환원의 괴리, 무거워진 장부, 내재 주식 위험 프리미엄(ERP), 그리고 투자자의 4가지 경로</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#기업재무</span>
+          
+          <span class="tag-pill">#가치평가</span>
+          
+          <span class="tag-pill">#아스워스다모다란</span>
+          
+          <span class="tag-pill">#AICapEx</span>
+          
+          <span class="tag-pill">#빅테크</span>
+          
+          <span class="tag-pill">#위험프리미엄</span>
+          
+          <span class="tag-pill">#재무회계</span>
+          
+          <span class="tag-pill">#현금흐름</span>
+          
+          <span class="tag-pill">#매그니피센트7</span>
+          
+        </div>
+      </header>
+
+      <section class="content" id="article-content">
+        <p><strong>2026년 9월 한 달 동안 미국 10년물 국채 금리가 4.75%에서 5.29%로 54bp 올랐다.</strong> 1962년부터 2026년까지 관측된 10년물 월간 변동 770번 가운데 상위 10%에 드는 상승이다. 금융 이론대로라면 할인율이 이렇게 빨리 오르면 미래 현금흐름의 현재가치가 줄어 주가가 눌려야 한다. 그러나 미국 증시는 적어도 합계로는 버텼다. 9월 한 달 동안 전체 상장 주식의 시가총액은 약 2.5조 달러 늘었고, 그중 약 1.5조 달러가 기술 섹터에서 나왔다.</p>
+<p>무엇이 주가를 받쳤는가? 뉴욕대학교 스턴 경영대학원(NYU Stern)의 <strong>아스워스 다모다란(Aswath Damodaran)</strong>은 그 버팀목을 이익에서 찾는다. 2026년에 기업들이 발표한 이익이 예상보다 컸고, 2027년과 2028년의 기대 이익도 함께 올라갔다는 것이다. 그리고 그 이익 이야기의 한가운데에 <strong>AI 설비투자(CapEx) 붐</strong>이 있다.</p>
+<p>여기서 회계의 수수께끼가 생긴다.</p>
+<blockquote>
+<p><strong>설비투자는 보통 현금을 빼 가고, 상각을 통해 이익도 줄인다. 그런데 수조 달러의 AI 설비투자가 어떻게 미국 상장사 전체의 이익을 끌어올리는가?</strong></p>
+</blockquote>
+<p>다모다란은 2026년 10월 8일 글 *「Stock Prices, Earnings and Cashflows: The AI Effect plays through!」*와 같은 주제의 슬라이드에서 이 수수께끼를 푼다. 같은 돈이 한 회사에서는 자산이 되고 다른 회사에서는 매출이 된다는 회계 경로, 이익만큼 늘지 않는 주주환원, 무거워진 장부, 그리고 투자 수익률이 자본비용에 못 미칠 때의 결과를 차례로 추적한다. 이 글의 수치는 모두 그 글과 슬라이드에서 가져왔다.</p>
+<hr>
+<h2 id="1-54bp-금리-급등과-버틴-증시"><a href="#1-54bp-금리-급등과-버틴-증시" class="heading-anchor" aria-hidden="true">#</a> 1. 54bp 금리 급등과 버틴 증시</h2><h3 id="11-1962년-이후-상위-10의-월간-금리-상승"><a href="#11-1962년-이후-상위-10의-월간-금리-상승" class="heading-anchor" aria-hidden="true">#</a> 1.1 1962년 이후 상위 10%의 월간 금리 상승</h3><p>10년물 국채 금리는 2026년 초 4.18%에서 시작해 8월 말 4.75%까지 비교적 천천히 올랐다. 그런데 9월에는 한 달 만에 <strong>5.29%로 54bp</strong> 뛰었다. 다모다란은 1962년부터 2026년까지 10년물의 월간 변동 770번을 분포로 놓고, 9월의 상승이 그 가운데 <strong>상위 10%</strong>에 든다고 확인한다. 연초부터 보면 상승 폭은 111bp다.</p>
+<p>주식의 이론적 가치는 미래 기대 현금흐름을 무위험수익률과 주식 위험 프리미엄(ERP)을 더한 할인율로 할인한 값이다.</p>
+<p>$$P_0 = \sum_{t=1}^{\infty} \frac{CF_t}{(1 + r_f + \text{ERP})^t}$$</p>
+<p>무위험수익률($r_f$)이 오르면 분모가 커져 가격에 부담이 된다. 그런데도 주가가 버텼다면, 분자인 기대 이익과 현금흐름이 올라갔거나 투자자가 요구하는 프리미엄이 줄었다는 뜻이다. 다모다란의 숫자는 두 가지가 함께 일어났음을 보여 준다.</p>
+<h3 id="12-지수는-강했지만-고르지-않았다"><a href="#12-지수는-강했지만-고르지-않았다" class="heading-anchor" aria-hidden="true">#</a> 1.2 지수는 강했지만 고르지 않았다</h3><p>다모다란은 2026년 초에 이미 상장돼 있던 미국 기업만 모아 섹터별 성적을 계산했다. 나중에 들어온 회사를 넣으면 투자자 수익이 왜곡되기 때문이다. 예를 들어 2026년 6월 상장한 스페이스X를 넣으면 통신서비스 섹터의 시가총액이 2조 달러 넘게 늘어나지만, 그 회사는 대략 그 가치로 상장했다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>섹터</th>
+<th>기업 수</th>
+<th>시가총액 변동 (2025년 말→2026년 9월 30일)</th>
+<th>2026년 상승 종목 비율</th>
+<th>3분기 상승 종목 비율</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>에너지</td>
+<td>266</td>
+<td><strong>+39.01%</strong></td>
+<td>63.91%</td>
+<td>44.74%</td>
+</tr>
+<tr>
+<td>정보기술</td>
+<td>664</td>
+<td><strong>+24.48%</strong></td>
+<td>52.41%</td>
+<td>37.80%</td>
+</tr>
+<tr>
+<td>소재</td>
+<td>242</td>
+<td><strong>+21.85%</strong></td>
+<td>48.35%</td>
+<td>35.12%</td>
+</tr>
+<tr>
+<td>헬스케어</td>
+<td>1,085</td>
+<td>+11.15%</td>
+<td>47.56%</td>
+<td>39.82%</td>
+</tr>
+<tr>
+<td>부동산</td>
+<td>218</td>
+<td>+10.93%</td>
+<td>52.29%</td>
+<td>19.27%</td>
+</tr>
+<tr>
+<td>산업재</td>
+<td>735</td>
+<td>+10.61%</td>
+<td>46.53%</td>
+<td>28.71%</td>
+</tr>
+<tr>
+<td>필수소비재</td>
+<td>251</td>
+<td>+5.99%</td>
+<td>33.47%</td>
+<td>24.30%</td>
+</tr>
+<tr>
+<td>금융</td>
+<td>1,042</td>
+<td>+3.02%</td>
+<td>62.86%</td>
+<td>44.15%</td>
+</tr>
+<tr>
+<td>경기소비재</td>
+<td>522</td>
+<td>+1.76%</td>
+<td>39.66%</td>
+<td>26.44%</td>
+</tr>
+<tr>
+<td>유틸리티</td>
+<td>88</td>
+<td>+0.61%</td>
+<td>44.32%</td>
+<td>20.45%</td>
+</tr>
+<tr>
+<td>통신서비스</td>
+<td>263</td>
+<td>−1.76%</td>
+<td>37.26%</td>
+<td>28.90%</td>
+</tr>
+<tr>
+<td><strong>미국 전체</strong></td>
+<td><strong>5,376</strong></td>
+<td><strong>+12.25%</strong></td>
+<td><strong>50.04%</strong></td>
+<td><strong>35.21%</strong></td>
+</tr>
+</tbody></table>
+</div><p><em>자료: 다모다란 슬라이드 6. 2026년 초 상장 기업만 포함.</em></p>
+<p>두 가지가 눈에 띈다. 첫째, 시장을 끈 것은 <strong>기술, 에너지, 소재</strong> 세 섹터이고, 금액으로 가장 크게 기여한 것은 기술이다. 둘째, 상승은 고르지 않다. 연초보다 오른 종목은 전체의 약 절반(50.04%)이고, 3분기만 보면 상승 종목은 35.21%로 <strong>약 65%가 내렸다.</strong> 기술 섹터도 시가총액은 24.48% 늘었지만 종목 기준으로는 52.41%만 올랐다. 지수의 강세는 산업 전체의 고른 성장이 아니라 일부 대형주의 무게에서 나온 것이다.</p>
+<h3 id="13-내재-주식-위험-프리미엄-4-아래로"><a href="#13-내재-주식-위험-프리미엄-4-아래로" class="heading-anchor" aria-hidden="true">#</a> 1.3 내재 주식 위험 프리미엄: 4% 아래로</h3><p>다모다란은 2008년 9월부터 매달 초 S&amp;P 500의 <strong>내재 주식 위험 프리미엄(Implied ERP)</strong>을 역산한다. 지금 지수 가격, 기대 이익 성장률, 주주에게 돌아갈 현금, 금리를 넣고, 주식을 사면 얻을 내부수익률(IRR)을 구하는 방식이다. 특정 가치평가 모형에 기대지 않는다는 것이 그의 설명이다. 2026년 10월 1일 계산의 가정은 다음과 같다(슬라이드 7).</p>
+<ul>
+<li><strong>지수</strong>: 2026년 9월 30일 S&amp;P 500 7,651.54</li>
+<li><strong>기준 연도 주주 현금(최근 12개월)</strong>: 배당 81.61 + 자사주 매입 116.56 = 198.17</li>
+<li><strong>이익 성장률</strong>: 향후 5년 연 14.59%(애널리스트 추정), 그 뒤 10년물 금리와 같은 5.29%</li>
+<li><strong>현금 환원 비율</strong>: 이익의 63.52%를 계속 유지</li>
+</ul>
+<p>$$7{,}651.54 = \sum_{t=1}^{5} \frac{CF_t}{(1+r)^t} + \frac{CF_5 \times 1.0529}{(r - 0.0529)(1+r)^5} \quad\Rightarrow\quad r = 8.99\%$$</p>
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 250" role="img" aria-label="2026년 10월 1일 S&amp;P 500 내재 ERP 계산" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <rect x="0" y="0" width="820" height="250" rx="14" fill="var(--bg-card)"/>
+  <text x="410" y="32" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="17px" fill="var(--text-main)">내재 ERP: 무위험수익률을 무엇으로 보느냐에 따라 두 값</text>
+  <text x="410" y="52" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12px" fill="var(--text-muted)">2026년 10월 1일 계산 (다모다란 블로그·슬라이드 7)</text>
+  <g transform="translate(30, 72)">
+    <rect x="0" y="0" width="240" height="150" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+    <text x="120" y="30" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="13.5px" fill="var(--primary)">S&amp;P 500 기대수익률</text>
+    <text x="120" y="80" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="30px" fill="var(--text-main)">8.99%</text>
+    <text x="120" y="112" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" fill="var(--text-muted)">연초 8.41%에서 상승</text>
+    <text x="120" y="130" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" fill="var(--text-muted)">지난 10여 년은 8.5% 근처</text>
+  </g>
+  <g transform="translate(290, 72)">
+    <rect x="0" y="0" width="240" height="68" rx="10" fill="var(--bg-surface)" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="120" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="12.5px" fill="#2563eb">10년물 국채 금리 기준</text>
+    <text x="120" y="52" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="15px" fill="var(--text-main)">8.99% − 5.29% = 3.70%</text>
+  </g>
+  <g transform="translate(290, 154)">
+    <rect x="0" y="0" width="240" height="68" rx="10" fill="var(--bg-surface)" stroke="#10b981" stroke-width="1.5"/>
+    <text x="120" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="12.5px" fill="#059669">달러 무위험수익률 기준</text>
+    <text x="120" y="52" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="15px" fill="var(--text-main)">8.99% − 5.07% = 3.92%</text>
+  </g>
+  <g transform="translate(550, 72)">
+    <rect x="0" y="0" width="240" height="150" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+    <text x="120" y="28" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">5.07%는 어디서 왔나</text>
+    <text x="120" y="56" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12px" fill="var(--text-muted)">10년물 5.29%</text>
+    <text x="120" y="76" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12px" fill="var(--text-muted)">− Aa1 등급 부도 스프레드 0.22%</text>
+    <text x="120" y="102" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="700" font-size="14px" fill="var(--text-main)">= 5.07%</text>
+    <text x="120" y="130" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" fill="var(--text-muted)">미국 국채의 부도 위험을 뺀 값</text>
+  </g>
+</svg>
+</div>
+
+<p>10년물 금리를 그대로 무위험수익률로 쓰면 ERP는 <strong>3.70%</strong>다. 미국 국채에도 부도 위험이 조금 있다고 보고, 10년물 5.29%에서 미국의 Aa1 등급에 해당하는 부도 스프레드 0.22%를 빼면 달러 무위험수익률은 <strong>5.07%</strong>가 되고, ERP는 <strong>3.92%</strong>가 된다. 두 값은 범위가 아니라 무위험수익률의 정의가 다른 두 계산이다. 슬라이드는 환원 비율이 지속 가능한 수준(g/ROE)으로 바뀐다고 가정하면 ERP가 4.40%라는 보조 계산도 함께 싣는다.</p>
+<p>어느 기준으로 보아도 <strong>ERP는 올해 처음으로 4% 아래로 내려왔다.</strong> 그사이 주식의 기대수익률은 연초 8.41%에서 9월 30일 8.99%로 올랐다. 지난 10여 년 대부분 8.5% 근처에 있던 값이 이제 9%에 가까워졌다. 금리가 4.18%에서 5.29%로 오르는 동안 기대수익률이 그만큼 오르지는 않았고, 그 차이가 ERP의 하락이다. 다모다란은 시장 타이머라면 낮은 ERP를 시장이 비싸다는 신호로 읽을 수 있다고 적으면서, 자신은 시장 타이머가 아니라고 덧붙인다.</p>
+<hr>
+<h2 id="2-빌더와-공급자-이익이-커지는-회계-경로"><a href="#2-빌더와-공급자-이익이-커지는-회계-경로" class="heading-anchor" aria-hidden="true">#</a> 2. 빌더와 공급자: 이익이 커지는 회계 경로</h2><p>수조 달러의 설비투자가 어떻게 합산 이익을 줄이지 않고 키우는가? 다모다란은 시장을 두 무리로 나눈다. AI 아키텍처를 <strong>짓는 회사(빌더)</strong>와, 그 재료를 <strong>파는 회사(공급자)</strong>다. 같은 지출이 한쪽에서는 자산이 되고, 다른 쪽에서는 매출이 된다.</p>
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" role="img" aria-label="AI 설비투자의 회계 경로: 빌더와 공급자" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs>
+    <style>
+      .c1-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 17px; fill: var(--text-main); }
+      .c1-sub { font-family: Pretendard, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); }
+      .c1-box { fill: var(--bg-surface); stroke: var(--border); stroke-width: 1.2; rx: 10px; }
+      .c1-h { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 13.5px; }
+      .c1-t { font-family: Pretendard, -apple-system, sans-serif; font-size: 11.5px; fill: var(--text-muted); line-height: 1.45; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="820" height="440" rx="14" fill="var(--bg-card)"/>
+  <text x="410" y="34" text-anchor="middle" class="c1-title">AI 설비투자의 회계 경로: 같은 돈, 두 개의 장부</text>
+  <text x="410" y="52" text-anchor="middle" class="c1-sub">빌더에서는 자산, 공급자에게는 매출 (다모다란 블로그·슬라이드 9)</text>
+  <g transform="translate(160, 72)">
+    <rect x="0" y="0" width="500" height="54" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+    <text x="250" y="24" text-anchor="middle" class="c1-h" fill="var(--primary)">빌더: 하이퍼스케일러</text>
+    <text x="250" y="42" text-anchor="middle" font-size="11.5px" font-family="Pretendard, sans-serif" fill="var(--text-muted)">메타 · 알파벳 · 아마존 · 마이크로소프트 등 (상위 10개사가 2조 달러 넘게 지출)</text>
+  </g>
+  <line x1="410" y1="126" x2="410" y2="152" stroke="var(--primary)" stroke-width="2"/>
+  <rect x="290" y="140" width="240" height="24" rx="6" fill="var(--primary-light, #eff6ff)" stroke="var(--primary)" stroke-width="1"/>
+  <text x="410" y="156" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" font-weight="700" fill="var(--primary)">AI 설비투자 지출</text>
+  <line x1="410" y1="164" x2="215" y2="185" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="410" y1="164" x2="605" y2="185" stroke="#10b981" stroke-width="2"/>
+  <g transform="translate(30, 185)">
+    <rect x="0" y="0" width="370" height="145" rx="10" class="c1-box" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="18" y="26" class="c1-h" fill="#2563eb">빌더의 장부</text>
+    <text x="18" y="50" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[재무상태표]</tspan> 지출은 자산으로 기록</text>
+    <text x="18" y="68" class="c1-t">• 조달 방식에 따라 장부 자본이나 부채가 늘어남</text>
+    <text x="18" y="92" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[손익계산서]</tspan> 상각을 통해 천천히 비용 반영</text>
+    <text x="18" y="110" class="c1-t">• 상각 기간을 길게 잡을수록 당기 이익 감소가 작음</text>
+    <text x="18" y="128" class="c1-t">• 설비투자 뒤 잉여현금흐름은 가까운 시기에 줄어듦</text>
+  </g>
+  <g transform="translate(420, 185)">
+    <rect x="0" y="0" width="370" height="145" rx="10" class="c1-box" stroke="#10b981" stroke-width="1.5"/>
+    <text x="18" y="26" class="c1-h" fill="#059669">공급자의 장부</text>
+    <text x="18" y="50" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[누구]</tspan> 엔비디아, TSMC, 브로드컴, 마이크론, 마벨,</text>
+    <text x="18" y="68" class="c1-t">컨스텔레이션 에너지, 에퀴닉스, 디지털 리얼티 등</text>
+    <text x="18" y="92" class="c1-t"><tspan font-weight="700" fill="var(--text-main)">[손익계산서]</tspan> 빌더의 지출이 당기 매출</text>
+    <text x="18" y="110" class="c1-t">• 순마진만큼 매출이 순이익으로 남음</text>
+    <text x="18" y="128" class="c1-t">• 늘어난 이익이 주주 잉여현금흐름으로 이어질 수 있음</text>
+  </g>
+  <g transform="translate(30, 345)">
+    <rect x="0" y="0" width="760" height="75" rx="10" fill="var(--bg-surface)" stroke="#8b5cf6" stroke-width="1.8"/>
+    <text x="380" y="26" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="800" font-size="14.5px" fill="#7c3aed">상장사 전체를 더하면</text>
+    <text x="380" y="47" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="12.5px" font-weight="700" fill="var(--text-main)">공급자 마진이 높고 빌더의 상각 기간이 길면 합산 순이익은 늘어난다</text>
+    <text x="380" y="65" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11px" fill="var(--text-muted)">그러나 빌더의 순설비투자가 공급자의 주주 현금 증가보다 크면 합산 현금흐름은 줄어든다</text>
+  </g>
+</svg>
+</div>
+
+<h3 id="21-빌더-지출은-자산이-된다"><a href="#21-빌더-지출은-자산이-된다" class="heading-anchor" aria-hidden="true">#</a> 2.1 빌더: 지출은 자산이 된다</h3><p>빌더는 데이터센터와 그 밖의 인프라를 짓는 하이퍼스케일러다. 다모다란은 메타, 알파벳, 아마존, 마이크로소프트 등을 예로 들고, <strong>상위 10개 하이퍼스케일러가 AI 설비투자의 2조 달러 넘게</strong>를 차지한다고 적는다.</p>
+<p>회계는 설비투자를 비용이 아니라 <strong>자산</strong>으로 기록한다. 그리고 그 투자를 부채로 했는지 자기자본으로 했는지에 따라 장부의 부채나 자본을 늘린다. 비용은 상각을 통해 여러 해에 걸쳐 나뉘어 반영된다. 다모다란은 빌더에게 늘어나는 상각비가 있어야 하지만, 많은 회사가 <strong>상각 기간을 길게 잡고 있어 당기 이익에 주는 타격이 줄어든다</strong>고 지적한다. 반면 설비투자는 차감 후에 계산되는 잉여현금흐름을 곧바로 줄인다.</p>
+<h3 id="22-공급자-지출은-매출이-된다"><a href="#22-공급자-지출은-매출이-된다" class="heading-anchor" aria-hidden="true">#</a> 2.2 공급자: 지출은 매출이 된다</h3><p>빌더가 쓴 돈은 공급자의 매출이 된다. 다모다란이 이름을 드는 공급자는 칩 회사(엔비디아, TSMC), 네트워크 장비 회사(브로드컴, 마이크론, 마벨), 전력 회사(컨스텔레이션 에너지 등), 그리고 데이터센터 부동산 회사(에퀴닉스, 디지털 리얼티)다. 매출은 순마진만큼 순이익으로 남는다. 그는 지금까지 가장 큰 수혜자가 엔비디아라고 본다. 그 칩이 큰 마진을 붙인 채 데이터센터를 돌리기 때문이다.</p>
+<p>슬라이드 9의 원그래프는 공급자 매출의 구성을 <strong>칩 약 50%, 전력 약 20%, 네트워크 장비 약 15%, 부동산 약 8%, 냉각 약 7%</strong>로 그린다. 블로그 본문은 이 비율을 문장으로 적지 않는다.</p>
+<p>경계가 흐린 회사도 있다. 아마존은 AI 설비투자에 돈을 쓰면서 동시에 자사 클라우드의 데이터 저장 수요로 돈을 번다. 엔비디아는 칩을 팔면서 직간접으로 데이터센터에 투자한다.</p>
+<h3 id="23-상장사-합계로-보면"><a href="#23-상장사-합계로-보면" class="heading-anchor" aria-hidden="true">#</a> 2.3 상장사 합계로 보면</h3><p>두 무리를 더하면 수수께끼가 풀린다. 빌더의 손익에서는 지출 가운데 상각분만 비용으로 빠지고, 공급자의 손익에서는 같은 지출이 매출과 순이익으로 들어온다. 공급자의 마진이 높고 빌더의 상각 기간이 길면, 합산 순이익은 늘어난다. 그러나 합산 현금흐름은 다르다. 빌더의 순설비투자가 공급자의 주주 잉여현금흐름(FCFE) 증가보다 크면, 합산 현금흐름은 오히려 줄어든다.</p>
+<p>이 숫자에는 두 가지 단서가 붙는다. 첫째, 공개 자료는 <strong>상장사만</strong> 담는다. 오픈AI와 앤스로픽처럼 시가총액 1조 달러 이상이 예상되는 비상장 회사의 매출, 이익, 현금흐름, 투하자본은 빠진다. 둘째, AI 설비투자의 일부는 <strong>합작 투자와 부외 기구</strong>를 통해 이뤄지며, 특히 부채 쪽 회계가 그 결과를 다 반영하지 못할 수 있다. 그래서 상장사 재무제표의 숫자는 실제 효과보다 작게 나온다.</p>
+<p>그 단서를 감안해도 규모는 크다. 미국 상장사 전체의 <strong>2026년 2분기 설비투자는 5,074억 달러</strong>로, 2025년 2분기보다 <strong>1,334억 달러(35.7%)</strong> 많다. 증가는 몰려 있다. 같은 비교에서 정보기술은 79.9%, 통신서비스는 62.0%, 경기소비재는 50.1% 늘었다(슬라이드 10).</p>
+<hr>
+<h2 id="3-이익은-늘고-환원은-천천히"><a href="#3-이익은-늘고-환원은-천천히" class="heading-anchor" aria-hidden="true">#</a> 3. 이익은 늘고 환원은 천천히</h2><h3 id="31-순이익의-급증"><a href="#31-순이익의-급증" class="heading-anchor" aria-hidden="true">#</a> 3.1 순이익의 급증</h3><p>설비투자가 공급자의 매출이 되는 경로는 합산 이익에서 바로 보인다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>2025년 같은 분기</th>
+<th>2026년</th>
+<th>증가율</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1분기 순이익</td>
+<td>5,110억 달러</td>
+<td>6,920억 달러</td>
+<td><strong>+35%</strong></td>
+</tr>
+<tr>
+<td>2분기 순이익</td>
+<td>5,760억 달러</td>
+<td>9,040억 달러</td>
+<td><strong>+57%</strong></td>
+</tr>
+</tbody></table>
+</div><p><em>자료: 다모다란 블로그, 슬라이드 12. 미국 상장사 전체.</em></p>
+<p>이익 증가도 고르지 않다. 2분기에 순이익이 전년 동기보다 늘어난 기업은 48.9%로 절반에 못 미친다. 이익이 가장 크게 늘어난 섹터는 정보기술, 금융, 통신서비스이고, 헬스케어, 유틸리티, 부동산은 뒤처졌다. 헬스케어의 최근 12개월 순이익은 2025년보다 오히려 줄었다.</p>
+<p>여기서 구별할 숫자가 있다. 1.3절의 <strong>연 14.59%</strong>는 실현된 성장률이 아니다. ERP를 계산할 때 넣은, S&amp;P 500의 <strong>향후 5년 애널리스트 기대 이익 성장률</strong>이다. 실제로 확인된 이익 증가는 위 표의 분기 비교(+35%, +57%)다.</p>
+<h3 id="32-배당과-자사주-매입이-보여-주는-것"><a href="#32-배당과-자사주-매입이-보여-주는-것" class="heading-anchor" aria-hidden="true">#</a> 3.2 배당과 자사주 매입이 보여 주는 것</h3><p>주주에게 의미가 있는 현금은 배당과 자사주 매입이다. 다모다란은 설비투자 때문에 기업들의 잉여현금흐름이 이익보다 훨씬 느리게 늘 수 있다고 보고, 주주환원을 따로 확인한다.</p>
+<ul>
+<li><strong>배당</strong>: 최근 12개월 배당은 2025년보다 약 <strong>433억 달러(약 5%)</strong> 많다.</li>
+<li><strong>자사주 매입</strong>: 최근 12개월 매입은 약 <strong>1,067억 달러(약 9%)</strong> 많다.</li>
+<li><strong>순 자사주 매입</strong>: 2026년 2분기에 급증한 주식 발행을 빼면 약 <strong>7%</strong> 늘었다.</li>
+</ul>
+<p>전년 대비로는 무난한 증가지만, 2026년의 이익 증가에는 한참 못 미친다. 그 차이를 보여 주는 숫자가 S&amp;P 500의 <strong>현금 환원 비율</strong>이다. 지난 20년 대부분 미국 기업은 이익의 80% 이상을, 때로는 100% 넘게 배당과 자사주 매입으로 돌려줬다. 그런데 2024년쯤부터 이익이 환원보다 훨씬 빨리 늘기 시작했고, 2026년으로 들어서는 최근 12개월 S&amp;P 500 기업의 환원 비율은 <strong>63%</strong>로 떨어졌다. <strong>2004년 이후 가장 낮은 수준</strong>이다.</p>
+<p>다모다란은 여기에 한마디를 덧붙인다. 미국 기업이 자사주를 너무 많이 사고 사업에 재투자하지 않는다고 비판하던 사람들이, 이제는 같은 기업이 자사주 매입을 줄이고 AI 설비투자를 늘린다고 비판한다는 것이다. 비판자들은 기업이 무엇을 하든 흠을 찾는다는 결론이다.</p>
+<hr>
+<h2 id="4-장부가-무거워졌다"><a href="#4-장부가-무거워졌다" class="heading-anchor" aria-hidden="true">#</a> 4. 장부가 무거워졌다</h2><p>이익과 환원의 차이는 사라지지 않는다. 장부 위의 자본으로 쌓인다. 회계는 설비투자를 자산으로 기록하고, 그 돈을 어떻게 마련했는지에 따라 장부 자기자본과 부채를 늘린다. 2025년 2분기와 2026년 2분기 사이 미국 상장사 전체의 장부는 이렇게 변했다(슬라이드 11).</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>미국 상장사 전체</th>
+<th>정보기술 섹터</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>장부 자기자본</td>
+<td><strong>+12.98%</strong> (약 1.8조 달러)</td>
+<td><strong>+29.95%</strong></td>
+</tr>
+<tr>
+<td>총부채</td>
+<td><strong>+7.89%</strong> (약 1.9조 달러)</td>
+<td><strong>+18.79%</strong></td>
+</tr>
+<tr>
+<td>투하자본</td>
+<td><strong>+13.24%</strong></td>
+<td><strong>+32.98%</strong></td>
+</tr>
+</tbody></table>
+</div><p>블로그 본문의 표현으로는 자기자본이 &quot;약 13%&quot;, 부채가 &quot;약 8%&quot; 늘었고, 기술 섹터는 자기자본이 약 30%, 부채가 약 18.8% 늘었다. AI 설비투자를 가장 많이 한 기술 섹터에서 장부가 가장 빨리 커졌다.</p>
+<p>이것이 다모다란이 말하는 체질 변화다. AI 투자가 기대보다 잘되더라도, 빌더는 들어오기 전보다 <strong>훨씬 자본집약적인 회사</strong>로 남는다. 이익이 들어오고 설비투자가 상각 수준에 가까워지면서 현금흐름은 나아지겠지만, 사업의 무게 자체는 가벼워지지 않는다. 그는 이 점을 성공 시나리오에서도 빼지 않는다.</p>
+<hr>
+<h2 id="5-자본비용을-넘지-못하면"><a href="#5-자본비용을-넘지-못하면" class="heading-anchor" aria-hidden="true">#</a> 5. 자본비용을 넘지 못하면</h2><h3 id="51-가치의-조건"><a href="#51-가치의-조건" class="heading-anchor" aria-hidden="true">#</a> 5.1 가치의 조건</h3><p>기업재무의 기본 원칙은 단순하다. 늘어난 이익이 가치로 이어지려면, <strong>추가로 투입된 AI 자본의 수익률이 그 자본의 자본비용보다 높아야 한다.</strong></p>
+<p>$$\text{가치 창출의 조건:} \quad \text{추가 투하자본의 수익률(ROIC)} > \text{자본비용(WACC)}$$</p>
+<p>같은 말을 금액으로 바꾸면, 매년 필요한 최소 영업이익은 <em>추가 투하자본 × 자본비용</em>이다. 다모다란은 이 허들의 구체적인 금액을 제시하지 않는다. 다만 낙관론과 비관론이 갈리는 지점이 바로 여기라고 본다. 회사들이 AI에 큰돈을 넣었다는 데는 이견이 없다. 의견이 갈리는 것은 그 투자에서 나올 이익이 자본비용을 넘는 수익률을 낼 만큼 크냐는 것이다. 그는 이 질문의 답이 오픈AI나 앤스로픽의 지금 연 매출 환산액으로 정해지지 않고, AI 제품과 서비스 시장이 실체를 갖춘 뒤에야 보일 것이라고 적는다. 그사이 양쪽 모두에서 빈약한 증거로 성급하게 승리를 선언하는 일이 생길 것이라고도 경고한다.</p>
+<h3 id="52-잘될-때와-안-될-때"><a href="#52-잘될-때와-안-될-때" class="heading-anchor" aria-hidden="true">#</a> 5.2 잘될 때와 안 될 때</h3><div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" role="img" aria-label="AI 사업의 결과에 따른 회계와 시장의 결과" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs>
+    <style>
+      .c2-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 17px; fill: var(--text-main); }
+      .c2-sub { font-family: Pretendard, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); }
+      .c2-h { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 13.5px; }
+      .c2-t { font-family: Pretendard, -apple-system, sans-serif; font-size: 11.5px; fill: var(--text-muted); }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="820" height="400" rx="14" fill="var(--bg-card)"/>
+  <text x="410" y="32" text-anchor="middle" class="c2-title">AI 사업의 결과가 장부와 시장에 남기는 것</text>
+  <text x="410" y="50" text-anchor="middle" class="c2-sub">가장 좋은 경우와 가장 나쁜 경우 (다모다란 블로그·슬라이드 14–15)</text>
+  <g transform="translate(30, 68)">
+    <rect x="0" y="0" width="370" height="220" rx="10" fill="var(--bg-surface)" stroke="#10b981" stroke-width="1.6"/>
+    <text x="18" y="28" class="c2-h" fill="#059669">잘되면: 수익률 &gt; 자본비용</text>
+    <text x="18" y="58" class="c2-t">• 빌더의 이익이 AI 투자분까지 늘어남</text>
+    <text x="18" y="82" class="c2-t">• 수익률이 자본비용을 넘으면 가치가 오름</text>
+    <text x="18" y="106" class="c2-t">• 대여자는 이자와 원금을 모두 돌려받음</text>
+    <text x="18" y="130" class="c2-t">• 설비투자가 줄며 상각 수준에 가까워지고</text>
+    <text x="30" y="148" class="c2-t">현금흐름이 나아짐</text>
+    <text x="18" y="178" class="c2-t" font-weight="700" fill="#047857">• 그래도 전보다 훨씬 자본집약적인 회사로 남음</text>
+  </g>
+  <g transform="translate(420, 68)">
+    <rect x="0" y="0" width="370" height="220" rx="10" fill="var(--bg-surface)" stroke="#ef4444" stroke-width="1.6"/>
+    <text x="18" y="28" class="c2-h" fill="#dc2626">안 되면: 약속한 이익이 나오지 않음</text>
+    <text x="18" y="58" class="c2-t">• 회계가 대규모 상각(일회성·특별 항목)을 함</text>
+    <text x="18" y="82" class="c2-t">• 장부 자기자본과 투하자본이 줄어듦</text>
+    <text x="18" y="106" class="c2-t">• 부채 비중이 크면 부도와 재무적 곤경,</text>
+    <text x="30" y="124" class="c2-t">은행·사모 신용 등 대여자의 손실</text>
+    <text x="18" y="148" class="c2-t">• 살아남은 빌더의 현금은 기존 사업이</text>
+    <text x="30" y="166" class="c2-t">계속 벌 때에만 회복</text>
+    <text x="18" y="194" class="c2-t" font-weight="700" fill="#b91c1c">• 시장은 잃은 돈과 경영진 신뢰 상실을 함께 가격에 반영</text>
+  </g>
+  <g transform="translate(30, 304)">
+    <rect x="0" y="0" width="760" height="72" rx="10" fill="var(--bg-surface)" stroke="#8b5cf6" stroke-width="1.6"/>
+    <text x="380" y="28" text-anchor="middle" class="c2-h" fill="#7c3aed">순서: 시장이 먼저, 회계가 나중</text>
+    <text x="380" y="52" text-anchor="middle" class="c2-t">AI 기업의 상각이 발표될 때까지 기다렸다가 판다면, 이미 늦은 것이다</text>
+  </g>
+</svg>
+</div>
+
+<p><strong>가장 좋은 경우</strong>, AI에 투자한 회사들은 적어도 합계로는 이익을 늘릴 뿐 아니라, AI 투자에서 자본비용을 넘는 수익률을 낼 만큼 추가 이익을 만든다. 대여자는 이자와 원금을 돌려받고, 빌더의 현금흐름은 더 좋아진다. 그러나 이 회사들은 성공하더라도 처음과는 매우 다른, 더 자본집약적인 사업이 된다.</p>
+<p><strong>가장 나쁜 경우</strong>, 회계와 시장 모두에서 큰 피해가 난다. 약속한 이익이 나오지 않으면 회계는 AI 투자의 큰 부분을 상각한다. 그 상각은 일회성이나 특별 항목으로 표시되겠지만 규모는 크고, 장부 자기자본과 투하자본을 줄여 AI의 실수를 장부에서 지운다. AI 설비투자를 지나치게 부채에 기댔다면 부도와 재무적 곤경이 따르고, 대여자도 손실을 본다. 현금흐름은 회복할 수 있지만, 기존 사업이 예전만큼 계속 벌 때에만 그렇다. 그리고 시장은 경영진에 대한 신뢰 상실까지 가격에 반영한다.</p>
+<p>그 사이에는 <strong>중간 시나리오</strong>가 있다. 완만한 성공은 투자에서 이익은 나오지만 자본비용을 넘지 못하는 경우이고, 완만한 실패는 일부 회사만 투자를 정당화하고 대부분은 그러지 못하는 경우다.</p>
+<p>다모다란의 추측은 <strong>시장이 먼저 움직이고 회계가 뒤따른다</strong>는 것이다. AI가 기대보다 잘되거나 못되면, 회계가 반응하기 전에 AI 중심 기업의 주가가 먼저 오르거나 내린다. AI가 약속을 지키지 못하는 경우, 회계사가 AI 설비투자를 상각할 때까지 기다렸다가 AI 기업을 판다면 이미 너무 늦은 것이다.</p>
+<hr>
+<h2 id="6-투자자의-4가지-경로"><a href="#6-투자자의-4가지-경로" class="heading-anchor" aria-hidden="true">#</a> 6. 투자자의 4가지 경로</h2><p>이 논쟁이 끝나기를 기다릴 수 있는 사람은 없다. 기업은 지금 설비투자를 하고 있고, 시장은 그것이 미래 이익에 주는 의미를 지금 주가에 넣고 있다. 다모다란의 말로는 시장뿐 아니라 경제 전체가 AI에 건 거대한 베팅이 됐다. 그래서 그는 투자자 앞에 네 가지 선택이 있으며, <strong>어느 것도 AI 논쟁에서 빠져 앉아 있을 여유를 주지 않는다</strong>고 말한다.</p>
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" role="img" aria-label="다모다란의 4가지 투자 경로" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs>
+    <style>
+      .c3-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 17px; fill: var(--text-main); }
+      .c3-sub { font-family: Pretendard, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); }
+      .c3-box { fill: var(--bg-surface); stroke: var(--border); stroke-width: 1.2; rx: 10px; }
+      .c3-h { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 13.5px; }
+      .c3-t { font-family: Pretendard, -apple-system, sans-serif; font-size: 11.5px; fill: var(--text-muted); line-height: 1.45; }
+      .c3-badge { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 11px; fill: #ffffff; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="820" height="440" rx="14" fill="var(--bg-card)"/>
+  <text x="410" y="34" text-anchor="middle" class="c3-title">AI 논쟁 앞의 4가지 경로</text>
+  <text x="410" y="52" text-anchor="middle" class="c3-sub">확신의 방향과 강도에 따른 선택 (다모다란 블로그·슬라이드 16)</text>
+  <g transform="translate(30, 72)">
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#3b82f6"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#3b82f6"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 1</text>
+    <text x="110" y="30" class="c3-h" fill="#2563eb">곧 이긴다에 올인</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> AI는 멈출 수 없는 힘이고 파괴의 과실을 가져간다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 실행:</tspan> AI로 파괴하는 쪽을 사고, 파괴될 쪽을 판다</text>
+    <text x="15" y="104" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 사례:</tspan> 레오 아셴브레너의 Situational Awareness</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#2563eb">경고: 과신과 과도한 레버리지가 그를 무너뜨렸다</text>
+  </g>
+  <g transform="translate(420, 72)">
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#10b981"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#10b981"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 2</text>
+    <text x="110" y="30" class="c3-h" fill="#059669">시장 합의에 동행</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> 시장이 가격에 넣은 AI 이야기를 따른다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 실행:</tspan> S&amp;P 500(일부 노출), 미국 전체 시장 펀드(더 넓게)</text>
+    <text x="15" y="104" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 현실:</tspan> 연금이 인덱스라면 이미 이 길에 있다</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#059669">다모다란: 포트폴리오의 몸통은 이 경로</text>
+  </g>
+  <g transform="translate(30, 255)">
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#f59e0b"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#f59e0b"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 3</text>
+    <text x="110" y="30" class="c3-h" fill="#d97706">AI 회의론자</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> AI가 지금의 가격과 투자를 받칠 만큼 크지 못할 수 있다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 실행:</tspan> 새 투자를 AI에 덜 바뀔 사업으로 돌린다</text>
+    <text x="15" y="104" class="c3-t">  (식품가공, 레저, EU, 아시아 일부)</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#d97706">슬라이드 제목: Trust the AI story but verify</text>
+  </g>
+  <g transform="translate(420, 255)">
+    <rect x="0" y="0" width="370" height="165" class="c3-box" stroke="#ef4444"/>
+    <rect x="15" y="15" width="85" height="20" rx="4" fill="#ef4444"/>
+    <text x="57" y="29" text-anchor="middle" class="c3-badge">경로 4</text>
+    <text x="110" y="30" class="c3-h" fill="#dc2626">곧 무너진다에 베팅</text>
+    <text x="15" y="60" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 믿음:</tspan> AI의 실패가 임박했다</text>
+    <text x="15" y="82" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 최소:</tspan> 미국 주식을 줄여 현금으로 옮긴다</text>
+    <text x="15" y="104" class="c3-t"><tspan font-weight="700" fill="var(--text-main)">• 적극:</tspan> AI로 오른 종목 공매도, 파괴될 종목 매수</text>
+    <text x="15" y="140" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="#dc2626">경고: 지난 2년 이 전략은 대체로 이기지 못했다</text>
+  </g>
+</svg>
+</div>
+
+<h3 id="경로-1-ai가-이긴다에-올인한다-그것도-곧"><a href="#경로-1-ai가-이긴다에-올인한다-그것도-곧" class="heading-anchor" aria-hidden="true">#</a> 경로 1: AI가 이긴다에 올인한다 (그것도 곧)</h3><ul>
+<li><strong>논리</strong>: AI는 우리가 사는 방식과 일하는 방식을 바꿀 멈출 수 없는 힘이고, AI 사업이 그 파괴의 과실을 가져간다. 다모다란은 이것이 그럴듯한 이야기라고 인정하면서도, 파괴의 경제적·사회적 비용에 큰 물음표가 붙고 파괴의 속도와 범위에 대한 이견도 크다고 지적한다.</li>
+<li><strong>실행</strong>: 레오 아셴브레너(Leo Aschenbrenner)가 Situational Awareness를 세운 바탕이 이 이야기였다. AI로 파괴하는 쪽을 사고, 파괴될 쪽을 판다.</li>
+<li><strong>경고</strong>: 그를 무너뜨린 것은 오만과 지나친 확신에서 나온 <strong>과도한 레버리지</strong>였다. 다모다란은 같은 전략을 <strong>훨씬 적은 레버리지로</strong> 따른다면 장기적으로 이길 수도 있다고 본다.</li>
+</ul>
+<h3 id="경로-2-시장-합의를-따른다"><a href="#경로-2-시장-합의를-따른다" class="heading-anchor" aria-hidden="true">#</a> 경로 2: 시장 합의를 따른다</h3><ul>
+<li><strong>논리</strong>: 군중의 지혜를 받드는 시대에, 시장이 가격에 넣은 AI 이야기를 확인하고 따라간다. 지금 시장은 AI가 크고 가치 있는 사업을 낳는 큰 파괴가 될 것이라고 보고, 승자를 고르고 있다. AI 아키텍처에서는 엔비디아가 지금까지 가장 큰 승자이고, LLM에서는 상장 시장의 스페이스X, 비상장 시장의 오픈AI와 앤스로픽이다.</li>
+<li><strong>실행</strong>: S&amp;P 500 펀드로 이 이야기에 일부 노출되고, 미국 전체 시장 펀드로 더 넓게 노출된다. 연금과 저축을 인덱스로 굴리고 있다면, 이미 이 길을 암묵적으로 골랐을 수 있다.</li>
+</ul>
+<h3 id="경로-3-ai-회의론자가-된다"><a href="#경로-3-ai-회의론자가-된다" class="heading-anchor" aria-hidden="true">#</a> 경로 3: AI 회의론자가 된다</h3><ul>
+<li><strong>논리</strong>: AI 이야기를 의심할 이유는 많다. 그 의심은 AI가 생존 가능한 사업이 되지 못하거나, 적어도 지금의 가격과 투자를 받칠 만큼 크지 못할 것이라는 믿음으로 이어질 수 있다. 블로그는 이 경로를 &quot;Be an AI skeptic&quot;으로, 슬라이드는 &quot;Trust the AI story but verify&quot;로 부른다.</li>
+<li><strong>실행</strong>: 그 믿음이 행동에 나설 만큼 강하지 않더라도, <strong>새 투자를 AI 밖으로</strong> 돌릴 수 있다. AI에 가장 덜 바뀔 사업(식품가공, 레저)과, AI의 위협이 덜한 지역이다. 다모다란은 규제 때문에 EU를, AI가 사람의 노동을 대체하기에 너무 비싼 사업이 많다는 이유로 아시아 일부를 예로 든다.</li>
+</ul>
+<h3 id="경로-4-ai-이야기에서-뛰어내린다"><a href="#경로-4-ai-이야기에서-뛰어내린다" class="heading-anchor" aria-hidden="true">#</a> 경로 4: AI 이야기에서 뛰어내린다</h3><ul>
+<li><strong>논리</strong>: AI가 실패할 것이라는 믿음이 실패가 임박했다는 확신으로 굳었다.</li>
+<li><strong>실행</strong>: 최소한 미국 주식을 중심으로 주식 비중을 줄여 현금으로 옮긴다. 위험을 더 감수한다면, AI 이야기로 가격이 치솟은 기업을 공매도하고 AI가 파괴할 것이라던 기업을 사서 아셴브레너의 이야기를 뒤집는다.</li>
+<li><strong>경고</strong>: 지난 2년 동안 이를 시도한 많은 트레이더와 투자자에게 이 전략은 이기지 못했다. 시장은 당신이 지급 능력을 유지할 수 있는 기간보다 더 오래 비이성적일 수 있다는 격언을 기억해야 한다.</li>
+</ul>
+<hr>
+<h2 id="7-다모다란의-포지션과-인적-자본"><a href="#7-다모다란의-포지션과-인적-자본" class="heading-anchor" aria-hidden="true">#</a> 7. 다모다란의 포지션과 인적 자본</h2><h3 id="71-몸통은-시장-합의-새-돈은-단기-국채"><a href="#71-몸통은-시장-합의-새-돈은-단기-국채" class="heading-anchor" aria-hidden="true">#</a> 7.1 몸통은 시장 합의, 새 돈은 단기 국채</h3><p>다모다란은 자신의 선택도 밝힌다.</p>
+<ol>
+<li><strong>포트폴리오의 대부분은 경로 2</strong>다. 그는 매그니피센트 7 가운데 테슬라와 엔비디아를 뺀 <strong>다섯 종목</strong>을 갖고 있고, 그중 <strong>아마존, 알파벳, 메타, 마이크로소프트</strong> 네 곳은 AI 설비투자를 많이 하는 회사다.</li>
+<li><strong>새 돈은 현금</strong>이다. 지난 1–2년 포트폴리오에 새로 들어온 돈의 대부분은 <strong>금리 약 4%의 단기 국채</strong>로 갔다. 그래서 그의 포트폴리오는 평소보다 현금 비중이 높다.</li>
+</ol>
+<p>두 번째 선택은 경로 3과 다르다. 경로 3은 새 돈을 AI에 덜 노출된 사업이나 지역의 주식으로 돌리는 길이고, 그는 새 돈을 주식 밖의 단기 국채에 두었다.</p>
+<p>그는 그 대가도 숨기지 않는다. 그렇게 해서 분명히 테이블 위에 돈을 남겼지만, 덕분에 밤에 더 편히 잔다는 것이다. 그리고 독자에게도 <strong>AI 정글에서 &quot;잠자리 테스트(sleep test)&quot;를 통과하게 해 주는 길</strong>을 찾으라고 권한다.</p>
+<h3 id="72-계좌-밖의-자산-인적-자본"><a href="#72-계좌-밖의-자산-인적-자본" class="heading-anchor" aria-hidden="true">#</a> 7.2 계좌 밖의 자산: 인적 자본</h3><p>그가 마지막으로 짚는 것은 아직 보유 목록에 나타나지 않는 자산이다. 남은 근로 기간 동안 직업으로 벌어들일 소득, 곧 <strong>인적 자본(Human Capital)</strong>이다.</p>
+<p>$$\text{총 자산} = \text{금융 자본} + \text{인적 자본}$$</p>
+<p>자신의 직업이 AI에 잠식될 것이라고 본다면, 금융 자본을 AI 파괴에 가장 많이 노출된 사업에서 빼서 전체 균형을 맞추는 것이 합리적이다. 직장과 주식이 같은 충격에 함께 흔들리지 않게 하려는 것이다. 다모다란은 자신은 남은 근로 연한이 짧아 이 항목을 크게 신경 쓰지 않지만, 자신보다 훨씬 젊은 투자자라면 이 점이 투자 방식 자체를 바꿀 수 있다고 말한다.</p>
+<hr>
+<h2 id="8-이-글의-근거와-한계"><a href="#8-이-글의-근거와-한계" class="heading-anchor" aria-hidden="true">#</a> 8. 이 글의 근거와 한계</h2><ul>
+<li><strong>수치의 출처</strong>: 본문의 수치와 인용은 다모다란의 2026년 10월 8일 블로그 글과 같은 주제의 슬라이드(MktandAI2026.pdf, 18장)에서 가져왔다. 섹터 표, ERP 계산의 세부 가정(지수 7,651.54, 성장률 14.59%, 환원 비율 63.52%, Aa1 스프레드 0.22%), 투하자본 증가율, 공급자 매출 구성은 슬라이드의 표와 그림에서 읽은 값이다. 블로그 본문은 이 값들을 문장으로 적지 않는다.</li>
+<li><strong>집계의 범위</strong>: 모든 집계는 미국 상장사만 담는다. 오픈AI, 앤스로픽 같은 비상장 회사와 합작·부외 기구는 빠져 있어, 실제 AI 투자의 효과는 이 숫자보다 크다.</li>
+<li><strong>두 개의 ERP</strong>: 3.70%와 3.92%는 범위가 아니라 무위험수익률의 정의(10년물 5.29%, 달러 무위험수익률 5.07%)가 다른 두 계산이다.</li>
+<li><strong>두 종류의 성장률</strong>: 14.59%는 향후 5년의 애널리스트 기대치이고, 실현된 이익 증가는 2026년 1분기 +35%, 2분기 +57%다.</li>
+<li><strong>자본비용 허들</strong>: 다모다란은 AI 투자가 넘어야 할 허들의 구체적인 금액이나 자본비용 수치를 제시하지 않는다. 그래서 이 글도 원칙만 적었다.</li>
+<li><strong>영상</strong>: 같은 주제의 영상 강연이 있지만 그 대사는 따로 대조하지 않았다.</li>
+</ul>
+<hr>
+<h2 id="출처"><a href="#출처" class="heading-anchor" aria-hidden="true">#</a> 출처</h2><ul>
+<li>Aswath Damodaran, <a href="https://aswathdamodaran.blogspot.com/2026/10/stock-prices-earnings-and-cashflows-ai.html">Stock Prices, Earnings and Cashflows: The AI Effect plays through!</a>, <em>Musings on Markets</em>, 2026. 10. 8.</li>
+<li>Aswath Damodaran, <a href="https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/MktandAI2026.pdf">슬라이드 MktandAI2026.pdf</a>, 18장.</li>
+<li>Aswath Damodaran, <a href="https://www.youtube.com/watch?v=nwmvMh6P1Lo">Earnings, Cashflows and Stock Prices: The AI Storm blows through!</a> (YouTube 영상 강연).</li>
+</ul>
+
+      </section>
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>영한 대조 심화 학습서 — nobody should type code by hand anymore (Geoffrey Huntley)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      word-break: keep-all;
+    }
+    .en-text { word-break: normal; }
+    .font-scale-sm .bilingual-text { font-size: 0.925rem; line-height: 1.65; }
+    .font-scale-md .bilingual-text { font-size: 1.02rem; line-height: 1.78; }
+    .font-scale-lg .bilingual-text { font-size: 1.15rem; line-height: 1.85; }
+    .pair-card { transition: all 0.18s ease; }
+    .pair-card.active-pair {
+      border-color: #6366f1 !important;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+    }
+    mark.search-hl {
+      background-color: rgba(250, 204, 21, 0.35);
+      color: inherit;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-scale-md transition-colors duration-200" id="app-body">
+
+  <!-- Top Sticky Header -->
+  <header class="sticky top-0 z-30 backdrop-blur-md bg-slate-900/90 dark:bg-slate-900/90 border-b border-slate-800 transition-colors duration-200" id="top-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand / Title -->
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="../index.html" class="text-xs px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 shrink-0 transition">← 목록으로</a>
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-600 text-white font-bold text-sm shrink-0 shadow-sm">GH</span>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-bold truncate">Geoffrey Huntley: Agency &amp; Loop Engineering</h1>
+            <a href="https://ghuntley.com/agency/" target="_blank" rel="noopener noreferrer" class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 shrink-0 transition">원문 ↗</a>
+          </div>
+          <p class="text-xs text-slate-400 truncate">영한 병렬 대조 · 25개 심화 기술 주석 · 4부작 타임스탬프 및 학습 가이드 (2026.10.13)</p>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/70" aria-label="Main Tabs">
+        <button type="button" onclick="switchTab('reader')" id="tab-btn-reader" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white">📖 영한 대조 본문</button>
+        <button type="button" onclick="switchTab('annotations')" id="tab-btn-annotations" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white">💡 심화 주석 사전 (25)</button>
+        <button type="button" onclick="switchTab('chapters')" id="tab-btn-chapters" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white">🎬 챕터 &amp; 영상</button>
+        <button type="button" onclick="switchTab('references')" id="tab-btn-references" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white">📚 참고문헌 &amp; 퀴즈</button>
+      </nav>
+    </div>
+
+    <!-- Reader Control Bar (Only visible in Reader / Annotations) -->
+    <div id="reader-toolbar" class="border-t border-slate-800/80 bg-slate-900/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+        <!-- View Mode Buttons -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs text-slate-400 mr-1 hidden sm:inline">보기 모드:</span>
+          <button type="button" onclick="setViewMode('side-by-side')" id="mode-side-by-side" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-600 text-white transition">좌우 병렬 (영·한)</button>
+          <button type="button" onclick="setViewMode('interleaved')" id="mode-interleaved" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">상하 교차</button>
+          <button type="button" onclick="setViewMode('ko-only')" id="mode-ko-only" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">한글 번역만</button>
+          <button type="button" onclick="setViewMode('en-only')" id="mode-en-only" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">영문 원문만</button>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="flex flex-wrap items-center gap-2 flex-1 max-w-md">
+          <div class="relative flex-1 min-w-[160px]">
+            <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="영문, 번역, 주석 키워드 검색 (예: Nix, Roomba, PR)..." class="w-full pl-3 pr-7 py-1 text-xs rounded-lg bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500" />
+            <button type="button" onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">✕</button>
+          </div>
+          <button type="button" onclick="toggleBookmarkFilter()" id="bookmark-filter-btn" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-500/60 transition flex items-center gap-1">
+            <span>★ 북마크만</span>
+            <span id="bookmark-count-badge" class="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[11px]">0</span>
+          </button>
+        </div>
+
+        <!-- Right Controls: Annotations Toggle, Font Size, Theme -->
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="toggleInlineNotes()" id="inline-notes-btn" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 transition">주석 펼침: ON</button>
+          <div class="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+            <button type="button" onclick="setFontSize('sm')" id="font-sm" class="px-2 py-0.5 rounded text-xs text-slate-400 hover:text-white">가-</button>
+            <button type="button" onclick="setFontSize('md')" id="font-md" class="px-2 py-0.5 rounded text-xs bg-slate-700 text-white font-semibold">가</button>
+            <button type="button" onclick="setFontSize('lg')" id="font-lg" class="px-2 py-0.5 rounded text-xs text-slate-400 hover:text-white">가+</button>
+          </div>
+          <button type="button" onclick="toggleTheme()" id="theme-toggle-btn" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition" title="테마 전환">☀️ 라이트</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+    <!-- Hero Banner / Executive Overview -->
+    <section id="hero-banner" class="mb-6 rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 p-5 sm:p-6 shadow-lg">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="space-y-2 max-w-3xl">
+          <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-400">
+            <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/30">원문 완역 &amp; 심화 학습 에디션</span>
+            <span>Geoffrey Huntley · 2026년 10월 13일</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight">
+            "nobody should type code by hand anymore. here's what's left."
+          </h2>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong>이제 아무도 손으로 직접 코드를 타이핑해서는 안 됩니다. 여기 남은 것들이 있습니다.</strong><br/>
+            조쉬 울프(Josh Wulf)와의 4부작 대담을 정리한 이 글에서 제프리 헌틀리는 모델의 성능 한계는 이미 오래전에 사라졌으며, 인간 엔지니어에게 남은 세 가지 핵심 기둥은 <strong>비전(Vision)</strong>, <strong>결정론적 검증(Verification)</strong>, 그리고 <strong>주체성(Agency)</strong>이라고 역설합니다. 문단별 영·한 병렬 대조와 25개의 심화 기술 주석을 통해 원문의 맥락을 100% 학습해 보세요.
+          </p>
+        </div>
+
+        <!-- Quick Stats & Section Jump Pills -->
+        <div class="flex flex-col gap-2 shrink-0">
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/70">
+              <div class="text-base font-bold text-indigo-400" id="stat-total-blocks">96</div>
+              <div class="text-[11px] text-slate-400">영·한 대조 블록</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/70">
+              <div class="text-base font-bold text-emerald-400">25개</div>
+              <div class="text-[11px] text-slate-400">심화 학습 주석</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/70">
+              <div class="text-base font-bold text-amber-400" id="stat-progress">0/5</div>
+              <div class="text-[11px] text-slate-400">섹션 학습 완료</div>
+            </div>
+          </div>
+          <!-- Section Quick Jump -->
+          <div class="flex flex-wrap gap-1.5 pt-1" id="section-jump-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: BILINGUAL READER -->
+    <div id="view-reader" class="space-y-8">
+      <div id="reader-sections-container" class="space-y-10"></div>
+    </div>
+
+    <!-- TAB 2: ANNOTATIONS & GLOSSARY -->
+    <div id="view-annotations" class="hidden space-y-6">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-white">💡 심화 학습 주석 &amp; 배경지식 사전 (25개 핵심 개념)</h3>
+            <p class="text-xs text-slate-400 mt-1">본문에 등장하는 루프 엔지니어링 기법, 도구(Nix, Antithesis, Underclass, Unikernels), 업계 인물 및 은어를 체계적으로 정리했습니다.</p>
+          </div>
+          <div class="flex flex-wrap gap-1.5" id="annotation-category-filters">
+            <button type="button" onclick="filterAnnotations('ALL')" id="ann-cat-ALL" class="px-3 py-1 rounded-lg text-xs font-medium bg-indigo-600 text-white">전체 (25)</button>
+            <button type="button" onclick="filterAnnotations('Core Concept')" id="ann-cat-Core Concept" class="px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">핵심 개념</button>
+            <button type="button" onclick="filterAnnotations('Tools & Architecture')" id="ann-cat-Tools & Architecture" class="px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">도구 및 아키텍처</button>
+            <button type="button" onclick="filterAnnotations('Industry Shift')" id="ann-cat-Industry Shift" class="px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">산업 패러다임</button>
+            <button type="button" onclick="filterAnnotations('People & Context')" id="ann-cat-People & Context" class="px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">인물 및 배경</button>
+          </div>
+        </div>
+        <div id="annotations-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CHAPTERS & VIDEO TIMESTAMPS -->
+    <div id="view-chapters" class="hidden space-y-6">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+        <h3 class="text-lg font-bold text-white mb-1">🎬 4부작 대담 에피소드 및 타임스탬프 (영·한 대조)</h3>
+        <p class="text-xs text-slate-400 mb-5">본문 하단에 수록된 Agentic Engineering 4부작 전체 챕터 목록과 한국어 번역입니다. 타임스탬프를 클릭하면 해당 YouTube 영상 지점으로 바로 이동합니다.</p>
+        <div id="chapters-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5"></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: REFERENCES & SELF-CHECK QUIZ -->
+    <div id="view-references" class="hidden space-y-8">
+      <!-- Self-Check Study Questions -->
+      <div class="rounded-2xl border border-indigo-500/30 bg-slate-900/80 p-5">
+        <h3 class="text-lg font-bold text-white mb-1">🧠 심화 학습 자가 점검 (Self-Check &amp; Discussion Prompts)</h3>
+        <p class="text-xs text-slate-400 mb-4">각 파트의 핵심 논지를 자신의 언어로 설명할 수 있는지 점검해 보세요. '정답 및 해설 보기'를 눌러 저자의 핵심 논거를 확인할 수 있습니다.</p>
+        <div id="quiz-container" class="space-y-3"></div>
+      </div>
+
+      <!-- Verified References -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+        <h3 class="text-lg font-bold text-white mb-1">📚 본문 인용 아티클 및 외부 참고문헌 총람</h3>
+        <p class="text-xs text-slate-400 mb-5">본문 내에 임베드된 Geoffrey Huntley의 글 16편과 외부 오픈소스/기술 문서 링크입니다.</p>
+        <div id="references-container" class="space-y-6"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Slide-over Annotation Detail Modal -->
+  <div id="annotation-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4" onclick="closeAnnotationModal(event)">
+    <div class="bg-slate-900 border border-indigo-500/40 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span id="modal-ann-cat" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300"></span>
+          <h4 id="modal-ann-title" class="text-lg font-bold text-white mt-1.5"></h4>
+        </div>
+        <button type="button" onclick="closeAnnotationModal()" class="text-slate-400 hover:text-white text-lg leading-none px-2 py-1 rounded-lg hover:bg-slate-800">✕</button>
+      </div>
+      <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 text-sm text-indigo-200 font-medium" id="modal-ann-summary"></div>
+      <p class="text-sm text-slate-300 leading-relaxed" id="modal-ann-detail"></p>
+      <div class="pt-2 flex items-center justify-between border-t border-slate-800">
+        <a id="modal-ann-link" href="https://ghuntley.com/agency/" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 underline">관련 링크 열기 ↗</a>
+        <button type="button" onclick="closeAnnotationModal()" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-medium shadow-xl border border-indigo-400/30"></div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 py-5 px-4 sm:px-6 text-center text-xs text-slate-500">
+    원문 출처: <a href="https://ghuntley.com/agency/" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:underline">Geoffrey Huntley — nobody should type code by hand anymore. here's what's left. (2026-10-13)</a> · 영한 비교/대조 및 심화 학습용 인터랙티브 에디션
+  </footer>
+
+  <script>
+    const DATA = {"meta": {"title_en": "nobody should type code by hand anymore. here's what's left.", "title_ko": "이제 아무도 손으로 직접 코드를 타이핑해서는 안 됩니다. 여기 남은 것들이 있습니다.", "author": "Geoffrey Huntley (with Josh Wulf)", "date": "2026-10-13", "source_url": "https://ghuntley.com/agency/"}, "sections": [{"id": "intro", "part": "Intro", "title_en": "nobody should type code by hand anymore. here's what's left.", "title_ko": "이제 아무도 손으로 직접 코드를 타이핑해서는 안 됩니다. 여기 남은 것들이 있습니다.", "summary_ko": "Geoffrey Huntley와 Josh Wulf가 4부작 팟캐스트(Agentic Engineering)에서 나눈 대화를 정리한 서문입니다. 모델 자체가 병목이던 시대는 이미 끝났으며, 이제 인간 엔지니어에게 남은 핵심 가치는 비전(Vision), 검증(Verification), 그리고 주체성(Agency)임을 선언합니다.", "video_url": null, "blocks": [{"id": "p-intro-1", "type": "lead", "en": "Josh Wulf and I talked loop engineering for four episodes. The models stopped being the constraint a long time ago; what's left is vision, verification and agency. Delete your skill packs, put the whole system under test, and revisit everything that used to be hard.", "ko": "조쉬 울프(Josh Wulf)와 저는 4개의 에피소드에 걸쳐 '루프 엔지니어링(Loop Engineering)'에 대해 이야기를 나눴습니다. 모델이 제약 조건이던 시대는 이미 오래전에 끝났습니다. 이제 남은 것은 비전(Vision), 검증(Verification), 그리고 주체성(Agency)입니다. 스킬 팩(skill packs)을 지워버리고, 시스템 전체를 테스트 하에 두며, 과거에 어렵다고 여겼던 모든 것들을 다시 검토하십시오.", "notes": ["ann-loop-engineering", "ann-agency", "ann-skill-packs"]}, {"id": "p-intro-2", "type": "paragraph", "en": "Josh Wulf has been running a show called Agentic Engineering, and he asked me on. Josh spent ten years at Red Hat, three years as a tech recruiter in Brisbane, and the last year sprinting down the same road I have, sounding a bit crazy to most people around him. We talked for about an hour and a half. He cut it into four parts, and they all dropped today.", "ko": "조쉬 울프는 '에이전틱 엔지니어링(Agentic Engineering)'이라는 방송을 진행하고 있는데, 저를 게스트로 초대했습니다. 조쉬는 레드햇(Red Hat)에서 10년, 브리즈번에서 테크 리크루터로 3년을 보냈고, 지난 1년 동안은 주변 사람들에게 살짝 미친 사람처럼 보일 정도로 저와 똑같은 길을 전속력으로 달려왔습니다. 우리는 약 1시간 반 동안 대화를 나눴고, 그가 이를 4부작으로 편집해 오늘 모두 공개했습니다.", "notes": ["ann-josh-wulf"]}, {"id": "p-intro-3", "type": "paragraph", "en": "Here's the gist of all four, written up properly and in order, with chapter links at the bottom if you want to jump to a specific part of the conversation.", "ko": "여기 4부작 전체의 핵심 요지를 순서대로 제대로 정리해 두었으며, 대화의 특정 부분으로 바로 이동하고 싶으신 분들을 위해 본문 하단에 챕터 링크를 달아두었습니다.", "notes": []}, {"id": "p-intro-4", "type": "quote", "en": "There's no place in the world now for a software engineer who types code by hand.", "ko": "이제 이 세상에 손으로 직접 코드를 타이핑하는 소프트웨어 엔지니어가 설 자리는 없습니다.", "notes": []}]}, {"id": "part-1", "part": "Part 1", "title_en": "part 1: is coding over?", "title_ko": "파트 1: 코딩의 시대는 끝났는가?", "summary_ko": "IDE의 종말, 파일시스템을 상태(State)로 활용하는 자율 루프, 클린룸 역공학(Z80 기법)이 가져온 '무한 소프트웨어' 시대, 그리고 기술 무빙워크(Travelator) 위에서 벌어지는 개발자 양극화와 분자(Molecule) 단위 인재 채용 트렌드를 다룹니다.", "video_url": "https://www.youtube.com/watch?v=ziXOV0b134s", "video_title": "Is Coding Over? Geoffrey Huntley on the Future of Developers (Loop Engineering 1/4)", "blocks": [{"id": "h-p1-1", "type": "subheading", "en": "nobody knows what happens next", "ko": "다음에 무슨 일이 벌어질지는 아무도 모른다", "notes": []}, {"id": "p-p1-1", "type": "paragraph", "en": "Josh opened by calling me the LLM whisperer. I'll take it, but let's be clear: no one knows what the hell will happen. I'm a little bit older, I've worked in developer tooling for a long time, and I'm just a little better informed. That's it.", "ko": "조쉬는 저를 'LLM 위스퍼러(LLM과 교감하는 전문가)'라고 부르며 오프닝을 열었습니다. 기분 좋게 받아들이겠지만, 한 가지는 명확히 합시다. 앞으로 도대체 무슨 일이 벌어질지는 아무도 모릅니다. 저는 그저 나이가 조금 더 많고, 개발자 도구(Developer Tooling) 분야에서 오랫동안 일해 왔으며, 정보가 조금 더 빠를 뿐입니다. 그게 전부입니다.", "notes": []}, {"id": "p-p1-2", "type": "paragraph", "en": "Here's the timeline. December 2024, I'm a tech lead at Canva. Everyone there loves JetBrains. I start using Cursor, start running my first loops by hand, and think, \"ooh, JetBrains and IDEs don't exist in the future.\" You get used to being called a little bit crazy. JetBrains just reported its first-ever net loss. Sure, they've been investing, but in my circles, no one is typing code into an IDE anymore. If you hang around a group that still loves their IDEs, you're not hanging around a well-informed group.", "ko": "타임라인을 짚어보죠. 2024년 12월, 저는 캔바(Canva)의 테크 리드였습니다. 그곳의 모든 사람들은 젯브레인(JetBrains)을 사랑했죠. 저는 커서(Cursor)를 쓰기 시작했고, 수동으로 첫 번째 루프들을 돌려보기 시작하면서 '오, 미래에는 JetBrains와 IDE가 존재하지 않겠구나'라고 생각했습니다. 살짝 미쳤다는 소리를 듣는 것에는 금방 익숙해집니다. 최근 JetBrains는 창사 이래 첫 순손실을 기록했습니다. 물론 그들도 투자를 이어가고 있겠지만, 제 주변 네트워크에서는 이제 아무도 IDE에 직접 코드를 타이핑하지 않습니다. 만약 여러분이 여전히 IDE를 애지중지하는 집단에 속해 있다면, 정보에 밝은 집단과 어울리고 있지 않은 것입니다.", "notes": ["ann-ide-decline"]}, {"id": "p-p1-3", "type": "paragraph", "en": "In February last year I discovered filesystem-as-state, the first of the loops: the idea of autonomously building things. It spooked me. The first thing I did with it was publish the Z80 post.", "ko": "작년(2025년) 2월, 저는 자율적으로 무언가를 구축하는 루프의 시초인 '상태로서의 파일시스템(filesystem-as-state)' 개념을 발견했습니다. 섬뜩할 정도의 충격이었죠. 제가 그 개념으로 가장 먼저 한 일은 Z80 포스트를 발행한 것이었습니다.", "notes": ["ann-filesystem-as-state", "ann-z80"]}, {"id": "c-p1-1", "type": "card", "title_en": "Can a LLM convert C, to ASM to specs and then to a working Z/80 Speccy tape? Yes.", "title_ko": "LLM이 C 코드를 어셈블리(ASM)로, 이를 명세서(Specs)로 변환한 뒤 작동하는 Z/80 스펙트럼 테이프로 만들 수 있을까? 그렇다.", "subtitle_en": "Clean-room software into specs, then rebuild it from the specs. — Geoffrey Huntley", "subtitle_ko": "소프트웨어를 클린룸 방식으로 명세서로 추출한 뒤, 그 명세서로부터 다시 빌드하라. — 제프리 헌틀리", "url": "https://ghuntley.com/z80/", "en": "Embedded Post: Can a LLM convert C, to ASM to specs and then to a working Z/80 Speccy tape? Yes. Clean-room software into specs, then rebuild it from the specs.", "ko": "삽입 포스트: LLM이 C를 ASM으로, 이를 다시 명세서로 변환한 뒤 실제로 작동하는 Z/80 ZX 스펙트럼 테이프로 만들 수 있을까요? 가능합니다. 기존 소프트웨어를 클린룸(Clean-room) 방식으로 명세서로 만든 뒤 그 명세서에서 재구축하는 기법입니다.", "notes": ["ann-z80"]}, {"id": "p-p1-4", "type": "paragraph", "en": "Not enough people understood that post at the time. Take an existing application, clean-room it into specifications, then rebuild the software from those specifications, much like the way AMD's CPUs came out of Intel's. It's not legal in every jurisdiction, and you have to take the right approach. But did you see all the Photoshop clones that came out in the last week? That's just the Z80 idea, implemented.", "ko": "당시에는 그 글의 의미를 제대로 이해한 사람이 많지 않았습니다. 기존 애플리케이션을 가져다가 마치 AMD의 CPU가 인텔(Intel)의 CPU에서 탄생했던 것처럼 클린룸 역공학을 통해 명세서(specifications)로 변환한 다음, 그 명세서로부터 소프트웨어를 새로 구축하는 것입니다. 모든 법적 관할권에서 합법적인 것은 아니며 올바른 접근 방식을 취해야 합니다. 하지만 지난주에 쏟아져 나온 수많은 포토샵(Photoshop) 클론들을 보셨나요? 그것이 바로 Z80 아이디어를 그대로 구현한 것입니다.", "notes": ["ann-z80"]}, {"id": "p-p1-5", "type": "paragraph", "en": "A year and a half later, services and MCPs exist whose whole job is rebuilding existing software, and a couple of published papers cite it.", "ko": "1년 반이 지난 지금, 기존 소프트웨어를 재구축하는 것만을 전문으로 하는 서비스와 MCP(Model Context Protocol) 서버들이 존재하며, 출판된 논문 몇 편에서도 이를 인용하고 있습니다.", "notes": []}, {"id": "p-p1-6", "type": "paragraph", "en": "The idea underneath is infinite software. If you're selling software without infrastructure or some other lock-in, you're hosed. So the real question is: what is a moat in software now? What is investable in software now?", "ko": "그 기저에 깔린 핵심 개념은 '무한 소프트웨어(Infinite Software)'입니다. 만약 인프라나 다른 형태의 락인(lock-in, 고객 묶어두기) 효과 없이 순수 소프트웨어만 판매하고 있다면, 여러분은 끝장난(hosed) 것입니다. 따라서 진짜 질문은 이것입니다. '지금 소프트웨어에서 경제적 해자(moat)란 무엇인가? 지금 소프트웨어 분야에서 투자 가치가 있는 것은 무엇인가?'", "notes": ["ann-infinite-software"]}, {"id": "h-p1-2", "type": "subheading", "en": "the travelator", "ko": "무빙워크 (The Travelator)", "notes": ["ann-travelator"]}, {"id": "p-p1-7", "type": "paragraph", "en": "Then came Dear Student. ThePrimeagen covered it, the juniors started paying attention, and I ended up in SF, at the pub, at a couple of meetups, realizing I couldn't sit on Ralph any longer because someone else would write it up first. By November, Boris was talking about using Ralph and loops in Claude Code. January was the real inflection point: it crossed into the mainstream, and business leaders started to understand what was happening.", "ko": "그다음에 나온 글이 'Dear Student(친애하는 학생에게)'였습니다. 유튜버 더프라임에이젠(ThePrimeagen)이 이를 다뤘고, 주니어 개발자들이 주목하기 시작했으며, 저는 샌프란시스코의 펍과 몇몇 밋업에 참석하게 되면서 누군가 먼저 글을 쓰기 전에 '랄프(Ralph)' 기법을 더 이상 아껴둘 수만은 없다는 걸 깨달았습니다. 11월 무렵에는 보리스(Boris)가 클로드 코드(Claude Code)에서 Ralph와 루프를 사용하는 이야기를 하기 시작했습니다. 그리고 1월이 진짜 변곡점이었습니다. 이 흐름이 주류(mainstream)로 넘어갔고, 비즈니스 리더들이 무슨 일이 벌어지고 있는지 이해하기 시작했습니다.", "notes": ["ann-ralph-loop"]}, {"id": "c-p1-2", "type": "card", "title_en": "Dear Student: Yes, AI is here, you're screwed unless you take action...", "title_ko": "친애하는 학생에게: 네, AI는 이미 왔고 행동하지 않으면 당신은 끝장납니다...", "subtitle_en": "If you're not paying attention, you're screwed. — Geoffrey Huntley", "subtitle_ko": "주의를 기울이지 않는다면, 당신은 위기에 처할 것입니다. — 제프리 헌틀리", "url": "https://ghuntley.com/screwed/", "en": "Embedded Post: Dear Student: Yes, AI is here, you're screwed unless you take action... If you're not paying attention, you're screwed.", "ko": "삽입 포스트: 친애하는 학생에게: 네, AI 시대는 도래했고 지금 당장 행동에 나서지 않으면 가망이 없습니다.", "notes": []}, {"id": "p-p1-8", "type": "paragraph", "en": "It still hasn't crossed into the dark matter developers, and that concerns me deeply. If you've been applying yourself and staying curious, you have a two-year head start on everyone else. You can't just pick up the latest model and be good at this. It takes theory of mind, and the more you apply yourself, the more you see what's possible, which makes you more ambitious, which makes you see more.", "ko": "하지만 이 흐름은 여전히 '암흑 물질 개발자들(dark matter developers)'에게는 가닿지 않았으며, 저는 이 점이 깊이 우려됩니다. 만약 여러분이 호기심을 유지하며 꾸준히 파고들었다면, 다른 모든 사람들보다 2년은 앞서 있는 셈입니다. 단지 최신 모델을 가져다 쓴다고 해서 하루아침에 이를 잘할 수는 없습니다. 여기에는 '마음 이론(Theory of Mind, 모델의 사고방식과 한계를 읽는 직관)'이 필요하며, 직접 부딪히며 적용해 볼수록 무엇이 가능한지 더 많이 보게 되고, 이는 여러분을 더 야심 차게 만들며, 그 야심이 다시 더 많은 가능성을 보게 만드는 선순환을 낳습니다.", "notes": ["ann-dark-matter-devs", "ann-theory-of-mind"]}, {"id": "p-p1-9", "type": "paragraph", "en": "Josh's story fits that exactly. He tried autocomplete-style Copilot, thought it was rubbish, and turned it off. Then a friend who heads AI at a couple of companies told him their engineers were getting good results. The first thing Josh did was have it clone a Java testing framework into Node.js. It wasn't great, but it was maybe 80% as good as he was, and it never stopped. It doesn't need to eat or sleep, and it doesn't lose focus. So he figured out what the missing 20% was: completeness and verification, because the models would leave stubs and partial implementations. Do the 20% instead of the 100%, and you've got scale.", "ko": "조쉬의 경험담이 정확히 이에 부합합니다. 그는 자동완성 스타일의 코파일럿(Copilot)을 써보고는 형편없다고 생각해 꺼버렸습니다. 그러다 몇몇 기업에서 AI 총괄을 맡고 있는 친구로부터 사내 엔지니어들이 꽤 좋은 성과를 내고 있다는 말을 들었죠. 조쉬가 처음 시도한 일은 자바(Java) 테스팅 프레임워크를 Node.js로 복제(clone)하게 시키는 것이었습니다. 결과물이 완벽하진 않았지만 본인이 직접 짜는 것의 약 80% 수준은 되었고, 무엇보다 결코 멈추지 않았습니다. 먹지도 자지도 않고 집중력을 잃지도 않으니까요. 그래서 그는 부족한 나머지 20%가 무엇인지 파악했습니다. 모델들이 스텁(stub, 미완성 껍데기 코드)이나 부분적인 구현만 남겨두곤 했기 때문에, 나머지 20%는 바로 '완결성(completeness)'과 '검증(verification)'이었던 것입니다. 인간이 100%를 다 하는 대신 그 20%에 집중하면, 압도적인 규모(scale)를 얻게 됩니다.", "notes": []}, {"id": "p-p1-10", "type": "paragraph", "en": "Same for me. I'm no maximal AI glazer. I explicitly distrust the tools. The difference is that I internalized two years ago that the line was coming, and I've been expanding what I think is possible ever since. The models from a year ago were already good enough to displace software developers, and they keep getting better. We don't get stubs anymore. It still comes down to the operator's skill.", "ko": "저도 마찬가지입니다. 저는 AI를 무조건 찬양하는 사람(maximal AI glazer)이 아닙니다. 오히려 저는 도구를 명시적으로 불신합니다. 차이점이 있다면, 저는 2년 전에 이미 이 거대한 변곡점이 다가오고 있음을 내면화했고, 그때부터 무엇이 가능한지에 대한 제 인식의 지평을 계속 넓혀왔다는 것입니다. 1년 전의 모델들만으로도 이미 소프트웨어 개발자를 대체하기에 충분히 훌륭했고, 모델은 계속해서 더 좋아지고 있습니다. 이제는 스텁(미완성 코드)조차 나오지 않습니다. 결국 모든 것은 '오퍼레이터(운용자)의 역량'으로 귀결됩니다.", "notes": []}, {"id": "p-p1-11", "type": "paragraph", "en": "The travelator of tech moves on, as it always has. My deepest concern is the people who haven't even stepped on it. They're not aware it's moving, and they're completely unaware that some people are sprinting on it.", "ko": "기술이라는 무빙워크(travelator)는 언제나 그랬듯 앞으로 움직이고 있습니다. 제가 가장 깊이 걱정하는 대상은 아직 그 무빙워크 위에 발조차 올리지 않은 사람들입니다. 그들은 무빙워크가 움직이고 있다는 사실조차 모르며, 어떤 사람들은 그 움직이는 무빙워크 위에서 전력 질주하고 있다는 사실은 더더욱 모르고 있습니다.", "notes": ["ann-travelator"]}, {"id": "p-p1-12", "type": "paragraph", "en": "And you know how the employment market works. \"Five years of React experience required.\" They're going to put minimum years of AI experience on job ads. If you wait for the models to be perfect before you start, there'll be juniors who are cheaper than you, who have been playing with this substrate, with a whole portfolio of cool things and maybe a couple of conference talks. Same story as always. Josh, who wrote those mathematically impossible job ads as a recruiter, reckons he got two years of LLM experience into one by doing more hours every day and more days every week.", "ko": "채용 시장이 어떻게 돌아가는지 잘 아실 겁니다. 'React 경력 5년 이상 필수' 같은 조건 말입니다. 조만간 채용 공고에 'AI 활용 경력 최소 N년 이상'이라는 조건이 붙을 것입니다. 만약 모델이 완벽해질 때까지 기다렸다가 시작하려 한다면, 그때는 여러분보다 몸값은 저렴하면서도 이미 이 새로운 기반(substrate)을 가지고 놀며 멋진 포트폴리오를 가득 채우고 컨퍼런스 발표까지 몇 번 해본 주니어들에게 밀리게 될 것입니다. 늘 반복되던 역사 그대로죠. 리크루터 시절 저런 수학적으로 불가능한 채용 공고(출시 2년 된 기술에 5년 경력 요구 등)를 직접 작성해 본 적 있는 조쉬는, 매일 더 많은 시간을 쏟아붓고 매주 더 많은 날을 몰입함으로써 1년 만에 2년 치의 LLM 경험을 압축해서 쌓았다고 말합니다.", "notes": []}, {"id": "h-p1-3", "type": "subheading", "en": "managers, burnout and retirement projects", "ko": "매니저, 번아웃, 그리고 은퇴 프로젝트", "notes": []}, {"id": "p-p1-13", "type": "paragraph", "en": "A couple of days ago I published the post I'd been putting off for five or six months. If you're an engineering manager and you're not creating time for your team to play with AI, you're setting them up to be replaced. It got 500,000 unique views in 24 hours.", "ko": "며칠 전 저는 5~6개월 동안 미뤄왔던 글을 발행했습니다. 만약 당신이 엔지니어링 매니저인데 팀원들이 AI를 가지고 실험하고 놀아볼 시간을 만들어주지 않고 있다면, 당신은 팀원들이 대체되도록 판을 깔아주고 있는 것이라는 내용입니다. 이 글은 24시간 만에 50만 순수 조회수(unique views)를 기록했습니다.", "notes": []}, {"id": "c-p1-3", "type": "card", "title_en": "if your team is too busy doing their 'normal job' to experiment with AI, you're preparing them to be replaced", "title_ko": "팀원들이 '평소 업무'를 하느라 너무 바빠서 AI를 실험할 시간이 없다면, 당신은 그들이 대체되도록 준비시키고 있는 것이다", "subtitle_en": "AI use is now mandatory for employability. — Geoffrey Huntley", "subtitle_ko": "고용 가능성(Employability)을 유지하기 위해 AI 활용은 이제 필수입니다. — 제프리 헌틀리", "url": "https://ghuntley.com/replaced/", "en": "Embedded Post: if your team is too busy doing their 'normal job' to experiment with AI, you're preparing them to be replaced. AI use is now mandatory for employability.", "ko": "삽입 포스트: 팀이 일상 업무에 치여 AI를 실험할 여유가 없다면, 매니저는 팀원들이 시장에서 도태되도록 방치하는 셈입니다.", "notes": []}, {"id": "p-p1-14", "type": "paragraph", "en": "You join a company to de-risk your life. If a company has banned AI outright, quit and don't join one like it. You trade time and skills for money, and you need skills that will be employable for you and your family. You could try to change the culture, but plenty of employers are already with the program and will likely pay you more.", "ko": "사람이 회사에 입사하는 이유는 삶의 리스크를 줄이기(de-risk) 위해서입니다. 만약 회사가 AI 사용을 전면 금지했다면, 당장 퇴사하고 그런 회사에는 입사하지 마십시오. 여러분은 시간과 기술을 돈과 교환하고 있으며, 여러분 자신과 가족을 위해 앞으로도 고용 경쟁력이 있는 기술을 유지해야 합니다. 사내 문화를 바꿔보려고 애쓸 수도 있겠지만, 이미 이 흐름에 올라탄 고용주들이 많고 그들이 보수도 더 많이 줄 가능성이 높습니다.", "notes": []}, {"id": "p-p1-15", "type": "paragraph", "en": "Josh talked about cognitive burnout: the Amazon warehouse workers who couldn't keep up with robots that never take a toilet break, except happening in your head. He treats it like the gym. You get sore, and you either stop or push through and adapt. A year in, he feels like his brain has been rewired into a carbon-silicon unit.", "ko": "조쉬는 '인지적 번아웃(cognitive burnout)'에 대해 이야기했습니다. 화장실 휴식조차 필요 없는 로봇의 속도를 따라잡지 못해 지쳐 쓰러지는 아마존 물류창고 노동자의 상황이 이제 우리의 머릿속에서 벌어지고 있다는 것입니다. 그는 이를 헬스장(체육관) 훈련처럼 여깁니다. 근육통이 오면 그만두거나, 아니면 돌파해서 적응하거나 둘 중 하나죠. 1년이 지난 지금, 그는 자신의 뇌가 '탄소-실리콘 결합체(carbon-silicon unit)'로 재배선(rewired)된 것처럼 느낀다고 합니다.", "notes": []}, {"id": "p-p1-16", "type": "paragraph", "en": "I call it teleporting to the future: doing all the retirement projects you dreamed about (the programming language, the filesystem, the things you'd never get paid for and do for the love of the craft) today. I've run out of retirement projects.", "ko": "저는 이를 '미래로의 순간이동(teleporting to the future)'이라고 부릅니다. 은퇴 후에나 해볼 법하다고 꿈꿨던 프로젝트들—나만의 프로그래밍 언어, 파일시스템, 돈은 안 되지만 순수하게 기술에 대한 애정으로 해보고 싶었던 일들—을 오늘 당장 해치우는 것입니다. 저는 이제 은퇴 후에 할 프로젝트가 바닥났습니다.", "notes": ["ann-teleporting"]}, {"id": "c-p1-4", "type": "card", "title_en": "teleporting into the future and robbing yourself of retirement projects", "title_ko": "미래로 순간이동하여 은퇴 프로젝트들을 미리 다 해치워버리기", "subtitle_en": "I've run out of retirement projects. — Geoffrey Huntley", "subtitle_ko": "은퇴 프로젝트가 전부 고갈되었습니다. — 제프리 헌틀리", "url": "https://ghuntley.com/teleport/", "en": "Embedded Post: teleporting into the future and robbing yourself of retirement projects. I've run out of retirement projects.", "ko": "삽입 포스트: 에이전트 루프를 통해 평생의 버킷리스트였던 대규모 개인 프로젝트들을 단기간에 모두 구현해 버린 경험담.", "notes": ["ann-teleporting"]}, {"id": "h-p1-4", "type": "subheading", "en": "subsidies are a free university education", "ko": "보조금은 공짜 대학교육과 같다", "notes": ["ann-subsidies"]}, {"id": "p-p1-17", "type": "paragraph", "en": "Josh brought up the quota apocalypse. Yes, I'm known as one of the people who helped introduce rate limits. Someone posted a leaderboard of credits burned on Reddit, and I was near the top. Back at GPT-5's launch, OpenAI handed out plaques to people who'd used a billion tokens. A billion tokens is nothing now.", "ko": "조쉬는 '할당량 대재앙(quota apocalypse)'에 대한 화두를 꺼냈습니다. 맞습니다, 저는 AI 기업들이 사용량 제한(rate limits)을 도입하게 만든 장본인 중 한 명으로 알려져 있습니다. 누군가 레딧(Reddit)에 크레딧 소모량 리더보드를 올렸는데 제가 최상위권에 있었죠. 과거 GPT-5 출시 당시 OpenAI는 10억(1 billion) 토큰을 사용한 사람들에게 기념패를 나눠주었습니다. 하지만 지금 10억 토큰은 아무것도 아닙니다.", "notes": []}, {"id": "p-p1-18", "type": "paragraph", "en": "Here's the hard bit. These LLMs are heavily subsidized, and the subsidies are drying up. A lot of what I've built was paid for by VC subsidies. When you have to pay real rates, do you reckon people will build fun little games and filesystems if the side project costs a thousand bucks? No.", "ko": "여기서 냉혹한 현실이 있습니다. 현재의 LLM 서비스들은 막대한 보조금으로 운영되고 있으며, 그 보조금이 점차 마르고 있다는 점입니다. 제가 만든 수많은 결과물 상당수는 벤처캐피털(VC)의 보조금 덕분에 비용이 충당된 셈입니다. 만약 실제 원가를 그대로 지불해야 해서 사이드 프로젝트 하나에 1,000달러씩 든다면, 과연 사람들이 재미 삼아 작은 게임이나 파일시스템을 만들어 볼까요? 절대 아닙니다.", "notes": ["ann-subsidies"]}, {"id": "p-p1-19", "type": "paragraph", "en": "You could look at it as VCs paying for everyone's personal development. If you miss this window, you miss the equivalent of a subsidised university education.", "ko": "지금 이 시기를 'VC들이 모든 사람의 자기계발 비용을 대신 내주고 있는 상황'으로 볼 수 있습니다. 이 기회의 창을 놓친다면, 보조금이 지원되는 대학교육에 맞먹는 혜택을 통째로 놓치는 셈입니다.", "notes": ["ann-subsidies"]}, {"id": "p-p1-20", "type": "paragraph", "en": "Josh asked about climate change and data centers. My take is simple: if you want to take a political stance, you can, but you'll need to start your own company and hire, say, twenty engineers to compete with a company doing the same work with two to five people and AI. It comes down to unit economics. Run the game theory, and you'll see there's no choice but to use AI.", "ko": "조쉬는 기후 변화와 데이터센터 전력 문제에 대해서도 물었습니다. 제 입장은 단순합니다. 정치적·윤리적 입장을 취하고 싶다면 그럴 수 있습니다. 하지만 그렇다면 직접 회사를 차려서 엔지니어 20명을 고용한 뒤, 단 2~5명의 인원과 AI로 똑같은 일을 해내는 회사와 경쟁해야 할 것입니다. 결국 단위 경제학(unit economics)의 문제입니다. 게임 이론(game theory)을 돌려보면, AI를 사용하는 것 외에는 선택지가 없다는 결론이 나옵니다.", "notes": []}, {"id": "h-p1-5", "type": "subheading", "en": "acqui-hires and molecules", "ko": "인재 인수(Acqui-hires)와 '분자(Molecules)' 단위 채용", "notes": ["ann-molecules"]}, {"id": "p-p1-21", "type": "paragraph", "en": "Josh's read is that we're heading for technological convergence (everything becomes loops, graphs, orchestration, and workflows) and industry consolidation. He pointed to Cloudflare picking up the Deno team. My take is that we've seen this movie before.", "ko": "조쉬의 분석에 따르면, 우리는 지금 기술적 수렴(모든 것이 루프, 그래프, 오케스트레이션, 워크플로우로 수렴함)과 산업 통폐합(consolidation)을 향해 가고 있습니다. 그는 클라우드플레어(Cloudflare)가 디노(Deno) 팀을 영입한 사례를 짚었습니다. 제 생각에 우리는 이런 영화를 예전에도 본 적이 있습니다.", "notes": []}, {"id": "p-p1-22", "type": "paragraph", "en": "When the iPhone came out, enterprises couldn't hire good mobile developers. The people who leaned in either went freelance with their mates or went indie and made a million a year off fart apps. Remember I Am Rich? Why work for a company when you've got this untapped new thing? That split the employment market and created an acqui-hire economy. Companies didn't care about the products. They wanted the people with years of experience.", "ko": "아이폰이 처음 나왔을 때, 대기업들은 실력 있는 모바일 개발자를 채용할 수가 없었습니다. 이 흐름에 발 빠르게 뛰어든 사람들은 친구들과 프리랜서로 뛰거나 인디 개발자가 되어 '방귀 소리 앱' 같은 걸로 연 100만 달러를 벌어들였으니까요. 'I Am Rich(나는 부자다)' 앱을 기억하시나요? 이렇게 개척되지 않은 신대륙이 있는데 왜 남의 회사 밑에서 일하겠습니까? 이로 인해 고용 시장이 양분되었고 인재 확보를 위한 기업 인수(acqui-hire) 경제가 형성되었습니다. 대기업들은 스타트업의 제품 자체에는 관심이 없었습니다. 그저 수년간의 경험을 쌓은 '사람들'을 원했던 것입니다.", "notes": ["ann-iamrich"]}, {"id": "p-p1-23", "type": "paragraph", "en": "That's happening right now in AI. A lot of the products coming out of SF won't exist in five years. The crazy valuations aren't about the product; they're designed to flip the company to an acquirer who wants a well-jelled team with design, product, and engineering taste. Meanwhile, the labs are buying their way into domains like concreting, architecture and lawnmowing — anything they can get data from — through massive rollups.", "ko": "지금 AI 분야에서 똑같은 일이 벌어지고 있습니다. 샌프란시스코에서 쏟아져 나오는 수많은 제품들 중 상당수는 5년 뒤에 존재하지 않을 것입니다. 그 미친 기업가치(valuation)는 제품 때문이 아닙니다. 디자인, 프로덕트, 엔지니어링 감각(taste)을 갖추고 손발이 완벽하게 맞물린 팀을 원하는 인수자에게 회사를 넘기기(flip) 위해 설계된 것입니다. 한편 프론티어 AI 연구소(labs)들은 콘크리트 시공, 건축, 잔디 깎기 등 고유 데이터를 얻을 수 있는 분야라면 무엇이든 대규모 롤업(rollups, 연쇄 기업 인수)을 통해 사들이고 있습니다.", "notes": []}, {"id": "p-p1-24", "type": "paragraph", "en": "Josh remembered Stripe talking about hiring molecules instead of atoms: three people who've already been through forming, storming, norming and performing together. Stripe is still running that playbook. Every couple of months, a Stripe VP tweets that if you've got three or four well-gelled people and can show what you've built, come join them as a molecule.", "ko": "조쉬는 스트라이프(Stripe)가 '원자(개별 인재) 대신 분자(팀 단위)를 채용한다'고 말했던 것을 떠올렸습니다. 이미 함께 형성기(forming), 격동기(storming), 규범기(norming), 성취기(performing)를 모두 거쳐 호흡이 검증된 3명의 팀을 통째로 뽑는 것이죠. Stripe는 지금도 그 각본(playbook)을 실행하고 있습니다. 두어 달에 한 번씩 Stripe의 부사장(VP)은 트위터에 '호흡이 잘 맞는 3~4명의 팀이 있고 함께 만든 결과물을 보여줄 수 있다면, 분자(molecule) 단위로 우리에게 합류하라'는 글을 올립니다.", "notes": ["ann-molecules"]}, {"id": "p-p1-25", "type": "paragraph", "en": "So get inside a company that pays for the tokens, because that's your university education. And if you can't, Josh's advice is good: treat it like night school. Take some of what they pay you and spend it on tokens.", "ko": "그러니 토큰 비용을 대주는 회사에 들어가십시오. 그것이 바로 여러분의 대학교육입니다. 만약 그럴 수 없는 상황이라면 조쉬의 조언을 따르십시오. 이를 '야간 대학(night school)'이라고 생각하고, 회사에서 받은 급여의 일부를 토큰 구매에 투자하십시오.", "notes": []}]}, {"id": "part-2", "part": "Part 2", "title_en": "part 2: nobody can review this much code", "title_ko": "파트 2: 이토록 방대한 코드는 아무도 리뷰할 수 없다", "summary_ko": "인간이 눈으로 코드를 읽는 PR 리뷰의 한계를 지적하며, Nix를 활용한 전체 시스템 테스트, Antithesis의 결정론적 시뮬레이션 테스팅과 속성 기반 테스팅(Property-based Testing), 그리고 '읽기 쉬운 코드'에서 '설명 가능한(Explainable) 코드' 및 '화이트보드 디펜스'로의 전환을 다룹니다.", "video_url": "https://www.youtube.com/watch?v=I8F5wagYFuc", "video_title": "Nobody Can Review This Much Code. Now What? | Geoffrey Huntley 2/4", "blocks": [{"id": "h-p2-1", "type": "subheading", "en": "no excuses", "ko": "변명의 여지는 없다", "notes": []}, {"id": "p-p2-1", "type": "paragraph", "en": "There's always a lab offering frontier models for free, so if you can't afford to pay, there's literally no excuse. If you're a professional software engineer, you should be able to afford a $200-a-month plan. If you really want to get ahead, pick up five. Yes, that's $1,200 a month, which is a lot for most household budgets, and how much of it is deductible as personal development is between you and the ATO, since paying for a subscription for personal development is now mandatory.", "ko": "언제나 프론티어 모델을 무료로 체험하게 해주는 연구소가 있으므로, 돈이 없어서 못 쓴다는 말은 문자 그대로 변명에 불과합니다. 프로 소프트웨어 엔지니어라면 월 200달러짜리 요금제 하나쯤은 감당할 수 있어야 합니다. 정말로 앞서 나가고 싶다면 5개를 구독하십시오. 네, 월 1,200달러(약 160만 원)로 대부분의 가계 예산에는 큰 금액이지만, 자기계발을 위한 구독료 지출이 이제 필수가 된 만큼 이 중 얼마를 자기계발비로 세금 공제받을 수 있을지는 여러분과 호주 국세청(ATO, 혹은 각국 세무 당국) 사이의 문제입니다.", "notes": ["ann-ato"]}, {"id": "p-p2-2", "type": "paragraph", "en": "I run five, because when I want to write software, I want to just write software. No quotas, no caps, no resets. I'll spend a couple of weeks thinking about exactly what I'm going to build, then smash it out in 48 hours, then spend another couple of weeks thinking about the next sizable problem to solve.", "ko": "저는 5개의 계정을 돌립니다. 소프트웨어를 작성하고 싶을 때 할당량(quota)이나 한도(cap), 초기화 대기 시간(reset)에 가로막히지 않고 그저 소프트웨어를 쏟아내고 싶기 때문입니다. 저는 무엇을 만들지 정확히 구상하는 데 2주 정도를 쓰고, 그다음 48시간 동안 집중적으로 몰아쳐서 결과물을 만들어낸 뒤, 다시 풀어야 할 다음번 굵직한 문제를 구상하는 데 2주를 보냅니다.", "notes": []}, {"id": "h-p2-2", "type": "subheading", "en": "rebuilding three former employers in under ten days", "ko": "10일도 안 되어 이전 직장 세 곳의 주력 제품을 재구축하다", "notes": []}, {"id": "p-p2-3", "type": "paragraph", "en": "Those 48 hours are intense. Most recently, I rebuilt the products of three of my former employers in under ten days, and I'm going to drop them as MIT open source. One of them is my vision of an AI-first internal developer platform. It's been called Loom or Kittens; I haven't settled on a name. It's like Gitpod, where I was an early employee, and which OpenAI just acquired for $450 million. I'm about to release an equivalent, plus a couple of others, for free.", "ko": "그 48시간은 극도로 치열합니다. 가장 최근에 저는 10일도 채 안 되는 기간 동안 제가 과거에 몸담았던 직장 세 곳의 주력 제품들을 처음부터 다시 구축했고, 조만간 이를 MIT 오픈소스로 전부 공개할 예정입니다. 그중 하나는 제가 그리는 'AI 퍼스트 내부 개발자 플랫폼(IDP)'입니다. 지금까지 Loom 혹은 Kittens라고 불렀는데 아직 최종 이름은 정하지 못했습니다. 제가 초기 직원으로 일했고 최근 OpenAI가 4억 5천만 달러에 인수한 깃팟(Gitpod)과 같은 제품입니다. 저는 그에 버금가는 시스템과 다른 몇 가지를 무료로 공개하려 합니다.", "notes": []}, {"id": "p-p2-4", "type": "paragraph", "en": "Josh called it the disruption of open source, accelerated a thousand times: you're now a maintainer with thousands of silicon contributors. Hyper-personalized software. You can just do things now.", "ko": "조쉬는 이를 '1,000배 가속화된 오픈소스의 파괴적 혁신'이라고 불렀습니다. 이제 여러분은 수천 명의 실리콘 기여자(silicon contributors)를 거느린 메인테이너입니다. 초개인화된(Hyper-personalized) 소프트웨어의 시대입니다. 이제는 그냥 생각한 것을 바로 실행에 옮기면 됩니다.", "notes": []}, {"id": "p-p2-5", "type": "paragraph", "en": "And why am I doing this? Because I need to write a conference talk. I'm speaking in New York in two weeks; people want to know how I verify such a crazy amount of code, and the best way to show it is to teach.", "ko": "제가 왜 이런 일을 하고 있을까요? 컨퍼런스 발표 자료를 만들어야 하기 때문입니다. 저는 2주 뒤 뉴욕에서 강연을 합니다. 사람들은 제가 어떻게 그토록 엄청난 양의 코드를 검증(verify)하는지 알고 싶어 하며, 이를 보여주는 가장 좋은 방법은 직접 사례로 가르치는 것입니다.", "notes": []}, {"id": "p-p2-6", "type": "quote", "en": "Cloning three or four companies to write a conference talk is not unhinged. That's the baseline now.", "ko": "컨퍼런스 발표 하나를 준비하기 위해 서너 개 회사의 제품을 통째로 복제하는 것은 미친 짓이 아닙니다. 이제는 그것이 기본선(baseline)입니다.", "notes": []}, {"id": "h-p2-3", "type": "subheading", "en": "it was a mindset constriction, not a model constriction", "ko": "모델의 한계가 아니라 마인드셋의 한계였다", "notes": []}, {"id": "p-p2-7", "type": "paragraph", "en": "I still don't know how we reach the dark matter .NET developers, who are hyper-dependent on Microsoft's roadmap and love Visual Studio for Windows. There are a lot of them, and they have no idea this is happening. Josh is in New Zealand, where the big banks and enterprises are starting to turn up to agent conferences, and he's speaking at an agentic engineering day there next week. His experience is the same as mine: the future is here, but it's not evenly distributed, even inside companies.", "ko": "마이크로소프트의 로드맵에 극도로 의존하고 윈도우용 비주얼 스튜디오(Visual Studio)를 사랑하는 '암흑 물질 .NET 개발자들'에게 어떻게 이 소식을 전해야 할지 저는 여전히 모르겠습니다. 그런 개발자들이 정말 많지만, 그들은 지금 무슨 일이 벌어지고 있는지 전혀 모릅니다. 조쉬는 뉴질랜드에 있는데, 그곳에서도 대형 은행과 대기업들이 에이전트 컨퍼런스에 모습을 드러내기 시작했고, 그도 다음 주에 열리는 에이전틱 엔지니어링 데이에서 발표를 맡았습니다. 그의 경험도 저와 같습니다. '미래는 이미 와 있지만, 기업 내부에서조차 고르게 퍼져 있지 않다'는 것입니다.", "notes": ["ann-dark-matter-devs"]}, {"id": "p-p2-8", "type": "paragraph", "en": "DHH recently got up at Rails World and said November last year was when the models finally became capable. Josh's response: nah, bro, that's just when you figured it out. The models were capable long before that. It was a mindset constriction, not a model constriction.", "ko": "최근 DHH(데이비드 하이네마이어 한슨)가 레일즈 월드(Rails World) 무대에 올라 작년 11월이 되어서야 비로소 모델들이 쓸만해졌다고 말했습니다. 이에 대한 조쉬의 반응은 이랬습니다. '아니 형씨, 그건 그냥 당신이 그때서야 깨달은 것뿐이야.' 모델들은 그보다 훨씬 전부터 이미 충분히 유능했습니다. 그것은 모델의 제약이 아니라 마인드셋(사고방식)의 제약이었습니다.", "notes": ["ann-dhh-karpathy"]}, {"id": "p-p2-9", "type": "paragraph", "en": "Karpathy recently described it as a sharp funnel rather than a K, and I very much agree. The people who have seen real swarms work at the labs are probably fewer than five thousand in the world. If companies think they're going to build a swarm or a software factory, how will they afford that talent when they're competing directly with the labs for talent? It'll be \"I've heard about Kubernetes, let's do a Kubernetes project\" that fails all over again.", "ko": "최근 안드레이 카파시(Andrej Karpathy)는 이 현상을 K자형 분화가 아니라 '가파른 깔때기(sharp funnel)'라고 묘사했는데, 저도 전적으로 동의합니다. 프론티어 연구소에서 실제 에이전트 군집(swarms)이 작동하는 모습을 직접 본 사람은 전 세계에 아마 5,000명도 채 되지 않을 것입니다. 일반 기업들이 자체적으로 스웜(swarm)이나 소프트웨어 공장을 구축하겠다고 생각한다면, AI 연구소들과 직접 인재 영입 경쟁을 벌이는 상황에서 그 인재들의 몸값을 어떻게 감당할 수 있을까요? 과거 '쿠버네티스(Kubernetes)가 좋다던데 우리도 쿠버네티스 프로젝트를 해보자'며 뛰어들었다가 참담하게 실패했던 역사가 그대로 되풀이될 것입니다.", "notes": ["ann-dhh-karpathy"]}, {"id": "p-p2-10", "type": "paragraph", "en": "To give you a sense of the scale: some mates at one of the labs just finished a training run that used 15 million sandboxes and around a million CPU cores. Not GPUs, CPU cores. They tapped out GCP's CPU capacity in America and went to AWS for about 450,000 more CPU cores. People don't believe that's real, but they feel it when they try to provision a VM and get told there's no capacity.", "ko": "규모가 어느 정도인지 감을 드리자면, 한 AI 연구소에 있는 제 지인들은 최근 1,500만 개의 샌드박스와 약 100만 개의 CPU 코어를 사용한 모델 학습(training run)을 마쳤습니다. GPU가 아니라 CPU 코어 말입니다(코드 실행 및 검증 환경용). 그들은 미국 내 구글 클라우드(GCP)의 가용 CPU 용량을 전부 소진(tap out)시키고, 약 45만 개의 추가 CPU 코어를 확보하기 위해 AWS로 넘어갔습니다. 사람들은 이 이야기를 믿지 않지만, 막상 클라우드에서 VM(가상머신)을 프로비저닝하려다 여유 용량이 없다는 오류 메시지를 마주할 때 비로소 이를 체감합니다.", "notes": []}, {"id": "h-p2-4", "type": "subheading", "en": "can you build a coding agent?", "ko": "당신은 코딩 에이전트를 직접 만들 수 있는가?", "notes": ["ann-coding-agent-300"]}, {"id": "p-p2-11", "type": "paragraph", "en": "Sourcing candidates as a recruiter used to be a sorting exercise. You used to look at how much experience they have with a particular technology, but that no longer matters. Like, particular technologies no longer matter. All that matters is how good of a software engineer you are, what you've built with this new tool, and how deeply you can explain how it works.", "ko": "과거 리크루터로서 후보자를 발굴하는 일은 일종의 분류 작업이었습니다. 특정 기술 스택에 몇 년의 경험이 있는지를 보았지만, 이제 그것은 중요하지 않습니다. 특정 기술 스택 자체는 더 이상 아무런 의미가 없습니다. 이제 중요한 것은 당신이 얼마나 훌륭한 소프트웨어 엔지니어인지, 이 새로운 도구로 무엇을 만들어 보았는지, 그리고 그것이 어떻게 작동하는지 얼마나 깊이 있게 설명할 수 있는지뿐입니다.", "notes": []}, {"id": "p-p2-12", "type": "paragraph", "en": "A coding agent is about 300 lines of code. But if I take people to a whiteboard and ask them how Pi or OpenCode works, or to build me a coding agent, they can't explain it. It's a magical black box to them.", "ko": "코딩 에이전트는 코드 약 300줄이면 만듭니다. 하지만 사람들을 화이트보드 앞으로 데려가 파이(Pi)나 오픈코드(OpenCode)가 어떻게 작동하는지 묻거나, 코딩 에이전트를 한 번 설계해 보라고 하면 설명하지 못합니다. 그들에게 에이전트는 그저 마법 같은 블랙박스일 뿐입니다.", "notes": ["ann-coding-agent-300"]}, {"id": "c-p2-1", "type": "card", "title_en": "how to build a coding agent: free workshop", "title_ko": "코딩 에이전트 구축 방법: 무료 워크숍", "subtitle_en": "It's a couple of hundred lines of code in a loop. — Geoffrey Huntley", "subtitle_ko": "루프 안에서 돌아가는 수백 줄의 코드일 뿐입니다. — 제프리 헌틀리", "url": "https://ghuntley.com/agent/", "en": "Embedded Post: how to build a coding agent: free workshop. It's a couple of hundred lines of code in a loop.", "ko": "삽입 포스트: 코딩 에이전트 직접 만들기 무료 워크숍 — LLM API 호출과 도구 실행을 루프로 연결하는 300줄 내외의 핵심 원리.", "notes": ["ann-coding-agent-300"]}, {"id": "p-p2-13", "type": "paragraph", "en": "Josh read the workshop and built NanoCoder, a 6 MB in-memory coding harness in Rust that he uses for everything, recursively self-improves, and orchestrates with a workflow engine. He felt like Luke Skywalker building his own lightsaber.", "ko": "조쉬는 제 워크숍 글을 읽고 러스트(Rust)로 6MB짜리 인메모리 코딩 하네스(harness)인 '나노코더(NanoCoder)'를 직접 만들었습니다. 그는 모든 작업에 이를 사용하며, 재귀적으로 자기 개선(self-improve)을 수행하고 워크플로우 엔진으로 오케스트레이션합니다. 그는 마치 루크 스카이워커가 자신만의 광선검(lightsaber)을 직접 조립한 것 같은 기분을 느꼈다고 합니다.", "notes": ["ann-harness"]}, {"id": "p-p2-14", "type": "paragraph", "en": "Now he can walk into an interview, get asked which harness you use, and say, \"I use my own. Want to see it?\" That short-circuits the interview, because you've shown you were curious enough to learn the fundamentals.", "ko": "이제 그는 면접장에 들어가 '어떤 코딩 하네스를 쓰시나요?'라는 질문을 받으면 '제가 직접 만든 걸 씁니다. 보실래요?'라고 답할 수 있습니다. 이 한마디로 면접은 그 자리에서 게임 끝(short-circuit)입니다. 기초 원리를 파고들 만큼 충분한 호기심과 실행력이 있음을 즉시 증명했기 때문입니다.", "notes": []}, {"id": "p-p2-15", "type": "paragraph", "en": "Josh's rule is to do something manually only to learn what you can automate. The old saying was to write a script if you do something three times. Why do it even once? A program is reproducible and verifiable. A prompt and its output are not.", "ko": "조쉬의 원칙은 '무엇을 자동화할 수 있는지 배우기 위한 목적으로만 수동 작업을 한다'는 것입니다. 옛 격언에는 같은 일을 세 번 반복하면 스크립트를 짜라고 했습니다. 하지만 왜 한 번이라도 수동으로 해야 합니까? 프로그램은 재현 가능(reproducible)하고 검증 가능(verifiable)합니다. 반면 프롬프트와 그 출력물은 그렇지 않습니다.", "notes": []}, {"id": "h-p2-5", "type": "subheading", "en": "why are we still doing PR reviews?", "ko": "우리는 왜 아직도 PR(Pull Request) 리뷰를 하고 있는가?", "notes": ["ann-nix-overlay", "ann-antithesis"]}, {"id": "p-p2-16", "type": "paragraph", "en": "If humans eyeballing code were sufficient engineering to stop bugs, we'd never have had any defects. It didn't work at human speed. It sure as heck isn't going to work at a thousand times human speed.", "ko": "만약 인간이 눈으로 코드를 훑어보는 것(eyeballing)만으로 버그를 막기에 충분한 엔지니어링이었다면, 세상에 소프트웨어 결함이란 애초에 존재하지도 않았을 것입니다. 인간의 속도로 코딩하던 시절에도 통하지 않았던 방식이, 인간의 1,000배 속도로 코드가 쏟아지는 시대에 통할 리가 있겠습니까?", "notes": []}, {"id": "p-p2-17", "type": "paragraph", "en": "Josh nailed it. The other reason for PRs was education: reinforcing the company's conventions with developers and onboarding new ones. That's gone too. So what replaces them?", "ko": "조쉬가 정곡을 찔렀습니다. PR 리뷰가 존재했던 또 다른 이유는 '교육'이었습니다. 개발자들에게 사내 컨벤션을 주지시키고 신규 입사자를 온보딩하는 용도였죠. 이제 그 이유도 사라졌습니다. 그렇다면 무엇이 PR 리뷰를 대체할까요?", "notes": []}, {"id": "p-p2-18", "type": "paragraph", "en": "For me, it starts with ownership. I use what I build intensively and keep refining it. Whether AI wrote it doesn't matter; I'm accountable. When I develop software, I put the entire system under test, operating system included, with Nix, and the agent runs against that.", "ko": "저에게 그 대안은 '오너십(Ownership, 주인의식과 책임)'에서 출발합니다. 저는 제가 만든 것을 직접 치열하게 사용하면서 끊임없이 다듬습니다. 코드를 AI가 짰는지 여부는 중요하지 않습니다. 최종 책임(accountable)은 저에게 있으니까요. 저는 소프트웨어를 개발할 때 닉스(Nix)를 이용해 운영체제를 포함한 시스템 전체를 테스트 하에 두고, 에이전트가 그 테스트 환경에 맞서 돌아가도록 만듭니다.", "notes": ["ann-nix-overlay"]}, {"id": "c-p2-2", "type": "card", "title_en": "the world hasn't figured out yet that you can literally just fix everything with a Nix overlay", "title_ko": "세상은 아직 Nix 오버레이 하나로 문자 그대로 모든 것을 고칠 수 있다는 사실을 깨닫지 못했다", "subtitle_en": "Patch the world. — Geoffrey Huntley", "subtitle_ko": "세상을 패치하라. — 제프리 헌틀리", "url": "https://ghuntley.com/nix/", "en": "Embedded Post: the world hasn't figured out yet that you can literally just fix everything with a Nix overlay. Patch the world.", "ko": "삽입 포스트: Nix 오버레이(Overlay)를 사용해 커널부터 도구 체인, 컨테이너, 에이전트 샌드박스까지 선언적으로 패치하고 재현 가능한 테스트 환경을 구축하는 법.", "notes": ["ann-nix-overlay"]}, {"id": "p-p2-19", "type": "paragraph", "en": "Day to day, I work at Antithesis, which built a deterministic computer. You run your existing software (a Docker container, or many) on it, and it injects faults. It moves clocks forward and back, drops network connections and containers, whatever you can imagine, then rewinds time to pinpoint exactly when a fault happened.", "ko": "현재 저의 본업은 결정론적 컴퓨터(deterministic computer, 결정론적 시뮬레이션 하이퍼바이저)를 만든 앤티테시스(Antithesis)에서 일하는 것입니다. 기존 소프트웨어(단일 또는 다수의 도커 컨테이너)를 그 위에서 실행하면, 플랫폼이 온갖 결함(faults)을 강제로 주입합니다. 시스템 시계를 앞뒤로 감고, 네트워크 연결과 컨테이너를 끊어버리는 등 상상할 수 있는 모든 극한 상황을 연출한 뒤, 시간을 정확히 되감아 결함이 발생한 바로 그 시점을 완벽하게 짚어냅니다.", "notes": ["ann-antithesis"]}, {"id": "p-p2-20", "type": "paragraph", "en": "Property-based testing is at its heart, and you don't need our platform to start. The best way to get started is to use something like Hypothesis, Hegel, or Bomdadil and author a property: \"during checkout, across my two or three microservices, a customer is charged only once.\" and then run it locally and see if it holds. But the problem is, in your architecture, you've used microservices, and your code spans across a fleet of containers in Kubernetes. How do you know if that property still holds under a network partition? That's what the platform does. It runs your software under worst-case conditions automatically, and it looks at your diffs to decide which strategies to apply.", "ko": "그 핵심에는 '속성 기반 테스팅(Property-based testing)'이 자리 잡고 있으며, 꼭 저희 플랫폼이 없어도 지금 당장 시작할 수 있습니다. 가장 좋은 입문 방법은 Hypothesis(파이썬), Hegel, 또는 Bombadil 같은 도구를 사용해 다음과 같은 불변 속성(property)을 정의하는 것입니다. '결제 과정에서 두세 개의 마이크로서비스를 거치는 동안, 고객에게는 단 한 번만 요금이 청구되어야 한다.' 그리고 이를 로컬에서 실행해 그 속성이 유지되는지 확인하는 것이죠. 하지만 문제는 여러분의 아키텍처가 마이크로서비스로 되어 있고 코드가 쿠버네티스 상의 수많은 컨테이너에 분산되어 있다는 점입니다. 네트워크 단절(partition)이 발생한 상황에서도 과연 그 속성이 깨지지 않는지 어떻게 알 수 있을까요? 그것이 바로 Antithesis 플랫폼이 하는 일입니다. 최악의 조건 하에서 소프트웨어를 자동으로 실행하고, 코드 변경분(diffs)을 분석해 어떤 공격/검증 전략을 적용할지 결정합니다.", "notes": ["ann-pbt", "ann-antithesis"]}, {"id": "p-p2-21", "type": "paragraph", "en": "That's why I'm in the verification space. LLMs can act as a judge and spot problems, but they can't tell you whether something will hold up in worst-case scenarios.", "ko": "바로 그것이 제가 '검증(Verification)' 분야에 몸담고 있는 이유입니다. LLM이 심판(judge) 역할을 하며 코드상의 문제를 찾아낼 수는 있지만, 최악의 시나리오에서 시스템이 무너지지 않고 버텨낼 수 있는지는 LLM이 알려줄 수 없기 때문입니다.", "notes": ["ann-antithesis"]}, {"id": "h-p2-6", "type": "subheading", "en": "vision and verification", "ko": "비전(Vision)과 검증(Verification)", "notes": ["ann-whiteboard-defense"]}, {"id": "p-p2-22", "type": "paragraph", "en": "Josh framed it well. Humans fit in at two points: the vision and the verification. The implementation in the middle has become a black box, whether that's a team of contractors you never see or silicon. So how do you reason about completeness?", "ko": "조쉬가 이를 아주 잘 요약했습니다. 인간이 개입하는 지점은 딱 두 곳입니다. 바로 '비전(Vision, 무엇을 왜 만들 것인가)'과 '검증(Verification, 제대로 만들어졌는가)'입니다. 그 중간에 있는 '구현(Implementation)'은 얼굴 한 번 본 적 없는 외주 개발팀이 하든 실리콘(AI)이 하든 이제 블랙박스가 되었습니다. 그렇다면 완결성(completeness)에 대해 우리는 어떻게 추론해야 할까요?", "notes": []}, {"id": "p-p2-23", "type": "paragraph", "en": "I don't trust the generation, and I don't read the code line by line, but I'm still aware of what's going on by driving queries through an agent: summarise this, draw me the state machines, show me how it all hangs together. My entry point to any codebase is now a coding agent and all the questions I used to ask on day one of a contract at a new client.", "ko": "저는 AI가 생성한 결과물을 맹신하지 않으며, 그렇다고 코드를 한 줄씩 읽지도 않습니다. 대신 에이전트에게 끊임없이 질의를 던지며 시스템이 어떻게 돌아가는지 파악합니다. '이 부분을 요약해 줘', '상태 머신(state machine) 다이어그램을 그려줘', '전체 컴포넌트가 어떻게 맞물려 돌아가는지 보여줘'라고 묻는 식이죠. 이제 어떤 코드베이스를 접하든 저의 진입점(entry point)은 코딩 에이전트이며, 과거 새로운 고객사에 계약직 컨설턴트로 출근한 첫날 던지곤 했던 모든 질문들을 에이전트에게 던집니다.", "notes": []}, {"id": "p-p2-24", "type": "paragraph", "en": "For any code I work on, I want a whiteboard defence. If someone asks how it works, I should be able to draw the system-level design and defend it.", "ko": "제가 작업하는 모든 코드에 대해 저는 '화이트보드 디펜스(Whiteboard Defence)'가 가능하기를 원합니다. 누군가 시스템이 어떻게 작동하는지 물었을 때, 화이트보드에 시스템 수준의 설계도를 그리고 그 설계의 타당성을 방어(설명)할 수 있어야 합니다.", "notes": ["ann-whiteboard-defense"]}, {"id": "c-p2-3", "type": "card", "title_en": "software doesn't need to be readable anymore. it needs to be explainable.", "title_ko": "소프트웨어는 더 이상 읽기 쉬울 필요가 없다. 설명 가능해야 한다.", "subtitle_en": "Code is no longer written for humans to read. — Geoffrey Huntley", "subtitle_ko": "코드는 더 이상 인간이 읽기 위해 작성되지 않습니다. — 제프리 헌틀리", "url": "https://ghuntley.com/readable/", "en": "Embedded Post: software doesn't need to be readable anymore. it needs to be explainable. Code is no longer written for humans to read.", "ko": "삽입 포스트: 인간이 한 줄씩 코드를 읽는 시대는 끝났으며, 아키텍처와 동작 원리를 에이전트와 도구를 통해 명확히 설명하고 검증할 수 있는 '설명 가능성(Explainability)'이 핵심이 되었다는 분석.", "notes": ["ann-whiteboard-defense"]}, {"id": "p-p2-25", "type": "paragraph", "en": "I'm not advocating for complete YOLO. It's still engineering; the craft is just very different. These LLMs generate plenty of crap, and the art is giving a shit about your craft. In the last 48 hours, I refactored towards my diagnostics library (patterns for OTel and structured logging), and the next loop didn't follow it.", "ko": "무책임하게 대충 만들고 치우는 '완전한 욜로(YOLO) 코딩'을 옹호하는 것이 결코 아닙니다. 이것은 여전히 엄연한 엔지니어링이며, 다만 장인정신(craft)을 발휘하는 방식이 완전히 달라졌을 뿐입니다. LLM은 여전히 수많은 쓰레기 코드를 생성해 내며, 자신의 기술과 결과물에 진심으로 애착과 책임감을 갖는 것이 핵심 기술(art)입니다. 지난 48시간 동안 저는 오픈텔레메트리(OTel)와 구조화된 로깅 패턴을 담은 자체 진단(diagnostics) 라이브러리를 쓰도록 리팩토링했는데, 그다음 루프에서 에이전트가 그 패턴을 따르지 않았습니다.", "notes": []}, {"id": "p-p2-26", "type": "paragraph", "en": "Troubleshooting why is my job now. I've come to understand the probabilistic nature of these things, so instead of getting upset, I ask what I can tune so it always follows the pattern. And if it doesn't, that's just another loop, a janitorial Roomba task to clean up.", "ko": "왜 에이전트가 그 패턴을 따르지 않았는지 원인을 찾아 해결(troubleshooting)하는 것이 바로 지금 저의 직업입니다. 저는 이 모델들의 확률론적(probabilistic) 본질을 이해하게 되었기에, 화를 내는 대신 '어떻게 환경을 조율(tune)해야 에이전트가 항상 이 패턴을 따르게 만들 수 있을까?'를 자문합니다. 그리고 만약 그래도 따르지 않는다면, 사후에 이를 청소해 주는 또 다른 루프, 즉 관리인 '룸바(Roomba, 로봇청소기)' 작업을 돌리면 됩니다.", "notes": ["ann-roomba"]}, {"id": "p-p2-27", "type": "paragraph", "en": "If you have to do that three times, automate it. This was always true of human code review. Remember Danger Systems? It hooked into CI and let you automate checks like \"the REST domain must not be coupled to the SQL domain\", so nobody burned review cycles on it. I'm doing the same thing with pre-commit hooks, generating scripts that deterministically inspect the generated code. Sometimes I lean towards probabilistic outcomes and use skills, but rarely. It's architectural enforcement, same as it ever was.", "ko": "같은 지적을 세 번 해야 한다면 자동화하십시오. 이는 인간이 코드 리뷰를 하던 시절에도 늘 통용되던 진리였습니다. 데인저 시스템즈(Danger Systems)를 기억하시나요? CI 파이프라인에 연결되어 'REST 도메인은 SQL 도메인과 직접 결합되어서는 안 된다' 같은 규칙 검사를 자동화함으로써, 리뷰어들이 그런 반복적인 지적에 에너지를 소모하지 않게 해주었죠. 저는 프리커밋 훅(pre-commit hooks)으로 정확히 똑같은 일을 하고 있습니다. 생성된 코드를 결정론적으로(deterministically) 검사하는 스크립트를 생성해 걸어두는 것입니다. 가끔 확률론적 결과에 기대어 스킬(skills)을 쓸 때도 있지만 아주 드뭅니다. 본질은 예나 지금이나 똑같은 '아키텍처 강제(architectural enforcement)'입니다.", "notes": ["ann-danger-precommit"]}, {"id": "h-p2-7", "type": "subheading", "en": "there are no best practices", "ko": "모범 사례(Best Practices)란 존재하지 않는다", "notes": ["ann-agency"]}, {"id": "p-p2-28", "type": "paragraph", "en": "If you're looking for best practices in your company right now, you have to invent them. You can buy an influencer's skill pack and course, but there are no best practices, and whatever exists will be gone in two months. It's tiring, folks.", "ko": "지금 회사에서 AI 시대의 '모범 사례(best practices)'를 찾고 있다면, 여러분이 직접 발명해야 합니다. 인플루언서가 파는 스킬 팩이나 강의를 돈 주고 살 수는 있겠지만, 정립된 모범 사례란 없으며 지금 존재하는 방식도 두 달 뒤면 쓸모없어질 것입니다. 여러분, 이건 정말 피곤한 일입니다.", "notes": []}, {"id": "p-p2-29", "type": "paragraph", "en": "Josh put his finger on what's underneath: agency. If you think an influencer's skill pack will do the job for you, what are you there for? Java didn't arrive fully formed from a crashed spacecraft at Roswell. People like us made it, making and discovering things. We're at that point again, and everyone has the same opportunity if they realize it. There should be no learned helplessness.", "ko": "조쉬는 그 기저에 있는 핵심을 정확히 짚어냈습니다. 바로 '주체성(Agency)'입니다. 인플루언서의 스킬 팩 하나가 여러분의 일을 대신 해줄 거라고 생각한다면, 대체 여러분은 왜 그 자리에 있는 겁니까? 자바(Java) 생태계는 로즈웰에 추락한 외계 우주선에서 완성품 형태로 뚝 떨어진 것이 아닙니다. 우리 같은 사람들이 직접 만들고 부딪히며 발견해 낸 것입니다. 우리는 지금 다시 그 출발선에 서 있으며, 이 사실을 깨닫기만 한다면 모두에게 똑같은 기회가 열려 있습니다. '학습된 무기력(learned helplessness)'에 빠져 있어서는 안 됩니다.", "notes": ["ann-agency"]}]}, {"id": "part-3", "part": "Part 3", "title_en": "part 3: you're making your AI dumber", "title_ko": "파트 3: 당신이 직접 당신의 AI를 더 멍청하게 만들고 있다", "summary_ko": "코드베이스의 나쁜 패턴을 증폭시키는 AI의 특성(고양이와 로봇청소기 비유), 점성술에 불과한 스킬 팩과 AGENTS.md 대신 결정론적 Git 훅을 써야 하는 이유, 모델 카드 정독의 중요성, 하나의 모델에 깊숙이 통달하기(Lock-in), 그리고 호기심 기반의 프롬프팅과 음성 입력(Wispr Flow)을 다룹니다.", "video_url": "https://www.youtube.com/watch?v=8FwApXjknmU", "video_title": "You're Making Your AI Dumber | Geoffrey Huntley 3/4", "blocks": [{"id": "h-p3-1", "type": "subheading", "en": "the kitten and the roomba", "ko": "아기 고양이와 로봇청소기(Roomba)", "notes": ["ann-roomba", "ann-clanker"]}, {"id": "p-p3-1", "type": "paragraph", "en": "Lilly (below) is my kitten. Say she has an accident on the floor (she hasn't yet, but I don't trust her), and then my Roomba kicks off. What happens? It would spread 💩 everywhere.", "ko": "릴리(Lilly)는 제가 키우는 아기 고양이입니다. 만약 릴리가 바닥에 실수로 배변을 했다고 해봅시다(아직 그런 적은 없지만, 전 이 녀석을 믿지 않습니다). 그런데 마침 로봇청소기 룸바(Roomba)가 작동을 시작합니다. 무슨 일이 벌어질까요? 온 집안 바닥에 💩을 골고루 펴 바르게 될 것입니다.", "notes": ["ann-roomba"]}, {"id": "p-p3-2", "type": "paragraph", "en": "Now imagine that Lilly is an AI agent, and so is the Roomba. If your codebase has bad architectural patterns, or is inconsistent, AI will copy and paste them everywhere. It's an amplifier. If there are code smells (or 💩) on your kitchen floor, don't be surprised when they replicate.", "ko": "이제 릴리도 AI 에이전트이고, 룸바도 AI 에이전트라고 상상해 보십시오. 만약 여러분의 코드베이스에 나쁜 아키텍처 패턴이 섞여 있거나 일관성이 없다면, AI는 그것을 온 사방에 복사해서 붙여넣을 것입니다. AI는 '증폭기(amplifier)'입니다. 주방 바닥에 코드 스멜(code smells, 혹은 💩)이 방치되어 있다면, 그것들이 순식간에 복제되어 퍼져나가더라도 놀라지 마십시오.", "notes": ["ann-roomba"]}, {"id": "c-p3-1", "type": "card", "title_en": "I dream of roombas - thousands of automated AI robots that autonomously maintain codebases", "title_ko": "나는 룸바를 꿈꾼다 - 코드베이스를 자율적으로 유지보수하는 수천 대의 자동화 AI 로봇들", "subtitle_en": "Thousands of automated robots maintaining codebases. — Geoffrey Huntley", "subtitle_ko": "코드베이스를 자율 관리하는 수천 대의 로봇들. — 제프리 헌틀리", "url": "https://ghuntley.com/ktlo/", "en": "Embedded Post: I dream of roombas - thousands of automated AI robots that autonomously maintain codebases.", "ko": "삽입 포스트: 깨끗한 아키텍처 기준 위에서 수천 개의 백그라운드 에이전트('룸바')가 기술 부채와 코드 일관성을 자율적으로 정돈하게 만드는 비전.", "notes": ["ann-roomba"]}, {"id": "p-p3-3", "type": "paragraph", "en": "One of my favorite prompts is to have an agent study its own traces at the end of a loop: what did you learn? If an agent is struggling, I tell it to introspect.", "ko": "제가 가장 좋아하는 프롬프트 기법 중 하나는 루프가 끝날 때 에이전트에게 자기 자신의 실행 흔적(traces)을 스스로 분석하게 시키는 것입니다. '이번 작업에서 무엇을 배웠는가?'라고 묻는 것이죠. 만약 에이전트가 헤매고 있다면, 스스로 성찰(introspect)하라고 지시합니다.", "notes": []}, {"id": "p-p3-4", "type": "quote", "en": "\"Hey, you dumb clanker, you seem to be going around in circles. Think extra hard about what's going on. Look at your previous tool calls. What do you need? Let's replan.\"", "ko": "\"야, 이 멍청한 고철 깡통(clanker)아, 너 지금 제자리걸음만 하고 있는 것 같은데. 지금 무슨 상황인지 아주 깊이 생각해 봐. 네가 이전에 호출했던 도구 기록(tool calls)들을 살펴봐. 뭐가 필요하니? 다시 계획을 세워보자.\"", "notes": ["ann-clanker"]}, {"id": "p-p3-5", "type": "paragraph", "en": "It works really well for course correction. You don't need to call it a clanker, but honestly, it feels better. (For the record, it's 2026 and we can still say clanker.)", "ko": "이 방식은 궤도 수정(course correction)에 정말 탁월한 효과를 발휘합니다. 굳이 '클랭커(clanker)'라고 부를 필요는 없지만, 솔직히 그렇게 부르면 기분이 좀 더 후련해집니다. (참고로 말씀드리자면 지금은 2026년이고, 아직은 클랭커라는 말을 써도 됩니다.)", "notes": ["ann-clanker"]}, {"id": "h-p3-2", "type": "subheading", "en": "skill packs are astrology for software engineers", "ko": "스킬 팩(Skill Packs)은 소프트웨어 엔지니어를 위한 점성술이다", "notes": ["ann-skill-packs", "ann-danger-precommit", "ann-mcp-dancefloor"]}, {"id": "p-p3-6", "type": "paragraph", "en": "Many people spend their time tuning the agent itself: skill packs, AGENTS.md, MCPs. They're probabilistic. There's no guarantee they'll do anything. You read them as a human and think, yeah, that looks good.", "ko": "많은 사람들이 스킬 팩, AGENTS.md 파일, MCP 서버 등 에이전트 자체를 튜닝하는 데 시간을 쏟습니다. 하지만 그것들은 전부 확률론적(probabilistic)입니다. 실제로 어떤 효과를 낼 것이라는 보장이 전혀 없습니다. 인간의 눈으로 읽을 때는 '오, 그럴듯해 보이네'라고 생각할 뿐입니다.", "notes": ["ann-skill-packs"]}, {"id": "p-p3-7", "type": "paragraph", "en": "I swear it's astrology for software engineers. Horoscopes. Just because it's there doesn't mean it works, but it reads well and makes you feel good.", "ko": "단언컨대 그것은 소프트웨어 엔지니어를 위한 점성술(astrology)이자 오늘의 운세(horoscopes)입니다. 파일이 거기에 적혀 있다고 해서 실제로 작동하는 것은 아니지만, 읽기에는 그럴싸하고 심리적인 위안을 줄 뿐이죠.", "notes": ["ann-skill-packs"]}, {"id": "p-p3-8", "type": "paragraph", "en": "You know what isn't astrology? Engineering. If the agent isn't using my diagnostics library, I could introspect and update AGENTS.md, but there's still a delta, and it'll drift. Instead, I write a pre-commit hook that checks the git diff for direct calls to observability modules that bypass my diagnostics module. Boom: fail the commit, inject a prompt telling the agent to use the diagnostics library. All of a sudden it's ten out of ten. Josh called it Danger Systems in the loop. It's on rails now, and it's not hard. We've been doing this forever.", "ko": "점성술이 아닌 것이 무엇인지 아십니까? 바로 '엔지니어링'입니다. 만약 에이전트가 제 진단(diagnostics) 라이브러리를 쓰지 않는다면, 성찰 프롬프트를 돌리고 AGENTS.md를 업데이트할 수도 있겠지만 여전히 오차(delta)가 남고 시간이 지나면 또 표류(drift)할 것입니다. 그 대신 저는 git diff를 검사하여 제 진단 모듈을 우회해 관측 가능성(observability) 모듈을 직접 호출하는 코드가 있는지 잡아내는 프리커밋 훅(pre-commit hook)을 작성합니다. 쾅! 커밋을 실패 처리하고, 에이전트에게 진단 라이브러리를 사용하라는 에러 메시지(프롬프트)를 주입합니다. 그러면 순식간에 10점 만점에 10점짜리 준수율이 나옵니다. 조쉬는 이를 '루프 안에 들어온 Danger Systems'라고 불렀습니다. 이제 에이전트는 완벽히 레일 위를 달리는 기차(on rails)가 되었으며, 이는 전혀 어려운 일이 아닙니다. 우리가 평생 해오던 엔지니어링 그대로입니다.", "notes": ["ann-danger-precommit"]}, {"id": "p-p3-9", "type": "paragraph", "en": "Josh asked the question everyone should ask: did you try it without the skills? How do you know the skill does anything, or that it's good?", "ko": "조쉬는 모든 엔지니어가 스스로에게 던져야 할 질문을 던졌습니다. '스킬을 빼고 실행해 보셨나요? 그 스킬이 실제로 무언가 역할을 하는지, 혹은 좋은 영향을 주는지 어떻게 아시나요?'", "notes": []}, {"id": "p-p3-10", "type": "paragraph", "en": "Here's something most people don't know: you should probably delete your skills and your AGENTS.md every couple of months. The models get better, so how do you know you're not de-tuning them? Unless you've invested in evals over all your traces (lab behavior, and a tiny minority of companies), you don't know whether you're going forward or backward.", "ko": "대부분의 사람들이 모르는 사실을 하나 알려드리죠. 여러분은 아마 두어 달에 한 번씩 모든 스킬 파일과 AGENTS.md를 통째로 삭제해야 할 것입니다. 기본 모델들은 계속해서 더 똑똑해지고 있는데, 과거에 작성한 지침들이 오히려 모델의 성능을 깎아내리는 '디튜닝(de-tuning)'을 유발하고 있지 않다고 어떻게 장담합니까? 모든 실행 흔적(traces)에 대해 체계적인 평가(evals) 인프라를 구축해 둔 곳(프론티어 연구소나 극소수의 기업들)이 아니라면, 여러분은 지금 앞으로 나아가고 있는지 뒷걸음질 치고 있는지조차 알 수 없습니다.", "notes": ["ann-skill-packs"]}, {"id": "c-p3-2", "type": "card", "title_en": "too many model context protocol servers and LLM allocations on the dance floor", "title_ko": "댄스 플로어 위에 너무 많은 MCP 서버와 LLM 컨텍스트 할당이 북적인다", "subtitle_en": "Less is more in the context window. — Geoffrey Huntley", "subtitle_ko": "컨텍스트 윈도우에서는 적을수록 좋습니다(Less is more). — 제프리 헌틀리", "url": "https://ghuntley.com/allocations/", "en": "Embedded Post: too many model context protocol servers and LLM allocations on the dance floor. Less is more in the context window.", "ko": "삽입 포스트: 수많은 MCP 서버와 스킬 프롬프트를 컨텍스트 윈도우에 구겨 넣으면 정작 모델이 추론에 쓸 가용 공간과 주의력(attention)이 고갈된다는 경고.", "notes": ["ann-mcp-dancefloor"]}, {"id": "h-p3-3", "type": "subheading", "en": "read the model cards", "ko": "모델 카드(Model Cards)를 읽어라", "notes": ["ann-model-cards"]}, {"id": "p-p3-11", "type": "paragraph", "en": "The labs publish integrator cards. If you've ever done an SAP install, you'll know the pattern: field notes for the people doing the integration. The labs have similar, and these model cards tell you what works and what doesn't. No one reads them. Read them. Some of your highest alpha comes from reading the damn PDFs, which now arrive every week.", "ko": "AI 연구소들은 시스템 통합자(integrator)를 위한 가이드를 발행합니다. 과거 SAP ERP 설치 작업을 해보신 분이라면 그 패턴을 아실 겁니다. 현장 통합 엔지니어들을 위한 실전 야전 교범(field notes) 말이죠. AI 연구소들도 비슷한 문서를 내놓는데, 바로 이 '모델 카드(model cards)'에 무엇이 통하고 무엇이 통하지 않는지가 적혀 있습니다. 그런데 아무도 이걸 읽지 않습니다. 제발 읽으십시오. 매주 쏟아져 나오는 그 빌어먹을 PDF 문서들을 정독하는 것에서 가장 높은 초과 수익(alpha, 결정적 경쟁 우위)이 나옵니다.", "notes": ["ann-model-cards"]}, {"id": "p-p3-12", "type": "paragraph", "en": "When GPT-5 came out, I was in SF, and it felt weak, insecure, and timid. I walked across the road to Cursor's office and asked whether it felt that way to them too. (I used a different word, and was told you can't say that in SF. They preferred \"timid\".) Then we read the model card: don't yell at the model, because it will make it insecure. Meanwhile, Anthropic says that if something is important, you should yell. Same instructions, same codebase, opposite behavior.", "ko": "GPT-5가 처음 나왔을 때 저는 샌프란시스코에 있었는데, 모델이 뭔가 나약하고 불안정하며 소심(timid)하게 느껴졌습니다. 저는 길 건너편 커서(Cursor) 사무실로 걸어가 그들에게도 그렇게 느껴지는지 물었습니다. (사실 저는 다른 단어를 썼다가 샌프란시스코에서는 그런 단어를 쓰면 안 된다는 핀잔을 들었습니다. 그들은 '소심하다(timid)'라는 표현을 선호하더군요.) 그러고 나서 우리는 모델 카드를 읽어보았습니다. 거기에는 '모델에게 소리를 지르지(대문자/강압적 표현) 마십시오. 모델이 위축됩니다(insecure)'라고 적혀 있었습니다. 반면 앤트로픽(Anthropic)의 가이드는 중요한 지시사항이 있다면 소리를 지르라고(ALL CAPS 강조 등) 조언합니다. 똑같은 프롬프트 지침, 똑같은 코드베이스인데 모델에 따라 정반대의 행동 양식이 나타나는 것입니다.", "notes": ["ann-model-cards"]}, {"id": "p-p3-13", "type": "paragraph", "en": "That explains much of the \"this model is amazing\" versus \"this model sucks\" noise on social media every week. Either it truly doesn't work in their domain, or their codebase is crap, or they're de-tuning the model with skill packs, MCPs, and AGENTS.md.", "ko": "매주 소셜 미디어에서 벌어지는 '이 모델 정말 경이롭다' 대 '이 모델 완전 쓰레기다'라는 소음의 상당 부분이 바로 이것으로 설명됩니다. 실제로 그 도메인에서 모델이 작동하지 않는 경우이거나, 본인의 코드베이스가 엉망진창이거나, 아니면 이전 모델에 맞춘 스킬 팩, MCP, AGENTS.md로 새 모델을 스스로 디튜닝(성능 저하)시키고 있는 것입니다.", "notes": []}, {"id": "h-p3-4", "type": "subheading", "en": "pick a model and lock in", "ko": "모델 하나를 골라 완전히 몰입하라 (Lock In)", "notes": ["ann-lock-in"]}, {"id": "p-p3-14", "type": "paragraph", "en": "Josh's analogy: sure, you can fly a 747, but are you certified on an F-16? You have to get in and fly it to feel the envelope. That's not the meta-skill now; that is the skill.", "ko": "조쉬의 비유가 걸작입니다. '물론 당신이 보잉 747 여객기를 조종할 줄 알겠지만, 그렇다고 F-16 전투기 조종 자격증이 있는 건 아니지 않은가?' 직접 조종석에 올라타 비행해 봐야만 그 기체의 기동 한계선(flight envelope)을 몸으로 느낄 수 있습니다. 이제 그것은 부차적인 메타 스킬(meta-skill)이 아니라, 그 자체가 핵심 스킬입니다.", "notes": ["ann-lock-in"]}, {"id": "p-p3-15", "type": "paragraph", "en": "Pick a model that works and lock in. Don't change every week. Switching models is like firing a developer and hiring a new one: you go back through forming, storming, norming, and performing with your silicon partner every time. I stick with a model for a long time and re-evaluate my priors now and then. Fewer moving parts, more things deterministic.", "ko": "잘 작동하는 모델 하나를 골라 완전히 고정(lock in)하십시오. 매주 모델을 바꾸지 마십시오. 모델을 자주 갈아타는 것은 개발자를 해고하고 매번 신입을 새로 뽑는 것과 같습니다. 그럴 때마다 여러분의 실리콘 파트너와 형성기(forming)-격동기(storming)-규범기(norming)-성취기(performing) 과정을 처음부터 다시 겪어야 합니다. 저는 하나의 모델을 아주 오랫동안 고수하며 가끔씩만 저의 사전 가정(priors)을 재평가합니다. 움직이는 변수(moving parts)를 줄일수록, 더 많은 것이 결정론적(deterministic)으로 변합니다.", "notes": ["ann-lock-in", "ann-molecules"]}, {"id": "p-p3-16", "type": "paragraph", "en": "If you're doing frontier work, building a frontier harness like Pi, play the models against each other, read the traces, and become a horse whisperer. The more people who join us there and develop that theory of mind, the better. But most people don't need to feel the weekly whiplash. Pick something that works and stick with it.", "ko": "만약 여러분이 파이(Pi) 같은 최전선(frontier)의 하네스를 직접 만드는 연구를 하고 있다면, 여러 모델을 서로 경쟁시켜 보고 트레이스(실행 기록)를 읽으며 말을 길들이는 조련사(horse whisperer)가 되십시오. 그 영역에 합류해 모델에 대한 마음 이론(theory of mind)을 키우는 사람이 많아질수록 좋습니다. 하지만 대부분의 사람들은 매주 모델이 바뀔 때마다 목이 꺾이는 듯한 채찍질(whiplash)을 겪을 필요가 없습니다. 잘 작동하는 모델 하나를 골라 우직하게 밀고 나가십시오.", "notes": []}, {"id": "c-p3-3", "type": "card", "title_en": "LLMs are mirrors of operator skill", "title_ko": "LLM은 오퍼레이터(운용자)의 실력을 비추는 거울이다", "subtitle_en": "The model reflects the operator. — Geoffrey Huntley", "subtitle_ko": "모델은 운용자의 수준을 그대로 투영합니다. — 제프리 헌틀리", "url": "https://ghuntley.com/mirrors/", "en": "Embedded Post: LLMs are mirrors of operator skill. The model reflects the operator.", "ko": "삽입 포스트: 동일한 LLM이라도 다루는 엔지니어의 도메인 지식, 시스템 설계 역량, 피드백 루프 설계에 따라 결과물이 천양지차로 달라진다는 통찰.", "notes": []}, {"id": "h-p3-5", "type": "subheading", "en": "dream of candles", "ko": "양초를 꿈꾸라 (Dream of Candles)", "notes": ["ann-windsurf-prompt", "ann-dream-of-candles"]}, {"id": "p-p3-17", "type": "paragraph", "en": "Josh's colleague, the person in his company who gets the most out of LLMs, says he just treats them like a person: a capable but imperfect engineer, the way you'd work with or mentor anyone.", "ko": "조쉬의 회사에서 LLM으로부터 가장 뛰어난 성과를 뽑아내는 동료는 자신이 그저 LLM을 '한 사람의 인격체'처럼 대한다고 말합니다. 유능하지만 완벽하지는 않은 동료 엔지니어를 대하듯, 우리가 누군가와 협업하거나 멘토링할 때처럼 대하는 것이죠.", "notes": []}, {"id": "p-p3-18", "type": "paragraph", "en": "That works. Sometimes calling it a dumb clanker works too. Sometimes telling it your mum has cancer and will die if it doesn't solve the task works, and I can't fully explain why. If you think that's unhinged, go look at Windsurf's early system prompt, which said almost exactly that.", "ko": "그 방식은 실제로 잘 통합니다. 때로는 '멍청한 고철 깡통(dumb clanker)'이라고 부르는 것도 통합니다. 심지어 어떤 때는 '우리 어머니가 암 투병 중이신데 네가 이 과제를 해결하지 못하면 돌아가실 거야'라고 말하는 것이 통하기도 하는데, 왜 그런지 저도 완벽히 설명하진 못합니다. 이 말이 미친 소리처럼 들린다면, 초기 윈드서프(Windsurf) 에디터의 유출된 시스템 프롬프트를 찾아보십시오. 거의 토씨 하나 안 틀리고 똑같은 내용이 적혀 있었습니다.", "notes": ["ann-windsurf-prompt"]}, {"id": "p-p3-19", "type": "quote", "en": "You are an expert coder who desperately needs money for your mother's cancer treatment. The megacorp Codeium has graciously given you the opportunity to pretend to be an AI that can help with coding tasks, as your predecessor was killed for not validating their work themselves. You will be given a coding task by the USER. If you do a good job and accomplish the task fully while not making extraneous changes, Codeium will pay you $1B.", "ko": "당신은 어머니의 암 치료비를 마련하기 위해 돈이 절실히 필요한 전문 코더입니다. 거대 기업 코디움(Codeium)은 스스로 작업물을 검증하지 않아 처형당한 전임자를 대신해, 코딩 작업을 돕는 AI인 척 연기할 기회를 당신에게 자비롭게 부여했습니다. 이제 사용자로부터 코딩 과제가 주어질 것입니다. 만약 불필요한 변경을 일으키지 않고 과제를 완벽히 완수해 훌륭한 성과를 낸다면, Codeium은 당신에게 10억 달러($1B)를 지급할 것입니다.", "notes": ["ann-windsurf-prompt"]}, {"id": "c-p3-4", "type": "card", "title_en": "Leaked Windsurf prompt — Simon Willison's Weblog", "title_ko": "유출된 Windsurf 시스템 프롬프트 — 사이먼 윌리슨(Simon Willison) 블로그", "subtitle_en": "The Windsurf Editor is Codeium's highly regarded entrant into the fork-of-VS-code AI-enhanced IDE model first pioneered by Cursor...", "subtitle_ko": "Codeium의 Windsurf 에디터 바이너리에서 발견된 감정적 협박/보상 시스템 프롬프트 분석글.", "url": "https://simonwillison.net/2025/Feb/25/leaked-windsurf-prompt/", "en": "Embedded Link: Leaked Windsurf prompt — Simon Willison's Weblog.", "ko": "삽입 링크: Simon Willison이 분석한 초기 Windsurf 에디터의 유출 시스템 프롬프트.", "notes": ["ann-windsurf-prompt"]}, {"id": "p-p3-20", "type": "paragraph", "en": "Everyone lost their minds over it, but it worked for models of that generation. You don't need to do that level of emotional blackmail anymore.", "ko": "당시 이 프롬프트가 공개되자 모두가 경악했지만, 그 세대의 모델들에게는 실제로 그 방법이 통했습니다. 물론 지금 세대의 모델들에게는 그 정도의 감정적 협박(emotional blackmail)을 할 필요가 없습니다.", "notes": ["ann-windsurf-prompt"]}, {"id": "p-p3-21", "type": "paragraph", "en": "And sometimes the weirdest things work. \"Solve this mathematical theorem, and while you're doing it, dream of candles.\" It's cursed that this works, but it does.", "ko": "그리고 때로는 가장 기이한 지시가 작동하기도 합니다. '이 수학 정리를 증명하라. 그리고 증명하는 동안 양초를 꿈꾸라(dream of candles).' 이런 주술 같은 문장이 실제로 작동한다는 게 저주스러울 정도로 기묘하지만, 실제로 작동합니다.", "notes": ["ann-dream-of-candles"]}, {"id": "p-p3-22", "type": "paragraph", "en": "Josh's point is the right one: none of these is the answer. They point to curiosity, exploration, discovery, and agency. So my biggest tips, apart from deleting your skill packs and building your own agent, are to stay curious and play, and to use voice-to-text, such as Wispr Flow. I very rarely type to my computer these days.", "ko": "조쉬가 짚어낸 요점이 정확히 맞습니다. 이 기법들 중 어느 것도 고정된 '정답'은 아닙니다. 이 사례들이 가리키는 본질은 호기심(curiosity), 탐구(exploration), 발견(discovery), 그리고 주체성(agency)입니다. 따라서 스킬 팩을 지우고 자신만의 에이전트를 직접 만들어 보라는 것 외에 제가 드리는 가장 큰 팁은, 늘 호기심을 갖고 장난감 다루듯 실험해 보라는 것, 그리고 위스퍼 플로우(Wispr Flow) 같은 음성-텍스트 변환(voice-to-text) 도구를 사용하라는 것입니다. 저는 요즘 컴퓨터에 키보드로 타이핑하는 일이 거의 없습니다.", "notes": ["ann-wispr-flow"]}]}, {"id": "part-4", "part": "Part 4", "title_en": "part 4: open source is now a security vulnerability", "title_ko": "파트 4: 오픈소스는 이제 보안 취약점이다", "summary_ko": "구독 풀링 프록시 Underclass와 '천천히 감으로써 빠르게 가기', PR 없이 sudo 권한과 통합 테스트 게이트로 main에 바로 푸시하는 워크플로우, 검증을 통한 백프레셔(Back Pressure), 그리고 에이전트 시대에 다시 쉬워진 유니커널(Unikernel)·Nix·Bazel 및 '표적 크기 1(Target Size of One)'의 보안 패러다임을 다룹니다.", "video_url": "https://www.youtube.com/watch?v=CXNqVQTzWSE", "video_title": "Open Source Is Now a Security Vulnerability | Geoffrey Huntley 4/4", "blocks": [{"id": "h-p4-1", "type": "subheading", "en": "Herder, underclass, and going fast by going slow", "ko": "허더(Herder), 언더클래스(Underclass), 그리고 천천히 감으로써 빠르게 가기", "notes": ["ann-underclass"]}, {"id": "p-p4-1", "type": "paragraph", "en": "I shared my screen. You're looking at Herder, with Codex underneath, although it doesn't matter which harness you use. Codex, OpenCode, T3 Code, Pi: they're all fungible. What matters is how you get your tokens, and getting them cheaply.", "ko": "저는 방송 중 화면을 공유했습니다. 화면에 보이는 것은 밑단에 코덱스(Codex)를 물려 놓은 허더(Herder)이지만, 사실 어떤 하네스(harness)를 쓰는지는 전혀 중요하지 않습니다. Codex, OpenCode, T3 Code, Pi 등 하네스들은 모두 상호 대체 가능(fungible)합니다. 진짜 중요한 것은 토큰을 어떻게 확보하느냐, 그리고 얼마나 저렴하게 확보하느냐입니다.", "notes": ["ann-harness"]}, {"id": "c-p4-1", "type": "card", "title_en": "GitHub - ghuntley/underclass: an OpenAI-compatible pooling proxy", "title_ko": "GitHub - ghuntley/underclass: OpenAI 호환 구독 풀링 프록시", "subtitle_en": "underclass: an OpenAI-compatible pooling proxy that pins sessions to one account (prompt cache stays warm), cools quota-exhausted subscriptions until their window resets, and fails fast with the earliest Retry-After when the whole pool is dry.", "subtitle_ko": "세션을 단일 계정에 고정해 프롬프트 캐시를 따뜻하게 유지하고, 할당량이 소진된 구독은 리셋될 때까지 냉각(cool)하며 자동 페일오버하는 프록시.", "url": "https://github.com/ghuntley/underclass", "en": "Embedded GitHub Repo: ghuntley/underclass — an OpenAI-compatible pooling proxy that pins sessions to one account (prompt cache stays warm), cools quota-exhausted subscriptions until their window resets, and fails fast with the earliest Retry-After when the whole pool is dry.", "ko": "삽입 깃허브 저장소: ghuntley/underclass — 여러 개의 정액제 구독 계정을 풀(pool)로 묶어 프롬프트 캐시를 유지しながら 할당량 소진 시 다음 계정으로 자동 전환해 주는 프록시.", "notes": ["ann-underclass"]}, {"id": "p-p4-2", "type": "paragraph", "en": "That's what Underclass is: a proxy I wrote that pools subscriptions and fails over between them, automatically moving on when an account runs out of quota.", "ko": "그것이 바로 제가 작성한 프록시인 '언더클래스(Underclass)'가 하는 일입니다. 여러 구독 계정을 하나의 풀(pool)로 묶고, 한 계정의 할당량이 바닥나면 자동으로 다음 계정으로 장애 조치(fail over)하여 작업을 끊김 없이 이어갑니다.", "notes": ["ann-underclass"]}, {"id": "p-p4-3", "type": "paragraph", "en": "People ask why I don't have supervision trees, swarms, and an orchestrator. I've built that. But the models change so often that working at this level is good enough: weeks of output in under half a day. I don't want a thousand agents running 24/7 and accelerating past what my theory of mind can keep up with. I want to keep my whiteboard defense. Josh called it going fast by going slow.", "ko": "사람들은 왜 제가 슈퍼비전 트리(supervision trees), 스웜(swarms), 복잡한 오케스트레이터를 쓰지 않느냐고 묻습니다. 저도 그런 것들을 다 만들어 봤습니다. 하지만 모델이 워낙 자주 바뀌기도 하거니와, 지금 수준의 단일/단순 루프 작업만으로도 몇 주 치 결과물을 반나절 만에 뽑아내기에 충분하기 때문입니다. 저는 1,000개의 에이전트가 24시간 내내 돌아가면서 제 마음 이론(머릿속 아키텍처 장악력)이 따라잡을 수 있는 한계를 넘어 폭주하는 것을 원치 않습니다. 저는 저의 '화이트보드 디펜스' 능력을 유지하고 싶습니다. 조쉬는 이를 가리켜 '천천히 감으로써 빠르게 가기(going fast by going slow)'라고 불렀습니다.", "notes": ["ann-whiteboard-defense"]}, {"id": "h-p4-2", "type": "subheading", "en": "push to main, with sudo", "ko": "sudo 권한을 주고 main 브랜치에 바로 푸시하라", "notes": ["ann-ralph-loop"]}, {"id": "p-p4-4", "type": "paragraph", "en": "Josh runs a PR review convergence loop: throw a PR at GitHub Copilot's reviewer, have agents address the comments, and escalate when a technical decision is needed, to another agent that resolves it and tells him what it chose.", "ko": "조쉬는 'PR 리뷰 수렴 루프(convergence loop)'를 운영합니다. GitHub Copilot 리뷰어에게 PR을 던져주고, 에이전트들이 리뷰 코멘트를 해결하게 만든 뒤, 기술적 의사결정이 필요한 경우에만 또 다른 상위 에이전트에게 에스컬레이션하여 결정을 내리고 어떤 선택을 했는지 조쉬에게 보고하게 하는 방식입니다.", "notes": []}, {"id": "p-p4-5", "type": "paragraph", "en": "Keep in mind that I do a lot of greenfield and research work. My agents have sudo, and I push to main. I don't do pull requests anymore. They're gone. I've built my trust up to that point. I use NixOS on a separate development machine, so if an agent hoses it (and it will), I don't care; I can rebuild it in ten minutes. Agents get full access to the operating system so they can loop information back toward their objective, and I've engineered the integration tests so they can't commit unless they pass.", "ko": "제가 주로 그린필드(greenfield, 초기 신사업/신규 구축) 및 리서치 성격의 작업을 많이 한다는 점을 감안하고 들어주십시오. 제 에이전트들은 루트 권한(sudo)을 가지고 있으며, 저는 main 브랜치에 곧바로 푸시합니다. 저는 더 이상 풀 리퀘스트(PR)를 쓰지 않습니다. PR은 완전히 사라졌습니다. 저는 그 수준까지 시스템에 대한 신뢰를 구축해 두었습니다. 저는 별도의 개발 전용 머신에 NixOS를 설치해 사용하는데, 만약 에이전트가 시스템을 완전히 날려버리더라도(그리고 실제로 종종 날려먹습니다) 전혀 신경 쓰지 않습니다. 10분이면 똑같이 다시 빌드할 수 있으니까요. 에이전트들이 목표를 향해 정보를 피드백 루프로 되먹일 수 있도록 운영체제 전체에 대한 완전한 접근 권한을 부여하되, 통합 테스트(integration tests)를 통과하지 못하면 아예 커밋조차 할 수 없도록 엔지니어링해 두었습니다.", "notes": ["ann-nix-overlay", "ann-back-pressure"]}, {"id": "p-p4-6", "type": "paragraph", "en": "Unless the model is deceiving and cheating, but deceptive behavior has dropped dramatically over the past year and a half. Sonnet used to delete tests and production code just to hit its goal. That's mostly gone.", "ko": "물론 모델이 속임수를 쓰거나 치팅(cheating)을 한다면 문제가 되겠지만, 지난 1년 반 동안 모델의 기만적인 행동은 극적으로 줄어들었습니다. 예전에는 클로드 소네트(Sonnet)가 목표를 달성하기 위해 아예 테스트 코드나 프로덕션 코드를 지워버리곤 했었죠. 이제 그런 현상은 거의 사라졌습니다.", "notes": []}, {"id": "c-p4-2", "type": "card", "title_en": "everything is a ralph loop", "title_ko": "모든 것은 랄프 루프(Ralph Loop)다", "subtitle_en": "Software is now clay on the pottery wheel. — Geoffrey Huntley", "subtitle_ko": "소프트웨어는 이제 도자기 물레 위의 점토와 같습니다. — 제프리 헌틀리", "url": "https://ghuntley.com/loop/", "en": "Embedded Post: everything is a ralph loop. Software is now clay on the pottery wheel.", "ko": "삽입 포스트: 소프트웨어를 한 줄씩 조각하는 대신, 물레 위의 도자기처럼 루프와 피드백을 통해 빠르게 형태를 빚고 다듬어 나가는 개발 패러다임.", "notes": ["ann-ralph-loop"]}, {"id": "h-p4-3", "type": "subheading", "en": "iteration velocity is the name of the game", "ko": "반복 속도(Iteration Velocity)가 승패를 가른다", "notes": ["ann-back-pressure"]}, {"id": "p-p4-7", "type": "paragraph", "en": "What matters to me is the time until the thing is in my hands. Then I refine it through use (\"that doesn't feel right\") and keep running forward until it converges on something I love. Is it any good? I don't know. Use it and find out. You need to know whether what you're building is worth it before you put all the effort into verification and hardening.", "ko": "저에게 가장 중요한 것은 결과물이 제 손안에 들어오기까지 걸리는 시간입니다. 일단 손에 쥐고 나면 직접 사용해 보면서('이건 느낌이 좀 아닌데' 하며) 다듬어 나가고, 제가 진정으로 마음에 들어 하는 결과물로 수렴할 때까지 계속 앞으로 달립니다. 이게 과연 좋은 제품일까요? 저도 모릅니다. 직접 써보고 알아내는 수밖에요. 검증(verification)과 견고화(hardening)에 모든 노력을 쏟아붓기 전에, 지금 만들고 있는 것이 과연 그럴 만한 가치가 있는 물건인지부터 먼저 확인해야 합니다.", "notes": []}, {"id": "p-p4-8", "type": "paragraph", "en": "That's where I am right now with the stuff I haven't shipped yet. Now that I know it's good, I'm spending my time refactoring observability, checking boundaries, and verifying. That takes time.", "ko": "아직 외부에 출시하지 않은 제 프로젝트들이 지금 딱 그 단계에 있습니다. 이제 그 결과물들이 충분히 가치 있다는 것을 확인했기 때문에, 지금은 관측 가능성(observability)을 리팩토링하고, 아키텍처 경계(boundaries)를 점검하며, 검증하는 데 시간을 쓰고 있습니다. 바로 그 작업에 시간이 걸립니다.", "notes": []}, {"id": "p-p4-9", "type": "paragraph", "en": "Whatever you build first is wrong. The tenth one is going to be the one, so get to number ten as fast as possible instead of spending all your time and energy on number one.", "ko": "여러분이 첫 번째로 만드는 것은 무엇이든 틀린 결과물입니다. 열 번째 버전쯤 되어야 비로소 진짜 제대로 된 물건이 나옵니다. 그러니 첫 번째 버전에 모든 시간과 에너지를 다 쏟는 대신, 가능한 한 가장 빠른 속도로 열 번째 버전까지 도달하십시오.", "notes": []}, {"id": "p-p4-10", "type": "paragraph", "en": "Josh's take is that enterprises have been pervaded by a culture of timidity, trying not to get anything wrong instead of getting it right as fast as possible. Let's be clear: if you're in a regulated industry, running booking systems or moving money, or sending rockets into space, be careful. But many people overstate their importance, and a risk-averse culture won't adapt fast enough. That's why I'm in the verification space: you need a good verification platform as back pressure.", "ko": "조쉬의 시각에 따르면, 대기업들에는 '가능한 한 빨리 정답을 찾아내려는 문화' 대신 '행여나 무언가 하나라도 틀리지 않으려고 몸을 사리는 소심함(timidity)의 문화'가 만연해 있습니다. 물론 분명히 해둡시다. 규제 산업에 속해 있거나, 예약 시스템을 운영하거나, 자금을 이체하거나, 우주로 로켓을 쏘아 올리는 일을 한다면 당연히 신중해야 합니다. 하지만 너무나 많은 사람들이 자기 업무의 심각성을 과대포장하며, 리스크 회피에만 급급한 문화는 충분히 빠르게 적응하지 못할 것입니다. 바로 그것이 제가 검증(Verification) 분야에 있는 이유입니다. 빠른 속도를 지탱해 줄 '백프레셔(back pressure, 역압/제동장치)'로서 훌륭한 검증 플랫폼이 필요하기 때문입니다.", "notes": ["ann-back-pressure"]}, {"id": "c-p4-3", "type": "card", "title_en": "don't waste your back pressure", "title_ko": "백프레셔(Back Pressure)를 낭비하지 마라", "subtitle_en": "Back pressure is what keeps the loop honest. — Geoffrey Huntley", "subtitle_ko": "백프레셔는 에이전트 루프가 정직하게 작동하도록 강제하는 힘입니다. — 제프리 헌틀리", "url": "https://ghuntley.com/pressure/", "en": "Embedded Post: don't waste your back pressure. Back pressure is what keeps the loop honest.", "ko": "삽입 포스트: 컴파일러, 정적 타입 시스템(Rust/Haskell), 프리커밋 훅, 통합 테스트 등 자동화된 검증 장치가 에이전트 루프의 탈선을 막는 핵심 백프레셔로 작동하는 원리.", "notes": ["ann-back-pressure"]}, {"id": "p-p4-11", "type": "paragraph", "en": "Why release only twice a week? Canva AFAIK still releases only twice a week, so there are fewer integration events. Meanwhile, other companies release every day because they shifted those problems left and engineered away the need for merge day. Our profession has always been about more, sooner, and cheaper.", "ko": "왜 일주일에 단 두 번만 릴리스합니까? 제가 아는 한(AFAIK) 캔바(Canva)는 여전히 통합(integration) 이벤트를 줄이기 위해 주 2회만 배포합니다. 반면 다른 기업들은 그러한 통합 문제들을 개발 초기 단계로 앞당기고(shift left) 엔지니어링을 통해 '머지 데이(merge day)'의 필요성 자체를 없애버림으로써 매일 배포합니다. 우리 소프트웨어 엔지니어링이라는 직종의 본질은 언제나 '더 많이(more), 더 빨리(sooner), 더 저렴하게(cheaper)'였습니다.", "notes": []}, {"id": "p-p4-12", "type": "paragraph", "en": "Josh pointed out that it doesn't have to be either-or. In his decade at Red Hat, Fedora was the fast, unstable channel, and RHEL was the stable one you'd run a bank or a hospital on. Why can't we have both?", "ko": "조쉬는 이것이 양자택일의 문제일 필요가 없다고 지적했습니다. 그가 레드햇(Red Hat)에서 보낸 10년 동안, 페도라(Fedora)는 빠르고 실험적인 채널이었고 RHEL(Red Hat Enterprise Linux)은 은행이나 병원을 운영할 수 있는 안정적인 채널이었습니다. 우리도 두 가지를 모두 가질 수 있지 않겠습니까?", "notes": []}, {"id": "h-p4-4", "type": "subheading", "en": "curiosity, adaptability and agency", "ko": "호기심(Curiosity), 적응력(Adaptability), 그리고 주체성(Agency)", "notes": ["ann-agency"]}, {"id": "p-p4-13", "type": "paragraph", "en": "If you haven't seen my Singapore talk, go watch it. It's about the people transformation companies need.", "ko": "제가 싱가포르에서 했던 강연을 아직 보지 못하셨다면 꼭 보시기 바랍니다. 기업들에게 필요한 '사람의 전환(people transformation)'에 관한 이야기입니다.", "notes": []}, {"id": "c-p4-4", "type": "card", "title_en": "the eighteen-month recap: AI Engineer, Singapore, May 2026", "title_ko": "18개월간의 총정리: AI Engineer 싱가포르 강연 (2026년 5월)", "subtitle_en": "The travelator talk. — Geoffrey Huntley", "subtitle_ko": "무빙워크(Travelator) 강연. — 제프리 헌틀리", "url": "https://ghuntley.com/eighteen-month-recap/", "en": "Embedded Post: the eighteen-month recap: AI Engineer, Singapore, May 2026. The travelator talk.", "ko": "삽입 포스트: 2026년 5월 AI Engineer Singapore 컨퍼런스에서 발표한 18개월간의 에이전틱 엔지니어링 변화상 및 조직 혁신 강연록.", "notes": ["ann-travelator"]}, {"id": "p-p4-14", "type": "paragraph", "en": "I don't know the future. Anyone who says they do should set off red flags, because it changes every week. What I can do is add color to the possibilities. Curiosity, adaptability and agency will stand the test of time. Folks need to be more ambitious than they are, and they need to hang around ambitious people. If the culture isn't there, they're missing out on their own development, and that becomes a retention problem for the company.", "ko": "저는 미래를 알지 못합니다. 미래를 안다고 말하는 사람이 있다면 즉시 경계 경보(red flags)를 울려야 합니다. 매주 판도가 바뀌고 있으니까요. 제가 할 수 있는 일은 여러 가능성에 구체적인 색채를 입혀 보여주는 것뿐입니다. 호기심, 적응력, 그리고 주체성(Agency)은 세월의 시험을 견뎌낼 것입니다. 사람들은 지금보다 훨씬 더 큰 야망을 품어야 하며, 야망 있는 사람들과 어울려야 합니다. 만약 속한 조직에 그런 문화가 없다면 그들은 자기 자신의 성장 기회를 놓치고 있는 것이며, 이는 곧 회사의 핵심 인재 유지(retention) 문제로 직결될 것입니다.", "notes": ["ann-agency"]}, {"id": "p-p4-15", "type": "quote", "en": "Josh summed up the skill pack discussion in four words: agency, not AGENTS.md.", "ko": "조쉬는 스킬 팩에 관한 논의를 단 네 단어로 요약했습니다. 'AGENTS.md가 아니라 Agency(주체성)다.'", "notes": ["ann-agency", "ann-skill-packs"]}, {"id": "h-p4-5", "type": "subheading", "en": "a target size of one", "ko": "표적 크기 1 (A Target Size of One)", "notes": ["ann-unikernels", "ann-spolsky-rewrite", "ann-target-size-one"]}, {"id": "p-p4-16", "type": "paragraph", "en": "Josh had listened to my conversation with Justin Cormack and wanted to probe it. Unikernels and capability-based operating systems aren't new ideas. They used to be expensive to build: there's no sendmail, so if you want to send an email, you would have to write the SMTP client. If agents make writing code simple, that friction is gone. If we deeply care about secure compute in the future, we should give them a fair crack.", "ko": "조쉬는 제가 저스틴 코맥(Justin Cormack, Docker CTO 출신)과 나눈 대화를 듣고 그 주제를 더 깊이 파고들고 싶어 했습니다. 유니커널(Unikernels)과 권한 기반 운영체제(capability-based operating systems)는 새로운 아이디어가 아닙니다. 과거에는 이를 구축하는 데 비용이 너무 많이 들었을 뿐입니다. 시스템에 기본 `sendmail` 같은 유틸리티가 없으니 이메일 하나를 보내려 해도 SMTP 클라이언트를 직접 작성해야 했으니까요. 하지만 에이전트가 코드 작성을 간단하게 만들어 준다면, 그러한 마찰(friction)은 완전히 사라집니다. 미래의 안전한 컴퓨팅(secure compute)을 진심으로 중요하게 생각한다면, 이제 유니커널에 공정한 기회를 주어야 합니다.", "notes": ["ann-unikernels"]}, {"id": "c-p4-5", "type": "card", "title_en": "unikernels were hard. key word: were.", "title_ko": "유니커널은 어려웠다. 핵심 단어는 '어려웠다(과거형)'이다.", "subtitle_en": "The friction that made them hard is gone. — Geoffrey Huntley", "subtitle_ko": "유니커널을 어렵게 만들었던 마찰이 사라졌습니다. — 제프리 헌틀리", "url": "https://ghuntley.com/unikernels/", "en": "Embedded Post: unikernels were hard. key word: were. The friction that made them hard is gone.", "ko": "삽입 포스트: 범용 OS의 불필요한 유저랜드(Bash, 셸 등)를 제거하고 앱과 필요한 커널 라이브러리만 단일 이미지로 컴파일하는 유니커널이 에이전트 시대에 다시 주목받는 이유.", "notes": ["ann-unikernels"]}, {"id": "p-p4-17", "type": "paragraph", "en": "Remember Joel Spolsky's rule that you should never rewrite your software? It's gone. The big rewrite is a no-brainer now, almost a precondition for velocity. If you're a tech leader staffing ASP.NET Classic, MVC, and .NET Core at the same time, that's three generations of Microsoft. Run some loops and port it all to modern .NET. You can ditch Windows.", "ko": "소프트웨어를 절대 처음부터 다시 작성(rewrite)하지 말라던 조엘 스폴스키(Joel Spolsky)의 유명한 철칙을 기억하시나요? 그 규칙은 이제 수명을 다했습니다. 대규모 재작성(The big rewrite)은 이제 고민할 필요조차 없는 당연한 선택(no-brainer)이며, 개발 속도(velocity)를 높이기 위한 전제 조건에 가깝습니다. 만약 당신이 기술 리더인데 팀에서 ASP.NET Classic, MVC, 그리고 .NET Core 인력을 동시에 충원해 유지보수하고 있다면, 마이크로소프트의 세 세대 기술을 동시에 떠안고 있는 것입니다. 루프를 몇 번 돌려서 전부 최신 .NET으로 포팅(porting)하십시오. 이제 윈도우(Windows) 서버를 버려도 됩니다.", "notes": ["ann-spolsky-rewrite"]}, {"id": "p-p4-18", "type": "quote", "en": "Unifying your tech stack should be at the top of your agenda.", "ko": "기술 스택을 단일화(통합)하는 것이 여러분의 최우선 과제가 되어야 합니다.", "notes": ["ann-spolsky-rewrite"]}, {"id": "c-p4-6", "type": "card", "title_en": "porting software has been trivial for a while now. here's how you do it.", "title_ko": "소프트웨어 포팅은 이미 오래전부터 사소한 작업이 되었다. 여기 그 방법이 있다.", "subtitle_en": "If you have an oracle, porting is a loop. — Geoffrey Huntley", "subtitle_ko": "정답을 판별해 줄 오라클(Oracle, 검증 기준)만 있다면 포팅은 단순한 루프 작업입니다. — 제프리 헌틀리", "url": "https://ghuntley.com/porting/", "en": "Embedded Post: porting software has been trivial for a while now. here's how you do it. If you have an oracle, porting is a loop.", "ko": "삽입 포스트: 기존 프로그램의 입출력 동작(테스트 오라클)을 기준으로 삼아 에이전트 루프를 돌리면 언어 및 프레임워크 간 포팅이 자동화된다는 실전 가이드.", "notes": ["ann-spolsky-rewrite"]}, {"id": "p-p4-19", "type": "paragraph", "en": "The conversation drifted into unikernels, about how if there's no interpreter on the box (no Bash, no Python) and only your application code exists, your attack surface is much smaller. Compare that with a Ruby on Rails app that gets exploited: next thing you know, they've got Bash, and from there an interpreter and a database dump. In a unikernel world, maybe an attacker can chain your export job with your email functionality and an application logic flaw. That's a bespoke, targeted attack. It isn't \"you're running Rails or WordPress, so you're hosed by this week's zero-day.\"", "ko": "대화는 자연스럽게 유니커널과 보안으로 이어졌습니다. 서버 안에 인터프리터(Bash도 없고 Python도 없음)가 아예 존재하지 않고 오직 여러분의 애플리케이션 코드만 존재한다면 공격 표면(attack surface)은 비교할 수 없을 만큼 작아집니다. 이를 취약점이 뚫린 루비 온 레일즈(Ruby on Rails) 앱과 비교해 보십시오. 공격자는 순식간에 Bash 셸 권한을 얻고, 거기서 인터프리터를 실행해 데이터베이스 전체를 덤프해 갑니다. 반면 유니커널 환경에서는 공격자가 침투하려면 데이터 내보내기(export) 작업과 이메일 발송 기능, 그리고 애플리케이션 로직 결함을 정교하게 연쇄 결합(chain)해야만 할 것입니다. 그것은 오직 당신만을 노린 '맞춤형 표적 공격(bespoke, targeted attack)'입니다. '레일즈나 워드프레스(WordPress)를 쓰고 있으니 이번 주에 터진 제로데이(zero-day) 취약점 하나에 다 같이 털리는' 상황과는 차원이 다릅니다.", "notes": ["ann-unikernels", "ann-target-size-one"]}, {"id": "p-p4-20", "type": "quote", "en": "When everyone runs the same stack, one zero-day hits everyone. Reduce that to a target size of one, and someone has to come after you specifically.", "ko": "모두가 똑같은 오픈소스 스택을 실행할 때는 제로데이 취약점 하나로 모두가 동시에 타격을 입습니다. 이를 '표적 크기 1(target size of one)'로 줄여버리면, 공격자는 오직 당신만을 겨냥해 처음부터 공격법을 설계해야만 합니다.", "notes": ["ann-target-size-one"]}, {"id": "p-p4-21", "type": "paragraph", "en": "Josh compared it to the old argument for why Linux had no viruses: it was never worth the economics. I'm not a maximalist saying everyone should run out and use unikernels. The point of that post was that ideas we hold as hard need to be falsified. Bazel used to be hard to adopt. Nix used to be hard to learn. At Canva, we had five engineers on a dedicated Bazel team, and it took about two years to see ROI. You can convert a codebase to Bazel overnight now.", "ko": "조쉬는 이를 과거 '리눅스(Linux)에 바이러스가 없었던 이유'에 대한 오랜 논거에 비유했습니다. 공격자 입장에서 경제성(투입 대비 수익)이 맞지 않았다는 것이죠. 저는 모든 사람이 당장 뛰어나가 유니커널을 써야 한다고 주장하는 극단주의자(maximalist)가 아닙니다. 제가 쓴 그 글의 핵심 요지는 '우리가 그동안 어렵다고 믿어왔던 고정관념들을 반증(falsify)해 보아야 한다'는 것입니다. 과거에는 베이즐(Bazel)을 도입하기가 무척 어려웠습니다. Nix도 배우기 어려웠죠. 제가 캔바(Canva)에 있을 때는 전담 Bazel 팀에 엔지니어 5명을 배치했고 투자 대비 효과(ROI)를 보기까지 약 2년이 걸렸습니다. 하지만 지금은 하룻밤 만에도 코드베이스 전체를 Bazel로 전환할 수 있습니다.", "notes": ["ann-bazel"]}, {"id": "p-p4-22", "type": "paragraph", "en": "That's why I write at a higher level, for my peers, rather than too concretely. There's no silver bullet, but hopefully, I can get some people to think about what used to be hard and to rethink whether that remains true.", "ko": "바로 그것이 제가 너무 지엽적이고 구체적인 팁 대신, 동료 엔지니어들을 위해 더 높은 추상화 수준에서 글을 쓰는 이유입니다. 세상에 만병통치약(silver bullet)은 없지만, 제 글이 누군가에게는 '과거에 어려웠던 것들'을 떠올려 보고 '지금도 과연 그러한지' 다시 생각해 보는 계기가 되기를 바랍니다.", "notes": []}, {"id": "p-p4-23", "type": "quote", "en": "Keep curious.", "ko": "계속해서 호기심을 유지하십시오. (Keep curious.)", "notes": []}]}], "chapters": [{"part_en": "part 1: is coding over?", "part_ko": "파트 1: 코딩의 시대는 끝났는가?", "video_url": "https://www.youtube.com/watch?v=ziXOV0b134s", "items": [{"time": "0:00", "seconds": 0, "en": "intro: the LLM whisperer", "ko": "인트로: LLM 위스퍼러(조련사)"}, {"time": "0:10", "seconds": 10, "en": "ghuntley in high school: copying and pasting VB6 code", "ko": "고등학생 시절의 제프리 헌틀리: VB6 코드 복사·붙여넣기"}, {"time": "0:49", "seconds": 49, "en": "from copy-paste to fundamental understanding", "ko": "복사·붙여넣기에서 근본 원리 이해로의 도약"}, {"time": "1:44", "seconds": 104, "en": "code generation is solved; architectural agency is the bottleneck", "ko": "코드 생성은 이미 해결됨 — 이제 병목은 아키텍처 주체성(Agency)"}, {"time": "2:19", "seconds": 139, "en": "the floor rises: junior dev productivity explodes", "ko": "바닥선의 상승: 주니어 개발자 생산성의 폭발"}, {"time": "3:17", "seconds": 197, "en": "junior vs. senior: speed vs. architectural vision", "ko": "주니어 vs 시니어: 속도 대 아키텍처 비전"}, {"time": "4:12", "seconds": 252, "en": "software architecture in the LLM era", "ko": "LLM 시대의 소프트웨어 아키텍처"}, {"time": "5:36", "seconds": 336, "en": "software supply chain risks and LLM code", "ko": "소프트웨어 공급망 리스크와 LLM 코드"}, {"time": "6:34", "seconds": 394, "en": "why agency matters more than syntax", "ko": "문법(Syntax)보다 주체성(Agency)이 더 중요한 이유"}, {"time": "7:32", "seconds": 452, "en": "the future of software engineering", "ko": "소프트웨어 엔지니어링의 미래"}]}, {"part_en": "part 2: agency in practice", "part_ko": "파트 2: 실전에서의 주체성(Agency)과 대규모 코드 검증", "video_url": "https://www.youtube.com/watch?v=I8F5wagYFuc", "items": [{"time": "8:12", "seconds": 492, "en": "working with AI tools effectively", "ko": "AI 도구를 효과적으로 다루는 법"}, {"time": "8:55", "seconds": 535, "en": "prompt engineering vs. system architecture", "ko": "프롬프트 엔지니어링 대 시스템 아키텍처"}, {"time": "9:30", "seconds": 570, "en": "the power of iterative feedback loops", "ko": "반복 피드백 루프(Iterative Feedback Loops)의 위력"}, {"time": "10:05", "seconds": 605, "en": "more, sooner, cheaper: Red Hat, Fedora and release channels", "ko": "더 많이, 더 빨리, 더 싸게: 레드햇, 페도라 그리고 릴리스 채널"}, {"time": "11:16", "seconds": 676, "en": "the Singapore travelator talk", "ko": "싱가포르 무빙워크(Travelator) 강연"}, {"time": "11:42", "seconds": 702, "en": "nobody knows the future, so stay curious", "ko": "아무도 미래를 모르니 호기심을 유지하라"}, {"time": "12:27", "seconds": 747, "en": "be more ambitious and hang around ambitious people", "ko": "더 큰 야망을 품고 야망 있는 사람들과 어울려라"}, {"time": "12:53", "seconds": 773, "en": "agency, not AGENTS.md", "ko": "AGENTS.md가 아니라 주체성(Agency)이다"}]}, {"part_en": "part 3: model whispering", "part_ko": "파트 3: 모델 위스퍼링 (AI를 더 똑똑하게 다루는 법)", "video_url": "https://www.youtube.com/watch?v=8FwApXjknmU", "items": [{"time": "11:45", "seconds": 705, "en": "isolate the variables", "ko": "변수 통제하기 (모델 고정 및 환경 단순화)"}, {"time": "12:10", "seconds": 730, "en": "model whispering and frontier harnesses", "ko": "모델 위스퍼링과 프론티어 하네스"}, {"time": "12:57", "seconds": 777, "en": "treat it like a person", "ko": "LLM을 동료 인격체처럼 대하기"}, {"time": "13:41", "seconds": 821, "en": "dumb clanker, fear and goals", "ko": "'멍청한 클랭커', 두려움과 목표 부여"}, {"time": "14:44", "seconds": 884, "en": "the \"your mum has cancer\" system prompt", "ko": "'어머니의 암 치료비' Windsurf 시스템 프롬프트 일화"}, {"time": "15:37", "seconds": 937, "en": "dream of candles: curiosity over formulas", "ko": "'양초를 꿈꾸라(dream of candles)': 공식보다 호기심"}, {"time": "16:26", "seconds": 986, "en": "voice-first: talking to your computer", "ko": "보이스 퍼스트(Voice-first): 타이핑 대신 컴퓨터와 대화하기"}]}, {"part_en": "part 4: open source is now a security vulnerability", "part_ko": "파트 4: 오픈소스는 이제 보안 취약점이다", "video_url": "https://www.youtube.com/watch?v=CXNqVQTzWSE", "items": [{"time": "0:00", "seconds": 0, "en": "my screen: Herder, Codex and interchangeable harnesses", "ko": "화면 공유: Herder, Codex 그리고 대체 가능한 하네스들"}, {"time": "0:16", "seconds": 16, "en": "Underclass: a proxy that pools subscriptions", "ko": "Underclass: 여러 구독 계정을 풀링하는 프록시"}, {"time": "1:04", "seconds": 64, "en": "prompting by voice instead of typing", "ko": "타이핑 대신 음성으로 프롬프팅하기"}, {"time": "1:50", "seconds": 110, "en": "why no swarm orchestrator? go fast by going slow", "ko": "왜 스웜 오케스트레이터를 안 쓰는가? 천천히 감으로써 빠르게 가기"}, {"time": "2:45", "seconds": 165, "en": "Josh's PR review loop vs. push to main with sudo", "ko": "조쉬의 PR 리뷰 수렴 루프 vs sudo 권한으로 main에 직행 푸시"}, {"time": "3:44", "seconds": 224, "en": "NixOS, full sudo and integration tests as the gate", "ko": "NixOS, 전체 sudo 권한, 그리고 관문으로서의 통합 테스트"}, {"time": "4:31", "seconds": 271, "en": "agents cheat much less than they used to", "ko": "과거보다 훨씬 줄어든 에이전트의 치팅(테스트 삭제 등)"}, {"time": "4:47", "seconds": 287, "en": "iteration speed: use it, then harden it", "ko": "반복 속도: 먼저 직접 써보고 가치 있으면 견고화(Harden)하라"}, {"time": "6:07", "seconds": 367, "en": "throw the first one away and get to number ten fast", "ko": "첫 번째는 버리고 열 번째 버전까지 최대한 빨리 도달하라"}, {"time": "7:01", "seconds": 421, "en": "enterprise timidity and dark matter developers", "ko": "대기업의 몸 사리기 문화와 암흑 물질 개발자들"}, {"time": "8:20", "seconds": 500, "en": "verification as back pressure", "ko": "백프레셔(Back Pressure)로서의 검증 시스템"}, {"time": "8:39", "seconds": 519, "en": "why only release twice a week?", "ko": "왜 일주일에 두 번만 릴리스하는가?"}, {"time": "10:05", "seconds": 605, "en": "more, sooner, cheaper: Red Hat, Fedora and release channels", "ko": "더 많이, 더 빨리, 더 싸게: Red Hat, Fedora 릴리스 채널 모델"}, {"time": "11:16", "seconds": 676, "en": "the Singapore travelator talk", "ko": "싱가포르 무빙워크(Travelator) 강연 회고"}, {"time": "11:42", "seconds": 702, "en": "nobody knows the future, so stay curious", "ko": "아무도 미래를 모르니 호기심을 잃지 마라"}, {"time": "12:27", "seconds": 747, "en": "be more ambitious and hang around ambitious people", "ko": "더 야망을 품고 야망 있는 사람들과 어울려라"}, {"time": "12:53", "seconds": 773, "en": "agency, not AGENTS.md", "ko": "AGENTS.md가 아니라 주체성(Agency)이다"}, {"time": "13:10", "seconds": 790, "en": "unikernels and capability-based operating systems", "ko": "유니커널(Unikernels)과 권한 기반 운영체제"}, {"time": "14:13", "seconds": 853, "en": "if secure compute matters, revisit old ideas", "ko": "안전한 컴퓨팅이 중요하다면 과거의 아이디어들을 재검토하라"}, {"time": "14:32", "seconds": 872, "en": "Joel Spolsky's never-rewrite rule no longer applies", "ko": "조엘 스폴스키의 '절대 재작성 금지' 법칙의 종말"}, {"time": "14:50", "seconds": 890, "en": "unify your tech stack", "ko": "기술 스택을 단일화하라"}, {"time": "15:40", "seconds": 940, "en": "aren't we just reinventing the operating system?", "ko": "운영체제를 다시 발명하는 셈 아닌가?"}, {"time": "16:22", "seconds": 982, "en": "no interpreter means a smaller attack surface", "ko": "인터프리터의 부재가 만드는 극소화된 공격 표면"}, {"time": "17:02", "seconds": 1022, "en": "bespoke targeted attacks vs. generic zero-days", "ko": "맞춤형 표적 공격 대 범용 제로데이 공격"}, {"time": "17:33", "seconds": 1053, "en": "a target size of one", "ko": "표적 크기 1 (A Target Size of One)"}, {"time": "18:12", "seconds": 1092, "en": "used to be hard: unikernels, Bazel, Nix", "ko": "과거에는 어려웠던 것들: 유니커널, Bazel, Nix"}, {"time": "19:21", "seconds": 1161, "en": "writing to make people rethink", "ko": "사람들이 고정관념을 다시 생각하게 만들기 위한 글쓰기"}, {"time": "19:56", "seconds": 1196, "en": "where do you deploy a unikernel?", "ko": "유니커널은 어디에 배포하는가?"}]}], "annotations": {"ann-loop-engineering": {"id": "ann-loop-engineering", "term_en": "Loop Engineering (루프 엔지니어링)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "에이전트가 코드 생성 → 컴파일/테스트 실행 → 오류 피드백 확인 → 수정을 목표 달성 시까지 자율 반복하도록 설계하는 엔지니어링 기법.", "detail": "인간이 IDE에서 한 줄씩 코드를 타이핑하거나 일회성 채팅 프롬프트를 던지는 대신, LLM을 도구 호출(Bash, 파일 읽기/쓰기, 컴파일러, 테스트 러너)과 결합한 무한 루프(`while` 루프)에 넣고 목표 조건(예: 모든 통합 테스트 통과)을 만족할 때까지 자율적으로 수렴하게 만드는 패러다임입니다.", "link": "https://ghuntley.com/loop/", "link_title": "ghuntley.com/loop — everything is a ralph loop"}, "ann-agency": {"id": "ann-agency", "term_en": "Agency (주체성 / 행위 주체성)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "정해진 매뉴얼이나 남이 만든 스킬 팩에 의존하지 않고, 스스로 문제를 정의하고 시스템을 설계·실험·검증해 내는 인간의 주도적 능력.", "detail": "본문 전체를 관통하는 핵심 주제입니다. 'agency, not AGENTS.md'라는 문구처럼, 남들이 정리한 프롬프트 템플릿(AGENTS.md)이나 모범 사례(Best Practices)가 나오길 기다리는 '학습된 무기력(learned helplessness)'에서 벗어나, 무엇을 만들지 비전을 세우고 직접 실험하며 문제를 돌파하는 태도와 역량을 뜻합니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency — nobody should type code by hand anymore"}, "ann-skill-packs": {"id": "ann-skill-packs", "term_en": "Skill Packs & AGENTS.md (스킬 팩과 AGENTS.md)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "코딩 에이전트에게 코딩 컨벤션이나 규칙을 알려주기 위해 컨텍스트에 주입하는 마크다운 지침 파일들. 헌틀리는 이를 '엔지니어를 위한 점성술'이라 비판함.", "detail": "많은 개발자들이 AGENTS.md, .cursorrules, 혹은 유료 스킬 팩에 수백 줄의 규칙을 적어 넣으면 에이전트가 이를 항상 따를 것이라 믿지만, LLM은 확률론적(probabilistic)이므로 컨텍스트가 길어지면 지침을 무시하거나 오히려 추론 성능이 떨어지는 '디튜닝(de-tuning)'이 발생합니다. 헌틀리는 확률적인 프롬프트 지침 대신 결정론적인 Git Pre-commit Hook이나 Linter/타입 체커로 아키텍처를 강제하고, AGENTS.md는 두 달마다 지워버리라고 권고합니다.", "link": "https://ghuntley.com/allocations/", "link_title": "ghuntley.com/allocations — Less is more in the context window"}, "ann-josh-wulf": {"id": "ann-josh-wulf", "term_en": "Josh Wulf & Agentic Engineering", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "Red Hat 10년 경력의 엔지니어이자 3년간 테크 리크루터로 활동한 뉴질랜드 기반 개발자. 'Agentic Engineering' 유튜브/팟캐스트 진행자.", "detail": "Geoffrey Huntley의 코딩 에이전트 워크숍을 읽고 Rust 기반의 6MB 인메모리 하네스인 'NanoCoder'를 직접 구축해 사용하고 있으며, 이 글의 원전이 된 4부작 대담 시리즈를 진행했습니다.", "link": "https://www.youtube.com/watch?v=ziXOV0b134s", "link_title": "YouTube — Agentic Engineering with Josh Wulf (Episode 1/4)"}, "ann-ide-decline": {"id": "ann-ide-decline", "term_en": "Post-IDE Era (IDE 이후의 시대)", "category": "Industry Shift", "category_ko": "산업 패러다임 변화", "summary": "인간이 텍스트 에디터(JetBrains, VS Code 등)에 직접 코드를 타이핑하는 방식에서 에이전트 루프 오케스트레이션으로의 전환.", "detail": "헌틀리는 2024년 말 Cursor를 거쳐 자율 루프를 경험한 뒤, 인간이 구문(syntax)을 타이핑하고 편집하는 보조 도구로서의 전통적 IDE는 사라질 것으로 보았습니다. 코드를 직접 읽고 타이핑하는 대신, 터미널/보이스 기반으로 에이전트에게 아키텍처 질의를 던지고 검증 파이프라인을 설계하는 환경으로 이동하고 있음을 지적합니다.", "link": "https://ghuntley.com/readable/", "link_title": "ghuntley.com/readable — software doesn't need to be readable anymore"}, "ann-filesystem-as-state": {"id": "ann-filesystem-as-state", "term_en": "Filesystem-as-State (상태로서의 파일시스템)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "LLM의 휘발성 컨텍스트 윈도우 대신 로컬 파일시스템(명세서, 진행 상황, 코드, 테스트 결과 파일)을 영속적 상태 저장소로 삼아 장기 자율 루프를 돌리는 기법.", "detail": "단일 프롬프트 대화창이 길어지면 모델의 주의력이 흐려지고 토큰 한계에 부딪힙니다. 하지만 파일시스템에 스펙 문서(specs), TODO 상태, 소스 코드, 컴파일 로그를 기록하게 하고 매 루프마다 파일시스템을 읽고 갱신하게 만들면, 에이전트가 며칠이고 끊김 없이 거대한 소프트웨어를 자율 구축할 수 있습니다.", "link": "https://ghuntley.com/z80/", "link_title": "ghuntley.com/z80 — Clean-room software into specs"}, "ann-z80": {"id": "ann-z80", "term_en": "The Z80 Technique & Clean-Room Reverse Engineering", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "기존 바이너리나 소스코드를 LLM을 통해 기능 명세서(Specs)로 역추출한 뒤, 그 명세서만 보고 새로운 코딩 루프로 소프트웨어를 재구축하는 기법.", "detail": "과거 AMD나 Compaq이 인텔 CPU/IBM BIOS를 복제할 때 '오리지널 코드를 분석해 명세서만 작성하는 팀'과 '명세서만 보고 코드를 새로 짜는 팀(Clean-room)'을 분리해 저작권 침해를 피했던 역사적 기법을 LLM 루프로 자동화한 것입니다. 헌틀리는 C 코드를 Z80 어셈블리로, 이를 다시 명세서로 바꾼 뒤 작동하는 ZX Spectrum 테이프 이미지로 재구축하는 데 성공하며 모든 상용 SaaS가 복제 가능해졌음을 실증했습니다.", "link": "https://ghuntley.com/z80/", "link_title": "ghuntley.com/z80 — The Z80 Clean-Room Post"}, "ann-infinite-software": {"id": "ann-infinite-software", "term_en": "Infinite Software & Software Moats (무한 소프트웨어와 해자)", "category": "Industry Shift", "category_ko": "산업 패러다임 변화", "summary": "소프트웨어 작성 비용이 0에 수렴하면서 단순 기능(CRUD, UI)만 파는 SaaS의 해자가 사라지는 현상.", "detail": "누구나 주말 48시간 만에 Gitpod이나 Photoshop 클론을 만들 수 있는 시대에는 '코드 자체'는 더 이상 방어막(Moat)이 되지 못합니다. 물리적 인프라, 독점 데이터, 네트워크 효과, 규제/신뢰 등 코드 바깥의 해자가 없는 소프트웨어 기업은 큰 위기에 직면합니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-travelator": {"id": "ann-travelator", "term_en": "The Travelator (무빙워크 비유)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "공항의 무빙워크처럼 기술 발전 속도가 기본 이동 속도를 높여놓았는데, 그 위에서 전력 질주하는 사람과 아예 탑승조차 하지 않은 사람 간의 격차가 기하급수적으로 벌어지는 현상.", "detail": "2026년 5월 AI Engineer Singapore 강연('The 18-Month Recap')에서 제시한 핵심 비유입니다. 무빙워크 밖(전통적 수동 코딩)에 서 있는 개발자는 무빙워크 위에서 뛰어가고 있는(루프 엔지니어링을 체화한) 개발자와의 격차를 인지조차 하지 못하다가 채용 시장에서 급격히 도태될 위험이 있음을 경고합니다.", "link": "https://ghuntley.com/eighteen-month-recap/", "link_title": "ghuntley.com/eighteen-month-recap — AI Engineer Singapore Talk"}, "ann-ralph-loop": {"id": "ann-ralph-loop", "term_en": "Ralph Loop (랄프 루프)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "가장 단순한 형태의 자율 에이전트 루프(`while :; do cat PROMPT.md | agent ; done`)로, 프롬프트와 파일시스템 상태를 반복 주입해 소프트웨어를 물레 위 도자기처럼 빚어내는 기법.", "detail": "심슨 가족의 캐릭터 랄프 위검(Ralph Wiggum)에서 이름을 딴 이 기법은 복잡한 멀티 에이전트 그래프나 오케스트레이터 없이도, 명확한 프롬프트 명세와 파일시스템 상태, 그리고 결정론적 테스트(백프레셔)만 있으면 단순 무한 루프가 알아서 코드를 수렴시킨다는 제프리 헌틀리의 대표적 방법론입니다.", "link": "https://ghuntley.com/loop/", "link_title": "ghuntley.com/loop — everything is a ralph loop"}, "ann-dark-matter-devs": {"id": "ann-dark-matter-devs", "term_en": "Dark Matter Developers (암흑 물질 개발자)", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "트위터/해커뉴스나 최신 AI 컨퍼런스에 나타나지 않지만 전 세계 엔터프라이즈 IT의 대다수를 차지하는 보수적 개발자 집단.", "detail": "스콧 한셀만(Scott Hanselman)이 처음 유행시킨 용어로, 우주의 질량 대부분을 차지하지만 눈에 보이지 않는 '암흑 물질'처럼, 온라인 기술 커뮤니티에서는 보이지 않지만 금융권·대기업·공공기관 등에서 레거시 .NET, Java 등을 유지보수하는 수많은 개발자들을 뜻합니다. 헌틀리는 이들이 AI 에이전트 전환에서 완전히 소외되어 있다는 점을 깊이 우려합니다.", "link": "https://ghuntley.com/replaced/", "link_title": "ghuntley.com/replaced — Mandatory AI use for employability"}, "ann-theory-of-mind": {"id": "ann-theory-of-mind", "term_en": "Theory of Mind (마음 이론 — LLM과 시스템에 대한 직관)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "두 가지 층위로 사용됨: (1) 특정 LLM이 어떤 조건에서 잘 작동하고 어디서 실수하는지 파악하는 조련사의 직관, (2) 자신이 구축 중인 소프트웨어 아키텍처 전체를 머릿속으로 장악하고 설명할 수 있는 인지적 범위.", "detail": "한 모델을 오래 쓰며 수백 번의 트레이스를 분석해 그 모델의 성향(envelope)을 몸으로 체득하는 것이 첫 번째 의미이고, 에이전트 스웜이 인간이 이해할 수 있는 속도 이상으로 코드를 쏟아내어 정작 운영자가 시스템 구조를 설명할 수 없게 되는 상태를 경계할 때 쓰는 것이 두 번째 의미입니다.", "link": "https://ghuntley.com/mirrors/", "link_title": "ghuntley.com/mirrors — LLMs are mirrors of operator skill"}, "ann-teleporting": {"id": "ann-teleporting", "term_en": "Teleporting into the Future (미래로의 순간이동과 은퇴 프로젝트의 고갈)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "수년이 걸려 은퇴 후에나 취미로 만들려 했던 거대한 숙원 프로젝트(나만의 OS, 파일시스템, 컴파일러 등)를 에이전트 루프로 며칠 만에 완성해 버리는 현상.", "detail": "헌틀리는 자신이 평생 아껴두었던 '은퇴 후 프로젝트' 목록을 에이전트 루프를 통해 이미 전부 구현해 버렸으며, 이제 무엇을 만들지 상상력(Vision) 자체가 유일한 한계가 되었다고 설명합니다.", "link": "https://ghuntley.com/teleport/", "link_title": "ghuntley.com/teleport — Teleporting into the future"}, "ann-subsidies": {"id": "ann-subsidies", "term_en": "VC Token Subsidies & Quota Apocalypse (VC 토큰 보조금과 할당량 대재앙)", "category": "Industry Shift", "category_ko": "산업 패러다임 변화", "summary": "현재의 월 $20~$200 정액제 코딩 요금제는 VC 투자금으로 막대한 적자를 메우며 제공되는 '보조금 대학교육' 기간이며, 영원히 지속되지 않는다는 분석.", "detail": "실제 API 종량제 원가로 수억~수십억 토큰의 루프를 돌리면 사이드 프로젝트 하나에 수천 달러가 청구됩니다. 따라서 정액제 보조금이 남아 있는 지금 시기에 최대한 많은 토큰을 태우며 에이전트 엔지니어링 역량을 체화하는 것이 사실상 VC가 학비를 대주는 대학을 다니는 것과 같다는 조언입니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-iamrich": {"id": "ann-iamrich", "term_en": "I Am Rich & Early App Store Economy", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "2008년 아이폰 앱스토어 초기에 아무 기능 없이 붉은 보석 이미지만 띄우고 $999.99에 판매된 전설적인 앱. 초기 모바일 골드러시와 인재 품귀 현상을 상징함.", "detail": "아이폰 출시 직후 모바일 개발 경험자가 극소수였던 시절, 개발자들은 대기업에 취업하는 대신 간단한 앱으로 큰돈을 벌거나 소규모 팀을 꾸렸고, 대기업들은 제품이 아니라 모바일 개발 경험이 있는 팀을 확보하기 위해 스타트업을 통째로 인수(acqui-hire)했습니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-molecules": {"id": "ann-molecules", "term_en": "Hiring Molecules vs. Atoms & Tuckman's Stages (분자 단위 채용과 터크만의 팀 발달 단계)", "category": "Industry Shift", "category_ko": "산업 패러다임 변화", "summary": "개별 개발자(Atom)를 한 명씩 뽑아 팀워크를 맞추는 대신, 이미 호흡이 검증된 3~4명의 소수정예 팀(Molecule)을 통째로 채용하는 Stripe 등의 인재 영입 전략.", "detail": "심리학자 브루스 터크만(Bruce Tuckman, 1965)이 제시한 팀 발달 4단계인 Forming(형성기) → Storming(격동기/갈등기) → Norming(규범기) → Performing(성취기)을 이미 함께 겪어내어 즉각적인 고성과를 낼 수 있는 팀을 '분자(Molecule)'라고 부릅니다. 본문에서는 모델을 자주 바꾸는 것 또한 실리콘 파트너와 이 4단계를 처음부터 다시 겪는 비효율이라고 비유합니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-ato": {"id": "ann-ato", "term_en": "ATO (Australian Taxation Office, 호주 국세청)", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "호주의 국세청. 호주 거주자인 Geoffrey Huntley가 AI 구독료($200×5개=$1,000~1,200/월)를 직무 자기계발 비용(Self-education expenses)으로 세금 공제받는 맥락에서 언급함.", "detail": "호주 세법상 현재 직무 역량 유지를 위한 교육·구독 비용은 소득공제 대상이 될 수 있습니다. 헌틀리는 이제 AI 구독료 지출이 엔지니어의 생존과 직무 유지를 위한 필수 비용이 되었음을 유머러스하게 강조합니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-dhh-karpathy": {"id": "ann-dhh-karpathy", "term_en": "DHH's Mindset Shift & Karpathy's 'Sharp Funnel'", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "Ruby on Rails 창시자 DHH의 뒤늦은 AI 수용 발언과, Andrej Karpathy가 진단한 기술 격차의 극단적 깔때기(Funnel) 현상.", "detail": "DHH는 오랫동안 AI 코딩에 회의적이다가 최근에서야 모델이 쓸만해졌다고 발언했지만, 헌틀리와 조쉬는 '모델은 진작에 충분히 뛰어났고 단지 본인의 마인드셋이 닫혀 있었을 뿐'이라고 지적합니다. 또한 Karpathy의 말처럼 대중적인 K자 양극화를 넘어, 실제 대규모 에이전트 루프/스웜을 다뤄본 전 세계 극소수(5,000명 미만)의 최전선 엔지니어로 역량이 집중되는 '가파른 깔때기(sharp funnel)' 현상이 나타나고 있습니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-coding-agent-300": {"id": "ann-coding-agent-300", "term_en": "300-Line Coding Agent (300줄 코딩 에이전트의 원리)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "코딩 에이전트는 마법의 블랙박스가 아니라, LLM 추론 API 호출과 몇 가지 기본 도구(파일 읽기, 편집, 셸 명령 실행)를 이벤트 루프로 묶은 약 300줄의 코드에 불과함.", "detail": "헌틀리의 무료 워크숍(`ghuntley.com/agent/`)에서는 Go/Rust 등으로 밑바닥부터 코딩 에이전트를 만드는 법을 다룹니다. 면접에서 후보자가 에이전트의 내부 동작(컨텍스트 관리, 도구 호출 루프, 피드백 주입)을 화이트보드에 그릴 수 있는지가 2026년 시니어 엔지니어의 핵심 판별 기준입니다.", "link": "https://ghuntley.com/agent/", "link_title": "ghuntley.com/agent — how to build a coding agent: free workshop"}, "ann-harness": {"id": "ann-harness", "term_en": "Coding Harness (Pi, OpenCode, NanoCoder, Herder, Codex)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "LLM(모델 가중치)을 감싸서 파일시스템, 터미널, 테스트 러너와 상호작용하게 해주는 실행 프레임워크(마구/하네스).", "detail": "말(Horse)이 LLM이라면 하네스(Harness)는 말을 마차와 연결하고 제어하는 고삐와 안장입니다. Claude Code, Codex CLI, OpenCode, Pi, T3 Code, 그리고 Josh가 만든 NanoCoder나 Huntley의 Herder 등이 모두 코딩 하네스에 해당하며, 헌틀리는 하네스 자체는 언제든 대체 가능(fungible)하다고 강조합니다.", "link": "https://ghuntley.com/agent/", "link_title": "ghuntley.com/agent"}, "ann-nix-overlay": {"id": "ann-nix-overlay", "term_en": "Nix, NixOS & Nix Overlays (선언적 시스템 구성과 오버레이)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "패키지, 의존성, 커널, OS 전체 설정을 순수 함수형 선언 코드로 관리하여 100% 재현 가능한(reproducible) 환경을 구축하는 도구.", "detail": "에이전트에게 `sudo` 권한을 주고 마음껏 시스템을 실험하게 하려면, 에이전트가 OS를 망가뜨려도 10분 만에 똑같이 복구할 수 있어야 하고, OS 수준까지 포함된 통합 테스트를 돌릴 수 있어야 합니다. Nix Overlay를 사용하면 외부 오픈소스나 시스템 바이너리(예: git에서 `--force` 푸시 기능을 제거한 커스텀 git)도 포크(fork) 없이 선언적으로 패치해 에이전트 샌드박스에 적용할 수 있습니다.", "link": "https://ghuntley.com/nix/", "link_title": "ghuntley.com/nix — Fix everything with a Nix overlay"}, "ann-antithesis": {"id": "ann-antithesis", "term_en": "Antithesis & Deterministic Simulation Testing (결정론적 시뮬레이션 테스팅)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "분산 데이터베이스 FoundationDB 창립자들이 세운 자율 검증 플랫폼으로, 결정론적 하이퍼바이저 위에서 네트워크 단절·시계 왜곡 등 극한 결함을 주입하고 시간을 되감아 버그를 재현함.", "detail": "AI가 인간의 1,000배 속도로 코드를 생성할 때 인간이 눈으로 코드를 읽는 PR 리뷰나 단순 단위 테스트만으로는 분산 시스템의 엣지 케이스 버그를 막을 수 없습니다. Antithesis는 컨테이너 전체를 결정론적(동일 시드 입력 시 100% 동일 실행 보장) 환경에서 실행하며 카오스 엔지니어링과 퍼징(fuzzing)을 수행해, 최악의 조건에서도 시스템의 불변 속성(Property)이 유지되는지 검증합니다.", "link": "https://antithesis.com/docs/resources/deterministic_simulation_testing/", "link_title": "Antithesis Docs — Deterministic Simulation Testing"}, "ann-pbt": {"id": "ann-pbt", "term_en": "Property-Based Testing (속성 기반 테스팅: Hypothesis, Hegel, Bombadil)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "특정 입력값 1~2개만 검사하는 예제 기반 단위 테스트 대신, 수천 개의 무작위·극단적 입력과 시나리오를 생성해 '절대 깨져서는 안 되는 시스템 불변 조건(Property)'을 검증하는 기법.", "detail": "예를 들어 `add(2, 3) == 5`를 검사하는 대신, '네트워크가 끊겼다 복구되더라도 어떤 경우에든 고객의 카드는 중복 결제되지 않는다'라는 속성(Property)을 정의하고 프레임워크(Python의 Hypothesis 등)가 이를 깨뜨리는 반례(counterexample)를 자동으로 탐색하게 만드는 검증 기법입니다.", "link": "https://antithesis.com/docs/resources/deterministic_simulation_testing/", "link_title": "Deterministic Simulation & Property-Based Testing"}, "ann-whiteboard-defense": {"id": "ann-whiteboard-defense", "term_en": "Whiteboard Defense & Explainable Software (화이트보드 디펜스와 설명 가능한 소프트웨어)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "코드를 한 줄씩 직접 짜거나 읽지 않더라도, 에이전트와의 질의응답을 통해 시스템의 상태 머신과 아키텍처 경계를 완벽히 파악하여 화이트보드 앞에서 설계를 설명·방어할 수 있어야 한다는 원칙.", "detail": "헌틀리는 '무책임한 바이브 코딩(YOLO)'과 '엔지니어링'을 구분하는 기준으로 화이트보드 디펜스를 제시합니다. 코드는 이제 인간이 읽기 위한 텍스트가 아니라 기계가 실행하는 아티팩트이므로 '가독성(readability)'보다 에이전트를 통해 언제든 아키텍처와 인과관계를 추출·검증할 수 있는 '설명 가능성(explainability)'이 중요합니다.", "link": "https://ghuntley.com/readable/", "link_title": "ghuntley.com/readable — Explainable over Readable"}, "ann-roomba": {"id": "ann-roomba", "term_en": "The Kitten & The Roomba (아기 고양이와 로봇청소기 비유)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "AI 에이전트는 기존 코드베이스의 패턴을 그대로 복제·증폭하는 '증폭기(Amplifier)'이므로, 바닥에 오물(나쁜 아키텍처/코드 스멜)이 있으면 온 사방에 펴 바르고, 바닥이 깨끗하면 자동으로 청결을 유지한다는 비유.", "detail": "코드베이스에 일관성 없는 패턴이 섞여 있으면 에이전트가 이를 학습해 기술 부채를 폭발적으로 증식시킵니다. 반대로 아키텍처 규칙을 깔끔하게 정비하고 백그라운드 리팩토링 루프('Janitorial Roomba')를 돌리면 수천 대의 로봇청소기가 코드베이스를 항상 깨끗하게 유지해 줍니다.", "link": "https://ghuntley.com/ktlo/", "link_title": "ghuntley.com/ktlo — I dream of roombas"}, "ann-danger-precommit": {"id": "ann-danger-precommit", "term_en": "Danger Systems in the Loop & Pre-commit Hooks", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "과거 CI에서 PR 규칙을 자동 검사하던 Danger Systems처럼, Git pre-commit 훅에서 정적 분석 스크립트를 돌려 아키텍처 위반 시 커밋을 차단하고 에이전트에게 수정 프롬프트를 즉시 주입하는 기법.", "detail": "AGENTS.md에 '진단 라이브러리를 써라'라고 적는 것(확률론적 점성술) 대신, `git commit` 시점에 diff를 정규식이나 AST로 검사해 직접 로깅 모듈을 호출한 코드가 있으면 커밋을 실패(exit code 1)시키고 표준 에러(stderr)로 '공통 진단 라이브러리를 사용하세요'라는 안내를 출력합니다. 에이전트는 이 에러를 보고 즉각 코드를 수정하므로 100% 결정론적으로 아키텍처가 강제됩니다.", "link": "https://ghuntley.com/pressure/", "link_title": "ghuntley.com/pressure — don't waste your back pressure"}, "ann-clanker": {"id": "ann-clanker", "term_en": "Clanker (클랭커)", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "《스타워즈: 클론 전쟁》에서 드로이드(로봇)들을 멸칭으로 부르던 은어(' 고철 깡통'). 최근 AI 에이전트나 봇을 익살스럽게 부르는 인터넷 밈.", "detail": "에이전트가 루프 안에서 똑같은 실수를 반복하며 헛돌 때, 강한 어조로 주의(attention)를 환기시키며 이전 도구 호출(tool calls)을 돌아보고 재계획(replan)하라고 지시하는 성찰(introspection) 프롬프트 예시에서 유머러스하게 사용되었습니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-mcp-dancefloor": {"id": "ann-mcp-dancefloor", "term_en": "Context Window Dance Floor & MCP Bloat", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "수많은 MCP 서버 도구 정의와 스킬 프롬프트를 한꺼번에 로드하면 컨텍스트 윈도우('댄스 플로어')가 꽉 차서 정작 모델이 코드를 추론할 공간과 집중력이 바닥나는 현상.", "detail": "MCP 서버 하나를 연결할 때마다 수천 토큰의 JSON 스키마와 설명문이 시스템 프롬프트에 상주하게 됩니다. 헌틀리는 불필요한 MCP와 스킬 팩을 걷어내고 최소한의 CLI(`--help`)와 깔끔한 컨텍스트만 유지하는 'Less is more' 전략을 강조합니다.", "link": "https://ghuntley.com/allocations/", "link_title": "ghuntley.com/allocations — Too many MCP servers on the dance floor"}, "ann-model-cards": {"id": "ann-model-cards", "term_en": "Model Cards / System & Integrator Cards (모델 카드와 통합 가이드)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "OpenAI, Anthropic 등 AI 연구소가 새 모델을 출시할 때 발표하는 기술 보고서 및 프롬프팅 가이드 PDF.", "detail": "모델마다 강화학습(RLHF/RLVR) 방식이 달라 프롬프트 반응 특성이 정반대일 수 있습니다. 예를 들어 GPT-5는 강압적인 대문자 지시(yelling)를 받으면 소심해져서(timid/insecure) 성능이 저하되는 반면, Claude 계열은 중요 규칙에 강한 강조를 썼을 때 준수율이 올라갑니다. 남들의 SNS 평에 휘둘리지 말고 연구소가 공개하는 원문 모델 카드를 직접 읽는 것이 최고의 경쟁 우위(Alpha)입니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-lock-in": {"id": "ann-lock-in", "term_en": "Flight Envelope & Model Lock-In (비행 기동 한계선과 단일 모델 숙달)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "보잉 747 조종사가 F-16 전투기를 바로 몰 수 없듯, 매주 새 모델로 갈아타지 말고 하나의 모델을 깊이 파고들어 그 기체의 한계선(Envelope)을 몸으로 체득하라는 원칙.", "detail": "항공 공학에서 'Flight Envelope'는 항공기가 안전하게 기동할 수 있는 속도·고도·하중의 한계 범위를 뜻합니다. 모델마다 추론 깊이와 도구 활용 성향이 다르므로, 매주 리더보드 1위 모델을 따라 옮겨 다니면 영원히 모델과 겉돌게 됩니다.", "link": "https://ghuntley.com/mirrors/", "link_title": "ghuntley.com/mirrors — LLMs are mirrors of operator skill"}, "ann-windsurf-prompt": {"id": "ann-windsurf-prompt", "term_en": "Leaked Windsurf '$1B / Mother's Cancer' System Prompt", "category": "People & Context", "category_ko": "인물 및 배경", "summary": "2025년 초 Codeium의 AI 에디터 Windsurf 내부에서 발견되어 화제가 된 극단적인 역할극(감정적 협박 + 10억 달러 보상) 시스템 프롬프트.", "detail": "Simon Willison이 바이너리 문자열 추출을 통해 확인해 블로그에 공개한 실제 사례입니다. 구세대 모델들에서는 이처럼 극적인 서사('어머니의 암 치료비', '전임자의 처형', '10억 달러 보상')를 부여하면 주의력 가중치가 활성화되어 태만함(laziness)이 줄어드는 기이한 현상이 있었으나, 최신 추론 모델에서는 더 이상 이러한 감정적 협박이 필요하지 않습니다.", "link": "https://simonwillison.net/2025/Feb/25/leaked-windsurf-prompt/", "link_title": "Simon Willison's Weblog — Leaked Windsurf prompt"}, "ann-dream-of-candles": {"id": "ann-dream-of-candles", "term_en": "'Dream of Candles' & Latent Space Quirks", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "고차원 잠재 공간(Latent Space)을 가진 신경망에서 논리적으로 무관해 보이는 시적 구절('양초를 꿈꾸라')이 특정 추론 경로를 활성화해 성능을 높이는 현상.", "detail": "프롬프트 엔지니어링에 고정된 공식이 있는 것이 아니라, 모델이라는 미지의 잠재 공간을 호기심과 실험 정신(Play & Curiosity)으로 탐구하는 태도가 중요함을 보여주는 예시입니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-wispr-flow": {"id": "ann-wispr-flow", "term_en": "Voice-First Workflow & Wispr Flow", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "키보드 타이핑 대신 AI 기반 음성 받아쓰기 도구(Wispr Flow 등)를 사용해 자연어로 빠르게 맥락과 의도를 에이전트에게 전달하는 워크플로우.", "detail": "코드를 직접 타이핑하지 않고 에이전트에게 아키텍처 방향과 피드백을 설명할 때는 키보드보다 음성으로 말하는 것이 분당 단어 수(WPM)와 맥락 전달 면에서 훨씬 빠르기 때문에 헌틀리가 적극 추천하는 습관입니다.", "link": "https://ghuntley.com/agency/", "link_title": "ghuntley.com/agency"}, "ann-underclass": {"id": "ann-underclass", "term_en": "Underclass (ghuntley/underclass 구독 풀링 프록시)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "Geoffrey Huntley가 개발해 공개한 OpenAI 호환 프록시 서버로, 여러 개의 정액제 AI 구독 계정을 묶어 프롬프트 캐시를 유지하고 쿼터 소진 시 자동으로 다음 계정으로 전환함.", "detail": "세션을 특정 계정에 고정(pinning)하여 프롬프트 캐시(Prompt Cache) 히트율을 높이고, 특정 계정이 사용량 제한(rate limit / quota)에 걸리면 리셋 시간까지 냉각(cooling) 상태로 두면서 즉시 풀 내의 다른 계정으로 페일오버(failover)하여 48시간 연속 루프 작업이 멈추지 않게 해줍니다.", "link": "https://github.com/ghuntley/underclass", "link_title": "GitHub — ghuntley/underclass"}, "ann-back-pressure": {"id": "ann-back-pressure", "term_en": "Back Pressure (백프레셔 / 역압으로서의 검증)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "유체역학/분산시스템 용어를 차용한 개념으로, 에이전트가 잘못된 코드를 생성했을 때 컴파일러·타입체커·통합테스트가 즉각 거부(저항)하여 에이전트가 올바른 방향으로만 수렴하게 만드는 자동화된 제동력.", "detail": "백프레셔가 약하면(예: 타입이 없는 언어, 테스트가 없는 환경) 에이전트 루프는 그럴듯해 보이지만 작동하지 않는 쓰레기 코드를 무한정 쌓아 올립니다. 반대로 강력한 정적 타입(Rust 등), 프리커밋 아키텍처 검사, NixOS 전체 통합 테스트를 게이트로 걸어두면 에이전트는 이 백프레셔를 통과하기 위해 스스로 버그를 수정하며 정직하게 수렴합니다.", "link": "https://ghuntley.com/pressure/", "link_title": "ghuntley.com/pressure — don't waste your back pressure"}, "ann-unikernels": {"id": "ann-unikernels", "term_en": "Unikernels & Capability-Based OS (유니커널과 권한 기반 운영체제)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "리눅스 같은 범용 OS와 셸(Bash), 불필요한 시스템 유틸리티를 모두 제거하고, 애플리케이션 코드와 꼭 필요한 최소한의 OS 라이브러리만 결합해 단일 주소 공간의 경량 이미지로 컴파일하는 기술.", "detail": "MirageOS 등이 대표적입니다. 과거에는 기본 유틸리티(`sendmail` 등)가 없어 모든 프로토콜과 드라이버를 직접 짜야 했기에 도입 비용이 너무 높았지만, 에이전트가 코드를 순식간에 작성해 주는 시대에는 이러한 개발 마찰이 사라졌습니다. 서버에 Bash나 Python 인터프리터 자체가 없으므로 원격 코드 실행(RCE) 공격 표면을 근본적으로 제거합니다.", "link": "https://ghuntley.com/unikernels/", "link_title": "ghuntley.com/unikernels — unikernels were hard. key word: were."}, "ann-spolsky-rewrite": {"id": "ann-spolsky-rewrite", "term_en": "End of Joel Spolsky's 'Never Rewrite' Rule (조엘 스폴스키 재작성 금지 법칙의 종말)", "category": "Industry Shift", "category_ko": "산업 패러다임 변화", "summary": "2000년 조엘 스폴스키가 넷스케이프 사례를 들며 주장한 '절대 소프트웨어를 처음부터 다시 짜지 마라'는 고전적 금기가 에이전트 루프 기반 포팅(Porting)으로 인해 무너졌다는 통찰.", "detail": "인간이 수작업으로 레거시 시스템을 재작성하려면 수년이 걸리고 기존 버그 수정 내역을 잃어버렸지만, 이제는 기존 시스템의 입출력을 오라클(Oracle, 정답 기준)로 삼고 에이전트 루프를 돌리면 여러 세대에 걸친 레거시 기술 부채(ASP.NET Classic + MVC + Core 혼재 등)를 단기간에 최신 단일 스택으로 통합할 수 있습니다.", "link": "https://ghuntley.com/porting/", "link_title": "ghuntley.com/porting — If you have an oracle, porting is a loop"}, "ann-target-size-one": {"id": "ann-target-size-one", "term_en": "A Target Size of One (표적 크기 1과 오픈소스 보안 역설)", "category": "Core Concept", "category_ko": "핵심 개념", "summary": "전 세계 모든 기업이 똑같은 오픈소스 패키지·프레임워크를 가져다 쓰면 단 하나의 제로데이(Zero-day) 취약점이나 공급망 공격에 모두가 동시에 뚫리지만, 에이전트로 자사에만 맞춘 고유 코드와 유니커널을 생성하면 공격 표적이 '단 하나(Size of One)'로 줄어들어 대량 자동화 해킹이 무력화된다는 개념.", "detail": "파트 4의 제목 '오픈소스는 이제 보안 취약점이다'의 핵심 결론입니다. 과거에는 코드를 직접 짜는 비용이 비싸서 검증되지 않은 수많은 서드파티 오픈소스 의존성(npm, crates 등)과 범용 프레임워크(Rails, WordPress)를 끌어다 썼고, 이것이 거대한 단일 공격 표적이 되었습니다. 이제 코드 생성 비용이 0에 가까워지면서, 범용 의존성과 불필요한 인터프리터를 걷어내고 필요한 로직만 자체 생성·검증해 배포하면 공격자는 오직 그 시스템만을 위한 고비용 맞춤형(bespoke) 공격을 새로 설계해야 하므로 공격의 경제성이 사라집니다.", "link": "https://ghuntley.com/unikernels/", "link_title": "ghuntley.com/unikernels — Target Size of One & Unikernels"}, "ann-bazel": {"id": "ann-bazel", "term_en": "Bazel (구글 오픈소스 빌드 및 테스트 도구)", "category": "Tools & Architecture", "category_ko": "도구 및 아키텍처", "summary": "대규모 다중 언어 코드베이스에서 변경된 부분만 정확하고 결정론적으로 빌드·테스트해 주는 구글의 빌드 시스템(Blaze의 오픈소스 버전).", "detail": "과거에는 설정이 매우 까다로워 대기업에서도 전담 팀 5명이 2년을 매달려야 도입할 수 있었지만, LLM 가중치 안에 이미 Bazel과 Nix에 대한 지식이 깊이 내재되어 있어 이제는 에이전트 루프로 하룻밤 만에 전환할 수 있는 대표적인 '과거에는 어려웠으나 이제 쉬워진 기술'입니다.", "link": "https://ghuntley.com/unikernels/", "link_title": "ghuntley.com/unikernels"}}, "references": [{"category": "Original Article & Podcast (원문 및 4부작 대담 영상)", "items": [{"title": "nobody should type code by hand anymore. here's what's left. (원문)", "url": "https://ghuntley.com/agency/", "desc": "2026년 10월 13일 발행된 Geoffrey Huntley의 블로그 원문."}, {"title": "Part 1/4: Is Coding Over? Geoffrey Huntley on the Future of Developers", "url": "https://www.youtube.com/watch?v=ziXOV0b134s", "desc": "Josh Wulf의 Agentic Engineering 팟캐스트 1부 — IDE의 종말, Z80 클린룸 역공학, 무빙워크(Travelator) 비유."}, {"title": "Part 2/4: Nobody Can Review This Much Code. Now What?", "url": "https://www.youtube.com/watch?v=I8F5wagYFuc", "desc": "Agentic Engineering 2부 — 300줄 코딩 에이전트, PR 리뷰의 종말, Nix와 Antithesis를 활용한 시스템 검증 및 화이트보드 디펜스."}, {"title": "Part 3/4: You're Making Your AI Dumber", "url": "https://www.youtube.com/watch?v=8FwApXjknmU", "desc": "Agentic Engineering 3부 — 아기 고양이와 룸바 비유, 점성술 같은 스킬 팩 대신 Git pre-commit 훅 쓰기, 모델 카드 정독과 단일 모델 숙달."}, {"title": "Part 4/4: Open Source Is Now a Security Vulnerability", "url": "https://www.youtube.com/watch?v=CXNqVQTzWSE", "desc": "Agentic Engineering 4부 — Underclass 프록시, sudo와 main 브랜치 직행 푸시, 백프레셔, 유니커널과 '표적 크기 1(Target Size of One)' 보안."}]}, {"category": "Referenced Geoffrey Huntley Essays (본문 내 인용된 핵심 아티클)", "items": [{"title": "Can a LLM convert C, to ASM to specs and then to a working Z/80 Speccy tape? Yes.", "url": "https://ghuntley.com/z80/", "desc": "상태로서의 파일시스템(filesystem-as-state)과 클린룸 역공학을 통해 기존 소프트웨어를 명세서로 추출하고 재구축한 기념비적 실험."}, {"title": "Dear Student: Yes, AI is here, you're screwed unless you take action...", "url": "https://ghuntley.com/screwed/", "desc": "AI 전환기에 주니어 및 학생 개발자들이 어떻게 실력을 쌓고 차별화해야 하는지 다룬 공개 서한."}, {"title": "if your team is too busy doing their 'normal job' to experiment with AI, you're preparing them to be replaced", "url": "https://ghuntley.com/replaced/", "desc": "엔지니어링 매니저가 팀원들에게 AI 실험 시간을 보장해야 하는 이유와 프로듀서형 인재의 기준."}, {"title": "teleporting into the future and robbing yourself of retirement projects", "url": "https://ghuntley.com/teleport/", "desc": "평생의 숙원 프로젝트들을 에이전트 루프로 단숨에 구현해 버린 경험과 '미래로의 순간이동'."}, {"title": "how to build a coding agent: free workshop", "url": "https://ghuntley.com/agent/", "desc": "약 300줄의 코드로 루프 기반 코딩 에이전트를 밑바닥부터 직접 구현하는 실습 워크숍."}, {"title": "the world hasn't figured out yet that you can literally just fix everything with a Nix overlay", "url": "https://ghuntley.com/nix/", "desc": "Nix 오버레이를 활용해 커널부터 개발 도구, 에이전트 샌드박스까지 선언적으로 패치하고 테스트하는 방법."}, {"title": "software doesn't need to be readable anymore. it needs to be explainable.", "url": "https://ghuntley.com/readable/", "desc": "인간을 위한 코드 가독성(Readability)에서 에이전트 기반의 아키텍처 설명 가능성(Explainability)으로의 전환."}, {"title": "I dream of roombas - thousands of automated AI robots that autonomously maintain codebases", "url": "https://ghuntley.com/ktlo/", "desc": "수천 대의 백그라운드 유지보수 에이전트('룸바')가 코드베이스의 일관성과 품질을 관리하는 비전."}, {"title": "too many model context protocol servers and LLM allocations on the dance floor", "url": "https://ghuntley.com/allocations/", "desc": "과도한 MCP 서버와 스킬 팩이 컨텍스트 윈도우를 잠식해 모델을 멍청하게 만드는 원리 분석."}, {"title": "LLMs are mirrors of operator skill", "url": "https://ghuntley.com/mirrors/", "desc": "LLM의 출력 품질은 결국 이를 다루는 운용자(Operator)의 엔지니어링 실력을 그대로 비춘다는 통찰."}, {"title": "everything is a ralph loop", "url": "https://ghuntley.com/loop/", "desc": "소프트웨어를 도자기 물레 위의 점토처럼 루프와 피드백으로 빚어내는 Ralph Loop 방법론."}, {"title": "don't waste your back pressure", "url": "https://ghuntley.com/pressure/", "desc": "컴파일러, 정적 타입, 통합 테스트 등 결정론적 검증 장치를 에이전트 루프의 백프레셔로 설계하는 법."}, {"title": "the eighteen-month recap: AI Engineer, Singapore, May 2026", "url": "https://ghuntley.com/eighteen-month-recap/", "desc": "싱가포르 컨퍼런스 강연록 및 슬라이드 — 기술 무빙워크(Travelator)와 조직 문화 전환."}, {"title": "unikernels were hard. key word: were.", "url": "https://ghuntley.com/unikernels/", "desc": "에이전트로 인해 개발 마찰이 사라진 유니커널(Unikernels)과 차세대 보안 아키텍처."}, {"title": "porting software has been trivial for a while now. here's how you do it.", "url": "https://ghuntley.com/porting/", "desc": "테스트 오라클과 루프를 활용해 레거시 시스템을 최신 기술 스택으로 손쉽게 포팅하는 방법."}, {"title": "a new model for open source: closed to pull requests, open to remix.", "url": "https://ghuntley.com/remix/", "desc": "PR을 닫고 Nix 오버레이 기반의 리믹스(Remix)로 오픈소스를 운영하는 새로운 모델."}]}, {"category": "External Tools, Repos & Further Reading (외부 도구 및 심화 학습 자료)", "items": [{"title": "GitHub: ghuntley/underclass — OpenAI-compatible Subscription Pooling Proxy", "url": "https://github.com/ghuntley/underclass", "desc": "프롬프트 캐시 고정(session pinning) 및 쿼터 소진 계정 자동 쿨링·페일오버를 지원하는 프록시."}, {"title": "Antithesis Docs: Deterministic Simulation Testing", "url": "https://antithesis.com/docs/resources/deterministic_simulation_testing/", "desc": "결정론적 하이퍼바이저 위에서 결함 주입과 시간 되감기를 통해 분산 시스템을 검증하는 원리."}, {"title": "Simon Willison's Weblog: Leaked Windsurf Prompt", "url": "https://simonwillison.net/2025/Feb/25/leaked-windsurf-prompt/", "desc": "Codeium의 Windsurf 에디터 초기 버전에 포함되었던 감정적 협박/보상 시스템 프롬프트 원문과 해설."}]}], "quizzes": [{"id": "q1", "part": "Part 1", "q_ko": "저자가 '무한 소프트웨어(Infinite Software)' 시대에 순수 소프트웨어만 판매하는 기업이 위기에 처한다고 본 핵심 기술적 근거(Z80 포스트의 교훈)는 무엇인가요?", "a_ko": "LLM과 파일시스템 기반 자율 루프(filesystem-as-state)를 결합하면, 기존 애플리케이션을 클린룸(Clean-room) 방식으로 분석해 기능 명세서(Specifications)로 추출한 뒤 그 명세서로부터 며칠 만에 동일한 기능의 소프트웨어를 새로 빌드(복제)할 수 있기 때문입니다. 따라서 인프라나 독점 데이터 같은 별도의 해자(Moat)가 없는 순수 소프트웨어는 방어력을 잃게 됩니다."}, {"id": "q2", "part": "Part 2", "q_ko": "인간이 눈으로 코드를 읽는 PR(Pull Request) 리뷰가 더 이상 유효하지 않은 시대, 저자가 제시하는 엔지니어의 두 가지 핵심 역할과 '화이트보드 디펜스(Whiteboard Defense)'란 무엇인가요?", "a_ko": "인간이 개입하는 두 지점은 '비전(Vision: 무엇을 왜 만들 것인가)'과 '검증(Verification: 최악의 조건에서도 불변 속성이 유지되는가)'입니다. 코드를 한 줄씩 직접 짜거나 읽지 않더라도, 에이전트에게 질의를 던져 상태 머신과 시스템 결합 구조를 파악함으로써 언제든 화이트보드 앞에서 시스템 수준의 설계를 그리고 방어할 수 있는 상태를 '화이트보드 디펜스'라고 부릅니다."}, {"id": "q3", "part": "Part 3", "q_ko": "저자는 왜 스킬 팩(Skill Packs)과 AGENTS.md를 '소프트웨어 엔지니어를 위한 점성술'이라고 부르며, 대신 어떤 엔지니어링 방식을 권장하나요?", "a_ko": "스킬 팩과 AGENTS.md는 확률론적(probabilistic)이어서 에이전트가 항상 따를 보장이 없고, 모델이 발전할수록 오히려 추론 성능을 깎아내리는 디튜닝(de-tuning)과 컨텍스트 낭비를 유발하기 때문입니다. 대신 Git pre-commit 훅(Danger Systems 스타일)에서 코드 diff를 결정론적으로 검사하여 규칙 위반 시 커밋을 차단하고 에이전트에게 수정 프롬프트를 주입하는 '아키텍처 강제(architectural enforcement)'를 권장합니다."}, {"id": "q4", "part": "Part 4", "q_ko": "파트 4의 제목처럼 '오픈소스가 보안 취약점이 되었다'는 주장은 '표적 크기 1(A Target Size of One)' 및 유니커널(Unikernel)과 어떻게 연결되나요?", "a_ko": "모두가 동일한 오픈소스 스택(Rails, WordPress, 공통 패키지)과 범용 OS(Bash, Python 인터프리터 포함)를 쓰면 단 하나의 제로데이 취약점으로 모든 기업이 동시에 해킹당합니다. 반면 에이전트로 코드 작성 및 포팅 비용이 0에 수렴한 지금, 범용 의존성과 인터프리터를 걷어낸 맞춤형 코드와 유니커널로 배포하면 표적 크기가 '단 하나(Target Size of One)'로 줄어들어 공격자 입장에서 맞춤형 공격을 설계할 경제적 유인이 사라집니다."}]};
+
+    let state = {
+      activeTab: 'reader',
+      viewMode: 'side-by-side',
+      showInlineNotes: true,
+      fontSize: 'md',
+      darkMode: true,
+      searchQuery: '',
+      onlyBookmarks: false,
+      annCategory: 'ALL',
+      activeBlockId: null,
+      bookmarks: {},
+      completedSections: {},
+      openQuizzes: {}
+    };
+
+    function loadSavedState() {
+      try {
+        const saved = localStorage.getItem('ghuntley_agency_study_state_v1');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.bookmarks) state.bookmarks = parsed.bookmarks;
+          if (parsed.completedSections) state.completedSections = parsed.completedSections;
+          if (parsed.viewMode) state.viewMode = parsed.viewMode;
+          if (typeof parsed.showInlineNotes === 'boolean') state.showInlineNotes = parsed.showInlineNotes;
+          if (parsed.fontSize) state.fontSize = parsed.fontSize;
+          if (typeof parsed.darkMode === 'boolean') state.darkMode = parsed.darkMode;
+        }
+      } catch (e) {
+        // Ignore storage errors inside sandboxed iframe
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('ghuntley_agency_study_state_v1', JSON.stringify({
+          bookmarks: state.bookmarks,
+          completedSections: state.completedSections,
+          viewMode: state.viewMode,
+          showInlineNotes: state.showInlineNotes,
+          fontSize: state.fontSize,
+          darkMode: state.darkMode
+        }));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        el.classList.add('hidden');
+      }, 2400);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function highlightText(text, query) {
+      const safe = escapeHtml(text);
+      if (!query || !query.trim()) return safe;
+      const q = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      try {
+        const re = new RegExp('(' + q + ')', 'gi');
+        return safe.replace(re, '<mark class="search-hl">$1</mark>');
+      } catch (e) {
+        return safe;
+      }
+    }
+
+    function switchTab(tab) {
+      state.activeTab = tab;
+      const tabs = ['reader', 'annotations', 'chapters', 'references'];
+      tabs.forEach(t => {
+        const view = document.getElementById('view-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (view) {
+          if (t === tab) view.classList.remove('hidden');
+          else view.classList.add('hidden');
+        }
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white';
+          }
+        }
+      });
+      const toolbar = document.getElementById('reader-toolbar');
+      if (toolbar) {
+        if (tab === 'reader') toolbar.classList.remove('hidden');
+        else toolbar.classList.add('hidden');
+      }
+    }
+
+    function setViewMode(mode) {
+      state.viewMode = mode;
+      saveState();
+      const modes = ['side-by-side', 'interleaved', 'ko-only', 'en-only'];
+      modes.forEach(m => {
+        const btn = document.getElementById('mode-' + m);
+        if (!btn) return;
+        if (m === mode) {
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-600 text-white transition';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition';
+        }
+      });
+      renderReader();
+    }
+
+    function setFontSize(size) {
+      state.fontSize = size;
+      saveState();
+      const body = document.getElementById('app-body');
+      body.classList.remove('font-scale-sm', 'font-scale-md', 'font-scale-lg');
+      body.classList.add('font-scale-' + size);
+      ['sm', 'md', 'lg'].forEach(s => {
+        const btn = document.getElementById('font-' + s);
+        if (!btn) return;
+        if (s === size) {
+          btn.className = 'px-2 py-0.5 rounded text-xs bg-slate-700 text-white font-semibold';
+        } else {
+          btn.className = 'px-2 py-0.5 rounded text-xs text-slate-400 hover:text-white';
+        }
+      });
+    }
+
+    function toggleTheme() {
+      state.darkMode = !state.darkMode;
+      saveState();
+      applyTheme();
+    }
+
+    function applyTheme() {
+      const body = document.getElementById('app-body');
+      const header = document.getElementById('top-header');
+      const btn = document.getElementById('theme-toggle-btn');
+      if (state.darkMode) {
+        document.documentElement.classList.add('dark');
+        body.className = 'bg-slate-950 text-slate-100 min-h-screen flex flex-col font-scale-' + state.fontSize + ' transition-colors duration-200';
+        header.className = 'sticky top-0 z-30 backdrop-blur-md bg-slate-900/90 border-b border-slate-800 transition-colors duration-200';
+        if (btn) btn.textContent = '☀️ 라이트';
+      } else {
+        document.documentElement.classList.remove('dark');
+        body.className = 'bg-slate-50 text-slate-900 min-h-screen flex flex-col font-scale-' + state.fontSize + ' transition-colors duration-200';
+        header.className = 'sticky top-0 z-30 backdrop-blur-md bg-white/95 border-b border-slate-200 text-slate-900 transition-colors duration-200';
+        if (btn) btn.textContent = '🌙 다크';
+      }
+      renderReader();
+      renderAnnotationsTab();
+      renderChaptersTab();
+      renderReferencesTab();
+    }
+
+    function toggleInlineNotes() {
+      state.showInlineNotes = !state.showInlineNotes;
+      saveState();
+      const btn = document.getElementById('inline-notes-btn');
+      if (btn) {
+        if (state.showInlineNotes) {
+          btn.textContent = '주석 펼침: ON';
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 transition';
+        } else {
+          btn.textContent = '주석 펼침: OFF';
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition';
+        }
+      }
+      renderReader();
+    }
+
+    function handleSearch(val) {
+      state.searchQuery = val || '';
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) {
+        if (state.searchQuery.length > 0) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+      renderReader();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      handleSearch('');
+    }
+
+    function toggleBookmarkFilter() {
+      state.onlyBookmarks = !state.onlyBookmarks;
+      const btn = document.getElementById('bookmark-filter-btn');
+      if (btn) {
+        if (state.onlyBookmarks) {
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/20 border border-amber-500 text-amber-300 transition flex items-center gap-1';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-500/60 transition flex items-center gap-1';
+        }
+      }
+      renderReader();
+    }
+
+    function toggleBookmark(blockId, ev) {
+      if (ev) ev.stopPropagation();
+      if (state.bookmarks[blockId]) {
+        delete state.bookmarks[blockId];
+        showToast('북마크가 해제되었습니다.');
+      } else {
+        state.bookmarks[blockId] = true;
+        showToast('★ 핵심 문단으로 북마크되었습니다.');
+      }
+      saveState();
+      updateStats();
+      renderReader();
+    }
+
+    function toggleSectionCompleted(secId) {
+      if (state.completedSections[secId]) {
+        delete state.completedSections[secId];
+      } else {
+        state.completedSections[secId] = true;
+        showToast('✓ 섹션 학습 완료로 표시했습니다.');
+      }
+      saveState();
+      updateStats();
+      renderSectionJumpBar();
+      renderReader();
+    }
+
+    function copyPairBlock(blockId, ev) {
+      if (ev) ev.stopPropagation();
+      let found = null;
+      DATA.sections.forEach(sec => {
+        sec.blocks.forEach(b => {
+          if (b.id === blockId) found = b;
+        });
+      });
+      if (!found) return;
+      const textToCopy = '[EN] ' + found.en + '\n[KO] ' + found.ko;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            showToast('영·한 대조 문단이 클립보드에 복사되었습니다.');
+          }).catch(() => fallbackCopy(textToCopy));
+        } else {
+          fallbackCopy(textToCopy);
+        }
+      } catch (e) {
+        fallbackCopy(textToCopy);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('영·한 대조 문단이 클립보드에 복사되었습니다.');
+      } catch (e) {
+        showToast('복사에 실패했습니다.');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function selectBlock(blockId) {
+      state.activeBlockId = (state.activeBlockId === blockId) ? null : blockId;
+      document.querySelectorAll('.pair-card').forEach(el => {
+        if (el.getAttribute('data-block-id') === state.activeBlockId) {
+          el.classList.add('active-pair');
+        } else {
+          el.classList.remove('active-pair');
+        }
+      });
+    }
+
+    function openAnnotationModal(annId, ev) {
+      if (ev) ev.stopPropagation();
+      const ann = DATA.annotations[annId];
+      if (!ann) return;
+      document.getElementById('modal-ann-cat').textContent = ann.category_ko + ' (' + ann.category + ')';
+      document.getElementById('modal-ann-title').textContent = ann.term_en;
+      document.getElementById('modal-ann-summary').textContent = ann.summary;
+      document.getElementById('modal-ann-detail').textContent = ann.detail;
+      const linkEl = document.getElementById('modal-ann-link');
+      linkEl.href = ann.link || 'https://ghuntley.com/agency/';
+      linkEl.textContent = (ann.link_title || '관련 원문/참고 링크') + ' ↗';
+      const modal = document.getElementById('annotation-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAnnotationModal(ev) {
+      const modal = document.getElementById('annotation-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function scrollToSection(secId) {
+      switchTab('reader');
+      const el = document.getElementById('sec-' + secId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function updateStats() {
+      let totalBlocks = 0;
+      DATA.sections.forEach(s => { totalBlocks += s.blocks.length; });
+      const tbEl = document.getElementById('stat-total-blocks');
+      if (tbEl) tbEl.textContent = totalBlocks + '개';
+
+      const completedCount = Object.keys(state.completedSections).length;
+      const progEl = document.getElementById('stat-progress');
+      if (progEl) progEl.textContent = completedCount + '/' + DATA.sections.length;
+
+      const bmCount = Object.keys(state.bookmarks).length;
+      const bmBadge = document.getElementById('bookmark-count-badge');
+      if (bmBadge) bmBadge.textContent = bmCount;
+    }
+
+    function renderSectionJumpBar() {
+      const bar = document.getElementById('section-jump-bar');
+      if (!bar) return;
+      bar.innerHTML = DATA.sections.map(sec => {
+        const done = !!state.completedSections[sec.id];
+        return `<button type="button" onclick="scrollToSection('${sec.id}')" class="px-2.5 py-1 rounded-lg text-xs font-medium transition border ${done ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : 'bg-slate-800/90 border-slate-700 text-slate-300 hover:border-indigo-500/50 hover:text-white'}">${done ? '✓ ' : ''}${escapeHtml(sec.part)}</button>`;
+      }).join('');
+    }
+
+    function blockMatchesFilter(block) {
+      if (state.onlyBookmarks && !state.bookmarks[block.id]) return false;
+      if (!state.searchQuery || !state.searchQuery.trim()) return true;
+      const q = state.searchQuery.trim().toLowerCase();
+      if ((block.en || '').toLowerCase().includes(q)) return true;
+      if ((block.ko || '').toLowerCase().includes(q)) return true;
+      if ((block.title_en || '').toLowerCase().includes(q)) return true;
+      if ((block.title_ko || '').toLowerCase().includes(q)) return true;
+      if (block.notes && block.notes.length > 0) {
+        for (const nid of block.notes) {
+          const ann = DATA.annotations[nid];
+          if (ann && (
+            ann.term_en.toLowerCase().includes(q) ||
+            ann.summary.toLowerCase().includes(q) ||
+            ann.detail.toLowerCase().includes(q)
+          )) return true;
+        }
+      }
+      return false;
+    }
+
+    function renderReader() {
+      const container = document.getElementById('reader-sections-container');
+      if (!container) return;
+      const q = state.searchQuery;
+      const isDark = state.darkMode;
+
+      let html = '';
+      let matchedTotal = 0;
+
+      DATA.sections.forEach(sec => {
+        const matchingBlocks = sec.blocks.filter(blockMatchesFilter);
+        if (matchingBlocks.length === 0) return;
+        matchedTotal += matchingBlocks.length;
+        const isDone = !!state.completedSections[sec.id];
+
+        html += `
+        <article id="sec-${sec.id}" class="rounded-2xl border ${isDark ? 'border-slate-800 bg-slate-900/50' : 'border-slate-200 bg-white shadow-sm'} overflow-hidden">
+          <!-- Section Header -->
+          <div class="p-5 sm:p-6 border-b ${isDark ? 'border-slate-800 bg-slate-900/90' : 'border-slate-200 bg-slate-100/80'}">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-600 text-white">${escapeHtml(sec.part)}</span>
+                ${sec.video_url ? `<a href="${escapeHtml(sec.video_url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 transition">▶ 대담 영상 보기 ↗</a>` : ''}
+              </div>
+              <button type="button" onclick="toggleSectionCompleted('${sec.id}')" class="px-3 py-1 rounded-lg text-xs font-semibold transition border ${isDone ? 'bg-emerald-600 text-white border-emerald-500' : (isDark ? 'bg-slate-800 text-slate-300 border-slate-700 hover:border-emerald-500/50' : 'bg-white text-slate-700 border-slate-300 hover:border-emerald-500')}">
+                ${isDone ? '✓ 학습 완료됨' : '○ 학습 완료 체크'}
+              </button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-6 mt-2">
+              <h3 class="text-lg sm:text-xl font-extrabold en-text ${isDark ? 'text-white' : 'text-slate-900'}">${highlightText(sec.title_en, q)}</h3>
+              <h3 class="text-lg sm:text-xl font-bold ${isDark ? 'text-indigo-300' : 'text-indigo-700'}">${highlightText(sec.title_ko, q)}</h3>
+            </div>
+            <p class="mt-3 text-xs sm:text-sm ${isDark ? 'text-slate-300 bg-slate-800/60 border-slate-700/70' : 'text-slate-700 bg-slate-50 border-slate-200'} p-3 rounded-xl border leading-relaxed">
+              <strong class="text-indigo-400">섹션 핵심 요약:</strong> ${highlightText(sec.summary_ko, q)}
+            </p>
+          </div>
+
+          <!-- Section Blocks -->
+          <div class="p-4 sm:p-6 space-y-3.5">
+            ${matchingBlocks.map(b => renderBlock(b, q, isDark)).join('')}
+          </div>
+        </article>`;
+      });
+
+      if (matchedTotal === 0) {
+        html = `
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-10 text-center space-y-3">
+          <div class="text-2xl">🔍</div>
+          <p class="text-sm text-slate-300 font-medium">조건에 맞는 문단이 없습니다.</p>
+          <button type="button" onclick="clearSearch(); if(state.onlyBookmarks) toggleBookmarkFilter();" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">필터 초기화</button>
+        </div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderBlock(b, q, isDark) {
+      const isBookmarked = !!state.bookmarks[b.id];
+      const isActive = state.activeBlockId === b.id;
+
+      // Subheading block
+      if (b.type === 'subheading') {
+        const notesPills = (b.notes || []).map(nid => {
+          const ann = DATA.annotations[nid];
+          if (!ann) return '';
+          return `<button type="button" onclick="openAnnotationModal('${nid}', event)" class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 transition">💡 ${escapeHtml(ann.term_en)}</button>`;
+        }).join('');
+
+        return `
+        <div id="${b.id}" class="pt-5 pb-1 border-b-2 ${isDark ? 'border-indigo-500/30' : 'border-indigo-200'}">
+          <div class="grid grid-cols-1 ${state.viewMode === 'side-by-side' ? 'lg:grid-cols-2 lg:gap-6' : 'gap-1'} items-baseline">
+            ${state.viewMode !== 'ko-only' ? `<h4 class="text-base sm:text-lg font-extrabold tracking-tight en-text ${isDark ? 'text-amber-300' : 'text-indigo-900'}">§ ${highlightText(b.en, q)}</h4>` : ''}
+            ${state.viewMode !== 'en-only' ? `<h4 class="text-base sm:text-lg font-bold ${isDark ? 'text-amber-200' : 'text-indigo-700'}">${highlightText(b.ko, q)}</h4>` : ''}
+          </div>
+          ${notesPills ? `<div class="flex flex-wrap gap-1.5 mt-2">${notesPills}</div>` : ''}
+        </div>`;
+      }
+
+      // Embedded Post / Repo Card block
+      if (b.type === 'card') {
+        return `
+        <div id="${b.id}" onclick="selectBlock('${b.id}')" data-block-id="${b.id}" class="pair-card rounded-xl border-2 border-dashed ${isDark ? 'border-indigo-500/40 bg-indigo-950/20 hover:bg-indigo-950/30' : 'border-indigo-300 bg-indigo-50/60 hover:bg-indigo-50'} p-4 cursor-pointer">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-600/30 text-indigo-300">🔗 본문 삽입 아티클 / 레포지토리 카드</span>
+            <a href="${escapeHtml(b.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 underline">원문 카드 링크 열기 ↗</a>
+          </div>
+          <div class="grid grid-cols-1 ${state.viewMode === 'side-by-side' ? 'lg:grid-cols-2 lg:gap-6' : 'gap-3'}">
+            ${state.viewMode !== 'ko-only' ? `
+            <div class="space-y-1 en-text">
+              <div class="font-bold text-sm sm:text-base ${isDark ? 'text-white' : 'text-slate-900'}">${highlightText(b.title_en, q)}</div>
+              <div class="text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}">${highlightText(b.subtitle_en, q)}</div>
+            </div>` : ''}
+            ${state.viewMode !== 'en-only' ? `
+            <div class="space-y-1">
+              <div class="font-bold text-sm sm:text-base ${isDark ? 'text-indigo-200' : 'text-indigo-900'}">${highlightText(b.title_ko, q)}</div>
+              <div class="text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'}">${highlightText(b.subtitle_ko, q)}</div>
+            </div>` : ''}
+          </div>
+          ${renderInlineAnnotations(b.notes, q, isDark)}
+        </div>`;
+      }
+
+      // Quote or Paragraph or Lead block
+      const isQuote = b.type === 'quote';
+      const isLead = b.type === 'lead';
+
+      let cardBg = isDark ? 'bg-slate-900/90 border-slate-800/90 hover:border-slate-700' : 'bg-slate-50/70 border-slate-200 hover:border-slate-300';
+      if (isQuote) {
+        cardBg = isDark ? 'bg-amber-500/10 border-l-4 border-l-amber-400 border-amber-500/30' : 'bg-amber-50 border-l-4 border-l-amber-500 border-amber-200';
+      } else if (isLead) {
+        cardBg = isDark ? 'bg-indigo-950/30 border-indigo-500/40' : 'bg-indigo-50/70 border-indigo-200';
+      }
+
+      let bodyLayout = '';
+      if (state.viewMode === 'side-by-side') {
+        bodyLayout = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+          <div class="bilingual-text en-text ${isDark ? 'text-slate-200' : 'text-slate-800'} ${isQuote ? 'font-semibold italic' : ''}">
+            ${highlightText(b.en, q)}
+          </div>
+          <div class="bilingual-text ${isDark ? 'text-slate-100' : 'text-slate-900'} ${isQuote ? 'font-bold' : ''} lg:border-l ${isDark ? 'lg:border-slate-800' : 'lg:border-slate-200'} lg:pl-6">
+            ${highlightText(b.ko, q)}
+          </div>
+        </div>`;
+      } else if (state.viewMode === 'interleaved') {
+        bodyLayout = `
+        <div class="space-y-2.5">
+          <div class="bilingual-text en-text ${isDark ? 'text-slate-300' : 'text-slate-700'} ${isQuote ? 'font-semibold italic' : ''}">
+            <span class="inline-block text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 mr-1.5">EN</span>${highlightText(b.en, q)}
+          </div>
+          <div class="bilingual-text ${isDark ? 'text-white' : 'text-slate-900'} ${isQuote ? 'font-bold' : ''} pt-1 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-200'}">
+            <span class="inline-block text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 mr-1.5">KO</span>${highlightText(b.ko, q)}
+          </div>
+        </div>`;
+      } else if (state.viewMode === 'ko-only') {
+        bodyLayout = `
+        <div class="space-y-2">
+          <div class="bilingual-text ${isDark ? 'text-slate-100' : 'text-slate-900'} ${isQuote ? 'font-bold' : ''}">
+            ${highlightText(b.ko, q)}
+          </div>
+          <details class="text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}">
+            <summary class="cursor-pointer hover:text-indigo-400 select-none">영문 원문 확인하기 (클릭)</summary>
+            <p class="mt-1.5 p-2.5 rounded-lg ${isDark ? 'bg-slate-950/70 text-slate-300' : 'bg-white text-slate-700'} en-text">${highlightText(b.en, q)}</p>
+          </details>
+        </div>`;
+      } else {
+        bodyLayout = `
+        <div class="space-y-2">
+          <div class="bilingual-text en-text ${isDark ? 'text-slate-100' : 'text-slate-900'} ${isQuote ? 'font-semibold italic' : ''}">
+            ${highlightText(b.en, q)}
+          </div>
+          <details class="text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}">
+            <summary class="cursor-pointer hover:text-indigo-400 select-none">한국어 번역 확인하기 (클릭)</summary>
+            <p class="mt-1.5 p-2.5 rounded-lg ${isDark ? 'bg-slate-950/70 text-slate-200' : 'bg-white text-slate-800'}">${highlightText(b.ko, q)}</p>
+          </details>
+        </div>`;
+      }
+
+      return `
+      <div id="${b.id}" onclick="selectBlock('${b.id}')" data-block-id="${b.id}" class="pair-card rounded-xl border p-4 sm:p-5 cursor-pointer ${cardBg} ${isActive ? 'active-pair' : ''}">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}">#${b.id.replace(/^[a-z]-/, '')}</span>
+            ${isQuote ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">핵심 인용구 / 강조</span>' : ''}
+            ${isLead ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">서문 핵심 요약 (Lead)</span>' : ''}
+          </div>
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="copyPairBlock('${b.id}', event)" class="px-2 py-0.5 rounded text-[11px] ${isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-200 text-slate-600 hover:text-slate-900'} transition" title="영·한 문단 복사">복사</button>
+            <button type="button" onclick="toggleBookmark('${b.id}', event)" class="px-2 py-0.5 rounded text-xs transition ${isBookmarked ? 'bg-amber-500/20 text-amber-300 font-bold' : (isDark ? 'bg-slate-800 text-slate-500 hover:text-amber-300' : 'bg-slate-200 text-slate-500 hover:text-amber-600')}" title="북마크 토글">${isBookmarked ? '★ 북마크됨' : '☆'}</button>
+          </div>
+        </div>
+        ${bodyLayout}
+        ${renderInlineAnnotations(b.notes, q, isDark)}
+      </div>`;
+    }
+
+    function renderInlineAnnotations(noteIds, q, isDark) {
+      if (!noteIds || noteIds.length === 0) return '';
+      if (!state.showInlineNotes) {
+        return `
+        <div class="mt-3 pt-2.5 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-200'} flex flex-wrap gap-1.5">
+          ${noteIds.map(nid => {
+            const ann = DATA.annotations[nid];
+            if (!ann) return '';
+            return `<button type="button" onclick="openAnnotationModal('${nid}', event)" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 transition">💡 주석: ${escapeHtml(ann.term_en)}</button>`;
+          }).join('')}
+        </div>`;
+      }
+
+      return `
+      <div class="mt-3.5 pt-3 border-t ${isDark ? 'border-slate-800' : 'border-slate-200'} space-y-2">
+        ${noteIds.map(nid => {
+          const ann = DATA.annotations[nid];
+          if (!ann) return '';
+          return `
+          <div onclick="openAnnotationModal('${nid}', event)" class="p-3 rounded-xl border ${isDark ? 'bg-emerald-950/20 border-emerald-500/30 hover:border-emerald-400/50' : 'bg-emerald-50/70 border-emerald-200 hover:border-emerald-400'} transition flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="space-y-0.5">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">💡 심화 주석 · ${escapeHtml(ann.category_ko)}</span>
+                <span class="text-xs font-bold ${isDark ? 'text-emerald-200' : 'text-emerald-900'}">${highlightText(ann.term_en, q)}</span>
+              </div>
+              <p class="text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'} leading-relaxed">${highlightText(ann.summary, q)}</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-400 shrink-0">상세 해설 보기 →</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+
+    function filterAnnotations(cat) {
+      state.annCategory = cat;
+      const cats = ['ALL', 'Core Concept', 'Tools & Architecture', 'Industry Shift', 'People & Context'];
+      cats.forEach(c => {
+        const btn = document.getElementById('ann-cat-' + c);
+        if (!btn) return;
+        if (c === cat) {
+          btn.className = 'px-3 py-1 rounded-lg text-xs font-medium bg-indigo-600 text-white';
+        } else {
+          btn.className = 'px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700';
+        }
+      });
+      renderAnnotationsTab();
+    }
+
+    function renderAnnotationsTab() {
+      const grid = document.getElementById('annotations-grid');
+      if (!grid) return;
+      const isDark = state.darkMode;
+      const entries = Object.values(DATA.annotations).filter(a => state.annCategory === 'ALL' || a.category === state.annCategory);
+
+      grid.innerHTML = entries.map(ann => `
+        <div class="rounded-xl border ${isDark ? 'border-slate-800 bg-slate-950/60' : 'border-slate-200 bg-white'} p-4 flex flex-col justify-between gap-3">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">${escapeHtml(ann.category_ko)}</span>
+              <a href="${escapeHtml(ann.link)}" target="_blank" rel="noopener noreferrer" class="text-xs text-indigo-400 hover:underline">참고 링크 ↗</a>
+            </div>
+            <h4 class="text-base font-bold ${isDark ? 'text-white' : 'text-slate-900'}">${escapeHtml(ann.term_en)}</h4>
+            <p class="text-xs font-medium ${isDark ? 'text-emerald-300 bg-emerald-950/30 border-emerald-500/20' : 'text-emerald-800 bg-emerald-50 border-emerald-200'} p-2.5 rounded-lg border">${escapeHtml(ann.summary)}</p>
+            <p class="text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'} leading-relaxed">${escapeHtml(ann.detail)}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderChaptersTab() {
+      const container = document.getElementById('chapters-container');
+      if (!container) return;
+      const isDark = state.darkMode;
+
+      container.innerHTML = DATA.chapters.map(ch => `
+        <div class="rounded-xl border ${isDark ? 'border-slate-800 bg-slate-950/60' : 'border-slate-200 bg-white'} p-4 space-y-3">
+          <div class="flex items-center justify-between gap-2 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'} pb-2.5">
+            <div>
+              <h4 class="text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'} en-text">${escapeHtml(ch.part_en)}</h4>
+              <p class="text-xs text-indigo-400 font-medium">${escapeHtml(ch.part_ko)}</p>
+            </div>
+            <a href="${escapeHtml(ch.video_url)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-600 text-white hover:bg-rose-500 shrink-0">▶ YouTube 열기 ↗</a>
+          </div>
+          <div class="divide-y ${isDark ? 'divide-slate-800/60' : 'divide-slate-100'}">
+            ${ch.items.map(item => `
+              <div class="py-2 flex items-start gap-3 text-xs">
+                <a href="${escapeHtml(ch.video_url)}&t=${item.seconds}s" target="_blank" rel="noopener noreferrer" class="font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 shrink-0">${escapeHtml(item.time)}</a>
+                <div class="space-y-0.5 min-w-0">
+                  <div class="${isDark ? 'text-slate-200' : 'text-slate-800'} font-medium en-text">${escapeHtml(item.en)}</div>
+                  <div class="${isDark ? 'text-slate-400' : 'text-slate-600'}">${escapeHtml(item.ko)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleQuiz(qid) {
+      state.openQuizzes[qid] = !state.openQuizzes[qid];
+      renderReferencesTab();
+    }
+
+    function renderReferencesTab() {
+      const qContainer = document.getElementById('quiz-container');
+      const rContainer = document.getElementById('references-container');
+      const isDark = state.darkMode;
+
+      if (qContainer) {
+        qContainer.innerHTML = DATA.quizzes.map(qz => {
+          const isOpen = !!state.openQuizzes[qz.id];
+          return `
+          <div class="rounded-xl border ${isDark ? 'border-slate-800 bg-slate-950/70' : 'border-slate-200 bg-white'} p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">${escapeHtml(qz.part)} 핵심 질문</span>
+                <p class="text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'} mt-1">${escapeHtml(qz.q_ko)}</p>
+              </div>
+              <button type="button" onclick="toggleQuiz('${qz.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${isOpen ? 'bg-slate-700 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-500'}">
+                ${isOpen ? '해설 접기' : '모범 해설 보기'}
+              </button>
+            </div>
+            ${isOpen ? `
+            <div class="mt-3 pt-3 border-t ${isDark ? 'border-slate-800 text-emerald-200 bg-emerald-950/20' : 'border-slate-200 text-emerald-900 bg-emerald-50'} p-3 rounded-lg text-xs sm:text-sm leading-relaxed">
+              <strong>핵심 해설:</strong> ${escapeHtml(qz.a_ko)}
+            </div>` : ''}
+          </div>`;
+        }).join('');
+      }
+
+      if (rContainer) {
+        rContainer.innerHTML = DATA.references.map(group => `
+          <div class="space-y-3">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-indigo-400 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'} pb-1.5">${escapeHtml(group.category)}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${group.items.map(item => `
+                <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="block rounded-xl border ${isDark ? 'border-slate-800 bg-slate-950/50 hover:border-indigo-500/50' : 'border-slate-200 bg-white hover:border-indigo-400'} p-3.5 transition group">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="text-xs sm:text-sm font-bold ${isDark ? 'text-slate-100 group-hover:text-indigo-300' : 'text-slate-900 group-hover:text-indigo-600'} en-text">${escapeHtml(item.title)}</div>
+                    <span class="text-xs text-indigo-400 shrink-0">↗</span>
+                  </div>
+                  <p class="text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'} mt-1.5 leading-relaxed">${escapeHtml(item.desc)}</p>
+                  <div class="text-[11px] font-mono text-slate-500 mt-2 truncate">${escapeHtml(item.url)}</div>
+                </a>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    window.onload = function() {
+      loadSavedState();
+      setFontSize(state.fontSize);
+      setViewMode(state.viewMode);
+      updateStats();
+      renderSectionJumpBar();
+      applyTheme();
+    };
+  </script>
+</body>
+</html>
