@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1978,7 +2219,7 @@
 <p>둘째, 동의가 더 깊이 내면화된다. 공장의 노동자는 동료와의 상호작용 속에서 집단적 규범을 매개로 게임에 참여했다. 플랫폼에서는 알고리즘이 개별 노동자에게 직접 작용하고, 여러 명의 고객이 별점으로 실시간 평가를 입력한다. 외부의 집단적 압력이 아니라 자기 자신과의 관계 속에서 자기착취가 이루어진다.</p>
 <p>셋째, 노동이 미세하게 쪼개진다. 하나의 노동과정이 수많은 작은 단위로 나뉘어 배분되고, 개별 작업은 너무 작아서 논문의 표현대로 &quot;진정한 고용&quot;으로 인식되지 않는다. 그런데도 플랫폼에 대한 의존은 오히려 강해진다. 노동자는 자신이 참여하는 게임의 전체 구조를 파악할 수조차 없다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" role="img" aria-label="인적·조직적 종속에서 알고리즘 통제로, 그리고 타인결정성의 질문으로 옮겨 가는 구조">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" role="img" aria-label="인적·조직적 종속에서 알고리즘 통제로, 그리고 타인결정성의 질문으로 옮겨 가는 구조">
   <defs>
     <marker id="ac-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
@@ -2033,7 +2274,7 @@
   <text x="634" y="394" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">작업은 잘게 쪼개지고 의존은 커진다</text>
   <rect x="90" y="422" width="600" height="38" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
   <text x="390" y="446" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">구조 뒤에는 반드시 그 구조를 만든 타인이 있다</text>
-</svg>
+</svg><figcaption>인적·조직적 종속에서 알고리즘 통제로, 그리고 타인결정성의 질문으로 옮겨 가는 구조</figcaption></figure>
 </div>
 
 <p>이 분석이 법적 판단에 던지는 함의는 분명하다. 종속성 지표는 명령과 감독자와 계약서를 찾도록 설계되어 있는데, 알고리즘 통제에서는 그 셋이 모두 다른 형태로 바뀌어 있다. 지표를 기계적으로 대면 통제는 있는데 지휘·감독은 없다는 기묘한 결론이 나온다. 논문이 인용하는 표현대로 노동 플랫폼은 &quot;종속성과 자율성 간의 긴장으로 채워져&quot; 있고, 일하는 사람에게 주어지는 자유와 유연성은 더 부드럽고 보이지 않는 감시와 통제로 상쇄된다. 법이 자유의 외관만 보면 통제를 놓치고, 통제만 보면 실제로 존재하는 선택의 여지를 무시하게 된다. 이 긴장을 다룰 언어가 필요하다는 것이 7장 논의의 동기다.</p>
@@ -2071,7 +2312,7 @@
 <p>논문은 이 질문을 세 측면으로 나눠 본다. 첫째는 노무 수행 방법의 결정이다. 업무의 내용·절차·방식을 노무제공자가 실질적으로 정하는지, 아니면 타인이 정한 규칙·매뉴얼·평가체계·알고리즘이 사실상 형성하는지를 본다. 둘째는 노무제공 조건의 결정이다. 보수의 수준과 산정 방식, 시간과 장소, 계약의 주요 내용과 변경 가능성이 실질적인 교섭과 자기결정의 결과인지, 타인이 일방적으로 정한 것인지를 본다. 셋째는 노무제공 결과의 귀속이다. 노무의 결과가 누구의 사업을 위해 기능하고 성과와 이익이 궁극적으로 누구에게 돌아가는지를 묻는다. 논문은 이 셋이 각각 따로 충족해야 하는 독립된 요건이 아니라, 노무제공 관계가 어떤 구조 위에서 작동하는지 드러내는 서로 연결된 검토의 측면이라고 강조한다.</p>
 <p>이 관점은 양방향으로 작동한다. 직접적인 지시나 근태 통제가 없어도 알고리즘이 업무를 배정하고, 평가 시스템이 보수와 기회의 배분을 좌우하고, 계약 구조와 운영 방식이 노무제공 방식을 사실상 규율한다면 타인결정성이 있다고 볼 여지가 생긴다. 반대로 형식상 고용계약이 있어도 노무제공자가 수행 방식과 조건을 실질적으로 스스로 정하고 그 결과도 독자적으로 귀속시킨다면 타인결정성은 약하게 나타날 수 있다. 계약서의 이름이 어느 쪽으로도 결론을 정하지 않는다는 점에서, 타인결정성은 보호를 넓히기만 하는 도구가 아니라 판단을 실질에 묶어 두는 도구다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" role="img" aria-label="종속성 판단의 재구성: 현행 판례의 판단 구조와 논문이 제시하는 두 방향">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" role="img" aria-label="종속성 판단의 재구성: 현행 판례의 판단 구조와 논문이 제시하는 두 방향">
   <defs>
     <marker id="rf-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
@@ -2120,7 +2361,7 @@
   <text x="568" y="395" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">간접적 수단에 의한 결정·통제까지 법문에 담기</text>
   <rect x="90" y="422" width="600" height="38" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
   <text x="390" y="446" text-anchor="middle" font-size="12.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">종속성을 '발견되는 사실'이 아니라 '규범적 개념'으로 다시 세우기</text>
-</svg>
+</svg><figcaption>종속성 판단의 재구성: 현행 판례의 판단 구조와 논문이 제시하는 두 방향</figcaption></figure>
 </div>
 
 <h3 id="75-타인은-누구인가-알고리즘은-사용자가-될-수-없다"><a href="#75-타인은-누구인가-알고리즘은-사용자가-될-수-없다" class="heading-anchor" aria-hidden="true">#</a> 7.5 타인은 누구인가 — 알고리즘은 사용자가 될 수 없다</h3><p>타인결정성의 정의에 알고리즘이 들어 있다고 해서 알고리즘을 법적 상대방으로 세우자는 뜻은 아니다. 논문은 이 점을 각주에서 분명히 한다. 타인은 자연인에 한정되지 않고 법인처럼 법이 만든 주체를 포함한다. 그리고 논문은 &#39;구조적 종속&#39;, &#39;알고리즘적 통제&#39;, &#39;외재적 결정성&#39; 같은 용어를 검토하고도 &#39;타인결정성&#39;을 고른 이유를 이렇게 설명한다. &quot;플랫폼 알고리즘도, 수수료율도, 업무 배분 방식도 결국은 플랫폼 사업자라는 타인이 설계하고 운영하는 것이다. 구조 뒤에는 반드시 그 구조를 만든 타인이 있다.&quot; 노동법은 본질적으로 사람과 사람 사이의 관계를 규율하는 법인데, &#39;구조적&#39;이나 &#39;외재적&#39;이라는 말은 그 인적 관계를 지워 버리고, &#39;타인&#39;이라는 말은 그것을 정면에 놓는다는 것이다.</p>
@@ -2185,7 +2426,7 @@
 <p>그러나 추정은 자동으로 근로자가 되는 장치가 아니다. 추정이 생기려면 노무제공자가 먼저 전제사실, 곧 노무제공의 본질적 사항이 노무수령자나 그의 규칙·알고리즘 등에 의해 계속적·실질적으로 결정되거나 통제된다는 사실을 보여야 한다. 그 사실을 보이는 데 필요한 정보도 여전히 상당 부분 플랫폼 쪽에 있으므로 정보의 비대칭은 줄어들 뿐 사라지지 않는다. 추정은 반증으로 번복될 수 있고, 무엇을 입증해야 번복되는지는 아직 정해져 있지 않다.</p>
 <p>논문 스스로도 추정의 효과를 크게 잡지 않는다. 추정 규정은 종속성 개념 자체의 이론적 문제를 해결하는 것이 아니어서 &quot;근본적인 대안이라고 하기는 어렵다.&quot; 다만 현실의 보호 공백을 메우는 데 즉각적인 효과가 있다는 점에서 &quot;실천적 의미가 크다.&quot; 추정은 판단 기준을 바꾸는 것이 아니라 기준의 적용 방식을 바꾸는 것이므로, 근로자성 판단 기준이 무엇인가라는 질문은 그대로 남고, 어떤 노무제공자에게 추정을 적용할지 정하는 기준도 따로 필요하다. 그래서 이 방향은 종속성 기준의 문제를 &quot;완전히 해소하지는 못한다.&quot; 이 논의의 중심은 입증 책임의 전환이 아니라, 추정의 요건 자체를 타인결정성으로 다시 쓰는 데 있다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" role="img" aria-label="개정안의 근로자 추정 구조: 전제사실 입증, 추정, 노무수령자의 반증, 남는 문제">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" role="img" aria-label="개정안의 근로자 추정 구조: 전제사실 입증, 추정, 노무수령자의 반증, 남는 문제">
   <defs>
     <marker id="ps-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
@@ -2223,7 +2464,7 @@
   <rect x="24" y="318" width="732" height="60" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
   <text x="390" y="341" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">추정이 남기는 문제 (논문 117쪽)</text>
   <text x="390" y="363" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">'노무제공'의 범위 · 추정을 번복하는 입증 기준 · 추정 기준을 법문에 둘지 여부 · 사용자 개념의 재구성</text>
-</svg>
+</svg><figcaption>개정안의 근로자 추정 구조: 전제사실 입증, 추정, 노무수령자의 반증, 남는 문제</figcaption></figure>
 </div>
 
 <h3 id="84-다른-나라의-추정-규정과-한국의-입법-논의"><a href="#84-다른-나라의-추정-규정과-한국의-입법-논의" class="heading-anchor" aria-hidden="true">#</a> 8.4 다른 나라의 추정 규정과 한국의 입법 논의</h3><p>논문은 스페인이 2021년 이른바 라이더법으로 플랫폼 노동자에 대한 근로자 추정을 도입했고, EU 플랫폼노동지침도 회원국에 추정 방식을 요구한다고 짧게 언급한다. 두 규정의 문언을 보면 개정안과의 거리가 드러난다.</p>

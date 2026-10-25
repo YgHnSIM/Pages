@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1885,7 +2126,7 @@
 <p>조율은 코드(토큰 0). 판단만 모델. 가짜 화살표를 먼저 지워라.</p>
 </blockquote>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-label="한 줄 사슬과 병렬 그래프 비교">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-label="한 줄 사슬과 병렬 그래프 비교">
   <defs>
     <marker id="af-arr-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
     <marker id="af-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
@@ -1926,7 +2167,7 @@
   <line x1="576" y1="128" x2="612" y2="128" stroke="#059669" stroke-width="2" marker-end="url(#af-arr-em)"/>
   <rect x="616" y="108" width="72" height="40" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
   <text x="652" y="132" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">보고서</text>
-</svg>
+</svg><figcaption>한 줄 사슬과 병렬 그래프 비교</figcaption></figure>
 </div>
 
 <hr>
@@ -2003,7 +2244,7 @@
 </ul>
 <p>다이어그램으로 그리면 박스가 <code>agent()</code> 한 번이고, 화살표는 <strong>앞 호출의 return이 다음 프롬프트 변수로 들어가는 자리</strong>다. 변수가 안 건너가면 화살표를 그릴 수 없다. 그릴 수 없으면 <strong>독립</strong>이다. 독립이면 줄 세울 이유가 없다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 210" role="img" aria-label="진짜 간선과 가짜 연결 비교">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 210" role="img" aria-label="진짜 간선과 가짜 연결 비교">
   <defs>
     <marker id="af2-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
   </defs>
@@ -2031,7 +2272,7 @@
   <rect x="584" y="88" width="100" height="48" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
   <text x="634" y="116" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#334155">노드 B</text>
   <text x="542" y="174" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">독립 → 줄 세울 이유 없음</text>
-</svg>
+</svg><figcaption>진짜 간선과 가짜 연결 비교</figcaption></figure>
 </div>
 
 <p>조율(누가 언제 뜨는지, 결과를 어디에 모으는지)은 <strong>코드</strong>에 둔다. 코드는 모델 토큰을 거의 안 먹는다. “다음에 무엇을 시킬까”를 또 다른 에이전트에게 맡기면, 배관비까지 시급을 주는 꼴이다.</p>
@@ -2074,7 +2315,7 @@
 <h2 id="4-선형-스크립트는-이미-그래프다-다만-퇴화한-형태"><a href="#4-선형-스크립트는-이미-그래프다-다만-퇴화한-형태" class="heading-anchor" aria-hidden="true">#</a> 4. 선형 스크립트는 이미 그래프다 — 다만 퇴화한 형태</h2><p>“A 하고, B 하고, C 하고, D”는 이미 그래프다. 가지가 없는 <strong>사슬</strong>일 뿐이다. 각 노드에 들어오는 화살표·나가는 화살표가 하나씩뿐이라, C가 막히면 D는 영영 없고 A의 결과는 상류에 묶인다.</p>
 <p>첫 실무 기술은 도구를 사는 것이 아니라 <strong>사슬을 다시 그리는 것</strong>이다. 화살표마다 3절의 질문을 던진다. 데이터 없는 화살표를 자르면 사슬이 <strong>넓어</strong>진다. 독립 노드 여러 개가 동시에 돌고, <strong>전부</strong>가 필요한 한 노드만 아래에서 받는다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" aria-label="퇴화한 사슬을 넓은 그래프로 자르기">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" aria-label="퇴화한 사슬을 넓은 그래프로 자르기">
   <defs>
     <marker id="af3-arr-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
     <marker id="af3-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
@@ -2118,7 +2359,7 @@
   <text x="650" y="124" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#475569">④</text>
   <text x="650" y="138" text-anchor="middle" font-size="9" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">분리</text>
   <text x="542" y="194" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">합침과 무관하면 아예 분리</text>
-</svg>
+</svg><figcaption>퇴화한 사슬을 넓은 그래프로 자르기</figcaption></figure>
 </div>
 
 <p>비용 0에 가까운 정리이고, 보통 <strong>새 도구를 사기 전에</strong> 대기 시간을 가장 많이 줄인다.</p>
@@ -2149,7 +2390,7 @@ ITEM = {
 <h2 id="6-간선은-무료-배관-flatmap에-에이전트를-쓰지-마라"><a href="#6-간선은-무료-배관-flatmap에-에이전트를-쓰지-마라" class="heading-anchor" aria-hidden="true">#</a> 6. 간선은 무료 배관 — flatMap에 에이전트를 쓰지 마라</h2><p>간선은 “B가 A 다음”이 아니라 <strong>무엇이 건너가는지</strong>에 대한 약속이다. 이름을 순서(“2단계”)가 아니라 데이터(“수집된 items”)로 붙이면, 진짜 간선인지 바로 보인다.</p>
 <p>팬아웃 뒤의 평탄화·중복 제거·필터는 대개 <strong>코드</strong>다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" role="img" aria-label="팬아웃 뒤 코드 간선으로 평탄화">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:640px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" role="img" aria-label="팬아웃 뒤 코드 간선으로 평탄화">
   <defs>
     <marker id="af6-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
     <marker id="af6-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
@@ -2173,7 +2414,7 @@ ITEM = {
   <text x="434" y="146" text-anchor="middle" font-size="9" font-family="Pretendard, system-ui, sans-serif" fill="#059669">전체가 필요할 때만 모델</text>
   <text x="540" y="48" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#475569">배관은 코드</text>
   <text x="540" y="66" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#475569">판단만 모델</text>
-</svg>
+</svg><figcaption>팬아웃 뒤 코드 간선으로 평탄화</figcaption></figure>
 </div>
 
 <p>“결과를 합쳐줘”라고 또 에이전트를 부르는 유혹을 참는다. 합치기가 판단(순위·해석)이면 노드고, 배관이면 코드다.</p>
@@ -2188,7 +2429,7 @@ ITEM = {
 <li><strong>한 명 실패 ≠ 전체 침몰</strong>: 깨진 작업은 빈 값으로 두고, 모을 때 걸러낸다. 팬인은 “전원 참석”이 아니라 “온 사람만으로도 진행”을 기본값으로 둔다.</li>
 </ul>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" aria-label="fan-out 동시 실행과 fan-in 배리어">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" aria-label="fan-out 동시 실행과 fan-in 배리어">
   <defs>
     <marker id="af7-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
     <marker id="af7-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
@@ -2236,12 +2477,12 @@ ITEM = {
   <line x1="532" y1="120" x2="532" y2="140" stroke="#059669" stroke-width="2" marker-end="url(#af7-arr-em)"/>
   <rect x="452" y="144" width="160" height="32" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
   <text x="532" y="164" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">한 노드가 전체를 봄</text>
-</svg>
+</svg><figcaption>fan-out 동시 실행과 fan-in 배리어</figcaption></figure>
 </div>
 
 <p><strong>다이아몬드</strong>가 기본 골격이다. 가르고 → 각자 일하고 → 합친다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220" role="img" aria-label="다이아몬드 토폴로지: fan-out, reduce, synthesize">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:640px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220" role="img" aria-label="다이아몬드 토폴로지: fan-out, reduce, synthesize">
   <defs>
     <marker id="afd-arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
     <marker id="afd-arr-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
@@ -2269,7 +2510,7 @@ ITEM = {
   <text x="562" y="108" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">합성</text>
   <text x="562" y="126" text-anchor="middle" font-size="10" font-family="Pretendard, system-ui, sans-serif" fill="#059669">보고서 (모델)</text>
   <text x="320" y="210" text-anchor="middle" font-size="12" font-family="Pretendard, system-ui, sans-serif" font-weight="600" fill="#475569">이름만 기억: fan-out → reduce(코드) → synthesize(모델)</text>
-</svg>
+</svg><figcaption>다이아몬드 토폴로지: fan-out, reduce, synthesize</figcaption></figure>
 </div>
 
 <p>시장 스캔, 의존성 감사, 코드 리뷰, 리서치 보고서가 같은 뼈대를 쓴다. “스텝을 더 늘리려면?”이 아니라 “<strong>어디서 가르고 어디서 합칠까?</strong>”가 스케일 질문이다.</p>
@@ -2350,7 +2591,7 @@ ITEM = {
 <li><strong>판정 패널</strong>: 여러 초안을 다른 각도로 만들고, 심사위원을 병렬로 두어 점수한 뒤, 승자 위에 근접안의 장점을 이식해 합성한다.</li>
 </ol>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" role="img" aria-label="적대적 검증: 발견에서 회의론자를 거쳐 생존분만 최종 보고서로">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" role="img" aria-label="적대적 검증: 발견에서 회의론자를 거쳐 생존분만 최종 보고서로">
   <defs>
     <marker id="afv-arr-rose" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#e11d48"/></marker>
     <marker id="afv-arr-em" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
@@ -2373,7 +2614,7 @@ ITEM = {
   <rect x="434" y="70" width="120" height="48" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
   <text x="494" y="98" text-anchor="middle" font-size="13" font-family="Pretendard, system-ui, sans-serif" font-weight="700" fill="#047857">최종 보고서</text>
   <text x="340" y="186" text-anchor="middle" font-size="11" font-family="Pretendard, system-ui, sans-serif" fill="#64748b">자기 채점 금지 · 검증은 남이</text>
-</svg>
+</svg><figcaption>적대적 검증: 발견에서 회의론자를 거쳐 생존분만 최종 보고서로</figcaption></figure>
 </div>
 
 <hr>

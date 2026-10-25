@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1917,7 +2158,7 @@
 <h2 id="2-고대-기하학의-정점과-내재적-한계-아폴로니우스의-39증상39"><a href="#2-고대-기하학의-정점과-내재적-한계-아폴로니우스의-39증상39" class="heading-anchor" aria-hidden="true">#</a> 2. 고대 기하학의 정점과 내재적 한계: 아폴로니우스의 &#39;증상&#39;</h2><p>이야기는 기원전 200년경 지중해 세계, 알렉산드리아의 거장 <strong>페르가의 아폴로니우스(Apollonius of Perga, 기원전 약 262~190)</strong>에게서 출발한다.</p>
 <p>아폴로니우스는 원뿔(Cone)이라는 3차원 입체 도형을 평평한 평면으로 비스듬히 절단할 때 나타나는 곡선들을 체계적으로 집대성하여 총 8권의 방대한 대작 『원뿔곡선론(Conics)』을 저술했다. 평면이 원뿔의 밑면과 이루는 각도를 변화시킴에 따라, 원뿔의 절단면은 원에서 출발하여 타원, 포물선, 쌍곡선으로 연속적으로 변모한다.</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" width="100%" height="320" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" width="100%" height="320" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">아폴로니우스의 원뿔 절단면 체계 (Conic Sections)</text>
   <text x="500" y="25" fill="#94a3b8" font-size="12">기원전 200년경 『원뿔곡선론』</text>
@@ -1980,7 +2221,7 @@
     <text x="36" y="48" fill="#f43f5e" font-size="11" font-weight="600">어원: ὑπερβολή (초과·지나침)</text>
     <text x="36" y="64" fill="#94a3b8" font-size="10.5">원뿔 모선보다 가파르게 밑면을 수직 절단</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>놀라운 점은 아폴로니우스의 분석 깊이였다. 그는 단순히 원뿔을 자르는 시각적 형태 묘사에 머물지 않았다. 그는 잘려 나간 곡선 위의 임의의 점에서 지름축까지 내린 수선의 길이와, 그 점에서 꼭짓점까지의 거리 사이에 성립하는 고유한 기하학적 비례 법칙을 규명했다. 그리스인들은 이를 곡선의 <strong>&#39;증상(Symptōma, σύμπτωμα)&#39;</strong>, 즉 어떤 질병에 고유한 징후가 나타나듯 곡선이 필연적으로 만족해야 하는 수학적 본질이라고 불렀다.</p>
@@ -2000,7 +2241,7 @@
 <p>$$\frac{d_1 \cdot d_2}{d_3 \cdot d_4} = k \quad (\text{단, } k\text{는 주어진 상수})$$</p>
 </blockquote>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 340" width="100%" height="340" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 340" width="100%" height="340" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">파푸스의 4선 궤적 문제 (Pappus's 4-Line Locus Problem)</text>
   <text x="470" y="25" fill="#94a3b8" font-size="12">알렉산드리아의 파푸스 (서기 320년경)</text>
@@ -2067,7 +2308,7 @@
     <text x="15" y="215" fill="#f8fafc" font-size="11">• <tspan fill="#f43f5e" font-weight="600">8선 이상:</tspan> 4차원 초입체 ($L^4$)</text>
     <text x="25" y="232" fill="#f43f5e" font-size="10" font-weight="600">→ 물리 세계에 부재! 기하학 사형 선고</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>파푸스는 유클리드와 아폴로니우스 같은 거인들조차 이 4선 문제를 완전히 해결하지 못했다고 솔직하게 털어놓았다. </p>
@@ -2088,7 +2329,7 @@ $d_1 \cdot d_2 \cdot d_3 \cdot d_4 = k \cdot (d_5 \cdot d_6 \cdot d_7 \cdot d_8)
 <h2 id="4-철학적-감옥-유클리드의-39동차성의-법칙39"><a href="#4-철학적-감옥-유클리드의-39동차성의-법칙39" class="heading-anchor" aria-hidden="true">#</a> 4. 철학적 감옥: 유클리드의 &#39;동차성의 법칙&#39;</h2><p>왜 당대의 천재들은 숫자를 다루는 대수학으로 이 기하학적 난제를 뚫어내지 못했을까? 
 거기에는 단순한 기술적 한계를 넘어, 고대 그리스 사상을 지배하던 엄격한 존재론적 교리가 가로막고 있었다. 바로 유클리드 『원론』 제5권과 제6권에 명시된 <strong>&#39;동차성의 법칙(Law of Homogeneity)&#39;</strong>이었다.</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 240" width="100%" height="240" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 240" width="100%" height="240" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">고대 그리스의 차원 감옥: 동차성의 법칙 (Law of Homogeneity)</text>
   <text x="490" y="25" fill="#94a3b8" font-size="12">유클리드 『원론』 제5권/제6권</text>
@@ -2161,7 +2402,7 @@ $d_1 \cdot d_2 \cdot d_3 \cdot d_4 = k \cdot (d_5 \cdot d_6 \cdot d_7 \cdot d_8)
     <text x="10" y="125" fill="#f43f5e" font-size="11" font-weight="700">L⁴ = 초입체</text>
     <text x="10" y="142" fill="#fda4af" font-size="10">"물리 세계에 부재"</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>기원전 5세기, 피타고라스 학파는 한 변의 길이가 1인 정사각형의 대각선($sqrt{2}$)이 두 정수의 비(유리수)로 표현될 수 없다는 무리수의 존재를 발견하고 경악했다. 정수의 조화로 우주를 설명하려던 그들의 신념이 산산조각 난 뒤, 그리스 수학자들은 불연속적인 &#39;수(Arithmos)&#39;에 대한 신뢰를 완전히 거두어들였다. </p>
@@ -2179,7 +2420,7 @@ $d_1 \cdot d_2 \cdot d_3 \cdot d_4 = k \cdot (d_5 \cdot d_6 \cdot d_7 \cdot d_8)
 <p>데카르트는 기존 수학자들처럼 4차원의 벽 앞에서 멈추지 않았다. 그는 아예 <strong>곱셈의 기하학적 본질을 송두리째 재정의</strong>했다.</p>
 <h3 id="단위-선분unit-segment-1의-마법"><a href="#단위-선분unit-segment-1의-마법" class="heading-anchor" aria-hidden="true">#</a> 단위 선분(Unit Segment, 1)의 마법</h3><p>데카르트는 묻는다. &quot;왜 선분 두 개를 곱하면 반드시 면적이 되어야 하는가?&quot;<br>그는 평면 위에 임의의 기준 길이 하나를 정하고 그것을 <strong>단위 선분 1</strong>이라고 명명했다. 그리고 닮은꼴 삼각형의 비례 원리를 이용해 두 선분의 곱을 작도했다.</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" width="100%" height="320" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" width="100%" height="320" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">데카르트의 단위 선분 작도: 곱셈의 1차원 선분 환원 (La Géométrie, 1637)</text>
   <text x="490" y="25" fill="#94a3b8" font-size="12">닮은꼴 삼각형의 비례 원리</text>
@@ -2241,7 +2482,7 @@ $d_1 \cdot d_2 \cdot d_3 \cdot d_4 = k \cdot (d_5 \cdot d_6 \cdot d_7 \cdot d_8)
     <text x="15" y="194" fill="#f8fafc" font-size="11">• x², x³, x⁴ 곱셈도 전부 <tspan fill="#fbbf24" font-weight="700">동일한 선분의 길이</tspan></text>
     <text x="15" y="216" fill="#f8fafc" font-size="11">• 고차 다항식의 덧셈·뺄셈 완전 해방!</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>작도 방법은 경이로울 정도로 단순했다.</p>
@@ -2269,7 +2510,7 @@ $a$와 $b$를 곱한 결과는 2차원의 직사각형 넓이가 아니었다. <
 직선이 5개, 6개로 늘어나면 3차 곡선이 되고, 7개, 8개로 늘어나면 4차 곡선이 될 뿐이었다. 고대인들이 이름조차 붙이지 못했던 미지의 곡선들이, 이제 방정식의 차수에 따라 체계적으로 분류되는 방대한 패밀리로 일목요연하게 정렬되었다.</p>
 <p>골리우스 교수에게 문제를 전달받은 지 불과 5~6주 만에, 데카르트는 1,300년 동안 닫혀 있던 파푸스의 문을 박살 내고 기하학과 대수학의 완벽한 1:1 번역기를 완성했다.</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 270" width="100%" height="270" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 270" width="100%" height="270" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">데카르트의 보편학(Mathesis Universalis): 완벽한 양방향 번역기</text>
   <text x="500" y="25" fill="#94a3b8" font-size="12">형태(Shape) ⟷ 기호(Symbol)</text>
@@ -2347,7 +2588,7 @@ $a$와 $b$를 곱한 결과는 2차원의 직사각형 넓이가 아니었다. <
       <text x="10" y="19" fill="#f43f5e" font-size="12" font-weight="700">f(x, y) = 0 (3차 이상)</text>
     </g>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <blockquote>
@@ -2406,7 +2647,7 @@ $a$와 $b$를 곱한 결과는 2차원의 직사각형 넓이가 아니었다. <
 <p>그것이 바로 수학사에 전설로 남은 <strong>&#39;데카르트의 엽선(Folium of Descartes)&#39;</strong>이었다.</p>
 <p>$$x^3 + y^3 - 3axy = 0$$</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 380" width="100%" height="380" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 380" width="100%" height="380" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#f43f5e" font-size="14" font-weight="700">데카르트의 엽선 (Folium of Descartes): x³ + y³ - 3axy = 0</text>
   <text x="460" y="25" fill="#94a3b8" font-size="12">1638년 '접선 전쟁'의 전설적 결투곡선</text>
@@ -2465,7 +2706,7 @@ $a$와 $b$를 곱한 결과는 2차원의 직사각형 넓이가 아니었다. <
     <text x="12" y="278" fill="#f8fafc" font-size="11">⇒ 루프 정점에서 기울기 -1 증명!</text>
     <text x="12" y="295" fill="#94a3b8" font-size="10">데카르트: "그의 탁월함을 인정한다"</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>라틴어로 나뭇잎(Folium)을 뜻하는 이 곡선은 제1사분면에 나뭇잎 모양의 둥근 고리(loop)를 맺고, 양 끝으로 점근선을 따라 무한히 뻗어 나가는 기괴한 형상이었다. </p>
@@ -2473,7 +2714,7 @@ $a$와 $b$를 곱한 결과는 2차원의 직사각형 넓이가 아니었다. <
 <h3 id="페르마의-비밀-병기-의사의법adequality-adqualitas"><a href="#페르마의-비밀-병기-의사의법adequality-adqualitas" class="heading-anchor" aria-hidden="true">#</a> 페르마의 비밀 병기: 의사의법(Adequality, Adæqualitas)</h3><p>그러나 페르마의 반응은 전 유럽을 경악시켰다. 편지를 받은 페르마는 단 며칠 만에 이 뒤틀린 3차 곡선의 임의의 점에서 접선의 기울기를 구하는 완벽한 일반식을 유도해 답장으로 꽂아 넣었다.</p>
 <p>페르마의 무기는 3세기 알렉산드리아의 수학자 디오판토스의 『산학』에서 영감을 얻은 <strong>&#39;의사의법(Adequality)&#39;</strong>이었다.</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" width="100%" height="200" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" width="100%" height="200" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#34d399" font-size="14" font-weight="700">페르마의 의사의법(Adequality / Adæqualitas) 4단계 메커니즘</text>
   <text x="495" y="25" fill="#94a3b8" font-size="12">현대 미적분 극한(lim e→0)의 원형</text>
@@ -2534,7 +2775,7 @@ $a$와 $b$를 곱한 결과는 2차원의 직사각형 넓이가 아니었다. <
     <rect x="10" y="90" width="120" height="24" rx="4" fill="#0f172a"/>
     <text x="18" y="106" fill="#34d399" font-size="11" font-weight="700">g(x, 0) = 0</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>페르마의 발상은 현대 미적분의 도함수 정의와 소름 끼칠 정도로 일치한다. 가장 단순한 포물선 $y = x^2$의 예를 통해 페르마의 알고리즘을 복원해 보자:</p>
@@ -2562,7 +2803,7 @@ $$\lim_{e \to 0} (2x + e) = 2x$$</li>
 <p>곡선이 방정식이 되자마자, 뉴턴의 머릿속에는 새로운 차원의 질문이 폭발했다.
 <em>&quot;방정식이 점의 현재 위치 $(x, y)$를 알려준다면, 그 점이 바로 지금 이 순간 얼마나 가파르게 상승하고 있는지(순간 속도) 역시 방정식으로 계산해 낼 수 있어야 하지 않겠는가?&quot;</em></p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 220" width="100%" height="220" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 220" width="100%" height="220" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">미적분학 기호와 개념의 진화 계보 (Genealogy of Calculus)</text>
   <text x="500" y="25" fill="#94a3b8" font-size="12">17세기 과학혁명의 도화선</text>
@@ -2614,7 +2855,7 @@ $$\lim_{e \to 0} (2x + e) = 2x$$</li>
     <rect x="10" y="102" width="170" height="28" rx="4" fill="#0f172a"/>
     <text x="20" y="120" fill="#34d399" font-size="12" font-weight="800">dy/dx  &amp;  ∫ y dx</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <p>뉴턴은 페르마의 미세 증분 $e$를 시간의 흐름으로 확장했다. 흐르는 양을 <strong>유량(Fluent, $x, y$)</strong>, 그 순간의 속도를 점을 찍어 <strong>유율(Fluxion, $\dot{x}, \dot{y}$)</strong>이라 정의하고, 찰나의 극미한 시간 간격을 <strong>소문자 알파벳 $o$</strong>로 표기했다. 그 짧은 순간에 일어나는 변화량은 $\dot{x}o, \dot{y}o$가 되었다.</p>
@@ -2628,7 +2869,7 @@ $$\lim_{e \to 0} (2x + e) = 2x$$</li>
 <hr>
 <h2 id="9-5인치-유리판-속의-17세기-현대-디지털-문명의-세-기둥"><a href="#9-5인치-유리판-속의-17세기-현대-디지털-문명의-세-기둥" class="heading-anchor" aria-hidden="true">#</a> 9. 5인치 유리판 속의 17세기: 현대 디지털 문명의 세 기둥</h2><p>오늘날 17세기 수학자들의 &#39;위대한 번역&#39;은 박물관의 유리관 속에 박제되어 있지 않다. 그것은 전 세계 수십억 인구의 주머니 속에 들어 있는 스마트폰 안에서 1초에 수십억 번씩 살아서 요동치고 있다.</p>
 <div align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 290" width="100%" height="290" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
+<figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:680px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 290" width="100%" height="290" style="background: #0f172a; border-radius: 12px; font-family: system-ui, -apple-system, sans-serif;">
   <rect x="0" y="0" width="680" height="40" fill="#1e293b" rx="12 12 0 0"/>
   <text x="24" y="25" fill="#38bdf8" font-size="14" font-weight="700">스마트폰 내부의 17세기 수학 엔진: 5인치 유리판의 기적</text>
   <text x="500" y="25" fill="#94a3b8" font-size="12">현대 모바일 OS &amp; 하드웨어</text>
@@ -2683,7 +2924,7 @@ $$\lim_{e \to 0} (2x + e) = 2x$$</li>
     <text x="12" y="168" fill="#94a3b8" font-size="11">• 슬리피 맵 타일 피라미드</text>
     <text x="12" y="186" fill="#34d399" font-size="11" font-weight="600">• 절대 픽셀 좌표에 핀 앵커링</text>
   </g>
-</svg>
+</svg></figure>
 </div>
 
 <h3 id="1-gpu와-디스플레이-300만-개-픽셀의-데카르트-격자"><a href="#1-gpu와-디스플레이-300만-개-픽셀의-데카르트-격자" class="heading-anchor" aria-hidden="true">#</a> 1. GPU와 디스플레이: 300만 개 픽셀의 데카르트 격자</h3><p>스마트폰의 OLED/LCD 화면은 가로 $W$개, 세로 $H$개의 작은 사각형 발광체들로 이루어진 거대한 데카르트 직교 평면이다. 

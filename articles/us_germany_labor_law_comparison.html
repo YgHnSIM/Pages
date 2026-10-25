@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1955,7 +2196,7 @@
 <h3 id="23-계약의-자유라는-철학"><a href="#23-계약의-자유라는-철학" class="heading-anchor" aria-hidden="true">#</a> 2.3 계약의 자유라는 철학</h3><p>미국이 이런 불확실성을 유지하는 이유는 흔히 철학으로 설명된다. 기업가의 자유와 개인의 계약의 자유를 최우선 가치로 두는 개인주의와 시장경제 원리가 강해서, 국가가 사적 고용계약에 개입하는 것을 본능적으로 꺼린다는 것이다. 이 설명에 따르면 미국 사회는 촘촘한 안전망보다 해고가 자유롭고 고용이 유연한 환경을 택했고, 그 대가로 일자리 창출과 높은 임금이라는 역동성을 얻었다.</p>
 <p>이 해석은 설득력이 있지만 설명이라기보다 요약에 가깝다. 같은 미국 안에서도 캘리포니아와 텍사스의 선택이 극단적으로 다르다는 사실(5장과 7장)은, 미국 노동법이 하나의 국민적 철학이 아니라 정치적 경쟁의 결과라는 점을 보여 준다. 7.2에서 보듯 연방 차원의 규칙마저 정권에 따라 흔들린다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" role="img" aria-label="독일과 미국 노동법의 규범 층위 비교: 독일은 연방법 중심, 미국은 얇은 연방법 위에 주법과 판례법">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" role="img" aria-label="독일과 미국 노동법의 규범 층위 비교: 독일은 연방법 중심, 미국은 얇은 연방법 위에 주법과 판례법">
   <rect x="8" y="8" width="764" height="384" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
   <text x="390" y="36" text-anchor="middle" font-size="15" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">규범의 층위: 누가 악보를 쓰는가</text>
   <text x="390" y="56" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" fill="#64748b">막대의 두께 = 개별 근로관계를 규율하는 비중(도식용, 정량 아님)</text>
@@ -1988,7 +2229,7 @@
   <text x="580" y="314" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">(민간 노조 조직률 5.9%, 2025)</text>
   <rect x="120" y="344" width="540" height="36" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
   <text x="390" y="367" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">독일은 위에서 아래로 기준을 내려보내고, 미국은 아래의 계약이 기본값이다</text>
-</svg>
+</svg><figcaption>독일과 미국 노동법의 규범 층위 비교: 독일은 연방법 중심, 미국은 얇은 연방법 위에 주법과 판례법</figcaption></figure>
 </div>
 
 <hr>
@@ -2003,7 +2244,7 @@
 <p>이것이 기능적 비교의 교과서적 예시다. 같은 이름의 제도라도 무엇과 비교되느냐에 따라 기능이 뒤집힌다. 미국에서 기간을 정한 고용계약을 중도에 해지하면, 계약에 정한 사유가 없는 한 계약 위반으로 남은 기간의 임금 상당액을 배상할 책임이 생긴다. 그래서 기간을 명시한 계약은 주로 임원이나 협상력이 강한 전문직이 얻어 내는 특권에 가깝다.</p>
 <p>독일은 이 예외적 불안정을 법으로 한 번 더 좁힌다. 단시간·기간제근로법(Teilzeit- und Befristungsgesetz)에 따라 객관적 사유 없는 기간제는 최장 2년, 그 안에서 3회까지만 연장(Verlängerung)할 수 있고, 그 밖에는 프로젝트나 대체 인력 같은 객관적 사유가 필요하다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 360" role="img" aria-label="해고의 디폴트 값과 기간제 계약의 역설 도식">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 360" role="img" aria-label="해고의 디폴트 값과 기간제 계약의 역설 도식">
   <defs>
     <marker id="d-arr" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
       <path d="M0,0 L5,2.5 L0,5 Z" fill="#64748b"/>
@@ -2032,7 +2273,7 @@
   <text x="580" y="272" text-anchor="middle" font-size="11" font-family="Pretendard, sans-serif" fill="#475569">금지된 사유만 아니면 언제든 해고</text>
   <rect x="120" y="306" width="540" height="34" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
   <text x="390" y="328" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">같은 렌즈를 거꾸로 끼운 안경: 제도의 기능은 기본값과의 거리로 정해진다</text>
-</svg>
+</svg><figcaption>해고의 디폴트 값과 기간제 계약의 역설 도식</figcaption></figure>
 </div>
 
 <blockquote>
@@ -2124,7 +2365,7 @@
 <p>주 입법을 기업 자금의 주민투표가 무력화했다는 것은 사실이다. 분류 기준을 둘러싼 왕복은 AB5와 발의안 22호라는 한 번이었지만, 공방은 그 뒤 형태를 바꿔 이어졌다. 2025년 10월 3일 주지사가 서명한 AB 1340은 발의안 22호 체제, 곧 독립계약자 분류를 그대로 둔 채 차량호출 운전자에게 단결하고 단체교섭할 권리를 주고, 그 절차를 주 공공고용관계위원회(Public Employment Relations Board, PERB)에 맡겼다. PERB 공지와 LA Times 보도(2026년 9월 10일)에 따르면, PERB는 2026년 9월 9일 운전자 단체 California Gig Workers Union을 우버·리프트 운전자 전체 단위의 교섭 조직으로 인증했다. PERB는 인증 근거로 활동 중인 운전자 30% 이상의 지지를 들었는데, 과반수 선거를 요구하는 전국노동관계법의 교섭대표 모델과는 다른 방식이다. 실제 교섭이 어떻게 진행될지는 2026년 9월 현재 알 수 없다. 입법과 주민투표가 핑퐁처럼 끝없이 반복되었다고 하면 분류 공방에 대해서는 수사에 가깝지만, 분류 공방 뒤에 교섭권 입법이라는 다음 수가 이어졌다는 점에서 공방이 계속된다는 큰 방향은 맞다.</p>
 <p>두 나라의 대응은 앞 장들의 구조를 그대로 반복한다. 독일·EU는 근로자 개념의 입구에서 추정과 입증 책임 전환이라는 사전 규칙을 만들고, 미국은 누가 근로자인지를 주 입법·주민투표·법원 소송이라는 사후적이고 분산된 경쟁에 맡긴다. 오분류(misclassification)를 바로잡는 도구가 한쪽에서는 법전의 추정 규정이고, 다른 쪽에서는 주마다 다른 테스트와 소송이다.</p>
 <div class="table-wrapper" style="margin:1.5rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 410" role="img" aria-label="플랫폼 노동 대응 타임라인: 독일과 EU, 미국 캘리포니아와 AB 1340 이후">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 410" role="img" aria-label="플랫폼 노동 대응 타임라인: 독일과 EU, 미국 캘리포니아와 AB 1340 이후">
   <defs>
     <marker id="p-arr" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
       <path d="M0,0 L5,2.5 L0,5 Z" fill="#64748b"/>
@@ -2176,7 +2417,7 @@
   <text x="645" y="336" text-anchor="middle" font-size="11.5" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">2025 AB 1340 → 2026.9 인증</text>
   <text x="645" y="354" text-anchor="middle" font-size="10.5" font-family="Pretendard, sans-serif" fill="#475569">분류는 그대로, 교섭권 부여(PERB)</text>
   <text x="390" y="388" text-anchor="middle" font-size="12" font-family="Pretendard, sans-serif" font-weight="700" fill="#0f172a">독일·EU는 추정 규칙을 법전에 넣고, 미국은 주 단위의 입법·투표·소송으로 다툰다</text>
-</svg>
+</svg><figcaption>플랫폼 노동 대응 타임라인: 독일과 EU, 미국 캘리포니아와 AB 1340 이후</figcaption></figure>
 </div>
 
 <h3 id="72-대통령이-바뀔-때마다-흔들리는-연방-노동기구"><a href="#72-대통령이-바뀔-때마다-흔들리는-연방-노동기구" class="heading-anchor" aria-hidden="true">#</a> 7.2 대통령이 바뀔 때마다 흔들리는 연방 노동기구</h3><p>미국 노동법은 기술 변화보다 정치적 변수에 더 크게 흔들린다. 이것은 어느 쪽 노선이 옳은가의 문제가 아니라 제도 구조의 문제다. NLRB는 대통령이 상원 인준을 거쳐 임명하는 5명의 위원으로 구성되고, 임기는 5년이며 엇갈려 끝난다. 그래서 정권이 바뀌면 몇 년 안에 다수파가 바뀌는 것이 보통이고, 누가 근로자이고 누가 독립계약자인지 같은 핵심 판단도 함께 뒤집힌다. 독립계약자 판단 기준이 그 예다. NLRB는 2019년 슈퍼셔틀(SuperShuttle) 결정에서 기업가적 기회를 중심에 둔 기준을 채택했다가, 2023년 애틀랜타 오페라(Atlanta Opera) 결정에서 이를 폐기하고 어느 한 요소도 결정적이지 않은 다요소 커먼로 기준으로 돌아갔다. 진자운동이라는 표현은 과장이 아니다.</p>

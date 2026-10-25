@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1941,7 +2182,7 @@
 <p><em>&quot;표지와 신호 간의 차이는, 우리가 표지를 우리 자신이 사용하기 위해 만드는 반면 신호는 다른 사람들도 사용하기 위해 만든다는 것이다.&quot;</em><br>— 홉스, 《물체론(De Corpore)》 I, 2, 2 (EW I, p. 15)</p>
 </blockquote>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 290" role="img" aria-label="홉스의 표지와 신호 이중 기호 체계도" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 290" role="img" aria-label="홉스의 표지와 신호 이중 기호 체계도" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .hb-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -1990,7 +2231,7 @@
     <rect x="14" y="162" width="332" height="32" rx="5" fill="var(--bg-card)" stroke="#3b82f6" stroke-opacity="0.4"/>
     <text x="180" y="183" text-anchor="middle" class="hb-bold" fill="#3b82f6">기능: 공적 지식 축적 및 학문의 세대 간 전수</text>
   </g>
-</svg>
+</svg><figcaption>홉스의 표지와 신호 이중 기호 체계도</figcaption></figure>
 </div>
 
 <h3 id="23-이름names의-우선순위와-명제의-결합"><a href="#23-이름names의-우선순위와-명제의-결합" class="heading-anchor" aria-hidden="true">#</a> 2.3 이름(Names)의 우선순위와 명제의 결합</h3><p>홉스에게 이 표지와 신호의 역할을 수행하는 물리적 실체는 바로 단어들, 더 정확히는 <strong>&#39;이름(names / verba)&#39;</strong>입니다. </p>
@@ -2055,7 +2296,7 @@
 <p>$$\text{다각형 내각의 총합 공식} = 180^\circ \times (n - 2)$$</p>
 <p>우리는 천각형의 변을 머릿속으로 세어보지 않고도, 위 공식의 변수 $n$ 자리에 기호 <code>1,000</code>을 대입하여 $180^\circ \times 998 = 179,640^\circ$라는 정확한 내각의 총합을 오차 없이 계산해 냅니다. <strong>내용을 직관하지 못해도, 비어 있는 자리에 기호를 대신 채워 넣고 규칙에 따라 조작하면 완벽한 진리에 도달하는 것입니다!</strong></p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 310" role="img" aria-label="라이프니츠의 천각형 역설과 맹목적 사고 메커니즘" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 310" role="img" aria-label="라이프니츠의 천각형 역설과 맹목적 사고 메커니즘" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .ch-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2123,7 +2364,7 @@
     <text x="115" y="172" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="10.5px" fill="var(--text-muted)">직관 없이 증명된 지식</text>
     <text x="115" y="205" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="700" fill="var(--text-main)">현대 컴퓨터 연산의 원형</text>
   </g>
-</svg>
+</svg><figcaption>라이프니츠의 천각형 역설과 맹목적 사고 메커니즘</figcaption></figure>
 </div>
 
 <h3 id="43-맹목적-사고cogitatio-caeca와-관념-개념의-혁명"><a href="#43-맹목적-사고cogitatio-caeca와-관념-개념의-혁명" class="heading-anchor" aria-hidden="true">#</a> 4.3 맹목적 사고(Cogitatio Caeca)와 관념 개념의 혁명</h3><p>라이프니츠는 대상의 구체적인 심상을 떠올리지 못한 채, 오직 기호 체계의 형식적 규칙에 의존하여 진행되는 사유를 <strong>&#39;맹목적 사고(盲目的 思考, Cogitatio Caeca)&#39;</strong> 혹은 <strong>&#39;기호적 사고(Cogitatio Symbolica)&#39;</strong>라고 불렀습니다 (<em>Meditationes</em>, A VI, 4, pp. 587-588).</p>
@@ -2199,7 +2440,7 @@
 <p>LLM 내부에는 인간이 느끼는 고통, 사랑, 진리의 의미가 존재하지 않습니다. 모델 내부에는 오직 고차원 기하학적 거리와 통계적 확률 분포만이 존재합니다.</p>
 <p>기계 자신은 의미를 완전히 결여한 채 맹목적으로 숫자와 기호를 조작하고 있는데, 출력되는 결과물은 인간이 보기에 경이로울 정도로 지적이고 유창합니다. 이것은 무엇입니까? <strong>&quot;구체적 내용의 직관 없이도 형식적 기호 조작 규칙만으로 지적 결과물에 도달할 수 있다&quot;는 라이프니츠의 &#39;맹목적 사고(Cogitatio Caeca)&#39;가, 현대의 거대한 통계적 인공신경망이라는 육체를 입고 가장 극단적이고 완전한 형태로 실현된 것입니다!</strong></p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" role="img" aria-label="기호에서 AI까지 400년 계산 사상사 계보도" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" role="img" aria-label="기호에서 AI까지 400년 계산 사상사 계보도" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .tree-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2275,7 +2516,7 @@
   </g>
 
   <line x1="390" y1="270" x2="445" y2="270" stroke="#ec4899" stroke-width="2" marker-end="url(#tree-arr)"/>
-</svg>
+</svg><figcaption>기호에서 AI까지 400년 계산 사상사 계보도</figcaption></figure>
 </div>
 
 <hr>

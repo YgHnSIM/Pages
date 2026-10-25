@@ -189,7 +189,7 @@ function normalizeNestedCodeFences(md) {
 }
 
 
-function compileMarkdown(markdown, meta = {}) {
+function renderMarked(markdown, meta = {}, ctx = {}) {
   const headings = [];
   const headingCounts = {};
   const pageTitle = stripTocLabel(meta.title || '');
@@ -278,8 +278,14 @@ function compileMarkdown(markdown, meta = {}) {
 
   // Custom Code blocks
   renderer.code = function({ text, lang }) {
+    if ((lang || '').trim().toLowerCase() === 'mermaid') {
+      if (ctx) ctx.hasMermaid = true;
+      const escapedMath = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<pre class="mermaid">${escapedMath}</pre>`;
+    }
     const generic = isGenericLang(lang);
-    const displayLang = generic ? '평문' : lang;
+    const ascii = generic && /[┌┐└┘│─├┤┬┴┼]/.test(text);
+    const displayLang = ascii ? '도식' : (generic ? '평문' : lang);
     const langClass = generic ? 'code-lang lang-generic' : 'code-lang';
     const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const copyBtn = isTrivialDiagram(text, lang)
@@ -293,8 +299,9 @@ function compileMarkdown(markdown, meta = {}) {
     ${copyBtn}
   </div>`;
     const codeClass = generic ? 'language-text' : `language-${lang}`;
+    const wrapperClass = ascii ? 'code-block-wrapper ascii-diagram' : 'code-block-wrapper';
     return `
-<div class="code-block-wrapper">${header}
+<div class="${wrapperClass}">${header}
   <pre><code class="${codeClass}">${escaped}</code></pre>
 </div>`;
   };
@@ -336,6 +343,518 @@ function compileMarkdown(markdown, meta = {}) {
   });
 
   return { html, headings };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function decodeAttr(value) {
+  return String(value)
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
+function pushSlot(slots, text) {
+  const token = `OBSLOT${slots.length}ENDOBSLOT`;
+  slots.push(text);
+  return token;
+}
+
+function unmask(text, slots) {
+  return String(text).replace(/OBSLOT(\d+)ENDOBSLOT/g, (_, n) => slots[Number(n)] ?? '');
+}
+
+function maskAll(md, slots) {
+  const lines = normalizeNestedCodeFences(md).split('\n');
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const open = lines[i].match(/^( {0,3})(`{3,})([^`]*)$/);
+    if (!open) {
+      out.push(lines[i]);
+      continue;
+    }
+    const len = open[2].length;
+    let j = i + 1;
+    while (j < lines.length && !new RegExp(`^ {0,3}\`{${len},}\\s*$`).test(lines[j])) j++;
+    const end = Math.min(j + (j < lines.length ? 1 : 0), lines.length);
+    out.push(pushSlot(slots, lines.slice(i, end).join('\n')));
+    i = j;
+  }
+  let text = out.join('\n');
+  text = text.replace(/<svg[\s\S]*?<\/svg>/gi, (m) => pushSlot(slots, m));
+  text = text.replace(/\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]/g, (m) => pushSlot(slots, m));
+  text = text.replace(/(?<!\\)\$(?!\s)([^$\n\uAC00-\uD7A3]+?)(?<!\s)\$(?!\d)/g, (m) => pushSlot(slots, m));
+  text = text.replace(/\\\((.+?)\\\)/g, (m) => pushSlot(slots, m));
+  text = text.replace(/``[^`]*``|`[^`\n]+`/g, (m) => pushSlot(slots, m));
+  return text;
+}
+
+function stripObsidianComments(md) {
+  return md.replace(/%%[\s\S]*?%%/g, '');
+}
+
+function normKey(value) {
+  return String(value || '').trim().toLowerCase().replace(/\.md$/i, '').replace(/\s+/g, ' ');
+}
+
+function makeCatalog(records) {
+  const map = new Map();
+  function add(key, rec) {
+    const n = normKey(key);
+    if (!n || map.has(n)) return;
+    map.set(n, rec);
+  }
+  for (const rec of records) {
+    add(rec.title, rec);
+    add(rec.slug, rec);
+    add(rec.fileStem, rec);
+    add(String(rec.fileStem || '').replace(/-/g, ' '), rec);
+  }
+  return {
+    lookup(name) {
+      const n = normKey(name);
+      if (!n) return null;
+      return map.get(n)
+        || map.get(n.replace(/[-_]/g, ' ').replace(/\s+/g, ' '))
+        || map.get(n.replace(/ /g, '-'))
+        || null;
+    }
+  };
+}
+
+function relUrl(fromPublic, toPublic) {
+  const fromParts = String(fromPublic || '').split('/');
+  fromParts.pop();
+  const toParts = String(toPublic || '').split('/');
+  while (fromParts.length && toParts.length && fromParts[0] === toParts[0]) {
+    fromParts.shift();
+    toParts.shift();
+  }
+  return fromParts.map(() => '..').concat(toParts).join('/');
+}
+
+function safeExistingFile(root, rel) {
+  const cleaned = String(rel || '').replace(/\\/g, '/').replace(/^\/+/, '');
+  if (!cleaned || cleaned.includes('..')) return null;
+  const full = path.resolve(root, cleaned);
+  const base = path.resolve(root);
+  if (full !== base && !full.startsWith(base + path.sep)) return null;
+  return fs.existsSync(full) && fs.statSync(full).isFile() ? full : null;
+}
+
+function findImage(rel) {
+  const roots = [
+    [path.join(SOURCES_DIR, 'attachments'), 'sources/attachments'],
+    [path.join(__dirname, 'assets'), 'assets'],
+    [SOURCES_DIR, 'sources']
+  ];
+  for (const [root, urlBase] of roots) {
+    if (safeExistingFile(root, rel)) {
+      return `${urlBase}/${String(rel).replace(/\\/g, '/')}`;
+    }
+  }
+  return null;
+}
+
+function parseWikiInner(inner) {
+  let main = inner;
+  let alias = null;
+  const pipe = inner.indexOf('|');
+  if (pipe !== -1) {
+    alias = inner.slice(pipe + 1).trim();
+    main = inner.slice(0, pipe);
+  }
+  const hash = main.indexOf('#');
+  if (hash === -1) return { target: main.trim(), sub: null, alias };
+  return { target: main.slice(0, hash).trim(), sub: main.slice(hash + 1).trim(), alias };
+}
+
+function wikiHasWord(value) {
+  return /[A-Za-z\uAC00-\uD7A3]/.test(value || '');
+}
+
+function inlineTitle(text) {
+  return escapeHtml(text)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
+const CALLOUTS = {
+  note: ['info', '노트'],
+  info: ['info', '정보'],
+  abstract: ['info', '요약'],
+  summary: ['info', '요약'],
+  tldr: ['info', '요약'],
+  question: ['info', '질문'],
+  help: ['info', '질문'],
+  faq: ['info', '질문'],
+  example: ['info', '예시'],
+  todo: ['info', '할 일'],
+  tip: ['tip', '팁'],
+  hint: ['tip', '팁'],
+  important: ['tip', '팁'],
+  success: ['tip', '성공'],
+  check: ['tip', '성공'],
+  done: ['tip', '성공'],
+  warning: ['warning', '주의'],
+  caution: ['warning', '주의'],
+  attention: ['warning', '주의'],
+  bug: ['warning', '버그'],
+  danger: ['danger', '위험'],
+  error: ['danger', '위험'],
+  failure: ['danger', '실패'],
+  fail: ['danger', '실패'],
+  missing: ['danger', '실패'],
+  quote: ['quote', '인용'],
+  cite: ['quote', '인용']
+};
+
+function calloutSpec(type) {
+  return CALLOUTS[String(type || '').toLowerCase()] || CALLOUTS.note;
+}
+
+function stripQuotes(line, depth) {
+  let rest = line;
+  for (let i = 0; i < depth; i++) rest = rest.replace(/^> ?/, '');
+  return rest;
+}
+
+function footnoteRef(num, primary) {
+  const id = primary ? ` id="fnref-${num}"` : '';
+  return `<a class="footnote-ref" href="#fn-${num}"${id}>${num}</a>`;
+}
+
+function pushNote(ctx, md) {
+  const num = ctx.notes.length + 1;
+  ctx.notes.push({ num, md });
+  return num;
+}
+
+function renderFootnotes(notes) {
+  if (!notes || !notes.length) return '';
+  const items = notes.map((note) => {
+    const body = note.md.includes('\n') ? marked.parse(note.md) : marked.parseInline(note.md);
+    return `<li id="fn-${note.num}">${body}<a class="backlink" href="#fnref-${note.num}" aria-label="본문으로">↩</a></li>`;
+  }).join('\n');
+  return `<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list">${items}</ol></section>`;
+}
+
+function extractSection(md, headingText) {
+  const lines = String(md || '').replace(/\r\n/g, '\n').split('\n');
+  const target = slugify(headingText);
+  let start = -1;
+  let level = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const h = lines[i].match(/^(#{1,6})\s+(.+?)\s*$/);
+    if (!h) continue;
+    if (start < 0 && slugify(h[2]) === target) {
+      start = i;
+      level = h[1].length;
+      continue;
+    }
+    if (start >= 0 && h[1].length <= level) return lines.slice(start, i).join('\n');
+  }
+  return start >= 0 ? lines.slice(start).join('\n') : null;
+}
+
+function wikiHref(rec, sub, ctx) {
+  const base = rec ? relUrl(ctx.fromUrl, rec.publicUrl) : '';
+  if (!sub) return base;
+  if (sub.startsWith('^')) return `${base}#ob-${encodeURIComponent(sub.slice(1))}`;
+  const hash = slugify(sub);
+  return `${base}#${hash}`;
+}
+
+function missingWiki(label) {
+  return `<span class="wikilink-missing">${escapeHtml(label)}</span>`;
+}
+
+function expandEmbed(inner, ctx, meta) {
+  const parsed = parseWikiInner(inner);
+  const label = parsed.alias || parsed.target || parsed.sub || inner;
+  if (!wikiHasWord(parsed.target) && !wikiHasWord(parsed.sub || '')) return `![[${inner}]]`;
+  if (/\.(png|jpe?g|gif|webp|svg|avif)$/i.test(parsed.target)) {
+    const urlBase = findImage(parsed.target);
+    if (!urlBase) return `<span class="embed-missing">임베드 없음: ${escapeHtml(parsed.target)}</span>`;
+    const width = parsed.alias && /^\d+$/.test(parsed.alias) ? parsed.alias : '';
+    const alt = width ? parsed.target : (parsed.alias || parsed.target);
+    const style = width ? ` style="max-width:${Number(width)}px"` : '';
+    const src = `${ctx.rootPrefix || '../'}${urlBase}`;
+    return `<img class="embed-image" src="${escapeAttr(src)}" alt="${escapeAttr(alt)}"${style}>`;
+  }
+  const rec = ctx.catalog ? ctx.catalog.lookup(parsed.target) : null;
+  if (!rec) return `<span class="embed-missing">임베드 없음: ${escapeHtml(label)}</span>`;
+  const href = wikiHref(rec, parsed.sub, ctx);
+  if (!parsed.sub || parsed.sub.startsWith('^') || (ctx.embedDepth || 0) >= 1) {
+    return `<p class="note-embed"><a href="${escapeAttr(href)}">${escapeHtml(parsed.alias || rec.title)}</a></p>`;
+  }
+  const section = extractSection(rec.body, parsed.sub);
+  if (section == null) return `<span class="embed-missing">임베드 없음: ${escapeHtml(parsed.target + '#' + parsed.sub)}</span>`;
+  const child = compileMarkdown(section, { title: rec.title, subtitle: '' }, {
+    ...ctx,
+    nestedChrome: true,
+    embedDepth: (ctx.embedDepth || 0) + 1
+  });
+  return `<aside class="note-embed"><p class="embed-source"><a href="${escapeAttr(href)}">${escapeHtml(rec.title)}</a></p>${child.html}</aside>`;
+}
+
+function applyWikilink(inner, ctx) {
+  const parsed = parseWikiInner(inner);
+  if (!wikiHasWord(parsed.target) && !wikiHasWord(parsed.sub || '')) return `[[${inner}]]`;
+  const label = parsed.alias || parsed.target || parsed.sub;
+  if (!parsed.target) {
+    const hash = parsed.sub && parsed.sub.startsWith('^')
+      ? `#ob-${encodeURIComponent(parsed.sub.slice(1))}`
+      : `#${slugify(parsed.sub || '')}`;
+    return `<a href="${escapeAttr(hash)}">${escapeHtml(label)}</a>`;
+  }
+  const rec = ctx.catalog ? ctx.catalog.lookup(parsed.target) : null;
+  if (!rec) return missingWiki(label);
+  return `<a href="${escapeAttr(wikiHref(rec, parsed.sub, ctx))}">${escapeHtml(label)}</a>`;
+}
+
+function applyHighlights(md) {
+  return md.replace(/==([^=\n]+?)==/g, (_, inner) => {
+    return `<mark class="md-highlight">${marked.parseInline(inner)}</mark>`;
+  });
+}
+
+function applyBlockIds(md) {
+  const lines = md.split('\n');
+  const out = [];
+  for (const line of lines) {
+    const only = line.match(/^\^([A-Za-z][\w-]*)\s*$/);
+    if (only && out.length) {
+      out[out.length - 1] += `<span id="ob-${only[1]}" class="block-id"></span>`;
+      continue;
+    }
+    const trail = line.match(/^(.*\S)[ \t]+\^([A-Za-z][\w-]*)\s*$/);
+    if (trail && !/^\s*>/.test(trail[1])) {
+      out.push(`${trail[1]}<span id="ob-${trail[2]}" class="block-id"></span>`);
+      continue;
+    }
+    out.push(line);
+  }
+  return out.join('\n');
+}
+
+function transformCallouts(md, ctx, slots, meta) {
+  if ((ctx.calloutDepth || 0) > 8) return md;
+  const lines = md.split('\n');
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const open = lines[i].match(/^((?:> *)+)\[!([A-Za-z]+)\]([+-])?[ \t]*([^\n]*)$/);
+    if (!open) {
+      out.push(lines[i]);
+      continue;
+    }
+    const depth = (open[1].match(/>/g) || []).length;
+    const fold = open[3] || '';
+    let custom = (open[4] || '').trim();
+    const bodyLines = [];
+    i++;
+    while (i < lines.length) {
+      if (lines[i].trim() === '') break;
+      const quotes = (lines[i].match(/^(?:> *)*/) || [''])[0];
+      const quoteCount = (quotes.match(/>/g) || []).length;
+      if (quoteCount < depth) break;
+      bodyLines.push(stripQuotes(lines[i], depth));
+      i++;
+    }
+    i--;
+    let body = bodyLines.join('\n');
+    let title = custom;
+    if (!title) {
+      const peeled = body.match(/^\*\*([^*]+)\*\*[ \t]*(?:\n|$)/);
+      if (peeled) {
+        title = peeled[1].trim();
+        body = body.slice(peeled[0].length);
+      }
+    }
+    const spec = calloutSpec(open[2]);
+    const titleHtml = inlineTitle(title || spec[1]);
+    const inner = compileMarkdown(unmask(body, slots), meta, {
+      ...ctx,
+      nestedChrome: true,
+      calloutDepth: (ctx.calloutDepth || 0) + 1
+    });
+    const cls = spec[0];
+    out.push('');
+    if (fold) {
+      const opened = fold === '+' ? ' open' : '';
+      out.push(`<details class="callout-box ${cls}"${opened}><summary class="callout-title">${titleHtml}</summary><div class="callout-body">${inner.html}</div></details>`);
+    } else {
+      out.push(`<div class="callout-box ${cls}"><div class="callout-title">${titleHtml}</div><div class="callout-body">${inner.html}</div></div>`);
+    }
+    out.push('');
+  }
+  return out.join('\n');
+}
+
+function processSegment(masked, ctx, slots, meta) {
+  const defs = new Map();
+  let text = masked.replace(/^\[\^([^\]\n]+)\]:[ \t]*([^\n]*)(?:\n((?:[ \t]+[^\n]*(?:\n|$))*))?/gm, (_, id, first, rest) => {
+    defs.set(id, unmask([first, rest || ''].join('\n').trim(), slots));
+    return '';
+  });
+  if (!ctx.seenNotes) ctx.seenNotes = new Map();
+  text = text.replace(/!\[\[([^\]]+)\]\]|\^\[([^\]\n]+)\]|\[\^([^\]\n]+)\]/g, (full, embed, inline, named) => {
+    if (embed) {
+      if ((ctx.embedDepth || 0) >= 1) return applyWikilink(embed, ctx);
+      return expandEmbed(embed, ctx, meta);
+    }
+    if (inline) return footnoteRef(pushNote(ctx, unmask(inline, slots)), true);
+    if (!defs.has(named)) return full;
+    if (ctx.seenNotes.has(named)) return footnoteRef(ctx.seenNotes.get(named), false);
+    const num = pushNote(ctx, defs.get(named));
+    ctx.seenNotes.set(named, num);
+    return footnoteRef(num, true);
+  });
+  text = applyHighlights(text);
+  text = text.replace(/(?<!!)\[\[([^\]]+)\]\]/g, (full, inner) => applyWikilink(inner, ctx));
+  text = applyBlockIds(text);
+  text = transformCallouts(text, ctx, slots, meta);
+  return text;
+}
+
+function canvasClass(svg) {
+  const open = svg.match(/^<svg\b[^>]*>/i);
+  const style = open && open[0].match(/style="([^"]*)"/i);
+  const bg = style && style[1].match(/background(?:-color)?:\s*([^;]+)/i);
+  const picked = bg ? bg[1] : firstCanvasFill(svg);
+  return classifyCanvas(picked);
+}
+
+function firstCanvasFill(svg) {
+  const vb = svg.match(/viewBox="\s*[\d.\-]+\s+[\d.\-]+\s+([\d.]+)/i);
+  const viewW = vb ? Number(vb[1]) : 0;
+  const rects = svg.match(/<rect\b[^>]*>/gi) || [];
+  for (const rect of rects.slice(0, 6)) {
+    const fill = rect.match(/\bfill="([^"]+)"/i);
+    if (!fill) continue;
+    const width = rect.match(/\bwidth="([\d.]+)"/i);
+    if (viewW && width && Number(width[1]) < viewW * 0.6) continue;
+    return fill[1];
+  }
+  return '';
+}
+
+function classifyCanvas(raw) {
+  const color = String(raw || '').trim().toLowerCase();
+  if (!color || color.startsWith('var(')) return 'diagram-adaptive';
+  let hex = color.replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map((ch) => ch + ch).join('');
+  hex = hex.slice(0, 6);
+  if (['ffffff', 'f8fafc', 'f1f5f9', 'f9fafb', 'fafafa'].includes(hex)) return 'diagram-light';
+  if (['0f172a', '020617', '1e293b', '0b0f19', '111827', '131b2e', '0d1117'].includes(hex)) return 'diagram-dark';
+  return 'diagram-adaptive';
+}
+
+function figureFor(svg) {
+  const labelMatch = svg.match(/\baria-label="([^"]*)"/i);
+  const vb = svg.match(/viewBox="\s*[\d.\-]+\s+[\d.\-]+\s+([\d.]+)/i);
+  const width = vb ? Math.max(1, Math.round(Number(vb[1]))) : 720;
+  const caption = labelMatch
+    ? `<figcaption>${escapeHtml(decodeAttr(labelMatch[1]))}</figcaption>`
+    : '';
+  return `<figure class="diagram diagram-scroll ${canvasClass(svg)}" style="--diagram-w:${width}px" data-scroll-hint="좌우로 밀어서 그림 전체 보기">${svg}${caption}</figure>`;
+}
+
+function wrapDiagrams(html) {
+  const unwrapped = html.replace(/<p>(\s*<svg\b[\s\S]*?<\/svg>\s*)<\/p>/gi, '$1');
+  return unwrapped.replace(/<svg\b[\s\S]*?<\/svg>/gi, (svg, offset, whole) => {
+    const before = whole.slice(Math.max(0, offset - 140), offset);
+    if (/class="[^"]*\bdiagram\b[^"]*"[^>]*>\s*$/.test(before)) return svg;
+    return figureFor(svg);
+  });
+}
+
+function compileMarkdown(markdown, meta = {}, ctx = {}) {
+  if (!ctx.notes) ctx.notes = [];
+  if (!ctx.seenNotes) ctx.seenNotes = new Map();
+  const slots = [];
+  const masked = stripObsidianComments(maskAll(String(markdown || '').replace(/\r\n/g, '\n'), slots));
+  const transformed = processSegment(masked, ctx, slots, meta);
+  const rendered = renderMarked(unmask(transformed, slots), meta, ctx);
+  if (ctx.nestedChrome) return rendered;
+  return {
+    html: wrapDiagrams(rendered.html) + renderFootnotes(ctx.notes),
+    headings: rendered.headings
+  };
+}
+
+function assertObsidianFixtures() {
+  const catalog = makeCatalog([{
+    title: '있는 글',
+    slug: 'exists',
+    fileStem: '있는-글',
+    publicUrl: 'articles/exists.html',
+    body: '## 포함된 제목\n\n본문 단락.\n\n## 다음\n\n뒤.\n'
+  }]);
+  const ctx = {
+    catalog,
+    fromUrl: 'articles/self.html',
+    rootPrefix: '../',
+    notes: [],
+    seenNotes: new Map(),
+    hasMermaid: false,
+    embedDepth: 0
+  };
+  const md = [
+    '> [!NOTE] 직접 제목',
+    '> 본문 ==강조== %%숨김%%',
+    '',
+    '> [!warning]-',
+    '> **굵은 제목**',
+    '> 접힘',
+    '',
+    '각주[^a]와 인라인^[옆].',
+    '',
+    '[^a]: 정의 **굵게**',
+    '',
+    '[[있는 글|별칭]]과 [[3]]과 `[[3]]`',
+    '',
+    '![[있는 글#포함된 제목]]',
+    '',
+    '![[없는그림.png]]',
+    '',
+    '```',
+    '%%keep%%',
+    '```',
+    '',
+    '```mermaid',
+    'graph TD; A-->B',
+    '```',
+    '',
+    '- [ ] 할 일',
+    '- [x] 끝'
+  ].join('\n');
+  const { html } = compileMarkdown(md, { title: '픽스처', subtitle: '' }, ctx);
+  const checks = [
+    ['callout title', html.includes('직접 제목') && html.includes('callout-box info')],
+    ['folded callout', html.includes('<details') && html.includes('굵은 제목') && !html.includes('**굵은 제목**') && !html.includes('[!warning]') && !html.includes('[!NOTE]')],
+    ['highlight', html.includes('class="md-highlight"') && html.includes('강조')],
+    ['comment removed', !html.includes('숨김')],
+    ['comment in code', html.includes('%%keep%%')],
+    ['footnote', html.includes('footnote-ref') && html.includes('footnotes-section') && html.includes('굵게')],
+    ['wikilink', html.includes('별칭') && html.includes('exists.html')],
+    ['literal brackets', html.includes('[[3]]')],
+    ['embed section', html.includes('note-embed') && html.includes('본문 단락')],
+    ['missing embed', html.includes('임베드 없음: 없는그림.png')],
+    ['mermaid', html.includes('class="mermaid"') && ctx.hasMermaid === true],
+    ['task', html.includes('type="checkbox"')]
+  ];
+  const failed = checks.filter(([, ok]) => !ok).map(([name]) => name);
+  if (failed.length) {
+    throw new Error(`Obsidian fixture failed: ${failed.join(', ')}\n${html.slice(0, 2500)}`);
+  }
 }
 
 /**
@@ -417,7 +936,11 @@ async function build() {
     return s === 'true' || s === 'yes' || s === '1';
   }
 
+  assertObsidianFixtures();
+  console.log('  ✓ Obsidian fixture');
+
   const jobs = collectMarkdownJobs();
+  const loaded = [];
   const articles = [];
 
   for (const job of jobs) {
@@ -445,19 +968,41 @@ async function build() {
     const tags = Array.isArray(data.tags) ? data.tags : (data.tags ? [data.tags] : []);
     const unlisted = job.preview || truthyFrontmatter(data.unlisted) || truthyFrontmatter(data.draft);
     const isPreview = job.preview;
+    const outSubdir = isPreview ? 'preview' : 'articles';
+    const publicUrl = `${outSubdir}/${slug}.html`;
+    const fileStem = path.basename(job.file, '.md');
+    loaded.push({
+      content, title, subtitle, date, author, summary, tags, unlisted, isPreview,
+      publicUrl, slug, fileStem, outSubdir
+    });
+  }
 
+  const catalog = makeCatalog(loaded);
+
+  for (const item of loaded) {
+    const {
+      content, title, subtitle, date, author, summary, tags, unlisted, isPreview,
+      publicUrl, outSubdir
+    } = item;
     const readingTime = estimateReadingTime(content);
-    const { html: contentHtml, headings } = compileMarkdown(content, { title, subtitle });
+    const ctx = {
+      catalog,
+      fromUrl: publicUrl,
+      rootPrefix: '../',
+      notes: [],
+      seenNotes: new Map(),
+      hasMermaid: false,
+      embedDepth: 0
+    };
+    const { html: contentHtml, headings } = compileMarkdown(content, { title, subtitle }, ctx);
     const tocHtml = renderTOC(headings);
 
-    const outSubdir = isPreview ? 'preview' : 'articles';
     const outDir = path.join(OUTPUT_DIR, outSubdir);
     if (!fs.existsSync(outDir)) {
       fs.mkdirSync(outDir, { recursive: true });
     }
-    const outFileName = `${slug}.html`;
+    const outFileName = path.posix.basename(publicUrl);
     const outFilePath = path.join(outDir, outFileName);
-    const publicUrl = `${outSubdir}/${outFileName}`;
     const homeUrl = '../index.html';
     const rootPath = '../';
     const robotsMeta = unlisted
@@ -476,7 +1021,8 @@ async function build() {
       content: contentHtml,
       home_url: homeUrl,
       root_path: rootPath,
-      robots_meta: robotsMeta
+      robots_meta: robotsMeta,
+      mermaid: ctx.hasMermaid
     });
 
     fs.writeFileSync(outFilePath, articleHtml, 'utf-8');

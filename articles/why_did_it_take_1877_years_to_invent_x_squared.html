@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1910,7 +2151,7 @@
 <p>$$a^m \cdot a^n = a^{m+n}$$</p>
 <p>그러나 아르키메데스에게는 거듭제곱을 압축적으로 적을 수 있는 대수적 기호 체계가 없었다. 그는 이 모든 원리를 &#39;기하학적 비례식&#39;이라는 장황한 언어로 기술해야만 했다.</p>
 <div class="svg-chart-container" style="margin: 28px 0; width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: auto; -webkit-overflow-scrolling: touch;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" role="img" aria-label="아르키메데스의 연속 비례와 거듭제곱 곱셈 법칙" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" role="img" aria-label="아르키메데스의 연속 비례와 거듭제곱 곱셈 법칙" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
   <defs>
     <marker id="m1-arr-gray" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
       <path d="M0,1 L5,3.5 L0,6 Z" fill="var(--text-light, #94a3b8)"/>
@@ -1984,7 +2225,7 @@
 
   <!-- Formula Summary: at y=255, well below nodes -->
   <text x="400" y="255" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="13px" font-weight="600" fill="var(--text-main)">지수 곱셈 법칙: aᵐ · aⁿ = aᵐ⁺ⁿ  (a³ · a⁴ = a³⁺⁴ = a⁷)</text>
-</svg>
+</svg><figcaption>아르키메데스의 연속 비례와 거듭제곱 곱셈 법칙</figcaption></figure>
 </div>
 
 <h3 id="디오판토스의-미지수-거듭제곱-단축-기호"><a href="#디오판토스의-미지수-거듭제곱-단축-기호" class="heading-anchor" aria-hidden="true">#</a> 디오판토스의 미지수 거듭제곱 단축 기호</h3><p>아르키메데스로부터 약 500년 뒤인 서기 3세기, 알렉산드리아의 수학자 <strong>디오판토스(Diophantus)</strong>는 『산술(<em>Arithmetica</em>)』에서 미지수와 미지수의 거듭제곱을 다루기 위한 획기적인 단축 기호(Syncopated notation)를 도입했다.</p>
@@ -2082,10 +2323,10 @@
 <h3 id="소수prime-차수의-악몽-서솔리드sursolid"><a href="#소수prime-차수의-악몽-서솔리드sursolid" class="heading-anchor" aria-hidden="true">#</a> 소수(Prime) 차수의 악몽: 서솔리드(Sursolid)</h3><p>그러나 이 실용적인 명칭 체계는 치명적인 약점을 안고 있었다. 2나 3의 배수가 아닌 소수(Prime) 거듭제곱이 등장하면 체계가 산산조각 났다.</p>
 <p>5제곱은 2나 3의 거듭제곱근 알고리즘으로 분해할 수 없었다. 그래서 코식 수학자들은 이를 &#39;단단하여 뚫을 수 없는 수&#39;라는 뜻의 **서솔리드(<em>sursolid</em>, 둔감한 입체)**라는 기괴한 이름을 지어 붙여야 했다. 7제곱은 &#39;제2의 서솔리드(<em>second sursolid</em>)&#39;, 11제곱은 &#39;제3의 서솔리드&#39;가 되었다. 차수가 올라갈 때마다 새로운 이름과 암기용 라틴어 규칙이 끝없이 덧붙여졌다.</p>
 <p>이 코식 대수학은 실생활에서는 아무 쓸모가 없었고, 오직 최고의 수학자들만이 두뇌를 연마하고 수학 올림피아드 같은 지적 대결에서 승리하기 위해 배우는 난해한 비전(祕傳)이었다.</p>
-<blockquote>
-<p>[!NOTE]
-<strong>로버트 레코드의 인문주의적 언어유희(Pun)</strong><br>레코드의 책 제목 『지혜의 숫돌(<em>The Whetstone of Witte</em>)』은 바로 이 코식 대수학을 활용한 절묘한 2개국어 언어유희였다. 당시 대수학을 뜻하던 단어 <strong>Coss</strong>(이탈리아어 <em>cosa</em>, &#39;사물&#39;에서 유래)는 **라틴어로 숫돌(칼을 가는 돌)을 뜻하는 단어 <em>cōs</em>(소유격 <em>cōtis</em>)**와 발음이 완전히 같았다. 따라서 이 책의 제목은 &quot;대수학 책&quot;인 동시에 독자의 지혜를 예리하게 벼려주는 &quot;지혜의 숫돌(<em>Cos ingenii</em>)&quot;이라는 이중적 의미를 담고 있었다.</p>
-</blockquote>
+<div class="callout-box info"><div class="callout-title">로버트 레코드의 인문주의적 언어유희(Pun)</div><div class="callout-body"><p>레코드의 책 제목 『지혜의 숫돌(<em>The Whetstone of Witte</em>)』은 바로 이 코식 대수학을 활용한 절묘한 2개국어 언어유희였다. 당시 대수학을 뜻하던 단어 <strong>Coss</strong>(이탈리아어 <em>cosa</em>, &#39;사물&#39;에서 유래)는 <strong>라틴어로 숫돌(칼을 가는 돌)을 뜻하는 단어 <em>cōs</em>(소유격 <em>cōtis</em>)</strong>와 발음이 완전히 같았다. 따라서 이 책의 제목은 &quot;대수학 책&quot;인 동시에 독자의 지혜를 예리하게 벼려주는 &quot;지혜의 숫돌(<em>Cos ingenii</em>)&quot;이라는 이중적 의미를 담고 있었다.</p>
+</div></div>
+
+
 <hr>
 <h2 id="4-1800년의-인식론적-장벽-quot수는-사물을-수식하는-형용사다quot"><a href="#4-1800년의-인식론적-장벽-quot수는-사물을-수식하는-형용사다quot" class="heading-anchor" aria-hidden="true">#</a> 4. 1,800년의 인식론적 장벽: &quot;수는 사물을 수식하는 형용사다&quot;</h2><p>이제 우리는 이 글의 가장 깊은 인식론적 핵심에 도달한다. </p>
 <p>오늘날 초등학생조차 &quot;그냥 8제곱은 $x$ 위에 작은 8을 적고($x^8$), 곱할 때는 지수끼리 더하면($x^2 \cdot x^3 = x^5$) 되잖아? 왜 그 똑똑한 학자들이 그걸 못 했을까?&quot;라고 의아해할 수 있다.</p>
@@ -2149,7 +2390,7 @@
 </blockquote>
 <p>레코드가 종이 위에 그은 두 평행선, 그것이 바로 오늘날 전 세계 80억 인류가 사용하는 <strong>등호($=$)</strong>의 탄생 순간이었다.</p>
 <div class="svg-chart-container" style="margin: 28px 0; width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: auto; -webkit-overflow-scrolling: touch;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="로버트 레코드의 등호 발명 계보" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="로버트 레코드의 등호 발명 계보" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
   <defs>
     <marker id="m2-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--text-light, #94a3b8)"/>
@@ -2199,7 +2440,7 @@
     <text x="65" y="60" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="28px" font-weight="800" fill="#ffffff">=</text>
     <text x="65" y="80" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="10px" font-weight="600" fill="rgba(255,255,255,0.85)">인류 공통 등호</text>
   </g>
-</svg>
+</svg><figcaption>로버트 레코드의 등호 발명 계보</figcaption></figure>
 </div>
 
 <h3 id="펨브룩-백작과의-정쟁과-채무자-감옥에서의-옥사"><a href="#펨브룩-백작과의-정쟁과-채무자-감옥에서의-옥사" class="heading-anchor" aria-hidden="true">#</a> 펨브룩 백작과의 정쟁과 채무자 감옥에서의 옥사</h3><p>그러나 현실의 세계는 수학 기호처럼 아름답지 못했다. 레코드가 브리스톨 조폐국에 부임한 지 불과 일주일 만에 치명적인 정적이 나타났다. 당대 최고의 실력자였던 <strong>제1대 펨브룩 백작 윌리엄 허버트(William Herbert, 1501~1570)</strong>였다.</p>
@@ -2268,16 +2509,16 @@
 x³   ===&gt;   x를 3번 곱함
 x⁴   ===&gt;   x를 4번 곱함
 xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 동일했기 때문)</code></pre>
-</div><blockquote>
-<p>[!TIP]
-<strong>데카르트는 왜 $x^2$ 대신 $xx$를 썼을까?</strong><br>데카르트의 책을 보면 $x^3, x^4$는 위첨자로 쓰면서도, 유독 2제곱만큼은 $x^2$ 대신 $xx$라고 쓴 경우가 매우 많다. 이유는 단순한 인쇄소 활자 조판 편의 때문이었다. 당시 활판 인쇄에서 $x^2$은 글자 &#39;x&#39; 위에 작은 활자 &#39;2&#39;를 올려야 하므로 조판이 매우 까다로웠지만, $xx$는 일반 활자 두 개를 나란히 놓으면 그만이었고 지면을 차지하는 가로 폭도 똑같았기 때문이다. 이 관습은 가우스 시대까지도 끈질기게 유지되었다.</p>
-</blockquote>
+</div><div class="callout-box tip"><div class="callout-title">데카르트는 왜 $x^2$ 대신 $xx$를 썼을까?</div><div class="callout-body"><p>데카르트의 책을 보면 $x^3, x^4$는 위첨자로 쓰면서도, 유독 2제곱만큼은 $x^2$ 대신 $xx$라고 쓴 경우가 매우 많다. 이유는 단순한 인쇄소 활자 조판 편의 때문이었다. 당시 활판 인쇄에서 $x^2$은 글자 &#39;x&#39; 위에 작은 활자 &#39;2&#39;를 올려야 하므로 조판이 매우 까다로웠지만, $xx$는 일반 활자 두 개를 나란히 놓으면 그만이었고 지면을 차지하는 가로 폭도 똑같았기 때문이다. 이 관습은 가우스 시대까지도 끈질기게 유지되었다.</p>
+</div></div>
+
+
 <p>데카르트는 책을 학자들의 언어인 라틴어가 아닌 일반 대중을 위한 <strong>프랑스어</strong>로 썼지만, 동시에 경쟁자들을 골탕 먹이기 위해 증명의 중간 단계를 무수히 생략하는 악명 높은 불친절함을 보였다. 자칫 사장될 뻔했던 데카르트의 기하학은 네덜란드의 수학자 <strong>프란스 판 스호텐(Frans van Schooten)</strong>이 상세한 해설과 주석을 덧붙인 라틴어 번역판(1649, 1659~1661)을 유럽 전역에 보급하면서 대륙과 영국의 학계를 완전히 평정했다.</p>
 <h3 id="패러다임-전환-quot구문론이-의미론을-이끈다-syntax-leads-semanticsquot"><a href="#패러다임-전환-quot구문론이-의미론을-이끈다-syntax-leads-semanticsquot" class="heading-anchor" aria-hidden="true">#</a> 패러다임 전환: &quot;구문론이 의미론을 이끈다 (Syntax leads Semantics)&quot;</h3><p>데카르트의 표기법이 가져온 진정한 혁명은 단순히 글자 수가 줄어들었다는 시각적 편리함에 있지 않았다. 그것은 <strong>인간의 뇌가 수학을 다루는 근본적인 방식의 지각변동</strong>이었다.</p>
 <p>과거의 수학책은 &#39;입으로 소리 내어 낭독하고 암송하는 책&#39;이었다. 따라서 표기법은 언제나 현실 세계의 말과 물리적 실체(선, 면, 입체)에 단단히 묶여 있어야만 했다.</p>
 <p>그러나 인쇄술과 데카르트의 표기법을 거치며 수학책은 <strong>&#39;눈으로 읽고 손으로 기호를 조작하는 시각적 텍스트&#39;</strong>로 탈바꿈했다. 기호가 말의 굴레에서 해방되자, 인류 역사상 처음으로 <strong>&quot;표기 규칙(구문론, Syntax)이 물리적 의미(의미론, Semantics)를 스스로 이끌고 나가는 역전 현상&quot;</strong>이 일어났다.</p>
 <div class="svg-chart-container" style="margin: 32px 0; width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: auto; -webkit-overflow-scrolling: touch;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" role="img" aria-label="대수학 인식론 대도약: 구술적 의미론에서 시각적 구문론으로" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" role="img" aria-label="대수학 인식론 대도약: 구술적 의미론에서 시각적 구문론으로" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
   <defs>
     <marker id="m3-arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--primary, #2563eb)"/>
@@ -2337,7 +2578,7 @@ xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 
     <text x="30" y="182" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--text-main)">• 음수 지수 탄생: 2³ / 2⁵ = 2⁻² = 1/4</text>
     <text x="30" y="196" font-family="Pretendard, -apple-system, sans-serif" font-size="11px" font-weight="600" fill="var(--text-main)">• 분수 지수 통일: (2¹/²)² = 2¹ ⟹ 2¹/² = √2</text>
   </g>
-</svg>
+</svg><figcaption>대수학 인식론 대도약: 구술적 의미론에서 시각적 구문론으로</figcaption></figure>
 </div>
 
 <p>이 규칙의 인도를 따라가자, 과거에는 도저히 상상할 수 없었던 수학적 개념들이 마치 마법처럼 저절로 쏟아져 나오기 시작했다:</p>
@@ -2363,7 +2604,7 @@ xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 
 <p>18세기에 이르러 <strong>요한 베르누이(Johann Bernoulli)</strong>와 <strong>레온하르트 오일러(Leonhard Euler)</strong>는 지수를 함수 자체($f(x) = a^x, e^x$)로 확장했고, 마침내 오일러는 허수 단위 $i$를 지수 위에 얹음으로써 인류 역사상 가장 아름다운 공식을 탄생시켰다.</p>
 <p>$$e^{i\pi} + 1 = 0$$</p>
 <div class="svg-chart-container" style="margin: 28px 0; width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: auto; -webkit-overflow-scrolling: touch;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="일반화자들의 계보: 데카르트에서 오일러까지" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="일반화자들의 계보: 데카르트에서 오일러까지" style="width:100%; min-width:680px; max-width:800px; height:auto; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
   <defs>
     <marker id="m4-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path d="M0,1.5 L6,4 L0,6.5 Z" fill="var(--text-light, #94a3b8)"/>
@@ -2409,7 +2650,7 @@ xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 
     <text x="67.5" y="52" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13px" font-weight="800" fill="#ffffff">eⁱᵖᶦ + 1 = 0</text>
     <text x="67.5" y="74" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-size="10px" font-weight="600" fill="rgba(255,255,255,0.85)">복소 지수함수 완성</text>
   </g>
-</svg>
+</svg><figcaption>일반화자들의 계보: 데카르트에서 오일러까지</figcaption></figure>
 </div>
 
 <h3 id="에필로그-100년-만에-얻은-불멸성"><a href="#에필로그-100년-만에-얻은-불멸성" class="heading-anchor" aria-hidden="true">#</a> 에필로그: 100년 만에 얻은 불멸성</h3><p>이 거대한 대서사시의 마지막 장에는 가슴 뭉클한 역사의 수수께끼가 숨어 있다.</p>

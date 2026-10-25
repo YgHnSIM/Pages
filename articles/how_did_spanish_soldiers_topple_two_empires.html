@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1944,9 +2185,9 @@
 <hr>
 <h2 id="3-전장의-기술적-실체-39총균쇠39-환상-해체와-말강철의-충격력"><a href="#3-전장의-기술적-실체-39총균쇠39-환상-해체와-말강철의-충격력" class="heading-anchor" aria-hidden="true">#</a> 3. 전장의 기술적 실체: &#39;총·균·쇠&#39; 환상 해체와 말·강철의 충격력</h2><p>제레드 다이아몬드의 베스트셀러 *총, 균, 쇠(Guns, Germs, and Steel)*는 유럽인의 승리를 총, 전염병, 강철로 요약했습니다. 그러나 실제 16세기 초반 백병전의 군사학적 메커니즘을 해부해 보면, 대중의 상식과는 현격히 다른 진실이 드러납니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 16세기 초 무기 체계별 실제 전술 효용성 비교 ]
@@ -1967,9 +2208,9 @@
 </ul>
 <h3 id="2-톨레도-강철검의-역학-39찌르기thrust39-vs-39베기slash39"><a href="#2-톨레도-강철검의-역학-39찌르기thrust39-vs-39베기slash39" class="heading-anchor" aria-hidden="true">#</a> (2) 톨레도 강철검의 역학: &#39;찌르기(Thrust)&#39; vs &#39;베기(Slash)&#39;</h3><p>백병전에서 원주민 전사들을 추풍낙엽처럼 쓰러뜨린 진짜 살상 병기는 스페인의 <strong>톨레도 강철검(Toledo Steel Swords)</strong>이었습니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 백병전 공격 궤적 및 신체 노출 역학 ]
@@ -1991,9 +2232,9 @@
 <hr>
 <h2 id="4-외교술과-99-원주민-동맹군-제국의-치명적-균열을-찌르다"><a href="#4-외교술과-99-원주민-동맹군-제국의-치명적-균열을-찌르다" class="heading-anchor" aria-hidden="true">#</a> 4. 외교술과 99% 원주민 동맹군: 제국의 치명적 균열을 찌르다</h2><p>대중 역사학의 가장 큰 착각은 코르테스가 500명의 스페인 백인 군대만으로 테노치티틀란을 함락시켰다는 신화입니다. 현실에서 <strong>스페인 콩키스타도르는 전체 군대의 0.5%에 불과한 소수 기동 첨병</strong>이었으며, 나머지 <strong>99.5%는 아즈텍에 원한을 품은 토착 원주민 연합군</strong>이었습니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 테노치티틀란 최종 포위군 병력 구성 (1521년 5월) ]
@@ -2020,9 +2261,9 @@
 <hr>
 <h2 id="5-피사로의-잉카-정복과-카하마르카-각본playbook의-복제"><a href="#5-피사로의-잉카-정복과-카하마르카-각본playbook의-복제" class="heading-anchor" aria-hidden="true">#</a> 5. 피사로의 잉카 정복과 카하마르카 각본(Playbook)의 복제</h2><p>코르테스의 멕시코 정복으로부터 10년 뒤, 안데스산맥에서 피사로가 펼친 정복 행선지는 코르테스가 남긴 성공의 <strong>&#39;각본(Playbook)&#39;을 한 치의 오차도 없이 복제한 사건</strong>이었습니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 코르테스-피사로 공통 정복 각본 (Conquest Playbook) ]
@@ -2071,9 +2312,9 @@
 <hr>
 <h2 id="7-지리와-문명의-고립-아즈텍과-잉카는-왜-교류하지-못했는가"><a href="#7-지리와-문명의-고립-아즈텍과-잉카는-왜-교류하지-못했는가" class="heading-anchor" aria-hidden="true">#</a> 7. 지리와 문명의 고립: 아즈텍과 잉카는 왜 교류하지 못했는가?</h2><p>유럽인들은 콜럼버스에서 코르테스로, 코르테스에서 피사로로 대서양 너머의 경험과 전술 지식을 끊임없이 누적하고 전수했습니다. 반면 잉카인들은 아즈텍이 존재한다는 사실조차 몰랐습니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 유라시아 동서 축 vs 아메리카 남북 축의 문명 전파 격차 ]
@@ -2097,9 +2338,9 @@
 <hr>
 <h2 id="8-장기적-역설-포토시-은광과-스페인의-몰락-자원의-저주와-네덜란드병"><a href="#8-장기적-역설-포토시-은광과-스페인의-몰락-자원의-저주와-네덜란드병" class="heading-anchor" aria-hidden="true">#</a> 8. 장기적 역설: 포토시 은광과 스페인의 몰락 (자원의 저주와 네덜란드병)</h2><p>시야를 넓혀 장기적 거시경제학의 관점에서 보면, 스페인의 신대륙 정복은 대단히 기이한 역사적 아이러니를 남겼습니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 은 유입과 스페인 경제 파멸의 인과 사슬 ]
@@ -2132,9 +2373,9 @@
 <hr>
 <h2 id="9-무굴-제국의-평행선-외세에-의탁한-문명의-비극적-결말"><a href="#9-무굴-제국의-평행선-외세에-의탁한-문명의-비극적-결말" class="heading-anchor" aria-hidden="true">#</a> 9. 무굴 제국의 평행선: 외세에 의탁한 문명의 비극적 결말</h2><p>스페인이 아메리카에서 구사한 이 분할 통치와 참수 작전은, 18세기 영국이 인도 대륙의 거대한 <strong>무굴 제국(Mughal Empire)</strong>을 식민지화할 때 완벽하게 똑같은 패턴으로 반복되었습니다.</p>
 
-<div class="code-block-wrapper">
+<div class="code-block-wrapper ascii-diagram">
   <div class="code-header">
-    <span class="code-lang lang-generic">평문</span>
+    <span class="code-lang lang-generic">도식</span>
     <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
   </div>
   <pre><code class="language-text">[ 코르테스 멕시코 정복 vs 로버트 클라이브 인도 정복 대조 ]

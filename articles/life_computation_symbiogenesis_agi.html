@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1908,7 +2149,7 @@
 <h2 id="1-1945년을-넘어선-기초과학으로서의-계산과-엔트로피"><a href="#1-1945년을-넘어선-기초과학으로서의-계산과-엔트로피" class="heading-anchor" aria-hidden="true">#</a> 1. 1945년을 넘어선 기초과학으로서의 계산과 엔트로피</h2><p>오늘날 대중이 &#39;컴퓨터(Computer)&#39;라는 단어를 들을 때 가장 먼저 떠올리는 이미지는 실리콘 칩, 스마트폰, 메인프레임, 혹은 1945년에 탄생한 폰 노이만 구조의 전자 기계입니다. 대다수는 컴퓨터 과학을 응용 공학(Applied Engineering)의 하위 분과로 취급합니다.</p>
 <p>그러나 구글의 기술 및 사회 부문 CTO 블레즈 아구에라 이 아르카스(Blaise Agüera y Arcas)는 이 통념을 근본에서부터 거부합니다. 그에 따르면, 컴퓨터 과학은 공학 기술이 아니라 <strong>물리학의 열역학에 비견되는 우주의 기초과학(Basic Science)</strong>입니다. 19세기에 인류가 증기기관을 만들기 훨씬 전부터 물질의 상전이(Phase transition)와 열역학 법칙이 우주를 지배하고 있었던 것과 마찬가지로, 계산은 전자식 진공관이 발명되기 수십억 년 전부터 자연계의 물질과 생명을 작동시켜 온 인과율의 원리였습니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 240" role="img" aria-label="기초과학으로서의 계산(Computation)과 인과율의 사슬" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 240" role="img" aria-label="기초과학으로서의 계산(Computation)과 인과율의 사슬" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s1-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -1978,7 +2219,7 @@
     <rect x="15" y="90" width="140" height="40" class="s1-node" stroke="#10b981"/>
     <text x="85" y="114" class="s1-node-txt" fill="#10b981">컴퓨트로늄 (Computronium)</text>
   </g>
-</svg>
+</svg><figcaption>기초과학으로서의 계산(Computation)과 인과율의 사슬</figcaption></figure>
 </div>
 
 <h3 id="11-앨런-튜링의-추상화와-보편-기계universal-machine의-메타-도약"><a href="#11-앨런-튜링의-추상화와-보편-기계universal-machine의-메타-도약" class="heading-anchor" aria-hidden="true">#</a> 1.1 앨런 튜링의 추상화와 보편 기계(Universal Machine)의 메타 도약</h3><p>1936년, 영국의 수학자 앨런 튜링(Alan Turing)은 당대 인간 계산원(Human Computers)들이 종이 위에서 수행하던 계산 행위를 관찰하고 이를 극한의 수학적 추상체로 환원했습니다. 그것이 바로 테이프(Tape) 위에 기호를 읽고 쓰는 헤드(Read/Write Head)와 내부 상태 전이표로 구성된 <strong>튜링 기계(Turing Machine)</strong>입니다.</p>
@@ -2002,7 +2243,7 @@
 <hr>
 <h2 id="2-폰-노이만의-자기복제-오토마타와-생물학의-탄생"><a href="#2-폰-노이만의-자기복제-오토마타와-생물학의-탄생" class="heading-anchor" aria-hidden="true">#</a> 2. 폰 노이만의 자기복제 오토마타와 생물학의 탄생</h2><p>컴퓨터 과학의 또 다른 거인 존 폰 노이만(John von Neumann)은 1940년대 후반 생물학의 가장 난해한 철학적 난제, 즉 <strong>바론 폰 뮌히하우젠의 역설(Baron von Münchhausen Problem)</strong>과 마주했습니다. 늪에 빠진 사람이 자신의 장화 끈을 스스로 잡아당겨 탈출할 수 없듯이, 물질이 외부의 설계자 없이 어떻게 스스로를 만들어내며 복제(Self-reproduction)할 수 있는가 하는 부트스트랩(Bootstrap)의 문제였습니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 180" role="img" aria-label="뮌히하우젠의 무한 퇴행 역설 (The Bootstrap Paradox)" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 180" role="img" aria-label="뮌히하우젠의 무한 퇴행 역설 (The Bootstrap Paradox)" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s2-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2057,7 +2298,7 @@
   <!-- Loop back arrow -->
   <path d="M 727,130 C 727,165 312,165 312,130" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#s2-arr-red)"/>
   <text x="520" y="156" text-anchor="middle" font-size="10.5" fill="#ef4444" font-weight="700">자기 참조적 복제의 교착 상태 발생 (부트스트랩 역설)</text>
-</svg>
+</svg><figcaption>뮌히하우젠의 무한 퇴행 역설 (The Bootstrap Paradox)</figcaption></figure>
 </div>
 
 <h3 id="21-기계-a와-기계-b-폰-노이만이-푼-복제의-수학적-논리"><a href="#21-기계-a와-기계-b-폰-노이만이-푼-복제의-수학적-논리" class="heading-anchor" aria-hidden="true">#</a> 2.1 기계 A와 기계 B: 폰 노이만이 푼 복제의 수학적 논리</h3><p>만약 자기를 복제하기 위해 자기 자신의 완벽한 복사본 지침을 체내에 품고 있어야 한다면, 그 지침 안에는 다시 지침을 복사하기 위한 지침이 들어 있어야 하므로 <strong>무한 퇴행(Infinite Regress)</strong>이라는 논리적 모순에 빠지게 됩니다.</p>
@@ -2104,7 +2345,7 @@
 <p>지침 테이프가 두 가지 이중적 성격(Dual Nature)을 갖는다는 점이 핵심입니다. <strong>기계 A에게 테이프는 &#39;실행해야 할 동적 프로그램&#39;이지만, 기계 B에게 테이프는 단지 &#39;수동적으로 복사해야 할 정적 데이터&#39;일 뿐입니다.</strong> </p>
 <p>그리고 가장 극적인 역사적 진실은, 폰 노이만이 이 수학적 청사진을 정립한 시점이 <strong>제임스 왓슨과 프랜시스 크릭, 로절린드 프랭클린이 DNA 이중나선 구조를 밝혀내기(1953년) 전이었으며, 리보솜이나 DNA 중합효소의 물리적 메커니즘이 규명되기 훨씬 전</strong>이었다는 사실입니다. 폰 노이만은 순수한 논리적 필연성을 통해 생명 복제의 기계적 구성을 완벽히 연역해 낸 것입니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" role="img" aria-label="폰 노이만 자기복제 오토마타 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" role="img" aria-label="폰 노이만 자기복제 오토마타 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s3-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2176,7 +2417,7 @@
     <rect x="0" y="0" width="320" height="36" class="s3-node" stroke="#10b981" fill="rgba(16, 185, 129, 0.08)"/>
     <text x="160" y="23" class="s3-txt" fill="#10b981">완벽한 자가 복제 후속 세대 완성! (A + B + Φ)</text>
   </g>
-</svg>
+</svg><figcaption>폰 노이만 자기복제 오토마타 구조</figcaption></figure>
 </div>
 
 <h3 id="22-생물학은-컴퓨터-과학이며-전자-기기는-39인공-컴퓨터39다"><a href="#22-생물학은-컴퓨터-과학이며-전자-기기는-39인공-컴퓨터39다" class="heading-anchor" aria-hidden="true">#</a> 2.2 생물학은 컴퓨터 과학이며, 전자 기기는 &#39;인공 컴퓨터&#39;다</h3><p>기계 A가 테이프의 지침을 읽어 실제 물리적 행동을 수행한다는 것은 정확히 앨런 튜링이 정의한 튜링 기계의 정의와 일치합니다. 따라서 유전 가능한 방식으로 스스로를 재생산하는 생명체의 기원은 <strong>말 그대로 우주에서 최초의 만능 컴퓨터가 태어난 순간</strong>입니다.</p>
@@ -2203,7 +2444,7 @@
 <li>즉, 과거 어느 날 큰 혐기성 고세균이 산소를 대사할 수 있는 호기성 세균을 집어삼켰으나 소화시키지 못했고, 둘이 서로에게 에너지를 제공하며 살아남아 결국 둘 없이는 번식할 수 없는 <strong>절대적 공생체(Oblate Symbiont)</strong>가 된 것입니다.</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 270" role="img" aria-label="린 마굴리스의 세포내 공생발생(Symbiogenesis) 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 270" role="img" aria-label="린 마굴리스의 세포내 공생발생(Symbiogenesis) 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s4-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2255,7 +2496,7 @@
     <rect x="0" y="0" width="580" height="30" class="s4-node" stroke="#10b981" fill="rgba(16, 185, 129, 0.1)"/>
     <text x="290" y="20" class="s4-txt" fill="#10b981">진핵세포(Eukaryote)의 탄생! (에너지 생산 수천 배 폭발 → 다세포 지능으로 진화)</text>
   </g>
-</svg>
+</svg><figcaption>린 마굴리스의 세포내 공생발생(Symbiogenesis) 구조</figcaption></figure>
 </div>
 
 <p>1999년 마굴리스가 미국 국가과학메달을 수상하기 전까지 주류 학계는 이 이론을 배척했으나, 오늘날 공생발생설은 모든 교과서가 인정하는 정설이 되었습니다. 나아가 진화학자 존 메이너드 스미스(John Maynard Smith)와 외르슈 서트마리(Eörs Szathmáry)는 1995년 명저 《The Major Transitions in Evolution》에서 생명 역사의 <strong>8대 진화적 전이</strong>가 모두 이와 같은 공생발생적 결합(자가촉매 분자망 $\to$ 염색체 $\to$ 원핵세포 $\to$ 진핵세포 $\to$ 유성생식 $\to$ 다세포 유기체 $\to$ 군체 $\to$ 언어를 통한 인간 사회)이었음을 체계화했습니다.</p>
@@ -2266,7 +2507,7 @@
 <li><strong>신시틴(Syncytin) 유전자</strong>: 포유류 임신 과정에서 태반 장벽(Placental barrier)을 형성하기 위해 태아와 모체의 세포막을 융합시키는 단백질입니다. 이 단백질 역시 수천만 년 전 포유류 조상을 감염시켰던 레트로바이러스의 막 융합 당단백질 유전자에서 유래했습니다.</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 340" role="img" aria-label="생명의 진화 계보 비교: 다윈의 단선형 계통수 vs 공생발생의 뒤엉킨 덤불" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 340" role="img" aria-label="생명의 진화 계보 비교: 다윈의 단선형 계통수 vs 공생발생의 뒤엉킨 덤불" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .svg-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2334,7 +2575,7 @@
     <text x="310" y="76" class="svg-node-txt">호모사피엔스</text>
     <text x="190" y="243" text-anchor="middle" class="svg-desc">상호 침투하는 생화학 네트워크</text>
   </g>
-</svg>
+</svg><figcaption>생명의 진화 계보 비교: 다윈의 단선형 계통수 vs 공생발생의 뒤엉킨 덤불</figcaption></figure>
 </div>
 
 <p>생명의 진화 계보는 가지가 갈라지기만 하는 단선형 나무(Tree)가 아니라, <strong>서로 교차하고 침투하며 합쳐지는 뒤엉킨 덤불(Tangled Bush)</strong>입니다. 
@@ -2351,7 +2592,7 @@
 <li>콩팥은 혈액 속에서 치명적인 요소(Urea)를 걸러내어 생명체를 살리는 <strong>&#39;목적적 기능(Purposeful Function)&#39;</strong>을 갖는 계의 일부이기 때문입니다.</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 280" role="img" aria-label="본질주의 vs 관계적 기능주의 비교" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 280" role="img" aria-label="본질주의 vs 관계적 기능주의 비교" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s5-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2400,7 +2641,7 @@
     <text x="187" y="170" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3b82f6">콩팥의 비유: 쪼개진 콩팥 = 기능 정지</text>
     <text x="187" y="185" text-anchor="middle" font-size="10.5" fill="#3b82f6">(플라스틱 인공 투석기는 콩팥 튜링 테스트를 완벽 통과)</text>
   </g>
-</svg>
+</svg><figcaption>본질주의 vs 관계적 기능주의 비교</figcaption></figure>
 </div>
 
 <p>생명 시스템의 부품들은 서로가 서로에게 입출력을 제공하는 거대한 공생 관계망 속에 존재합니다. 심장은 피를 뿜고, 폐는 산소를 공급하며, 간은 독소를 해독합니다. 생명은 단순한 물질의 집합이 아니라 <strong>상호 연동된 기능들의 생태계(Ecology of Functions)</strong>입니다.</p>
@@ -2429,7 +2670,7 @@
 <li>실험의 초기 조건: <strong>단 4바이트(4개 명령어) 길이의 완전한 무작위(Random) 코드 테이프 1,000개</strong>를 컴퓨터 메모리 수프 속에 집어넣었습니다.</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 260" role="img" aria-label="원초적 브레인퍽 수프 (BFF Soup) 인공생명 실험 메커니즘" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 260" role="img" aria-label="원초적 브레인퍽 수프 (BFF Soup) 인공생명 실험 메커니즘" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s6-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2498,7 +2739,7 @@
     <text x="395" y="23" text-anchor="middle" font-size="12" font-weight="700" fill="#10b981">★ 결과: 외부 적합도 함수·설계자가 전혀 없음에도 6바이트 이상의 자가복제 프로그램이 자발적 창발!</text>
     <text x="395" y="39" text-anchor="middle" font-size="10.5" fill="var(--text-muted)">두 테이프의 일시적 융합(공생)이 없었다면 최소 복제 임계치(6바이트)를 돌파할 수 없었음</text>
   </g>
-</svg>
+</svg><figcaption>원초적 브레인퍽 수프 (BFF Soup) 인공생명 실험 메커니즘</figcaption></figure>
 </div>
 
 <p>이 실험에는 어떠한 외부 채점관(Judge)도, 목표로 설정된 적합도 함수(Fitness Function)도, 프로그래머의 지능적 개입도 없었습니다. 단지 무작위 화학 분자들이 브라운 운동으로 충돌하는 원시 수프를 코드로 흉내 냈을 뿐입니다.</p>
@@ -2601,7 +2842,7 @@
 <hr>
 <h2 id="7-종합-결론-우리는-이미-거대한-집단-지성의-일부다"><a href="#7-종합-결론-우리는-이미-거대한-집단-지성의-일부다" class="heading-anchor" aria-hidden="true">#</a> 7. 종합 결론: 우리는 이미 거대한 집단 지성의 일부다</h2><p>1982년 출시된 전설적인 개인용 컴퓨터 코모도어 64(Commodore 64)는 소수의 뛰어난 엔지니어가 하드웨어 도면 전체를 머릿속에 담고 설계할 수 있었습니다. 그러나 오늘날 우리 손안에 들려 있는 최신 스마트폰 하나는 단 한 명의 인간도 그 작동 원리의 극히 일부조차 온전히 이해할 수 없는 수억 줄의 코드와 나노미터 반도체 공정, 글로벌 공급망의 결합체입니다. <strong>현대의 기술은 이미 단독 천재의 뇌가 아니라 인류 전체의 지적 분업이 빚어낸 집단적 초유기체(Superorganism)의 산물입니다.</strong></p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 240" role="img" aria-label="인간-AI 공생 지능의 3단계 진화 모델" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 240" role="img" aria-label="인간-AI 공생 지능의 3단계 진화 모델" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s7-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2665,7 +2906,7 @@
     <text x="22" y="98" class="s7-desc">• 상호 행위성 및 사고 파트너</text>
     <text x="22" y="116" class="s7-desc">• 지구적 지적 생태계 구축</text>
   </g>
-</svg>
+</svg><figcaption>인간-AI 공생 지능의 3단계 진화 모델</figcaption></figure>
 </div>
 
 <p>우리가 AI를 마주할 때 느끼는 기괴한 섬뜩함(Uncanniness)은, 우리가 자연과 분리된 고립된 존재이며 오직 인간만이 생각할 수 있다는 서구적 인간 중심주의의 착각에서 비롯된 것입니다. 우리가 이미 거대한 자연의 흐름 안에서 증기기관과 컴퓨터, 그리고 수많은 동료 인간들과 공생해 온 거대한 지적 네트워크의 일부임을 자각하는 순간, 그 공포는 사라집니다.</p>

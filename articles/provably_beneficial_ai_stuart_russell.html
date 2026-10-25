@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1911,7 +2152,7 @@
 <hr>
 <h2 id="2-ai-50년의-역사와-수학적-기초의-상실"><a href="#2-ai-50년의-역사와-수학적-기초의-상실" class="heading-anchor" aria-hidden="true">#</a> 2. AI 50년의 역사와 수학적 기초의 상실</h2><p>스튜어트 러셀은 1970년대 중반부터 50년 동안 AI 연구의 최전선을 지켜온 산증인입니다. 그가 피터 노빅(Peter Norvig)과 함께 저술한 《인공지능: 현대적 접근방식(Artificial Intelligence: A Modern Approach)》은 전 세계 1,500개 이상의 대학에서 교재로 채택된 AI 분야의 확고한 바이블입니다. 반세기에 걸친 그의 연구 궤적은 AI의 사상사적 변천을 세 단계로 압축합니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-label="AI 50년 3대 사상적 변천사" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-label="AI 50년 3대 사상적 변천사" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .t1-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -1976,7 +2217,7 @@
     <rect x="12" y="126" width="221" height="30" rx="4" fill="var(--bg-card)" stroke="#f59e0b" stroke-opacity="0.3"/>
     <text x="122" y="145" text-anchor="middle" class="t1-desc" fill="#f59e0b">"작동 메커니즘을 모르는 거대한 불"</text>
   </g>
-</svg>
+</svg><figcaption>AI 50년 3대 사상적 변천사</figcaption></figure>
 </div>
 
 <h3 id="1-상징적-추론에서-응용수학으로의-도약"><a href="#1-상징적-추론에서-응용수학으로의-도약" class="heading-anchor" aria-hidden="true">#</a> (1) 상징적 추론에서 응용수학으로의 도약</h3><p>1960년대와 70년대의 AI는 결정론적 세계에서의 &#39;문제 해결(Problem Solving)&#39;과 &#39;계획(Planning)&#39;이 중심이었습니다. 세계의 상태와 규칙을 기호로 정의하고 목표에 도달하는 일련의 행동 경로를 탐색하는 체스 알고리즘이 대표적이었습니다. 당시 AI 연구자는 전 세계를 통틀어 1,000명 남짓에 불과했습니다.</p>
@@ -1986,7 +2227,7 @@
 <hr>
 <h2 id="3-두-가지-실패-모드-39표준-모델39의-파탄과-39모방-학습39의-통제-불능"><a href="#3-두-가지-실패-모드-39표준-모델39의-파탄과-39모방-학습39의-통제-불능" class="heading-anchor" aria-hidden="true">#</a> 3. 두 가지 실패 모드: &#39;표준 모델&#39;의 파탄과 &#39;모방 학습&#39;의 통제 불능</h2><p>러셀 교수는 현재 AI가 직면한 위험을 이해하기 위해 지난 60년의 전통적 패러다임인 <strong>&#39;표준 모델(Standard Model)&#39;</strong>과 최근 LLM의 기반인 <strong>&#39;모방 학습(Imitation Learning)&#39;</strong>의 고유한 실패 모드를 날카롭게 구분하여 분석합니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 320" role="img" aria-label="표준 모델 vs 모방 학습 vs 입증 가능한 유익한 AI 비교" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 320" role="img" aria-label="표준 모델 vs 모방 학습 vs 입증 가능한 유익한 AI 비교" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2054,7 +2295,7 @@
     <text x="25" y="194" class="c-txt">목적의 불확실성이 인간의 개입과</text>
     <text x="25" y="210" class="c-txt">스위치 끄기를 허용할 인센티브 생성</text>
   </g>
-</svg>
+</svg><figcaption>표준 모델 vs 모방 학습 vs 입증 가능한 유익한 AI 비교</figcaption></figure>
 </div>
 
 <h3 id="1-표준-모델의-파탄-마이다스-왕-문제-the-king-midas-problem"><a href="#1-표준-모델의-파탄-마이다스-왕-문제-the-king-midas-problem" class="heading-anchor" aria-hidden="true">#</a> (1) 표준 모델의 파탄: 마이다스 왕 문제 (The King Midas Problem)</h3><p>표준 모델이란 1960년대 이래 AI, 제어공학(비용 함수 최소화), 통계학(손실 함수 최소화), 경제학(기대효용 극대화)을 지배해 온 패러다임입니다:
@@ -2079,7 +2320,7 @@ $$\text{Standard Model}: \quad \max_{a \in A} \mathbb{E}[U(s, a) \mid \theta_{\t
 <h2 id="4-입증-가능한-유익한-aiprovably-beneficial-ai의-3대-원칙과-어시스턴스-게임"><a href="#4-입증-가능한-유익한-aiprovably-beneficial-ai의-3대-원칙과-어시스턴스-게임" class="heading-anchor" aria-hidden="true">#</a> 4. 입증 가능한 유익한 AI(Provably Beneficial AI)의 3대 원칙과 어시스턴스 게임</h2><p>그렇다면 파탄 난 표준 모델과 통제 불능의 모방 학습을 넘어설 수 있는 수학적으로 안전한 대안은 무엇인가? 스튜어트 러셀 교수가 창안하고 UC 버클리 CHAI(Center for Human-Compatible AI)에서 발전시켜 온 해법이 바로 <strong>&#39;입증 가능한 유익한 AI(Provably Beneficial AI)&#39;</strong>입니다.</p>
 <p>이 패러다임은 세 가지 기본 공리(Principles) 위에 서 있습니다:</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-label="입증 가능한 유익한 AI의 3대 공리 체계" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-label="입증 가능한 유익한 AI의 3대 공리 체계" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .p3-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2144,7 +2385,7 @@ $$\text{Standard Model}: \quad \max_{a \in A} \mathbb{E}[U(s, a) \mid \theta_{\t
     <rect x="12" y="126" width="221" height="30" rx="4" fill="var(--bg-card)" stroke="#6366f1" stroke-opacity="0.3"/>
     <text x="122" y="145" text-anchor="middle" class="p3-desc" fill="#6366f1">P(θ | τ_H) ∝ P(τ_H | θ) P(θ)</text>
   </g>
-</svg>
+</svg><figcaption>입증 가능한 유익한 AI의 3대 공리 체계</figcaption></figure>
 </div>
 
 <h3 id="1-어시스턴스-게임assistance-games-cirl의-수학"><a href="#1-어시스턴스-게임assistance-games-cirl의-수학" class="heading-anchor" aria-hidden="true">#</a> (1) 어시스턴스 게임(Assistance Games / CIRL)의 수학</h3><p>이 3대 원칙은 2인 협력 게임 이론인 <strong>협력적 역강화학습(Cooperative Inverse Reinforcement Learning, CIRL)</strong>, 즉 <strong>어시스턴스 게임(Assistance Games)</strong>의 수학적 프레임워크로 공식화됩니다:</p>
@@ -2158,7 +2399,7 @@ $$P(\theta \mid \tau_H) \propto P(\tau_H \mid \theta) P(\theta)$$</li>
 $$\max_{\pi_R} \mathbb{E}\left[ \sum_{t=0}^{\infty} \gamma^t R(s_t, a_{H,t}, a_{R,t}; \theta) \;\middle|\; P(\theta \mid \tau_H) \right]$$</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 260" role="img" aria-label="어시스턴스 게임과 전원 스위치 인센티브 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 260" role="img" aria-label="어시스턴스 게임과 전원 스위치 인센티브 구조" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .ag-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2205,7 +2446,7 @@ $$\max_{\pi_R} \mathbb{E}\left[ \sum_{t=0}^{\infty} \gamma^t R(s_t, a_{H,t}, a_{
     <rect x="20" y="145" width="325" height="24" rx="4" fill="#10b981" fill-opacity="0.15"/>
     <text x="182" y="161" text-anchor="middle" class="ag-badge" fill="#10b981">결과: 인간의 스위치 끄기를 기꺼이 허용 (수학적 증명)</text>
   </g>
-</svg>
+</svg><figcaption>어시스턴스 게임과 전원 스위치 인센티브 구조</figcaption></figure>
 </div>
 
 <h3 id="2-전원-스위치-정리-the-off-switch-theorem"><a href="#2-전원-스위치-정리-the-off-switch-theorem" class="heading-anchor" aria-hidden="true">#</a> (2) 전원 스위치 정리 (The Off-Switch Theorem)</h3><p>이 구조에서 가장 아름다운 수학적 귀결은 바로 <strong>전원 스위치 문제(The Off-Switch Game)</strong>의 해결입니다.
@@ -2221,7 +2462,7 @@ $$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \im
 <p><em>&quot;가리 카스파로프(Garry Kasparov)가 1997년 딥블루와의 체스 대국에서 악수를 두어 패배했습니다. 우리는 그의 착수를 보고 &#39;아, 카스파로프는 지는 것을 원했구나!&#39;라고 결론 내리지 않습니다. 그는 온 힘을 다해 이기기를 원했습니다. 단지 인간의 뇌라는 연산 장치가 체스의 모든 수를 완벽하게 계산하기에는 연산 능력이 제한(Computationally Bounded)되어 있었기 때문에 실수를 저질렀을 뿐입니다.&quot;</em></p>
 </blockquote>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-label="인간 인지 한계 모델링과 진정한 선호 역추론" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-label="인간 인지 한계 모델링과 진정한 선호 역추론" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .inv-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2294,7 +2535,7 @@ $$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \im
     <rect x="12" y="136" width="191" height="28" rx="4" fill="var(--bg-card)" stroke="#10b981"/>
     <text x="107" y="154" text-anchor="middle" class="inv-badge" fill="#10b981">정렬된 목적 함수 θ 확립</text>
   </g>
-</svg>
+</svg><figcaption>인간 인지 한계 모델링과 진정한 선호 역추론</figcaption></figure>
 </div>
 
 <p>인간과 체스 말의 차이는 복잡도에 있습니다. 체스는 32개의 말과 64개의 칸으로 이루어진 완전 정보(Fully Observable) 환경이지만, 현실 세계는 무한대에 가까운 객체와 불완전 정보로 가득 차 있습니다. 따라서 기계는 인간의 행동을 있는 그대로 선호로 간주하는 1차원적 모방을 해서는 안 되며, <strong>&quot;인간은 계산적으로 제한되어 있고, 감정에 휩쓸리며, 정보가 부족한 상태에서 최선을 다해 행동한다&quot;는 인지 심리학적 생성 모델</strong>을 경유하여 인간의 행동을 해석해야 합니다. 이를 통해 기계는 인간의 표면적 실수가 아니라 그 이면에 있는 진정한 목적을 발라낼 수 있습니다.</p>
@@ -2308,7 +2549,7 @@ $$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \im
 </ul>
 <h3 id="2-원자력-모델과-행동적-레드라인-behavioral-red-lines"><a href="#2-원자력-모델과-행동적-레드라인-behavioral-red-lines" class="heading-anchor" aria-hidden="true">#</a> (2) 원자력 모델과 행동적 레드라인 (Behavioral Red Lines)</h3><p>러셀 교수는 소프트웨어 기업들의 이러한 미봉책을 끝내기 위해, 원자력 공학이나 항공 산업과 같은 수준의 엄격한 규제 프레임워크를 도입해야 한다고 역설합니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 280" role="img" aria-label="원자력 모델 기반 AI 행동적 레드라인 체계" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 280" role="img" aria-label="원자력 모델 기반 AI 행동적 레드라인 체계" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .rl-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2350,7 +2591,7 @@ $$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \im
     <rect x="20" y="138" width="330" height="32" rx="4" fill="var(--bg-card)" stroke="#ef4444"/>
     <text x="185" y="158" text-anchor="middle" class="rl-badge" fill="#ef4444">입증 실패 시 모델 배포 및 상용화 원천 차단</text>
   </g>
-</svg>
+</svg><figcaption>원자력 모델 기반 AI 행동적 레드라인 체계</figcaption></figure>
 </div>
 
 <p>원자력 발전소를 건설할 때 정부는 운영자에게 <strong>&quot;체르노빌 스타일의 노심용융 사고가 1,000만 년에 1회(1 in 10,000,000 reactor-years) 이하로 발생함을 수학적·공학적으로 입증하라&quot;</strong>고 요구합니다. 이 기준을 증명하지 못하면 원전은 가동될 수 없습니다. 엘리베이터, 항공기, 교량, 신약 개발 모두가 동일한 &#39;사전 입증제&#39;를 따릅니다.</p>
@@ -2383,7 +2624,7 @@ $$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \im
 </blockquote>
 <p>인류가 직면할 수 있는 세 가지 미래 시나리오를 통해 러셀 교수는 진정한 공존의 조건을 모색합니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 290" role="img" aria-label="문명적 주체성의 3대 미래 시나리오" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:840px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 290" role="img" aria-label="문명적 주체성의 3대 미래 시나리오" style="width:100%; height:auto; max-width:840px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .sc-title { font-family: Pretendard, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2439,7 +2680,7 @@ $$\text{로봇의 추론}: \quad \text{인간이 스위치를 누르려 함} \im
     <text x="25" y="160" class="sc-badge" fill="#10b981">귀결: 인간 주체성의 수호</text>
     <text x="25" y="178" class="sc-txt">기계의 자발적 절제와 배경화</text>
   </g>
-</svg>
+</svg><figcaption>문명적 주체성의 3대 미래 시나리오</figcaption></figure>
 </div>
 
 <h3 id="1-월-e의-디스토피아-지적-유아화"><a href="#1-월-e의-디스토피아-지적-유아화" class="heading-anchor" aria-hidden="true">#</a> (1) 《월-E》의 디스토피아: 지적 유아화</h3><p>픽사 애니메이션 《월-E》에 등장하는 인간들은 기계의 완벽한 돌봄을 받으며 우주선을 타고 떠돌아다닙니다. 그러나 그 대가는 처참했습니다. 문명의 모든 운영을 기계에 떠넘긴 인간들은 걷는 법조차 잊어버렸고, 비만에 걸려 부유 의자에 누운 채, 성인이 되어서도 아기 옷을 입고 스크린만 바라보는 <strong>무력한 거대한 아기(Big babies in baby clothes)</strong>로 퇴행했습니다. 이는 주체성과 교육, 사유의 능력을 상실한 종말적 유토피아입니다.</p>

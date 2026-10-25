@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1903,7 +2144,7 @@
 <h2 id="1-엑스레이-기계의-오류-선명한-인과율의-함정과-순수성의-환상"><a href="#1-엑스레이-기계의-오류-선명한-인과율의-함정과-순수성의-환상" class="heading-anchor" aria-hidden="true">#</a> 1. 엑스레이 기계의 오류 — 선명한 인과율의 함정과 순수성의 환상</h2><p>병원 응급실에서 엑스레이(X-ray)를 촬영하면 원인과 결과는 명료하게 드러납니다. 필름 위에 하얀 선이 선명하게 나타나며 의사는 주저 없이 말합니다. <em>&quot;여기 뼈에 금이 갔네요.&quot;</em> </p>
 <p>환자에게 이 진단은 심리적인 안도감을 줍니다. 뼈는 부러졌거나 부러지지 않았거나, 둘 중 하나로 완벽하게 양분(Binary)되기 때문입니다. 그러나 통증의 원인이 뼈가 아니라 미세한 신경망의 교란이거나 복잡한 심리적 요인으로 넘어가는 순간, 그 정밀하던 엑스레이 기계는 완전히 무용지물이 됩니다. 눈에 보이는 선명한 선은 사라지고, 진흙탕처럼 얽힌 복합계의 세계가 펼쳐집니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 330" role="img" aria-label="문명 전파의 네트워크 구조 비교: 단선형 파이프라인 vs 다원적 상호교차망" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 330" role="img" aria-label="문명 전파의 네트워크 구조 비교: 단선형 파이프라인 vs 다원적 상호교차망" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .m1-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -1982,13 +2223,13 @@
     <path d="M670 86 Q 462 130 82 86" stroke="#3b82f6" stroke-width="1.8" stroke-dasharray="4 2" fill="none"/>
     <text x="380" y="108" font-size="10px" font-family="Pretendard, sans-serif" fill="#3b82f6" text-anchor="middle">홍해 무역로 / 0과 십진법 전파 / 강제 노예 이주 문화 믹서기</text>
   </g>
-</svg>
+</svg><figcaption>문명 전파의 네트워크 구조 비교: 단선형 파이프라인 vs 다원적 상호교차망</figcaption></figure>
 </div>
 
 <p>근대 이후 인류는 역사를 마치 가계도나 나무처럼 설명하려 애썼습니다. 그리스에서 싹을 틔워 로마라는 줄기를 거쳐 르네상스와 계몽주의를 지나 근대 서구라는 열매를 맺었다는 이른바 <strong>‘가족 나무(Family Tree) 모델’</strong>입니다. </p>
 <p>그러나 옥스퍼드대학교의 고대사 석학 <strong>조세핀 퀸(Josephine Quinn)</strong> 교수는 지난 4,000년의 지중해와 유라시아 교류사를 총망라하며 단언합니다. <strong>&quot;문명은 결코 홀로 뿌리내린 나무가 아니다. 역사는 수천 년간 피와 땀, 무역과 약탈을 통해 서로를 감아 쥐고 자라난 거대한 덩굴에 불과하다.&quot;</strong></p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" role="img" aria-label="문명 인식 패러다임: 나무 모델 vs 덩굴 모델" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" role="img" aria-label="문명 인식 패러다임: 나무 모델 vs 덩굴 모델" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .p-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 16px; fill: var(--text-main); }
@@ -2042,7 +2283,7 @@
     <text x="35" y="252" class="p-text">• 기술·문자·철학은 경계를 넘어 끊임없이 교차 오염됨</text>
     <text x="35" y="268" class="p-text">• 상인, 전쟁 포로, 광부 등 이동하는 소수가 네트워크 구축</text>
   </g>
-</svg>
+</svg><figcaption>문명 인식 패러다임: 나무 모델 vs 덩굴 모델</figcaption></figure>
 </div>
 
 <hr>
@@ -2055,7 +2296,7 @@
 </ul>
 <h3 id="2-19세기-제국주의-팽창과-문명의-분할서열화"><a href="#2-19세기-제국주의-팽창과-문명의-분할서열화" class="heading-anchor" aria-hidden="true">#</a> (2) 19세기: 제국주의 팽창과 문명의 분할·서열화</h3><p>그러나 19세기에 접어들며 영국과 프랑스를 비롯한 유럽 열강들이 전 세계를 무대로 영토를 정복하고 식민지 쟁탈전을 벌이면서 언어의 용법이 급변합니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 370" role="img" aria-label="문명 개념의 역사적 변질: 단수형 과정에서 복수형 서열로" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 370" role="img" aria-label="문명 개념의 역사적 변질: 단수형 과정에서 복수형 서열로" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c2-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2116,7 +2357,7 @@
       <text x="360" y="99" font-size="11.5px" font-family="Pretendard, sans-serif" fill="var(--text-muted)">아프리카·오세아니아·신대륙 등 서양이 식민 지배하고 수탈할 정당한 대상</text>
     </g>
   </g>
-</svg>
+</svg><figcaption>문명 개념의 역사적 변질: 단수형 과정에서 복수형 서열로</figcaption></figure>
 </div>
 
 <p>폭력적인 식민 정복을 정당화하기 위해 유럽인들에게는 세상의 문화들을 줄 세우고 서열화할 정교한 이데올로기적 도구가 필요했습니다. 그 결과 <strong>문명이라는 단어는 복수형으로 쪼개졌습니다.</strong></p>
@@ -2146,7 +2387,7 @@
 <li>물리적 거리가 단숨에 압축되며, <strong>지중해 동부와 근동을 잇는 사상 최초의 거대한 초국가적 물류 네트워크</strong>가 열렸습니다.</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 240" role="img" aria-label="고대 운송 수단별 물류 수송력 비교: 당나귀 vs 돛단배" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 240" role="img" aria-label="고대 운송 수단별 물류 수송력 비교: 당나귀 vs 돛단배" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c3-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2189,7 +2430,7 @@
     <text x="20" y="108" class="c3-t">• 연결 범위: 지중해·홍해 횡단으로 초원거리 물리적 거리 압축</text>
     <text x="20" y="132" font-size="11px" font-family="Pretendard, sans-serif" font-weight="700" fill="#10b981">➔ 대량 곡물·청동 원자재 수송 및 '고대 G8' 상호의존망 개척</text>
   </g>
-</svg>
+</svg><figcaption>고대 운송 수단별 물류 수송력 비교: 당나귀 vs 돛단배</figcaption></figure>
 </div>
 
 <h3 id="2-후기-청동기-39위대한-왕들의-클럽39과-고대판-영어아카드어"><a href="#2-후기-청동기-39위대한-왕들의-클럽39과-고대판-영어아카드어" class="heading-anchor" aria-hidden="true">#</a> (2) 후기 청동기: &#39;위대한 왕들의 클럽&#39;과 고대판 영어(아카드어)</h3><p>기원전 14~13세기 후기 청동기 시대에 이르면, 이집트의 파라오, 바빌로니아, 히타이트, 아시리아, 미타니의 군주들이 서로를 &quot;나의 형제&quot;라 부르며 교류하는 이른바 <strong>&#39;위대한 왕들의 클럽(Club of Great Kings)&#39;</strong>이라는 다자간 외교 체계가 완성됩니다(아마르나 문서, Amarna Letters).</p>
@@ -2235,7 +2476,7 @@
 </div></div>
 
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 320" role="img" aria-label="베르니케 불상에 응축된 4중 글로벌 결합" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 320" role="img" aria-label="베르니케 불상에 응축된 4중 글로벌 결합" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c4-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2307,14 +2548,14 @@
       "재료는 튀르키예, 양식은 그리스·인도 혼합, 발견은 이집트, 시대는 로마 제국" ➔ 단 하나의 유물이 증명하는 인류 덩굴 네트워크
     </text>
   </g>
-</svg>
+</svg><figcaption>베르니케 불상에 응축된 4중 글로벌 결합</figcaption></figure>
 </div>
 
 <p>이집트 땅에서 튀르키예 대리석을 깎아 인도 상인을 위한 그리스 양식의 불상을 만든 현장. 이 단 하나의 유물만으로도 고대 지중해와 인도양이 단절된 세계가 아니라, <strong>하나의 유기적인 회로망으로 호흡하던 다극적 공간</strong>이었음을 증명하기에 충분합니다.</p>
 <hr>
 <h2 id="5-문명의-소프트웨어는-어떻게-해킹되었는가-알파벳-0-민주주의-그리고-성인전"><a href="#5-문명의-소프트웨어는-어떻게-해킹되었는가-알파벳-0-민주주의-그리고-성인전" class="heading-anchor" aria-hidden="true">#</a> 5. 문명의 소프트웨어는 어떻게 해킹되었는가 — 알파벳, 0, 민주주의, 그리고 성인전</h2><p>서양 문명의 진정한 정수이자 배타적 발명품으로 칭송받아 온 &#39;알파벳&#39;, &#39;수학과 0&#39;, &#39;민주주의&#39;, &#39;기독교 설화&#39; 등 소프트웨어 영역을 해부하면, 이들이야말로 <strong>동서양의 해킹과 릴레이 경주가 낳은 오픈소스적 합작품</strong>이었음이 여실히 드러납니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" role="img" aria-label="문명 소프트웨어의 4대 릴레이 경로" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" role="img" aria-label="문명 소프트웨어의 4대 릴레이 경로" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .s-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 16px; fill: var(--text-main); }
@@ -2379,7 +2620,7 @@
     <text x="530" y="36" font-size="11px" font-family="Pretendard, sans-serif" font-weight="700" fill="#8b5cf6">Bodhisattva (보살)</text>
     <text x="530" y="52" font-size="11px" font-family="Pretendard, sans-serif" font-weight="700" fill="#8b5cf6">➔ 가톨릭 성인 성 요사밧</text>
   </g>
-</svg>
+</svg><figcaption>문명 소프트웨어의 4대 릴레이 경로</figcaption></figure>
 </div>
 
 <h3 id="1-알파벳-시나이-반도-터키석-광부들의-위대한-39ui-해킹39"><a href="#1-알파벳-시나이-반도-터키석-광부들의-위대한-39ui-해킹39" class="heading-anchor" aria-hidden="true">#</a> (1) 알파벳: 시나이 반도 터키석 광부들의 위대한 &#39;UI 해킹&#39;</h3><p>우리가 매일 쓰는 알파벳의 기원은 그리스도, 페니키아 귀족도 아닙니다. 기원전 19세기경, 이집트 시나이 반도의 세라빗 엘-카딤(Serabit el-Khadim) 터키석 광산에서 혹독한 노동에 시달리던 <strong>셈족 계통(레반트)의 가난한 광부들</strong>이었습니다.</p>
@@ -2410,7 +2651,7 @@
 <h2 id="6-청동기-붕괴의-역설-민중의-문자-보이콧-가설과-철기의-탈세계화"><a href="#6-청동기-붕괴의-역설-민중의-문자-보이콧-가설과-철기의-탈세계화" class="heading-anchor" aria-hidden="true">#</a> 6. 청동기 붕괴의 역설 — 민중의 문자 보이콧 가설과 철기의 탈세계화</h2><p>기원전 1200년경, 번영하던 동부 지중해를 덮친 <strong>&#39;후기 청동기 시대의 붕괴(Late Bronze Age Collapse)&#39;</strong>는 초연결 사회가 맞이한 비극과 역설을 적나라하게 보여줍니다.</p>
 <p>기후 변화로 인한 극심한 가뭄, 대기근, 해상 약탈자(&#39;바다 민족&#39;)의 습격이 연쇄적으로 맞물리며 미케네, 히타이트, 우가리트 등 찬란했던 제국들이 도미노처럼 붕괴했습니다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340" role="img" aria-label="청동기 초연결망과 철기 탈세계화의 기술경제학적 역설" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340" role="img" aria-label="청동기 초연결망과 철기 탈세계화의 기술경제학적 역설" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c5-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 15px; fill: var(--text-main); }
@@ -2473,7 +2714,7 @@
       "철이라는 기술 진보가 초장거리 무역을 끊었다" ➔ 역사는 직진하지 않고 세계화와 탈세계화를 출렁인다
     </text>
   </g>
-</svg>
+</svg><figcaption>청동기 초연결망과 철기 탈세계화의 기술경제학적 역설</figcaption></figure>
 </div>
 
 <h3 id="1-선형문자-b의-소멸-망각인가-민중의-의도적-보이콧인가"><a href="#1-선형문자-b의-소멸-망각인가-민중의-의도적-보이콧인가" class="heading-anchor" aria-hidden="true">#</a> (1) 선형문자 B의 소멸: 망각인가, 민중의 의도적 보이콧인가?</h3><p>미케네 문명이 무너지면서 그리스에서는 이후 400년 동안 문자가 완전히 사라지는 이른바 &#39;암흑기(Dark Age)&#39;가 찾아왔습니다. 전통 사학계는 서기(Scribe) 계층이 살해당하면서 필사 기술이 단순 단절되었다고 설명해 왔습니다.</p>

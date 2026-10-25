@@ -31,7 +31,31 @@
   <!-- KaTeX for Math Equations -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}], throwOnError: false, output: 'html'});"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
 
   <style>
     .katex-mathml {
@@ -43,22 +67,58 @@
       overflow-x: auto;
       overflow-y: hidden;
       max-width: 100%;
-      padding: 0.5em 0;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
       max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
     }
 
     :root {
       --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -145,7 +205,7 @@
       --bg-card: #ffffff;
       --bg-surface: #f1f5f9;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
       --border: #e2e8f0;
       --border-focus: #3b82f6;
@@ -193,6 +253,13 @@
       overflow-x: clip;
       width: 100%;
       max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
     }
 
     /* Top Sticky Header */
@@ -351,7 +418,7 @@
     /* Main Container */
     .article-container {
       width: 100%;
-      max-width: 820px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 24px 16px 80px;
       flex: 1;
@@ -374,7 +441,7 @@
 
     @media (min-width: 768px) {
       .article-card {
-        padding: 48px 48px;
+        padding: 40px 44px;
       }
     }
 
@@ -410,7 +477,7 @@
       font-size: clamp(24px, 5.5vw, 34px);
       font-weight: 800;
       line-height: 1.32;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.01em;
       color: var(--text-main);
       margin-bottom: 10px;
     }
@@ -451,9 +518,9 @@
 
     .content h1, .content h2, .content h3, .content h4 {
       color: var(--text-main);
-      font-weight: 750;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
       margin-top: 2.2em;
       margin-bottom: 0.8em;
       position: relative;
@@ -466,18 +533,19 @@
     }
 
     .content h2 {
-      font-size: clamp(19px, 4.2vw, 23px);
+      font-size: clamp(20px, 4.6vw, 26px);
       padding-left: 12px;
       border-left: 4px solid var(--primary);
     }
 
     .content h3 {
-      font-size: clamp(17px, 3.6vw, 19.5px);
+      font-size: clamp(18px, 4vw, 21.5px);
     }
 
     .content h4 {
-      font-size: 16.5px;
-      color: var(--text-muted);
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
     }
 
     .content a.heading-anchor {
@@ -502,7 +570,7 @@
 
     .content p {
       margin-top: 0;
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       text-align: start;
     }
 
@@ -523,7 +591,7 @@
     }
 
     .content ul, .content ol {
-      margin-bottom: 1.4em;
+      margin-bottom: 1.15em;
       padding-left: 1.4em;
     }
 
@@ -554,12 +622,13 @@
     /* Inline Code */
     .content code:not(pre code) {
       font-family: var(--font-mono);
-      font-size: 0.88em;
+      font-size: 0.9em;
       background: var(--inline-code-bg);
       color: var(--inline-code-text);
-      padding: 0.2em 0.45em;
+      padding: 0.05em 0.35em;
       border-radius: 4px;
       font-weight: 500;
+      line-height: 1;
     }
 
     /* Code Block with Copy Button */
@@ -638,8 +707,8 @@
 
     .content pre code {
       font-family: var(--font-mono);
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14.5px;
+      line-height: 1.65;
       color: var(--code-text);
       display: block;
       background: none;
@@ -679,6 +748,179 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     /* Interactive Simulator Component */
@@ -1119,9 +1361,8 @@
 
     .content table {
       width: 100%;
-      min-width: 780px;
       border-collapse: collapse;
-      font-size: 14.5px;
+      font-size: 15px;
       text-align: left;
     }
 
@@ -1386,7 +1627,7 @@
     }
     .vc-issue-title {
       font-size: 15.5px;
-      font-weight: 750;
+      font-weight: 700;
       color: var(--text-main);
     }
     .vc-badges {
@@ -1962,7 +2203,7 @@
 <p>$$T_{\text{BEP}} \approx 102\text{분} \quad (\text{테이블 8개 매장, 4,100원 음료 기준})$$</p>
 <p>손님이 1시간 42분 이내에 자리를 비워주면 다음 손님이 들어와 매출을 일으키므로 매장은 흑자 구간을 유지한다. 그러나 손님이 3시간, 5시간, 7시간을 머무는 순간, 해당 좌석의 시간당 공헌이익은 마이너스로 추락한다.</p>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" role="img" aria-label="카페 좌석 손익분기점(1시간 42분)과 체류 시간별 누적 손익 곡선" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:820px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" role="img" aria-label="카페 좌석 손익분기점(1시간 42분)과 체류 시간별 누적 손익 곡선" style="width:100%; height:auto; max-width:820px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .c-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 16px; fill: var(--text-main); }
@@ -2010,7 +2251,7 @@
   <rect x="585" y="305" width="145" height="46" rx="6" class="c-card"/>
   <text x="657" y="324" text-anchor="middle" font-size="11" font-weight="700" class="c-title">7시간 이상 점유 시</text>
   <text x="657" y="340" text-anchor="middle" font-size="10" class="c-sub">테이블 매출 기여도 0원 수렴</text>
-</svg>
+</svg><figcaption>카페 좌석 손익분기점(1시간 42분)과 체류 시간별 누적 손익 곡선</figcaption></figure>
 </div>
 
 <h3 id="22-상권에-따른-양면성-39시골-카페39-vs-39도심-대학가39"><a href="#22-상권에-따른-양면성-39시골-카페39-vs-39도심-대학가39" class="heading-anchor" aria-hidden="true">#</a> 2.2 상권에 따른 양면성: &#39;시골 카페&#39; vs &#39;도심 대학가&#39;</h3><p>논문은 모든 카페가 카공족을 배척하는 것은 아니라는 점도 공평하게 조명한다.</p>
@@ -2069,7 +2310,7 @@
 <li>점주가 &quot;좌석이 부족하니 1인석으로 이동해 달라&quot;거나 &quot;2시간이 경과했으니 추가 주문을 하거나 자리를 비워달라&quot;고 요구하는 것은 정당한 시설관리권의 행사이므로, 이에 불응하여 소란을 피우는 것은 어떠한 위법성조각사유(정당방위, 정당행위 등)도 성립할 수 없다.</li>
 </ul>
 <div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-label="카페 내 정당한 퇴거 요청 불응 및 소란 발생 시 형법 제314조 위력 업무방해죄 성립 구조도" style="width:100%; height:auto; max-width:800px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-label="카페 내 정당한 퇴거 요청 불응 및 소란 발생 시 형법 제314조 위력 업무방해죄 성립 구조도" style="width:100%; height:auto; max-width:800px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
   <defs>
     <style>
       .t-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 700; font-size: 16px; fill: var(--text-main); }
@@ -2129,7 +2370,7 @@
   <rect x="40" y="375" width="720" height="75" rx="8" class="t-box-dark"/>
   <text x="400" y="405" text-anchor="middle" font-size="15" font-weight="700" fill="#38bdf8" font-family="Pretendard, sans-serif">결론: 위력에 의한 업무방해죄 기수(旣遂) 성립</text>
   <text x="400" y="430" text-anchor="middle" font-size="12" class="t-text-muted">5년 이하의 징역 또는 1,500만 원 이하의 벌금 | 기물 파손 시 재물손괴죄와 실체적 경합</text>
-</svg>
+</svg><figcaption>카페 내 정당한 퇴거 요청 불응 및 소란 발생 시 형법 제314조 위력 업무방해죄 성립 구조도</figcaption></figure>
 </div>
 
 <h3 id="35-죄수-및-관련-범죄와의-관계"><a href="#35-죄수-및-관련-범죄와의-관계" class="heading-anchor" aria-hidden="true">#</a> 3.5 죄수 및 관련 범죄와의 관계</h3><p>고시면 교수는 위력 업무방해죄 외에 병과될 수 있는 관련 형법 규정들도 면밀히 정리했다.</p>
@@ -2198,7 +2439,7 @@
 <hr>
 <h2 id="6-상생의-대안-고시면-교수의-397대-원칙39과-법경제학적-제언"><a href="#6-상생의-대안-고시면-교수의-397대-원칙39과-법경제학적-제언" class="heading-anchor" aria-hidden="true">#</a> 6. 상생의 대안 — 고시면 교수의 &#39;7대 원칙&#39;과 법경제학적 제언</h2><p>논문의 후반부에서 고시면 교수는 형사 고소나 감정적 싸움으로 치닫기 전에, 카페와 카공족이 공존할 수 있는 실질적인 가이드라인을 제시한다. 그가 가상으로 디자인한 안내문 <strong>[카공족 대환영 7대 수칙(카페 O...O)]</strong>은 자영업 현장에서 즉시 참고할 만한 균형점을 담고 있다.</p>
 <h3 id="61-카공족-대환영-7대-원칙"><a href="#61-카공족-대환영-7대-원칙" class="heading-anchor" aria-hidden="true">#</a> 6.1 카공족 대환영 7대 원칙</h3><div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 720" role="img" aria-label="카공족 대환영 7대 원칙 (카페 O...O 상생 안내문 도표)" style="width:100%; height:auto; max-width:780px; display:block; margin:0 auto; background:var(--bg-card); border-radius:16px; border:1px solid var(--border);">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:780px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 720" role="img" aria-label="카공족 대환영 7대 원칙 (카페 O...O 상생 안내문 도표)" style="width:100%; height:auto; max-width:780px; display:block; margin:0 auto; background:var(--bg-card); border-radius:16px; border:1px solid var(--border);">
   <defs>
     <style>
       .r-title { font-family: Pretendard, -apple-system, sans-serif; font-weight: 800; font-size: 20px; fill: var(--text-main); }
@@ -2255,7 +2496,7 @@
   <rect x="30" y="642" width="720" height="54" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1"/>
   <text x="390" y="664" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5px" font-weight="600" fill="var(--text-main)">★ 충족도 평가: 스타 7개 달성 시 'VIP 상생 단골' 고정 좌석 혜택 부여</text>
   <text x="390" y="683" text-anchor="middle" class="r-footer-txt">카페는 단순한 음료 판매처가 아닌 '공존의 제3공간' — 권리의 남용을 멈추고 서로의 생존을 배려할 때 상생이 시작됩니다.</text>
-</svg>
+</svg><figcaption>카공족 대환영 7대 원칙 (카페 O...O 상생 안내문 도표)</figcaption></figure>
 </div>
 
 <p>논문은 특히 <strong>2번 수칙(예의순)</strong>에서 외식산업연구원의 손익분기점인 <strong>1시간 42분</strong>을 표준 체류 시간으로 제시하면서, 만약 종일 공부하고 싶다면 객단가 1만 3,000원(약 음료 2~3잔 또는 음료+베이커리 세트) 수준의 매출을 올려주는 것이 상생의 최소한의 예의라고 역설한다.</p>
