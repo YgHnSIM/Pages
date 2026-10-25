@@ -6,3 +6,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .obsidian/
+
+# Temporary work files & scrap data
+raw_data/tmp/*
+!raw_data/tmp/.gitkeep
