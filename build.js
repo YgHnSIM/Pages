@@ -1047,6 +1047,17 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
+      title: "AI는 슈퍼카인데 회사는 왜 제자리일까 — 개인의 속도, 조직의 병목, 그리고 마찰의 종말",
+      subtitle: "와튼 스쿨 이선 몰릭의 《공존: AI의 다음 단계》와 빅 테크놀로지 팟캐스트로 읽는 역량 오버행, 추론기 패러다임, 인지적 하역, 그리고 양손잡이 조직의 생존법",
+      date: "2026-10-26",
+      summary: "코드 생산량은 20배 폭증했는데 제품 출시는 왜 30% 증가에 그치는가? 와튼 스쿨 이선 몰릭 교수의 2026년 신간 《공존: AI의 다음 단계》와 빅 테크놀로지 팟캐스트 대담을 바탕으로, 싱글 플레이어 AI와 멀티플레이어 조직의 충돌, 잃어버린 경영의 근육, 역량 오버행과 추론기 패러다임, 제로 토큰 비용이 몰고 올 마찰의 종말과 인지적 하역의 위기, 그리고 양손잡이 조직의 생존 전략을 완결된 해설 에세이로 해부한다.",
+      tags: ["AI", "생산성", "조직설계", "이선몰릭", "에이전트"],
+      tag_string: "AI 생산성 조직설계 이선몰릭 에이전트",
+      reading_time: 25,
+      url: "articles/ai_supercar_organizational_bottleneck.html",
+      _timestamp: new Date("2026-10-26T23:55:00Z").getTime()
+    },
+    {
       title: "예측하는 기계는 왜 압축하는 기계인가",
       subtitle: "섀넌의 엔트로피에서 산술 부호화, 솔로모노프와 후터를 거쳐 두 편의 LLM 압축 논문까지",
       date: "2026-10-22",
