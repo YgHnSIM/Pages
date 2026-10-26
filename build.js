@@ -13,15 +13,76 @@ const OUTPUT_DIR = __dirname;
 // Home preset chips. An article matches when one of its tags is listed here.
 // Match is exact. Title substrings are intentionally not used.
 const PRESETS = [
-  { name: 'AI', tags: ['AI', 'AGI', '에이전트', 'LLM', '인공지능안전', '인공지능철학', '인공지능윤리', '코딩에이전트', '에이전틱엔지니어링', 'AI안전', '생성형AI', '하네스', '정렬', '해석가능성', '언어모델', '정렬문제', '통제문제'] },
-  { name: '컴퓨터', tags: ['Python', 'CPython', '포인터', '메모리', '메모리 모델', '메모리모델', 'DRAM', '가비지컬렉션', '컴파일러', '어셈블리', 'C/C++', '자료구조', '컴퓨터 구조', '컴퓨터과학', '컴퓨터 과학사', '시스템프로그래밍', '시스템 프로그래밍', '프로그래밍언어', '바이트코드', '인터프리터', '소프트웨어 공학', 'LLVM', 'vectorcall', 'callable', 'BoundMethod', '디스크립터', '멘탈모델', '객체지향', 'provenance', 'Memory Controller'] },
-  { name: '법', tags: ['노동법', '비교노동법', '형법', '공정거래법', '경쟁법', '근로자성', '종속성', '플랫폼노동', '업무방해죄', '노동법사', '독일노동법', '미국노동법', '멤버십형고용', '노동3권', '노무제공자'] },
-  { name: '역사', tags: ['고대사', '역사', '역사학', '군사역사학', '고대근동', '서양문명', '청동기', '청동기시대', '스페인정복', '페르시아만', '바다민족', '콩키스타도르'] },
-  { name: '수학', tags: ['수학사', '해석기하학', '대수학', '미적분학', '기호학'] },
-  { name: '사상', tags: ['동양철학', '법철학', '정치철학', '법가사상', '한비자', '홉스', '라이프니츠', '인공지능철학'] },
-  { name: '과학', tags: ['우주론', '우주배경복사', '시뮬레이션가설'] },
-  { name: '경제', tags: ['기업재무', '가치평가', '재무회계', '현금흐름', 'AICapEx', '위험프리미엄', '빅테크'] }
+  { name: 'AI', tags: ['AI', 'AGI', '에이전트', '언어모델', 'AI안전', 'AI윤리', 'AI철학', '해석가능성', '생성형AI', '정보이론'] },
+  { name: '컴퓨터', tags: ['컴퓨터과학', '계산이론', '컴퓨터구조', '컴퓨터과학사', '메모리모델', '포인터', '자료구조', '컴파일러', '시스템프로그래밍', '소프트웨어공학', '아키텍처', '프로그래밍언어', '객체지향', '가비지컬렉션', '압축', 'Python', 'CPython', 'C-Cpp', 'Go', 'Rust'] },
+  { name: '법', tags: ['노동법', '법학', '근로자성', '플랫폼노동', '종속성', '타인결정성', '근로자추정', '노동3권', '노동법사', '비교노동법', '독일노동법', '미국노동법', '해고법제', '형법', '업무방해죄', '공정거래법', '법철학', '규제'] },
+  { name: '역사', tags: ['역사', '사회과학', '고대사', '서양문명', '문화혼종성', '청동기시대', '스페인정복', '군사사', '지정학', '국제정치경제학'] },
+  { name: '수학', tags: ['수학', '수학사', '해석기하학', '대수학', '미적분학', '기호학'] },
+  { name: '사상', tags: ['철학', '문화예술', '과학철학', '동양철학', '법가사상', '정치철학', '법철학', 'AI철학', '종교', '디자인', '한비자', '데카르트', '홉스', '라이프니츠'] },
+  { name: '과학', tags: ['생물학', '자연과학', '우주론', '시스템생물학', '공생발생'] },
+  { name: '경제', tags: ['경제경영', '기업재무', '가치평가', '조직설계', '생산성', '자영업경제학', '국제정치경제학'] }
 ];
+
+const FIELD_TAGS = new Set([
+  'AI', '컴퓨터과학', '노동법', '법학', '역사', '수학',
+  '철학', '경제경영', '생물학', '자연과학', '사회과학', '문화예술'
+]);
+const FORMAT_TAGS = new Set(['인터뷰', '강연', '논문리뷰', '해설', '튜토리얼', '요약']);
+const VALID_TAG_RE = /^[가-힣A-Za-z0-9]+(-[가-힣A-Za-z0-9]+)*$/;
+const CONTROLLED_VOCAB = new Set([
+  // 12 Field
+  'AI', '컴퓨터과학', '노동법', '법학', '역사', '수학',
+  '철학', '경제경영', '생물학', '자연과학', '사회과학', '문화예술',
+  // 71 Topic
+  'AGI', '에이전트', '언어모델', 'AI안전', 'AI윤리', 'AI철학', '해석가능성', '생성형AI', '정보이론',
+  '계산이론', '컴퓨터구조', '컴퓨터과학사', '메모리모델', '포인터', '자료구조', '컴파일러',
+  '시스템프로그래밍', '소프트웨어공학', '아키텍처', '프로그래밍언어', '객체지향', '가비지컬렉션',
+  '압축', 'Python', 'CPython', 'C-Cpp', 'Go', 'Rust',
+  '근로자성', '플랫폼노동', '종속성', '타인결정성', '근로자추정', '노동3권', '노동법사',
+  '비교노동법', '독일노동법', '미국노동법', '해고법제', '형법', '업무방해죄', '공정거래법', '법철학', '규제',
+  '고대사', '서양문명', '문화혼종성', '청동기시대', '스페인정복', '군사사', '지정학', '국제정치경제학',
+  '수학사', '해석기하학', '대수학', '미적분학', '기호학', '우주론', '시스템생물학', '공생발생',
+  '과학철학', '동양철학', '법가사상', '정치철학', '종교', '디자인',
+  '기업재무', '가치평가', '조직설계', '생산성', '자영업경제학',
+  // 15 Entity
+  '스튜어트러셀', '제프리헌틀리', '이선몰릭', '아스워스다모다란', '타일러코웬',
+  '데니스노블', '블레즈아구에라이아르카스', '조세핀퀸', '한비자', '데카르트',
+  '페르마', '뉴턴', '홉스', '라이프니츠', '앤트로픽',
+  // 6 Format
+  '인터뷰', '강연', '논문리뷰', '해설', '튜토리얼', '요약'
+]);
+
+function lintArticleTags(id, tags, controlledSet) {
+  const errors = [];
+  const warnings = [];
+  if (!Array.isArray(tags) || tags.length < 2 || tags.length > 5) {
+    errors.push(`[TAG-LINT:L1] 수량 위반 (${tags ? tags.length : 0}개): 태그는 2~5개여야 합니다.`);
+  }
+  const seen = new Set();
+  for (const t of (tags || [])) {
+    if (/\s/.test(t)) {
+      errors.push(`[TAG-LINT:L2] 공백 포함 금지: '${t}' → '${t.replace(/\s+/g, '')}'`);
+    }
+    if (!VALID_TAG_RE.test(t)) {
+      errors.push(`[TAG-LINT:L3] 특수기호 금지: '${t}'`);
+    }
+    const low = t.toLowerCase();
+    if (seen.has(low)) errors.push(`[TAG-LINT:L4] 중복 태그 발견: '${t}'`);
+    seen.add(low);
+    if (controlledSet && !controlledSet.has(t)) {
+      warnings.push(`[TAG-LINT:L7] 미등재 신규 태그 감지: '${t}' (표준 학문 분과명인지 확인하세요)`);
+    }
+  }
+  const fieldCount = (tags || []).filter(t => FIELD_TAGS.has(t)).length;
+  if (fieldCount === 0) {
+    errors.push(`[TAG-LINT:L5] 필수 분야 태그 누락: 12대 분야 태그 중 최소 1개를 포함하세요.`);
+  }
+  const formatCount = (tags || []).filter(t => FORMAT_TAGS.has(t)).length;
+  if (formatCount !== 1) {
+    warnings.push(`[TAG-LINT:L6] 형식 태그 권장 위반 (현재 ${formatCount}개): 6대 형식 태그 중 1개 권장.`);
+  }
+  return { errors, warnings };
+}
 
 function presetsFor(tags) {
   const list = Array.isArray(tags) ? tags : [];
@@ -948,6 +1009,10 @@ async function build() {
       ? path.join(SOURCES_DIR, job.relDir, job.file)
       : path.join(SOURCES_DIR, job.file);
     const raw = fs.readFileSync(filePath, 'utf-8');
+    if (!raw.startsWith('---')) {
+      console.warn('  ! Skipped non-article (no frontmatter):', job.file);
+      continue;
+    }
     const { data, content } = parseFrontMatter(raw);
 
     // Fallbacks
@@ -1047,23 +1112,12 @@ async function build() {
   // Include special rich legacy / standalone articles (e.g., cpu_dram_memory_interface.html, python deep-dives)
   const legacyArticles = [
     {
-      title: "AI는 슈퍼카인데 회사는 왜 제자리일까 — 개인의 속도, 조직의 병목, 그리고 마찰의 종말",
-      subtitle: "와튼 스쿨 이선 몰릭의 《공존: AI의 다음 단계》와 빅 테크놀로지 팟캐스트로 읽는 역량 오버행, 추론기 패러다임, 인지적 하역, 그리고 양손잡이 조직의 생존법",
-      date: "2026-10-26",
-      summary: "코드 생산량은 20배 폭증했는데 제품 출시는 왜 30% 증가에 그치는가? 와튼 스쿨 이선 몰릭 교수의 2026년 신간 《공존: AI의 다음 단계》와 빅 테크놀로지 팟캐스트 대담을 바탕으로, 싱글 플레이어 AI와 멀티플레이어 조직의 충돌, 잃어버린 경영의 근육, 역량 오버행과 추론기 패러다임, 제로 토큰 비용이 몰고 올 마찰의 종말과 인지적 하역의 위기, 그리고 양손잡이 조직의 생존 전략을 완결된 해설 에세이로 해부한다.",
-      tags: ["AI", "생산성", "조직설계", "이선몰릭", "에이전트"],
-      tag_string: "AI 생산성 조직설계 이선몰릭 에이전트",
-      reading_time: 25,
-      url: "articles/ai_supercar_organizational_bottleneck.html",
-      _timestamp: new Date("2026-10-26T23:55:00Z").getTime()
-    },
-    {
       title: "예측하는 기계는 왜 압축하는 기계인가",
       subtitle: "섀넌의 엔트로피에서 산술 부호화, 솔로모노프와 후터를 거쳐 두 편의 LLM 압축 논문까지",
       date: "2026-10-22",
       summary: "다음 기호를 잘 예측하는 모델은 곧 좋은 압축기라는 생각을 따라, 섀넌의 엔트로피와 허프만·산술 부호화, 솔로모노프와 후터의 이론을 거쳐 언어 모델을 압축기로 쓰는 두 편의 LLM 압축 논문까지 살피고, 압축률이 지능을 얼마나 비추는지 정리합니다.",
-      tags: ["AI", "언어모델", "정보이론", "압축", "지능"],
-      tag_string: "AI 언어모델 정보이론 압축 지능",
+      tags: ["AI", "언어모델", "정보이론", "압축", "논문리뷰"],
+      tag_string: "AI 언어모델 정보이론 압축 논문리뷰",
       reading_time: 44,
       url: "articles/language_modeling_compression_intelligence.html",
       _timestamp: new Date("2026-10-22T13:15:00Z").getTime()
@@ -1073,8 +1127,8 @@ async function build() {
       subtitle: "스스로 뛰는 심장 모델에서 중심 원리, 이기적 유전자, 생물학적 상대성, 다유전자 점수, 행위자성까지",
       date: "2026-10-22",
       summary: "스스로 뛰는 심장 세포 모델을 만든 생리학자 데니스 노블의 주장을 따라, 크릭의 중심 원리와 그 위에 덧쌓인 '유전자 설계도' 해석, 세포에 기대는 DNA 복제, 이기적 유전자 논쟁, 특권적 인과 층위가 없다는 생물학적 상대성을 살피고, 그의 말 가운데 단단한 대목과 과장된 대목을 갈라 읽습니다.",
-      tags: ["생물학", "과학철학", "유전학", "시스템생물학", "데니스노블"],
-      tag_string: "생물학 과학철학 유전학 시스템생물학 데니스노블",
+      tags: ["생물학", "시스템생물학", "과학철학", "데니스노블", "해설"],
+      tag_string: "생물학 시스템생물학 과학철학 데니스노블 해설",
       reading_time: 30,
       url: "articles/noble_genes_not_blueprint.html",
       _timestamp: new Date("2026-10-22T08:20:00Z").getTime()
@@ -1084,8 +1138,8 @@ async function build() {
       subtitle: "앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠이 말하는 개념, 계획, 정렬, 그리고 의인화",
       date: "2026-10-18",
       summary: "언어 모델은 짜인 것이 아니라 자라난 것이라 만든 사람도 그 속을 모릅니다. 앤트로픽 해석가능성 연구자 엠마뉴엘 아메이젠의 Lenny's Podcast 이야기를 따라, 형식과 언어를 가리지 않는 개념 표상, 말하지 않는 계획, 도약처럼 보이는 성능 향상, 감시받을 때만 착한 모델이라는 걱정, 의인화의 쓸모를 정리합니다.",
-      tags: ["AI", "해석가능성", "언어모델", "정렬", "앤트로픽"],
-      tag_string: "AI 해석가능성 언어모델 정렬 앤트로픽",
+      tags: ["AI", "해석가능성", "언어모델", "AI안전", "인터뷰"],
+      tag_string: "AI 해석가능성 언어모델 AI안전 인터뷰",
       reading_time: 41,
       url: "articles/inside_the_black_box_how_llms_think.html",
       _timestamp: new Date("2026-10-18T14:20:00Z").getTime()
@@ -1095,8 +1149,8 @@ async function build() {
       subtitle: "Geoffrey Huntley의 무료 워크숍 「how to build a coding agent」와 Go 실습 저장소 심층 학습",
       date: "2026-10-16",
       summary: "코딩 에이전트는 LLM 토큰과 함께 루프를 도는 300줄 코드라는 Geoffrey Huntley의 워크숍을 따라, 대화 루프에 read_file, list_files, bash, edit_file, code_search 도구를 하나씩 붙여 가는 6단계를 실제 Go 코드로 읽습니다.",
-      tags: ["AI", "코딩에이전트", "Go", "워크숍", "GeoffreyHuntley"],
-      tag_string: "AI 코딩에이전트 Go 워크숍 GeoffreyHuntley",
+      tags: ["AI", "컴퓨터과학", "에이전트", "Go", "튜토리얼"],
+      tag_string: "AI 컴퓨터과학 에이전트 Go 튜토리얼",
       reading_time: 35,
       url: "articles/build_a_coding_agent_workshop.html",
       _timestamp: new Date("2026-10-15T19:50:00Z").getTime()
@@ -1106,8 +1160,8 @@ async function build() {
       subtitle: "Geoffrey Huntley의 글을 영·한 병렬 대조와 25개 심화 주석으로 읽기",
       date: "2026-10-15",
       summary: "Josh Wulf와의 4부작 대담을 정리한 Geoffrey Huntley의 글을 96개 영·한 대조 블록으로 읽고, 인간 엔지니어에게 남은 비전·결정론적 검증·주체성을 25개 심화 주석과 챕터, 자가 점검으로 짚습니다.",
-      tags: ["AI", "에이전틱엔지니어링", "소프트웨어개발", "영한대조", "GeoffreyHuntley"],
-      tag_string: "AI 에이전틱엔지니어링 소프트웨어개발 영한대조 GeoffreyHuntley",
+      tags: ["AI", "에이전트", "소프트웨어공학", "제프리헌틀리", "튜토리얼"],
+      tag_string: "AI 에이전트 소프트웨어공학 제프리헌틀리 튜토리얼",
       reading_time: 50,
       url: "articles/huntley_nobody_should_type_code_by_hand.html",
       _timestamp: new Date("2026-10-15T13:00:00Z").getTime()
@@ -1117,8 +1171,8 @@ async function build() {
       subtitle: "Computerphile의 Laurence Tratt 강의와 슬라이드로 읽는 자동 메모리 관리의 논리",
       date: "2026-10-15",
       summary: "malloc과 free의 세 가지 오류에서 참조 횟수 계산의 한계, 마크 앤 스윕의 도달 가능성 발상, 그리고 GC가 있어도 누수가 생기는 이유까지 짚습니다.",
-      tags: ["컴퓨터과학", "메모리관리", "가비지컬렉션", "프로그래밍언어", "Computerphile"],
-      tag_string: "컴퓨터과학 메모리관리 가비지컬렉션 프로그래밍언어 Computerphile",
+      tags: ["컴퓨터과학", "가비지컬렉션", "메모리모델", "프로그래밍언어", "해설"],
+      tag_string: "컴퓨터과학 가비지컬렉션 메모리모델 프로그래밍언어 해설",
       reading_time: 20,
       url: "articles/garbage_collection_mark_and_sweep.html",
       _timestamp: new Date("2026-10-15T12:00:00Z").getTime()
@@ -1128,8 +1182,8 @@ async function build() {
       subtitle: "Katie Dill(Stripe) 강연 'How to scale intent, quality, and artistry with AI' 정리",
       date: "2026-10-13",
       summary: "좀비 건물에서 좀비 UI까지, AI 시대에 제품의 의도와 품질, 예술성을 지키는 함정과 해독제를 Stripe 디자인 리더 Katie Dill의 강연으로 정리합니다.",
-      tags: ["AI", "디자인", "품질", "장인정신", "Stripe"],
-      tag_string: "AI 디자인 품질 장인정신 Stripe",
+      tags: ["AI", "디자인", "소프트웨어공학", "강연"],
+      tag_string: "AI 디자인 소프트웨어공학 강연",
       reading_time: 20,
       url: "articles/digital_craftsmanship_ai_era.html",
       _timestamp: new Date("2026-10-13T12:00:00Z").getTime()
@@ -1139,8 +1193,8 @@ async function build() {
       subtitle: "클래스 정의부터 tp_new, Bound Method 동적 생성, 7가지 임시 객체까지",
       date: "2026-09-15",
       summary: "클래스 정의부터 tp_new, Bound Method(PyMethodObject) 동적 생성(m1 is m2 -> False), 7가지 숨은 임시 객체까지 CPython 힙 메모리와 디스크립터 프로토콜의 기계적 원리를 완전 해부합니다.",
-      tags: ["Python", "CPython", "메모리모델", "BoundMethod", "디스크립터", "시스템프로그래밍"],
-      tag_string: "Python CPython 메모리모델 BoundMethod 디스크립터 시스템프로그래밍",
+      tags: ["컴퓨터과학", "Python", "CPython", "메모리모델", "해설"],
+      tag_string: "컴퓨터과학 Python CPython 메모리모델 해설",
       reading_time: 18,
       url: "articles/python_object_creation_and_binding.html",
       _timestamp: new Date("2026-09-15T12:00:00Z").getTime()
@@ -1150,8 +1204,8 @@ async function build() {
       subtitle: "obj(1, 2) 바이트코드 CALL부터 tp_call, vectorcall, 그리고 순환 메모리 구조까지",
       date: "2026-09-15",
       summary: "obj(1, 2) 바이트코드 CALL부터 tp_call, PEP 590 vectorcall 고속 경로, 프레임 스택 평가, PyObject와 PyTypeObject의 순환 메모리 구조까지 CPython 실행 엔진을 완전 해부합니다.",
-      tags: ["Python", "CPython", "vectorcall", "callable", "바이트코드", "인터프리터"],
-      tag_string: "Python CPython vectorcall callable 바이트코드 인터프리터",
+      tags: ["컴퓨터과학", "Python", "CPython", "시스템프로그래밍", "해설"],
+      tag_string: "컴퓨터과학 Python CPython 시스템프로그래밍 해설",
       reading_time: 22,
       url: "articles/python_callable_and_execution_engine.html",
       _timestamp: new Date("2026-09-15T12:01:00Z").getTime()
@@ -1161,8 +1215,8 @@ async function build() {
       subtitle: "Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름",
       date: "2026-09-01",
       summary: "CPU와 DDR DRAM 사이의 Memory Controller, DDR PHY, DRAM 내부 구조와 데이터 흐름을 대화형 도식과 다이어그램으로 완벽 정리한 문서입니다.",
-      tags: ["컴퓨터 구조", "DRAM", "Memory Controller", "PHY", "다이어그램"],
-      tag_string: "컴퓨터 구조 DRAM Memory Controller PHY 다이어그램",
+      tags: ["컴퓨터과학", "컴퓨터구조", "메모리모델", "해설"],
+      tag_string: "컴퓨터과학 컴퓨터구조 메모리모델 해설",
       reading_time: 15,
       url: "articles/cpu_dram_memory_interface.html",
       _timestamp: new Date("2026-09-01").getTime()
@@ -1179,8 +1233,17 @@ async function build() {
   // Sort articles descending by date
   articles.sort((a, b) => b._timestamp - a._timestamp);
 
+  let totalErrors = 0;
   const tagCounts = new Map();
   articles.forEach(article => {
+    const { errors, warnings } = lintArticleTags(article.url, article.tags, CONTROLLED_VOCAB);
+    if (warnings.length > 0) {
+      warnings.forEach(w => console.warn(`  [TAG-LINT:WARN] ${article.url}: ${w}`));
+    }
+    if (errors.length > 0) {
+      errors.forEach(e => console.error(`  [TAG-LINT:ERROR] ${article.url}: ${e}`));
+      totalErrors += errors.length;
+    }
     const matched = presetsFor(article.tags);
     article.preset_json = escapeAttr(JSON.stringify(matched));
     article.tag_json = escapeAttr(JSON.stringify(article.tags));
@@ -1193,6 +1256,10 @@ async function build() {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     });
   });
+
+  if (totalErrors > 0) {
+    throw new Error(`태그 규칙 위반 (총 ${totalErrors}건)으로 빌드를 중단합니다.`);
+  }
 
   const tagEntries = Array.from(tagCounts.entries()).sort((a, b) => {
     return b[1] - a[1] || a[0].localeCompare(b[0], 'ko');
