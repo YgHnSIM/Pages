@@ -1,0 +1,3186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>믿지 않고 쓰는 법, 새지 않게 쌓는 법 — 사티아 나델라의 신뢰 아키텍처와 '프라이빗 평가'라는 새 지식재산</title>
+  <meta name="description" content="마이크로소프트 CEO 사티아 나델라는 '정렬은 규모를 키우면 저절로 따라온다'는 오랜 믿음을 버렸다고 말한다. 그렇다면 점점 강력해지지만 완전히 믿을 수는 없는 프런티어 모델을 기업은 어떻게 써야 하는가. 이 글은 모델 바깥에 세우는 제로 트러스트 격리 구조, 대부분의 토큰이 값싼 상품이 되는 경제, 사용자의 피드백이 모델 회사로 새어 나가는 '역정보 역설', 그리고 각 기업의 비공개 평가 세트가 핵심 지식재산이 된다는 주장을 배경지식부터 차근차근 풀어 설명한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">믿지 않고 쓰는 법, 새지 않게 쌓는 법 — 사티아 나델라의 신뢰 아키텍처와 '프라이빗 평가'라는 새 지식재산</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#믿지-않고-쓰는-법-새지-않게-쌓는-법-사티아-나델라의-신뢰-아키텍처와-39프라이빗-평가39라는-새-지식재산" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">믿지 않고 쓰는 법, 새지 않게 쌓는 법 — 사티아 나델라의 신뢰 아키텍처와 &#39;프라이빗 평가&#39;라는 새 지식재산</span></a></li><li class="depth-2"><a href="#1-출발점-quot정렬은-저절로-오지-않는다quot" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 출발점: &quot;정렬은 저절로 오지 않는다&quot;</span></a></li><li class="depth-3"><a href="#11-스케일링-법칙이라는-낙관" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 스케일링 법칙이라는 낙관</span></a></li><li class="depth-3"><a href="#12-지난-12개월-동안-바뀐-생각" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 지난 12개월 동안 바뀐 생각</span></a></li><li class="depth-3"><a href="#13-나델라가-보는-정렬의-자리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.3 나델라가 보는 정렬의 자리</span></a></li><li class="depth-2"><a href="#2-모델-바깥의-신뢰-제로-트러스트를-ai에-옮기기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 모델 바깥의 신뢰: 제로 트러스트를 AI에 옮기기</span></a></li><li class="depth-3"><a href="#21-제로-트러스트란-무엇인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 제로 트러스트란 무엇인가</span></a></li><li class="depth-3"><a href="#22-quotai-안전quot과-quot보안-격리quot를-혼동하지-말-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 &quot;AI 안전&quot;과 &quot;보안 격리&quot;를 혼동하지 말 것</span></a></li><li class="depth-3"><a href="#23-신뢰-아키텍처의-구성-요소" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 신뢰 아키텍처의 구성 요소</span></a></li><li class="depth-3"><a href="#24-왜-사고-과정은-quot영어로quot-남아야-하나" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.4 왜 사고 과정은 &quot;영어로&quot; 남아야 하나</span></a></li><li class="depth-3"><a href="#25-사고-과정은-믿을-만한가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.5 사고 과정은 믿을 만한가</span></a></li><li class="depth-3"><a href="#26-오픈-웨이트에-대한-신중한-언급" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.6 오픈 웨이트에 대한 신중한 언급</span></a></li><li class="depth-2"><a href="#3-토큰이-상품이-되는-경제" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 토큰이 상품이 되는 경제</span></a></li><li class="depth-3"><a href="#31-quot포화quot란-무엇이-포화되는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 &quot;포화&quot;란 무엇이 포화되는가</span></a></li><li class="depth-3"><a href="#32-에이전트-스웜과-라우터" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 에이전트 스웜과 라우터</span></a></li><li class="depth-3"><a href="#33-수직-통합인가-수평-분업인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 수직 통합인가 수평 분업인가</span></a></li><li class="depth-2"><a href="#4-기업은-왜-자기-지능을-소유해야-하는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 기업은 왜 자기 지능을 소유해야 하는가</span></a></li><li class="depth-3"><a href="#41-하이에크-지식은-흩어져-있다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 하이에크: 지식은 흩어져 있다</span></a></li><li class="depth-3"><a href="#42-애로의-정보-역설과-그것을-뒤집은-quot역정보-역설quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 애로의 정보 역설과, 그것을 뒤집은 &quot;역정보 역설&quot;</span></a></li><li class="depth-3"><a href="#43-지식을-담는-세-가지-그릇" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 지식을 담는 세 가지 그릇</span></a></li><li class="depth-2"><a href="#5-프라이빗-평가-기업의-새-핵심-지식재산" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 프라이빗 평가: 기업의 새 핵심 지식재산</span></a></li><li class="depth-3"><a href="#51-평가evals와-벤치마크의-기초" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 평가(evals)와 벤치마크의 기초</span></a></li><li class="depth-3"><a href="#52-나델라의-주장-모든-기업이-비공개-평가를-갖는다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 나델라의 주장: 모든 기업이 비공개 평가를 갖는다</span></a></li><li class="depth-3"><a href="#53-왜-평가가-지식재산이-되는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 왜 평가가 지식재산이 되는가</span></a></li><li class="depth-3"><a href="#54-quot지금은-이상해-보이지만-5년-뒤엔-당연해질-것quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.4 &quot;지금은 이상해 보이지만 5년 뒤엔 당연해질 것&quot;</span></a></li><li class="depth-3"><a href="#55-소수-기업만의-이야기인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.5 소수 기업만의 이야기인가</span></a></li><li class="depth-2"><a href="#6-구현-경제-누가-평가를-만들고-시스템을-엮는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 구현 경제: 누가 평가를 만들고 시스템을 엮는가</span></a></li><li class="depth-3"><a href="#61-새로운-종류의-일" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 새로운 종류의 일</span></a></li><li class="depth-3"><a href="#62-유니레버-사례" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 유니레버 사례</span></a></li><li class="depth-3"><a href="#63-표-구현의-단계와-각-단계의-산출물" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 표: 구현의 단계와 각 단계의 산출물</span></a></li><li class="depth-2"><a href="#7-더-큰-그림-투자-전력-그리고-성장" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 더 큰 그림: 투자, 전력, 그리고 성장</span></a></li><li class="depth-3"><a href="#71-1000억-달러짜리-학습은-감당-가능한가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 1000억 달러짜리 학습은 감당 가능한가</span></a></li><li class="depth-3"><a href="#72-성장률을-꺾어-올릴-수-있나" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 성장률을 꺾어 올릴 수 있나</span></a></li><li class="depth-3"><a href="#73-수렴-성장이라는-꿈" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 수렴 성장이라는 꿈</span></a></li><li class="depth-2"><a href="#8-논지를-다시-묶기-한-장의-지도" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 논지를 다시 묶기: 한 장의 지도</span></a></li><li class="depth-2"><a href="#9-비판적으로-읽을-지점" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 비판적으로 읽을 지점</span></a></li><li class="depth-3"><a href="#91-화자의-이해관계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 화자의 이해관계</span></a></li><li class="depth-3"><a href="#92-평가는-만들기-어렵다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 평가는 만들기 어렵다</span></a></li><li class="depth-3"><a href="#93-평가만으로-유출이-막히지는-않는다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.3 평가만으로 유출이 막히지는 않는다</span></a></li><li class="depth-3"><a href="#94-격리는-안전의-대체물이-아니다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.4 격리는 안전의 대체물이 아니다</span></a></li><li class="depth-2"><a href="#10-맺음말-무엇을-소유할-것인가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 맺음말: 무엇을 소유할 것인가</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-28</span>
+          <span class="meta-badge">⏱️ 약 44분</span>
+          
+        </div>
+        <h1 class="article-title">믿지 않고 쓰는 법, 새지 않게 쌓는 법 — 사티아 나델라의 신뢰 아키텍처와 '프라이빗 평가'라는 새 지식재산</h1>
+        <p class="article-subtitle">정렬이 저절로 오지 않는다는 고백, 모델 바깥의 제로 트러스트, 커모디티가 되는 토큰, 하이에크와 애로의 정보 역설을 뒤집은 '역정보 역설', 그리고 기업이 곧 벤치마크가 되는 시대</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#경제경영</span>
+          
+          <span class="tag-pill">#AI안전</span>
+          
+          <span class="tag-pill">#에이전트</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-28-나델라신뢰아키텍처.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="믿지-않고-쓰는-법-새지-않게-쌓는-법-사티아-나델라의-신뢰-아키텍처와-39프라이빗-평가39라는-새-지식재산"><a href="#믿지-않고-쓰는-법-새지-않게-쌓는-법-사티아-나델라의-신뢰-아키텍처와-39프라이빗-평가39라는-새-지식재산" class="heading-anchor" aria-hidden="true">#</a> 믿지 않고 쓰는 법, 새지 않게 쌓는 법 — 사티아 나델라의 신뢰 아키텍처와 &#39;프라이빗 평가&#39;라는 새 지식재산</h2><h2 id="1-출발점-quot정렬은-저절로-오지-않는다quot"><a href="#1-출발점-quot정렬은-저절로-오지-않는다quot" class="heading-anchor" aria-hidden="true">#</a> 1. 출발점: &quot;정렬은 저절로 오지 않는다&quot;</h2><h3 id="11-스케일링-법칙이라는-낙관"><a href="#11-스케일링-법칙이라는-낙관" class="heading-anchor" aria-hidden="true">#</a> 1.1 스케일링 법칙이라는 낙관</h3><p>2010년대 후반, 언어모델을 만드는 사람들 사이에는 하나의 경험칙이 강력한 믿음으로 자리 잡았다. 모델의 크기, 학습 데이터의 양, 투입하는 계산량을 일정한 비율로 함께 늘리면 성능이 놀랍도록 예측 가능하게 좋아진다는 것이다. 이것을 <strong>스케일링 법칙(scaling laws)</strong> 이라 부른다. 손실(loss)이라는 수치가 계산량에 따라 매끄러운 곡선을 그리며 내려가는 모습은, 마치 자연법칙을 발견한 듯한 확신을 주었다.</p>
+<p>마이크로소프트는 이 흐름의 한복판에 있었다. 나델라는 2018~2019년 무렵, 지금은 각자 다른 회사를 이끄는 오픈AI 초기 인물들이 &quot;한 가족&quot;처럼 지내던 시절을 떠올리며 자신도 그때 스케일링을 믿었다고 말한다. 그리고 그 믿음에는 조용한 부록이 하나 붙어 있었다. 모델이 충분히 커지고 똑똑해지면, 인간의 의도에 맞게 행동하는 성질, 곧 <strong>정렬(alignment)</strong> 도 능력과 함께 &quot;저절로 따라 나올(fall out)&quot; 것이라는 기대다.</p>
+<h3 id="12-지난-12개월-동안-바뀐-생각"><a href="#12-지난-12개월-동안-바뀐-생각" class="heading-anchor" aria-hidden="true">#</a> 1.2 지난 12개월 동안 바뀐 생각</h3><p>&quot;지난 1년 사이 무엇에 대한 생각이 바뀌었는가&quot;라는 물음에 나델라는 바로 이 부록을 꼽았다. 스케일링 법칙 자체는 여전히 작동한다. 모델은 점점 더 유능해진다. 그러나 정렬은 규모를 따라오지 않는 것 같고, 오히려 &quot;더 어렵고 성격이 다른 문제&quot;일 수 있다는 것이다. 여기에 그는 하나를 더 보탠다. 모델 내부에서 무슨 일이 일어나는지 회로 수준에서 이해하려는 <strong>기계적 해석 가능성(mechanistic interpretability)</strong> 연구도 아직 손에 잡히는 답을 주지 못하고 있다.</p>
+<p>이 고백의 무게는 화자의 위치에서 나온다. 가장 큰 규모로 AI 인프라에 투자해 온 회사의 수장이 &quot;능력과 안전은 같이 오지 않는다&quot;고 말하는 것은, 적어도 그 회사의 전략이 이 전제 위에서 다시 짜이고 있다는 신호로 읽을 수 있다.</p>
+<h3 id="13-나델라가-보는-정렬의-자리"><a href="#13-나델라가-보는-정렬의-자리" class="heading-anchor" aria-hidden="true">#</a> 1.3 나델라가 보는 정렬의 자리</h3><p>나델라는 정렬이 어디서 해결되어야 하는지에 대해서도 분명한 견해를 밝힌다. 그의 생각으로 정렬은 주로 <strong>학습 단계</strong>, 그것도 어쩌면 사전학습(pre-training) 단계에서부터 가중치에 새겨져야 하는 것이다. 이미 만들어진 모델 위에 강화학습(RL)을 덧대는 방식으로는 &quot;정렬에 도달할 수 없다&quot;고까지 말한다. 이것은 개인적 견해로 제시된 것이고 업계의 합의는 아니지만, 그의 다음 논리를 이해하는 데 중요하다. 정렬이 모델 내부, 그것도 아주 이른 단계의 문제라면, 그 모델을 <strong>가져다 쓰는 쪽</strong>이 당장 할 수 있는 일은 무엇인가?</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>과거의 기대</th>
+<th>나델라의 현재 판단</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>능력</td>
+<td>규모를 키우면 좋아진다</td>
+<td>여전히 그렇다</td>
+</tr>
+<tr>
+<td>정렬</td>
+<td>능력과 함께 저절로 따라온다</td>
+<td>따라오지 않는다. 별개의 어려운 문제</td>
+</tr>
+<tr>
+<td>내부 이해</td>
+<td>언젠가 들여다볼 수 있다</td>
+<td>기계적 이해는 아직 요원</td>
+</tr>
+<tr>
+<td>정렬이 일어나는 곳</td>
+<td>—</td>
+<td>학습, 특히 사전학습 단계. RL만으로는 부족</td>
+</tr>
+<tr>
+<td>사용자가 할 일</td>
+<td>모델을 믿고 쓴다</td>
+<td>모델 바깥에 신뢰 구조를 세운다</td>
+</tr>
+</tbody></table>
+</div><h2 id="2-모델-바깥의-신뢰-제로-트러스트를-ai에-옮기기"><a href="#2-모델-바깥의-신뢰-제로-트러스트를-ai에-옮기기" class="heading-anchor" aria-hidden="true">#</a> 2. 모델 바깥의 신뢰: 제로 트러스트를 AI에 옮기기</h2><h3 id="21-제로-트러스트란-무엇인가"><a href="#21-제로-트러스트란-무엇인가" class="heading-anchor" aria-hidden="true">#</a> 2.1 제로 트러스트란 무엇인가</h3><p>보안 분야에서 <strong>제로 트러스트(zero trust)</strong> 는 오래된 생각이다. 과거의 기업 보안은 성벽 모델이었다. 사내망 안쪽은 믿고, 바깥만 막는다. 그러나 내부자가 사고를 치거나, 침입자가 한 번 성벽을 넘으면 그 안에서는 마음대로 돌아다닐 수 있었다. 제로 트러스트는 이 전제를 버린다. 안이든 밖이든 어떤 사용자·기기·프로그램도 기본적으로 믿지 않고, 모든 접근마다 신원을 확인하고, 최소한의 권한만 주고, 모든 행동을 기록하고 감시한다.</p>
+<p>나델라의 제안은 단순하다. 이 오래된 원칙을 AI 에이전트에게 그대로 적용하자는 것이다. 그가 최근 글에서 내세운 요지도 &quot;모델이 이미 오염되었다고 가정하라&quot;는 것이었다. 나델라는 이것을 모델 회사의 공시나 약속을 무시하라는 뜻이 아니라고 설명한다. 모델은 점점 유능해지는데 정렬은 보장되지 않으니, 더 유능하지만 덜 정렬된 에이전트라도 <strong>피해를 내기 전에 가둘 수 있는</strong> &quot;공학적으로 설계된 제로 트러스트 환경&quot;이 있어야 한다는 것이다.</p>
+<h3 id="22-quotai-안전quot과-quot보안-격리quot를-혼동하지-말-것"><a href="#22-quotai-안전quot과-quot보안-격리quot를-혼동하지-말-것" class="heading-anchor" aria-hidden="true">#</a> 2.2 &quot;AI 안전&quot;과 &quot;보안 격리&quot;를 혼동하지 말 것</h3><p>여기서 나델라가 공들여 구분하는 지점이 있다. 사람들은 흔히 &quot;AI 안전은 어렵고 아직 풀리지 않았으니, 그 전에는 할 수 있는 게 없다&quot;고 생각한다. 그는 이것이 두 가지를 섞어 생각하는 오류라고 본다.</p>
+<ul>
+<li><strong>AI 안전(정렬)</strong>: 모델 자체가 올바른 가치와 의도를 갖게 만드는 문제. 모델을 만드는 쪽, 학습 단계의 과제다.</li>
+<li><strong>공학적 격리(containment)</strong>: 모델이 어떤 상태이든, 그것이 움직이는 환경을 통제해 피해를 막는 문제. 마이크로소프트 같은 플랫폼 회사와 보안 업계가 이미 잘 아는 일이다.</li>
+</ul>
+<p>둘이 동시에 해결될 필요는 없다. 정렬이 미완성인 지금 상태를 있는 그대로 받아들이고, 모델 바깥에 신뢰 시스템을 세운 뒤, 정책을 공격적으로 정하고 정책에서 벗어나는 행동을 감시하면 된다는 것이 그의 처방이다. 이 구분은 &quot;안전 문제가 보안 문제로 대체된다&quot;는 뜻이 아니다. 안전은 여전히 모델 쪽의 숙제로 남고, 보안은 그와 별개로 <strong>오늘</strong> 할 수 있는 일이라는 뜻이다.</p>
+<h3 id="23-신뢰-아키텍처의-구성-요소"><a href="#23-신뢰-아키텍처의-구성-요소" class="heading-anchor" aria-hidden="true">#</a> 2.3 신뢰 아키텍처의 구성 요소</h3><p>나델라는 마이크로소프트가 내놓은 에이전트 관리 제품(Agent 365 등)을 예로 들어 이 구조를 설명한다. 요소를 정리하면 다음과 같다.</p>
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:640px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="에이전트 신원, 변조 불가 로그, 교차 점검, 정책 모니터링, 격리" style="width:100%; height:auto; max-width:640px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs><marker id="nt1-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)"/></marker></defs>
+  <rect x="0" y="0" width="640" height="480" rx="14" fill="var(--bg-card)"/>
+  <text x="320.0" y="32" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="800" font-size="17px" fill="var(--text-main)">모델 바깥의 신뢰 아키텍처</text>
+  <rect x="220" y="60" width="200" height="44" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+  <text x="320.0" y="86.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--primary)">AI 에이전트</text>
+  <rect x="30" y="150" width="200" height="44" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="130.0" y="176.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">에이전트 ID</text>
+  <rect x="260" y="150" width="350" height="60" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="435.0" y="175.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">변조 불가 로그</text>
+  <text x="435.0" y="193.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="13px" fill="var(--text-main)">도구 호출 · 모델 호출 · 사고 과정(CoT)</text>
+  <rect x="30" y="290" width="240" height="44" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="150.0" y="316.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">여러 모델로 교차 점검</text>
+  <rect x="330" y="290" width="180" height="44" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="420.0" y="316.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">4. 행동 모니터링</text>
+  <rect x="530" y="228" width="90" height="40" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="575.0" y="252.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">정책</text>
+  <rect x="330" y="410" width="180" height="44" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+  <text x="420.0" y="436.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--primary)">대응 · 격리</text>
+  <path d="M260,104 L170,148" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt1-ar)"/>
+  <text x="196" y="122" text-anchor="end" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">1. 신원 부여</text>
+  <path d="M380,104 L420,148" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt1-ar)"/>
+  <text x="410" y="122" text-anchor="start" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">2. 모든 행동 기록</text>
+  <path d="M330,210 L190,288" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt1-ar)"/>
+  <text x="180" y="252" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">3. 사람이 읽을 수 있는 언어</text>
+  <path d="M420,210 L420,288" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt1-ar)"/>
+  <path d="M575,268 L500,288" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt1-ar)"/>
+  <path d="M420,334 L420,408" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt1-ar)"/>
+  <text x="432" y="377" text-anchor="start" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">이탈 감지</text>
+</svg><figcaption>에이전트 신원, 변조 불가 로그, 교차 점검, 정책 모니터링, 격리</figcaption></figure>
+</div>
+
+<ol>
+<li><strong>신원</strong>: 사람 직원에게 계정이 있듯 모든 에이전트에게 고유한 신원을 준다. 누가 무엇을 했는지 추적할 수 있는 출발점이다.</li>
+<li><strong>전면 기록</strong>: 에이전트의 활동, 외부 도구 호출, 모델 호출, 그리고 모델이 답을 내기까지 거친 <strong>사고의 연쇄(chain of thought, CoT)</strong> 까지 남긴다.</li>
+<li><strong>변조 불가능성</strong>: 에이전트가 자기 로그를 고칠 수 있으면 기록은 의미가 없다. 로그는 위조할 수 없어야 한다.</li>
+<li><strong>정책과 행동 감시</strong>: 그 기록 위에 정책을 얹고, 에이전트의 행동이 정책에 맞는지 계속 모니터링한다.</li>
+</ol>
+<h3 id="24-왜-사고-과정은-quot영어로quot-남아야-하나"><a href="#24-왜-사고-과정은-quot영어로quot-남아야-하나" class="heading-anchor" aria-hidden="true">#</a> 2.4 왜 사고 과정은 &quot;영어로&quot; 남아야 하나</h3><p>흥미로운 대목은 사고 과정의 언어에 대한 요구다. 나델라는 CoT가 &quot;뉴럴리즈(neuralese)&quot;, 곧 사람이 해독할 수 없는 모델 내부의 압축된 표현이 아니라 <strong>영어 같은 자연어</strong>로 남아야 한다고 말한다. 이유는 점검 가능성이다. 사람이 읽을 수 있고, 무엇보다 <strong>다른 여러 모델에게 읽혀 교차 점검</strong>할 수 있어야 감사가 성립한다. 한 모델의 판단을 다른 모델들이 검토하는 구조는, 단일 모델을 믿지 않는다는 제로 트러스트의 원칙과 잘 맞는다.</p>
+<p>연구 맥락을 조금 보태면, 최근 추론형 모델들은 답을 내기 전에 긴 중간 추론을 생성한다. 이 중간 추론을 효율을 위해 사람이 읽을 수 없는 형태로 압축하자는 아이디어도 연구되고 있는데, 나델라의 요구는 그런 방향에 대한 분명한 제동이다.</p>
+<h3 id="25-사고-과정은-믿을-만한가"><a href="#25-사고-과정은-믿을-만한가" class="heading-anchor" aria-hidden="true">#</a> 2.5 사고 과정은 믿을 만한가</h3><p>여기서 곧장 약점이 드러난다. 사고 과정 자체는 얼마나 믿을 수 있는가. 나델라의 답은 짧다. 믿을 수 없다. 모델이 겉으로 쓴 추론이 실제로 답을 낳은 내부 계산과 다를 수 있다는 것, 즉 CoT가 <strong>불성실(unfaithful)</strong> 할 수 있다는 사실은 이미 알려져 있다.</p>
+<p>그가 더 문제 삼는 것은 그다음이다. 모델 회사가 &quot;어차피 CoT는 불성실하니 숨기겠다&quot;고 나오면 상황은 더 나빠진다. 불완전한 단서라도 있어야 여러 모델로 대조하고 감사할 수 있는데, 그마저 사라지기 때문이다. 그래서 나델라는 적어도 <strong>신뢰받는 파트너</strong>에게는 CoT를 가공하지 않은 상태 그대로 제공해, 검사하고 감사할 수 있게 해야 한다고 요구한다.</p>
+<p>요점은 기록의 조작이 아니라 <strong>불성실함과 은폐</strong>의 문제다. 기록이 위조되는 것이 아니라, 기록에 담긴 추론이 실제 추론을 충실히 반영하지 않을 수 있고, 그것을 이유로 기록 자체가 공개되지 않을 수 있다는 것이다.</p>
+<h3 id="26-오픈-웨이트에-대한-신중한-언급"><a href="#26-오픈-웨이트에-대한-신중한-언급" class="heading-anchor" aria-hidden="true">#</a> 2.6 오픈 웨이트에 대한 신중한 언급</h3><p>나델라는 이 요구가 어쩌면 <strong>오픈 웨이트(open weights)</strong> 모델 쪽으로 수요를 더 밀어줄 수도 있다고 덧붙인다. 오픈 웨이트란 학습이 끝난 모델의 파라미터(가중치)를 공개해 누구나 내려받아 자기 서버에서 돌리고 고칠 수 있게 한 모델이다. 이 경우 사용자는 모델의 출력과 중간 추론을 자기 손으로 다 받아 볼 수 있다.</p>
+<p>그러나 그의 말은 조건부다. 그는 &quot;폐쇄형 모델이 더 강력하다&quot;는 점을 먼저 인정하고, 다만 폐쇄형 모델 회사들이 신뢰받는 파트너의 점검 요구를 외면한다면 문제가 될 것이라고 말한다. 오픈 웨이트가 곧 &quot;속이 투명한 모델&quot;이라는 뜻도 아니다. 가중치를 공개해도 수십억 개의 숫자가 왜 그런 답을 내는지는 여전히 해석하기 어렵다. 오픈 웨이트가 주는 것은 <strong>이해 가능성</strong>이 아니라 <strong>통제 가능성</strong>, 즉 직접 돌리고, 기록을 온전히 확보하고, 필요하면 추가 학습할 수 있는 권한이다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th></th>
+<th>폐쇄형 프런티어 모델</th>
+<th>오픈 웨이트 모델</th>
+<th>마이크로소프트가 말하는 &quot;라이선스 가중치&quot;</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>가중치 접근</td>
+<td>불가, API로만 사용</td>
+<td>공개, 직접 실행</td>
+<td>라이선스 계약 하에 제공</td>
+</tr>
+<tr>
+<td>성능</td>
+<td>대체로 최고 수준</td>
+<td>추격 중</td>
+<td>—</td>
+</tr>
+<tr>
+<td>CoT·로그 확보</td>
+<td>공급자 정책에 좌우</td>
+<td>사용자가 전부 확보</td>
+<td>계약에 따름</td>
+</tr>
+<tr>
+<td>사업 모델</td>
+<td>네트워크 효과형 지능 사업</td>
+<td>생태계·하드웨어 연계</td>
+<td>나델라 표현으로 &quot;단순한 소프트웨어 사업&quot;</td>
+</tr>
+</tbody></table>
+</div><p>오픈 소스 모델의 다수가 중국산이라는 우려에 대해 나델라는 안전이 결여된 AI는 어느 나라에도 좋지 않으며, 공개 가중치 모델은 만든 나라 자신에게도 공격 수단이 될 수 있다고 답한다. 그리고 서구의 오픈 웨이트 진영도 진전을 보이고 있으며, 마이크로소프트의 자체 모델(MAI)은 공개가 아닌 &quot;라이선스 가중치&quot;로 내놓아, 네트워크 효과에 기대는 지능 사업이 아니라 소프트웨어를 파는 평범한 사업으로 만들고 싶다고 말한다. 결국 승부를 가르는 것은 사용자가 그 모델을 <strong>쓰고 통제할 수 있다고 믿을 수 있느냐</strong>라는 것이다.</p>
+<h2 id="3-토큰이-상품이-되는-경제"><a href="#3-토큰이-상품이-되는-경제" class="heading-anchor" aria-hidden="true">#</a> 3. 토큰이 상품이 되는 경제</h2><h3 id="31-quot포화quot란-무엇이-포화되는가"><a href="#31-quot포화quot란-무엇이-포화되는가" class="heading-anchor" aria-hidden="true">#</a> 3.1 &quot;포화&quot;란 무엇이 포화되는가</h3><p>2년 뒤 트래픽은 오픈 모델과 폐쇄형 모델 중 어디로 갈까. 나델라의 답은 프런티어가 어떤 모습이냐에 달려 있다는 것이다. 그리고 핵심 문장을 내놓는다. <strong>대부분의 일은 포화된다.</strong></p>
+<p>여기서 포화되는 것은 모델의 발전 곡선이 아니라 <strong>과제</strong>다. 어떤 업무가 이미 충분히 잘 풀리는 수준에 이르면, 그 업무에 최신 최고 모델을 쓸 이유가 사라진다. 오픈 웨이트든, 값싼 폐쇄형 모델이든 충분하다. 특히 기업이 그 업무를 수행하며 쌓인 자기 <strong>트레이스(trace)</strong>, 즉 입력·중간 과정·출력·결과 판정의 기록으로 모델을 학습시킬 수 있다면, 문제가 바뀌지 않는 한 최신 모델은 필요 없다.</p>
+<p>반대로, 평가 기준을 계속 높여 가야 하는 일이라면 프런티어 모델에 돈을 낼 가치가 있다. 나델라는 프런티어 시장은 언제나 존재할 것이고, 다음 프런티어는 과학이 될 수도 있다고 말한다. 다만 토큰 사용량의 대부분은 <strong>커모디티(commodity) 토큰</strong>, 곧 가격 경쟁이 치열한 범용 상품이 될 것이라는 전망이다. 그리고 그것이 꼭 오픈 웨이트일 필요는 없고, 값싼 폐쇄형 모델일 수도 있다. 그는 마이크로소프트 Copilot 안에서도 값싼 폐쇄형 모델과 오픈 웨이트 모델을 함께 쓰고 있다고 덧붙인다.</p>
+
+<div class="code-block-wrapper ascii-diagram">
+  <div class="code-header">
+    <span class="code-lang lang-generic">도식</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">과제의 성격                     적합한 모델                  돈이 흐르는 곳
+────────────────────────────────────────────────────────────────────
+새로운 문제, 기준이 계속 올라감 → 프런티어 모델            → 최고 성능 프리미엄
+(과학, 미개척 영역)
+           │
+           │  시간이 지나며 과제가 "포화"
+           ▼
+반복되는 문제, 기준이 고정됨     → 값싼 폐쇄형 / 오픈 웨이트 → 커모디티 토큰 (가격 경쟁)
+(자기 트레이스로 학습 가능)        + 자체 트레이스로 추가 학습</code></pre>
+</div><h3 id="32-에이전트-스웜과-라우터"><a href="#32-에이전트-스웜과-라우터" class="heading-anchor" aria-hidden="true">#</a> 3.2 에이전트 스웜과 라우터</h3><p>나델라는 여기에 구조적 변화를 하나 겹친다. 하나의 거대 모델이 모든 일을 처리하는 대신, 여러 <strong>서브 에이전트</strong>가 일을 나눠 맡는 <strong>에이전트 스웜(agent swarm)</strong> 으로 가고 있다는 것이다. 이렇게 되면 큰 작업을 지휘하는 에이전트가 여러 하위 에이전트를 부르는데, 그 하위 에이전트 중에는 로컬 모델, 즉 사용자 기기나 사내 서버에서 도는 작은 모델이 섞여 있을 수 있다. 그는 이것을 GitHub의 새 기능과 연결해 이야기하지만, Copilot 전체가 로컬 모델 군단으로 돌아간다는 뜻은 아니다.</p>
+<p>산업 구조를 묻는 질문에서는 <strong>라우터</strong>가 등장한다. 오늘날 폐쇄형 모델 대여섯 개, 오픈 웨이트 모델 대여섯 개가 경쟁하는 상황이라면, 에이전트 시스템을 만드는 쪽은 의사결정 엔진이 들어간 라우터를 두고 과제마다 가장 알맞은 모델로 보내는 구성을 생각할 수 있다. 나델라는 이것을 &quot;하나의 가능성&quot;으로 소개한다.</p>
+<h3 id="33-수직-통합인가-수평-분업인가"><a href="#33-수직-통합인가-수평-분업인가" class="heading-anchor" aria-hidden="true">#</a> 3.3 수직 통합인가 수평 분업인가</h3><p>칩부터 모델, 앱까지 전부 가져야 이기는가라는 질문에 나델라는 산업 구조에 달렸다고 답한다. 한때는 하나의 회사가 모델·앱·실리콘·시스템을 수직으로 다 쥐는 구도가 올 수도 있다고 생각했지만, 실제로는 반대로 가고 있다는 것이다. 실리콘, 그 실리콘을 관리하는 시스템, 모델, 앱 모든 층에서 경쟁자가 늘고 있다. 무엇이 <strong>지배적 설계(dominant design)</strong> 가 될지는 알 수 없지만, 그의 희망은 각 층에 여러 승자가 있고 사용자가 그것을 조합하는 <strong>수평적 전문화</strong>다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>구도</th>
+<th>모습</th>
+<th>나델라의 평가</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>수직 통합</td>
+<td>한 회사가 실리콘~앱 전부</td>
+<td>가능성은 있으나 가능성 낮다고 봄</td>
+</tr>
+<tr>
+<td>수평 분업</td>
+<td>각 층에 여러 승자, 사용자가 조합</td>
+<td>현재 흐름이며 바람직한 방향</td>
+</tr>
+<tr>
+<td>라우팅</td>
+<td>과제마다 최적 모델로 분배</td>
+<td>앱 쪽에서 가능한 구성</td>
+</tr>
+</tbody></table>
+</div><p>이 그림에서 기업에게 중요한 결론은 하나다. 모델은 점점 <strong>교체 가능한 부품</strong>이 된다. 부품이 교체 가능해질수록, 무엇이 좋은 부품인지 판정하는 능력이 가치의 중심으로 이동한다.</p>
+<h2 id="4-기업은-왜-자기-지능을-소유해야-하는가"><a href="#4-기업은-왜-자기-지능을-소유해야-하는가" class="heading-anchor" aria-hidden="true">#</a> 4. 기업은 왜 자기 지능을 소유해야 하는가</h2><h3 id="41-하이에크-지식은-흩어져-있다"><a href="#41-하이에크-지식은-흩어져-있다" class="heading-anchor" aria-hidden="true">#</a> 4.1 하이에크: 지식은 흩어져 있다</h3><p>나델라는 &quot;지능의 시대에 기업의 미래는 무엇인가&quot;를 가장 중요한 질문 중 하나로 꼽고, 경제학자 프리드리히 하이에크를 끌어온다. 하이에크의 유명한 논점은, 경제를 움직이는 지식의 상당 부분이 교과서나 데이터베이스에 담긴 일반 지식이 아니라 특정 시간과 장소에 묶인 <strong>국지적 지식</strong>, 말로 다 옮기기 어려운 <strong>암묵지(tacit knowledge)</strong> 라는 것이다. 이 지식은 수많은 사람과 조직에 흩어져 있어서 어떤 중앙 계획자도 한데 모을 수 없다. 가격은 그 흩어진 지식을 압축해 전달하는 신호이고, 그래서 시장의 가격 발견이 작동한다.</p>
+<p>나델라는 여기서 결론을 끌어낸다. 지식이 흩어져 있기 때문에 세상에는 기업이 하나일 수 없고, <strong>지능도 하나일 수 없다</strong>. 그렇다면 각 기업은 AI를 써서 자기 지식을 점점 더 큰 규모로 <strong>축적</strong>해야지, <strong>유출</strong>해서는 안 된다.</p>
+<h3 id="42-애로의-정보-역설과-그것을-뒤집은-quot역정보-역설quot"><a href="#42-애로의-정보-역설과-그것을-뒤집은-quot역정보-역설quot" class="heading-anchor" aria-hidden="true">#</a> 4.2 애로의 정보 역설과, 그것을 뒤집은 &quot;역정보 역설&quot;</h3><p>이어서 나델라는 경제학자 케네스 애로가 정식화한 <strong>정보의 역설</strong>을 꺼낸다. 정보를 팔려는 사람은 구매자에게 그 정보가 가치 있다는 걸 보여 줘야 하지만, 보여 주는 순간 구매자는 이미 정보를 가진 셈이 되어 돈을 낼 이유가 사라진다. 그래서 특허, 영업비밀, 저작권 같은 제도적 보호 없이 비밀을 공개한 판매자는 가치를 잃는다. 전통적으로 보호가 필요한 쪽은 <strong>판매자</strong>였다.</p>
+<p>나델라는 AI 시대에 이 구도가 뒤집힌다고 말하고, 이것을 스스로 <strong>역정보 역설(reverse information paradox)</strong> 이라 이름 붙였다. 하이에크에서 애로로 이어지는 학설의 자연스러운 발전이 아니라, 두 경제학자의 통찰을 빌려 나델라가 오늘의 상황에 붙인 새 이름이다. 이제 처음으로 <strong>구매자</strong>가 보호를 필요로 한다. 기업이 AI를 쓸 때 넘겨주는 것은 데이터만이 아니다. 사용하는 과정에서 나오는 부산물, 나델라의 표현으로 일종의 &quot;배기가스(exhaust)&quot;, 예컨대 답변에 누르는 엄지 위·아래 신호까지 모두 모델 회사에 가치를 만들어 준다. 기업은 돈을 내고 서비스를 사면서, 동시에 자기가 만든 가치를 공급자에게 넘겨주는 셈이다.</p>
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:640px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 520" role="img" aria-label="애로의 정보 역설과 역정보 역설 비교" style="width:100%; height:auto; max-width:640px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs><marker id="nt2-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)"/></marker></defs>
+  <rect x="0" y="0" width="640" height="520" rx="14" fill="var(--bg-card)"/>
+  <text x="320.0" y="32" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="800" font-size="17px" fill="var(--text-main)">정보 역설의 역전</text>
+  <rect x="20" y="52" width="600" height="180" rx="12" fill="none" stroke="var(--border)" stroke-dasharray="4 4"/>
+  <text x="40" y="78" text-anchor="start" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">애로의 정보 역설 (판매자가 위험)</text>
+  <rect x="50" y="110" width="180" height="48" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="140.0" y="138.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">정보 판매자</text>
+  <rect x="410" y="110" width="180" height="48" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="500.0" y="138.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">구매자</text>
+  <path d="M230,124 L408,124" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt2-ar)"/>
+  <text x="320" y="116" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">가치를 증명하려 공개</text>
+  <path d="M410,146 L232,146" fill="none" stroke="var(--text-muted)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#nt2-ar)"/>
+  <text x="320" y="170" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">이미 알았으니 지불 거부</text>
+  <rect x="20" y="252" width="600" height="250" rx="12" fill="none" stroke="var(--primary)" stroke-dasharray="4 4"/>
+  <text x="40" y="278" text-anchor="start" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--primary)">역정보 역설 (구매자가 위험)</text>
+  <rect x="50" y="310" width="180" height="60" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+  <text x="140.0" y="335.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--primary)">AI를 쓰는 기업</text>
+  <text x="140.0" y="353.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="13px" fill="var(--primary)">(구매자)</text>
+  <rect x="410" y="310" width="180" height="60" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="500.0" y="335.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">모델 회사</text>
+  <text x="500.0" y="353.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="13px" fill="var(--text-main)">(판매자)</text>
+  <path d="M230,326 L408,326" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt2-ar)"/>
+  <text x="320" y="318" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">요금</text>
+  <path d="M230,356 L408,356" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt2-ar)"/>
+  <text x="320" y="380" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">데이터 · 사용 흔적 · 피드백</text>
+  <path d="M540,370 C580,450 420,450 465,372" fill="none" stroke="var(--text-muted)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#nt2-ar)"/>
+  <text x="500" y="470" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="400" font-size="11.5px" fill="var(--text-muted)">가치가 공급자 쪽에 쌓임</text>
+</svg><figcaption>애로의 정보 역설과 역정보 역설 비교</figcaption></figure>
+</div>
+
+<p>나델라가 바라는 안정된 상태는, 지능을 쓰면서 생긴 <strong>잉여(surplus)</strong> 의 더 많은 부분이 그 기업 안에 남는 것이다. 그렇지 않으면 기업은 가치를 만들어 주기만 하고 가져가지 못한다.</p>
+<h3 id="43-지식을-담는-세-가지-그릇"><a href="#43-지식을-담는-세-가지-그릇" class="heading-anchor" aria-hidden="true">#</a> 4.3 지식을 담는 세 가지 그릇</h3><p>그렇다면 기업은 무엇에 지식을 담아 둘 수 있는가. 나델라는 방법이 모델 가중치에 지식을 새기는 것(추가 학습)만은 아니라고 말한다. <strong>컨텍스트</strong>에 담을 수도 있고, <strong>평가(evals)</strong> 에 담을 수도 있다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>그릇</th>
+<th>무엇인가</th>
+<th>장점</th>
+<th>한계</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>가중치</td>
+<td>자기 데이터·트레이스로 모델을 추가 학습</td>
+<td>빠르고 싸게 반복 업무 처리</td>
+<td>모델을 바꾸면 다시 학습해야 함</td>
+</tr>
+<tr>
+<td>컨텍스트</td>
+<td>사내 문서·규칙을 검색해 매번 프롬프트에 넣음</td>
+<td>모델 교체가 쉬움</td>
+<td>매 호출 비용, 길이 제약</td>
+</tr>
+<tr>
+<td>평가</td>
+<td>&quot;무엇이 좋은 답인가&quot;를 정의한 비공개 시험 세트</td>
+<td>어떤 모델이 와도 기준이 남음</td>
+<td>만들고 유지하는 데 전문성 필요</td>
+</tr>
+</tbody></table>
+</div><p>이 셋 중 나델라가 가장 힘주어 말하는 것이 마지막이다.</p>
+<h2 id="5-프라이빗-평가-기업의-새-핵심-지식재산"><a href="#5-프라이빗-평가-기업의-새-핵심-지식재산" class="heading-anchor" aria-hidden="true">#</a> 5. 프라이빗 평가: 기업의 새 핵심 지식재산</h2><h3 id="51-평가evals와-벤치마크의-기초"><a href="#51-평가evals와-벤치마크의-기초" class="heading-anchor" aria-hidden="true">#</a> 5.1 평가(evals)와 벤치마크의 기초</h3><p>AI 분야에서 <strong>벤치마크</strong>는 모델 성능을 재는 공통 시험이다. 수학 문제 세트, 코딩 문제 세트, 상식 질문 세트처럼 정해진 문항과 채점 기준이 있고, 모델들은 그 점수로 비교된다. <strong>평가(eval)</strong> 는 더 넓은 말로, 특정 목적에 맞게 모델 출력을 채점하는 문항·기준·절차 전체를 가리킨다.</p>
+<p>공개 벤치마크에는 잘 알려진 약점이 있다. 문항이 공개되어 있으니 학습 데이터에 섞여 들어가 점수가 부풀려지기 쉽고, 모델 개발자들이 점수 자체를 목표로 최적화하면서 실제 능력과 점수가 어긋난다. 무엇보다 공개 벤치마크는 <strong>어느 회사의 업무도 아닌</strong> 일반적 과제를 잰다. 우리 회사의 청구서 분쟁을 잘 처리하는지, 우리 법무팀 기준으로 계약 조항을 정확히 검토하는지는 알려 주지 않는다.</p>
+<h3 id="52-나델라의-주장-모든-기업이-비공개-평가를-갖는다"><a href="#52-나델라의-주장-모든-기업이-비공개-평가를-갖는다" class="heading-anchor" aria-hidden="true">#</a> 5.2 나델라의 주장: 모든 기업이 비공개 평가를 갖는다</h3><p>나델라가 &quot;매우 열광한다(gung-ho)&quot;고 표현한 그림은 이렇다. 모든 기업이 자기만의 <strong>비공개 평가 벤치마크</strong>를 갖게 되고, 그것이 그 기업의 <strong>핵심 지식재산(core IP)</strong> 이 된다. 그리고 어떤 모델이든 들어와서 그 평가 위에서 <strong>힐 클라이밍(hill climbing)</strong>, 곧 점수를 한 걸음씩 끌어올리려 경쟁한다. 그는 이것이 기업이 작동하는 방식이라고 말한다.</p>
+<p>힐 클라이밍은 최적화 용어다. 안개 낀 산에서 정상을 찾는 사람이 지금 위치에서 조금이라도 높아지는 방향으로 한 걸음씩 옮겨 가는 방식을 떠올리면 된다. 중요한 것은 <strong>산을 누가 만드느냐</strong>다. 공개 벤치마크라는 산은 모두에게 같다. 프라이빗 평가는 그 기업만의 산이고, 그 산의 지형, 곧 무엇이 좋은 결과인지의 정의가 그 기업의 지식이다.</p>
+
+<div class="code-block-wrapper ascii-diagram">
+  <div class="code-header">
+    <span class="code-lang lang-generic">도식</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">           ┌─────────────────────────────────────────────┐
+           │         기업의 프라이빗 평가 (핵심 IP)        │
+           │  · 실제 업무에서 뽑은 문항                     │
+           │  · 사내 전문가가 정한 정답·채점 기준           │
+           │  · 실패 사례, 경계 사례, 규정 준수 조건        │
+           └──────────────▲───────────────▲──────────────┘
+                          │ 점수           │ 점수
+         ┌────────────────┴──┐   ┌─────────┴──────────┐   ┌──────────────┐
+         │ 프런티어 모델 A    │   │ 값싼 폐쇄형 모델 B │   │ 오픈 웨이트 C │ ...
+         └───────────────────┘   └────────────────────┘   └──────────────┘
+                 모델은 바뀌어도 평가는 남는다 → 교체·협상의 기준</code></pre>
+</div><h3 id="53-왜-평가가-지식재산이-되는가"><a href="#53-왜-평가가-지식재산이-되는가" class="heading-anchor" aria-hidden="true">#</a> 5.3 왜 평가가 지식재산이 되는가</h3><p>이 주장은 앞의 논리들을 하나로 묶는다.</p>
+<ul>
+<li><strong>모델은 교체 가능해진다.</strong> 대부분의 토큰이 커모디티가 되고, 층마다 경쟁자가 늘어난다면 특정 모델에 대한 의존은 경쟁력이 아니다.</li>
+<li><strong>교체 가능한 부품의 시대에는 판정 기준이 가치를 갖는다.</strong> 여러 모델 중 무엇이 우리 업무에 맞는지 고르려면 재는 자가 있어야 한다.</li>
+<li><strong>평가는 하이에크적 지식을 담는 그릇이다.</strong> 무엇이 좋은 청구 처리이고 무엇이 위험한 계약 문구인지는 그 조직의 암묵지다. 평가 세트를 만든다는 것은 그 암묵지를 명시적 문항과 기준으로 바꾸는 일이다.</li>
+<li><strong>평가는 유출되기 어렵다.</strong> 데이터와 피드백은 사용 과정에서 공급자로 흘러가지만, 평가 세트 자체는 사내에 두고 모델의 출력만 채점하면 된다. 역정보 역설에 대한 방어선이 된다.</li>
+<li><strong>평가는 제로 트러스트와도 맞물린다.</strong> 정책 위반을 감지하고 행동을 감시하는 일도 결국 &quot;무엇이 정상인가&quot;의 정의가 있어야 가능하다.</li>
+</ul>
+<p>나델라의 표현 그대로 옮기지는 않더라도, 그 함의는 분명하다. 평가를 가진 기업은 모델 공급자를 바꿀 수 있고, 가격을 협상할 수 있고, 새 모델이 나와도 자기 기준으로 검증할 수 있다. 평가가 없는 기업은 공급자가 &quot;더 좋아졌다&quot;고 말하는 것을 믿을 수밖에 없다.</p>
+<h3 id="54-quot지금은-이상해-보이지만-5년-뒤엔-당연해질-것quot"><a href="#54-quot지금은-이상해-보이지만-5년-뒤엔-당연해질-것quot" class="heading-anchor" aria-hidden="true">#</a> 5.4 &quot;지금은 이상해 보이지만 5년 뒤엔 당연해질 것&quot;</h3><p>나델라는 이 생각을 가장 강한 형태로 다시 말한다. 지금은 엉뚱해 보이지만 5년 뒤에는 흔해질 것으로 그는 &quot;평가&quot;를 꼽고, 기업이란 무엇인가라는 물음에 <strong>기업은 하나의 AI 벤치마크가 될 것</strong>이라고 답한다. 기업의 정체성이 무엇을 잘한다고 판정하는 기준의 집합으로 수렴한다는, 상당히 급진적인 기업론이다.</p>
+<h3 id="55-소수-기업만의-이야기인가"><a href="#55-소수-기업만의-이야기인가" class="heading-anchor" aria-hidden="true">#</a> 5.5 소수 기업만의 이야기인가</h3><p>이것이 하비(Harvey)나 레고라(Legora) 같은 AI에 앞선 소수 기업에나 해당하는 이야기가 아니냐는 반문에 나델라는 기술 확산은 늘 그렇게 시작한다고 답한다. 1980년대 말~1990년대 초, PC를 들여 엑셀로 예측 모델을 만들고 팩스와 사내 메모 대신 이메일로 보내던 소수 기업은 마법처럼 보였지만, 그것이 퍼지는 데는 10년쯤 걸렸다. 클라우드 초기에도 &quot;클라우드 네이티브냐 아니냐&quot;가 큰 화제였지만, 이제는 수백 년 역사의 보험 시장 로이즈(Lloyd&#39;s)조차 클라우드 네이티브다. &quot;AI 네이티브&quot;라는 말도 5년 뒤에는 꽤 낡은 말이 될 것이라는 게 그의 예상이다.</p>
+<h2 id="6-구현-경제-누가-평가를-만들고-시스템을-엮는가"><a href="#6-구현-경제-누가-평가를-만들고-시스템을-엮는가" class="heading-anchor" aria-hidden="true">#</a> 6. 구현 경제: 누가 평가를 만들고 시스템을 엮는가</h2><h3 id="61-새로운-종류의-일"><a href="#61-새로운-종류의-일" class="heading-anchor" aria-hidden="true">#</a> 6.1 새로운 종류의 일</h3><p>평가를 만들고, 에이전트를 설계하고, 모델을 고르고 바꾸는 일은 누가 하는가. 이 영역을 흔히 <strong>구현 경제(implementation economy)</strong> 라 부른다. 나델라는 시스템 통합(SI) 사업은 늘 있었고 기술 확산은 늘 그것에 의존해 왔지만, 이번에는 윤곽이 다르다고 답한다. 전통적인 경영 컨설팅도, 전통적인 시스템 통합도, 전통적인 기술 지원도 아닌, <strong>비즈니스 컨설팅과 기술 컨설팅의 결합</strong>이라는 것이다. 마이크로소프트를 비롯한 회사들은 고객 현장에 엔지니어를 상주시키는 이른바 <strong>전진 배치 엔지니어(forward-deployed engineer, FDE)</strong> 를 두고 있는데, 나델라는 앞으로 전통적 SI가 이런 새 형태로 바뀌어 갈 것으로 본다.</p>
+<p>이 일의 출발점이 무엇인지에 대한 그의 설명이 의미심장하다. 일은 &quot;비즈니스가 무엇인가, <strong>평가가 무엇인가</strong>, 에이전트 구조를 어떻게 구상할 것인가&quot;에서 시작한다. 평가가 기술 선택보다 앞에 놓인다.</p>
+<h3 id="62-유니레버-사례"><a href="#62-유니레버-사례" class="heading-anchor" aria-hidden="true">#</a> 6.2 유니레버 사례</h3><p>나델라가 든 사례는 유니레버다. 유니레버는 주문에서 대금 회수까지 이어지는 <strong>주문-수금(order-to-cash)</strong> 과정을 에이전트 시스템으로 자동화하려 했고, 여기에 <strong>무역 클레임(trade claims)</strong>, 곧 유통 거래에서 생기는 판촉비·공제·분쟁 청구 처리도 포함했다.</p>
+<p>진행 과정은 이렇다.</p>
+<div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:640px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440" role="img" aria-label="프런티어 모델에서 MAI 모델, 사내 IT팀 운영까지 4단계" style="width:100%; height:auto; max-width:640px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs><marker id="nt3-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)"/></marker></defs>
+  <rect x="0" y="0" width="640" height="440" rx="14" fill="var(--bg-card)"/>
+  <text x="320.0" y="32" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="800" font-size="17px" fill="var(--text-main)">유니레버 무역 클레임 업무의 전환</text>
+  <rect x="140" y="56" width="360" height="66" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="84.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">1. 프런티어 모델로 시작</text>
+  <text x="320.0" y="102.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="13px" fill="var(--text-main)">설계 · 검증</text>
+  <path d="M320,122 L320,150" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt3-ar)"/>
+  <rect x="140" y="152" width="360" height="66" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="189.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">2. 운영하며 트레이스 축적</text>
+  <path d="M320,218 L320,246" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt3-ar)"/>
+  <rect x="140" y="248" width="360" height="66" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+  <text x="320.0" y="276.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--primary)">3. 무역 클레임 업무를 MAI 모델로 대체 중</text>
+  <text x="320.0" y="294.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="13px" fill="var(--primary)">(비용 ↓ · 통제 ↑)</text>
+  <path d="M320,314 L320,342" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt3-ar)"/>
+  <rect x="140" y="344" width="360" height="66" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="372.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--text-main)">4. FDE 지원 후</text>
+  <text x="320.0" y="390.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="13px" fill="var(--text-main)">사내 IT팀이 운영</text>
+</svg><figcaption>프런티어 모델에서 MAI 모델, 사내 IT팀 운영까지 4단계</figcaption></figure>
+</div>
+
+<p>나델라의 설명에서 주목할 것은 대체의 이유 두 가지다. 하나는 <strong>비용</strong>이 낮다는 것, 다른 하나는 유니레버가 <strong>자기 트레이스로 학습시킬 수 있어 통제할 수 있다</strong>는 것이다. 다만 이것은 시스템 전체에서 프런티어 모델을 걷어 냈다는 이야기가 아니고, 유니레버가 독자 모델을 만들었다는 이야기도 아니다. 특정 업무(무역 클레임)에 대해 마이크로소프트의 MAI 모델을 쓰고 있다는 것이다. 마이크로소프트 CEO가 자사 모델을 쓰는 고객 사례를 든 것이라는 점도 감안해 읽을 필요가 있다.</p>
+<p>이 사례는 3장의 포화 논리를 그대로 보여 준다. 업무가 정의되고, 기준이 서고, 트레이스가 쌓이면, 그 업무는 포화된 과제가 되어 더 싸고 통제 가능한 모델로 옮겨 갈 수 있다. 그리고 그 이동이 안전한지 판단하는 것은, 새 모델이 기존 기준을 충족하는지 확인하는 평가다.</p>
+<p>참고로, 큰 모델이 낸 결과로 작은 모델을 가르치는 기법을 일반적으로 <strong>지식 증류(knowledge distillation)</strong> 라 부른다. 트레이스로 학습한다는 나델라의 말은 넓게 보면 이런 계열의 기법과 닿아 있지만, 그가 유니레버의 구체적 학습 방식을 설명한 것은 아니다.</p>
+<h3 id="63-표-구현의-단계와-각-단계의-산출물"><a href="#63-표-구현의-단계와-각-단계의-산출물" class="heading-anchor" aria-hidden="true">#</a> 6.3 표: 구현의 단계와 각 단계의 산출물</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>질문</th>
+<th>산출물</th>
+<th>소유 주체</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>업무 정의</td>
+<td>어떤 일을 자동화하나</td>
+<td>업무 범위·성공 조건</td>
+<td>기업</td>
+</tr>
+<tr>
+<td>평가 설계</td>
+<td>무엇이 좋은 결과인가</td>
+<td>프라이빗 평가 세트</td>
+<td>기업 (핵심 IP)</td>
+</tr>
+<tr>
+<td>아키텍처</td>
+<td>어떤 에이전트·모델 조합인가</td>
+<td>에이전트 구조, 라우팅</td>
+<td>기업 + FDE</td>
+</tr>
+<tr>
+<td>신뢰 장치</td>
+<td>어떻게 감시하고 가두나</td>
+<td>신원·로그·정책</td>
+<td>기업 + 플랫폼</td>
+</tr>
+<tr>
+<td>운영·대체</td>
+<td>더 싸고 통제 가능한 모델로 옮길 수 있나</td>
+<td>트레이스, 대체 모델</td>
+<td>기업</td>
+</tr>
+</tbody></table>
+</div><h2 id="7-더-큰-그림-투자-전력-그리고-성장"><a href="#7-더-큰-그림-투자-전력-그리고-성장" class="heading-anchor" aria-hidden="true">#</a> 7. 더 큰 그림: 투자, 전력, 그리고 성장</h2><h3 id="71-1000억-달러짜리-학습은-감당-가능한가"><a href="#71-1000억-달러짜리-학습은-감당-가능한가" class="heading-anchor" aria-hidden="true">#</a> 7.1 1000억 달러짜리 학습은 감당 가능한가</h3><p>1000억 달러 규모의 학습 실행이 온다는 업계의 전망이 있다. 에너지와 인프라가 이를 감당할 수 있을까. 나델라의 접근은 회계적이다. 학습 비용은 결국 <strong>연구개발(R&amp;D) 지출의 일정 비율</strong>이다. 연구개발 비중이 큰 회사들은 매출의 15~20% 정도를 R&amp;D에 쓴다. 따라서 충분한 매출이 있으면 충분한 학습에 쓸 수 있고, 그 매출은 AI가 세계 경제 성장에 기여해 자기 몫을 가져갈 때 나온다.</p>
+<p>공급 쪽에는 전력 부족, 실리콘 부족 같은 제약이 있다. 발전소나 반도체 공장은 손가락을 튕긴다고 생기지 않는 <strong>리드타임이 긴 품목</strong>이다. 모두가 짓고 있지만 언제 수요와 공급이 맞을지는 아무도 모르고, 지금의 전망은 모두 추측이라고 그는 솔직히 인정한다. 그가 확신하는 것은 하나다. 결국 기업의 손익계산서는 지금과 다르지 않을 것이다. 매출이 있고, 매출원가가 있고, 이익이 있어야 한다. 그러니 진짜 질문은 <strong>세계 GDP 성장률</strong>이다.</p>
+<h3 id="72-성장률을-꺾어-올릴-수-있나"><a href="#72-성장률을-꺾어-올릴-수-있나" class="heading-anchor" aria-hidden="true">#</a> 7.2 성장률을 꺾어 올릴 수 있나</h3><p>세계 경제는 오랫동안 연 2% 안팎에서 안정되어 왔다. AI가 그것을 짧은 시간에 끌어올릴 수 있느냐는 물음에 나델라는 &quot;그렇다고 보고, 그렇게 되길 바란다&quot;고 답한다. 그가 드는 예는 의료다. 어느 나라든 GDP에서 의료비가 차지하는 비중이 크다. 영국 국민보건서비스(NHS)에 Copilot을 배치해 환자의 결과가 나아지고 비용이 줄어든다면, 그것은 정의상 영국 GDP를 돕는 일이다.</p>
+<p>그는 경제 안에 AI 도입이 무르익은 영역, 즉 <strong>일자리 대체는 가장 적고 이익은 가장 큰</strong> 영역을 찾아야 한다고 말한다. 또 하나의 예가 소프트웨어 개발이다. 개발 생산성이 오르자 수요가 그만큼 늘어나는 것을 보면, 그동안 아무도 인식하지 못했을 뿐 기업들의 IT 백로그가 엄청났다는 뜻이라는 것이다. 수요가 <strong>탄력적</strong>이면, 생산성 향상은 사람을 줄이는 대신 그동안 못 하던 일을 하게 만든다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>영역</th>
+<th>나델라가 든 근거</th>
+<th>요점</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>의료 (NHS)</td>
+<td>환자 결과 개선 + 비용 절감</td>
+<td>GDP 기여가 정의상 분명</td>
+</tr>
+<tr>
+<td>소프트웨어 개발</td>
+<td>수요가 탄력적, 숨은 IT 백로그</td>
+<td>생산성이 수요 확대로 이어짐</td>
+</tr>
+<tr>
+<td>지식 노동 일반</td>
+<td>검증 가능한 보상 만들기가 더 어려움</td>
+<td>콜센터·공급망·주문-수금에서 가능성 확인 중</td>
+</tr>
+<tr>
+<td>과학·공학</td>
+<td>반도체 설계: 빠른 테이프아웃, 전면 시뮬레이션</td>
+<td>코딩만큼 탄력적일 수 있음</td>
+</tr>
+</tbody></table>
+</div><p>코딩이 특히 빨리 발전한 이유에 대해서도 그는 설명을 보탠다. 사전학습된 모델 위에 강화학습을 얹는 것이 최근 진전의 핵심이었고, 코딩은 정답 여부를 기계적으로 확인할 수 있는 <strong>검증 가능한 보상</strong>이 있어 이 방식이 잘 통했다. 일반 지식 노동은 그런 보상을 만들기가 훨씬 어렵다. 이 지점에서도 평가의 중요성이 다시 드러난다. 지식 노동에서 &quot;검증 가능한 보상&quot;에 해당하는 것을 만드는 일이, 결국 그 업무의 좋은 결과를 정의하는 평가를 만드는 일이기 때문이다.</p>
+<h3 id="73-수렴-성장이라는-꿈"><a href="#73-수렴-성장이라는-꿈" class="heading-anchor" aria-hidden="true">#</a> 7.3 수렴 성장이라는 꿈</h3><p>마지막 질문, 앞으로 10년에서 가장 기대하는 것에 나델라는 개인적인 이야기로 답한다. 그의 아버지는 개발경제학자였고, 집안의 화두는 늘 <strong>수렴 성장</strong>, 곧 개발도상국, 글로벌 사우스가 언제 선진국을 따라잡을 만한 도약의 계기를 얻느냐였다. 그는 이 범용 기술이 그 어떤 기술보다 빠르게, 모든 나라와 모든 산업으로 퍼져서, 승자와 패자를 세는 것이 아니라 모두가 함께 올라가는 성장의 전환이 일어나기를 바란다고 말한다.</p>
+<h2 id="8-논지를-다시-묶기-한-장의-지도"><a href="#8-논지를-다시-묶기-한-장의-지도" class="heading-anchor" aria-hidden="true">#</a> 8. 논지를 다시 묶기: 한 장의 지도</h2><div class="table-wrapper" style="margin:2rem 0; overflow-x:auto;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:640px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-label="정렬, 과제 포화, 하이에크의 세 출발점이 프라이빗 평가와 구현 경제로 이어지는 구조" style="width:100%; height:auto; max-width:640px; display:block; margin:0 auto; background:var(--bg-card); border-radius:14px; border:1px solid var(--border);">
+  <defs><marker id="nt4-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)"/></marker></defs>
+  <rect x="0" y="0" width="640" height="640" rx="14" fill="var(--bg-card)"/>
+  <text x="320.0" y="32" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="800" font-size="17px" fill="var(--text-main)">논지 지도: 세 갈래가 프라이빗 평가로 모인다</text>
+  <rect x="10" y="60" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="110.0" y="84.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">정렬은 규모를</text>
+  <text x="110.0" y="102.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">따라오지 않는다</text>
+  <path d="M110,118 L110,154" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="220" y="60" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="84.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">대부분의 과제는</text>
+  <text x="320.0" y="102.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">포화된다</text>
+  <path d="M320,118 L320,154" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="430" y="60" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="530.0" y="84.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">하이에크:</text>
+  <text x="530.0" y="102.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">지식은 흩어져 있다</text>
+  <path d="M530,118 L530,154" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="10" y="156" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="110.0" y="180.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">모델을 믿지 말고</text>
+  <text x="110.0" y="198.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">바깥에 제로 트러스트 구조</text>
+  <path d="M110,214 L110,250" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="220" y="156" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="180.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">토큰의 커모디티화</text>
+  <text x="320.0" y="198.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">모델은 교체 가능한 부품</text>
+  <path d="M320,214 L320,250" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="430" y="156" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="530.0" y="180.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">역정보 역설:</text>
+  <text x="530.0" y="198.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">구매자의 가치가 공급자로 샌다</text>
+  <path d="M530,214 L530,250" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="10" y="252" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="110.0" y="276.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">신원 · 변조 불가 로그</text>
+  <text x="110.0" y="294.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">영어 CoT · 정책 감시</text>
+  <rect x="220" y="252" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="276.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">판정 기준이</text>
+  <text x="320.0" y="294.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">가치의 중심</text>
+  <rect x="430" y="252" width="200" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="530.0" y="276.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">지식을 가중치 ·</text>
+  <text x="530.0" y="294.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">컨텍스트 · 평가에 축적</text>
+  <path d="M110,310 L230,378" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <path d="M320,310 L320,378" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <path d="M530,310 L410,378" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="170" y="380" width="300" height="52" rx="10" fill="var(--bg-surface)" stroke="var(--primary)" stroke-width="1.8"/>
+  <text x="320.0" y="410.7" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="13px" fill="var(--primary)">프라이빗 평가 = 기업의 핵심 IP</text>
+  <path d="M320,432 L320,468" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="130" y="470" width="380" height="58" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="494.8" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">구현 경제: 비즈니스 + 기술 컨설팅</text>
+  <text x="320.0" y="512.2" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="600" font-size="12.5px" fill="var(--text-main)">예) 유니레버 무역 클레임</text>
+  <path d="M320,528 L320,564" fill="none" stroke="var(--text-muted)" stroke-width="1.4" marker-end="url(#nt4-ar)"/>
+  <rect x="130" y="566" width="380" height="48" rx="10" fill="var(--bg-surface)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="320.0" y="594.5" text-anchor="middle" font-family="Pretendard, -apple-system, sans-serif" font-weight="700" font-size="12.5px" fill="var(--text-main)">GDP 성장 → R&amp;D → 더 큰 학습</text>
+</svg><figcaption>정렬, 과제 포화, 하이에크의 세 출발점이 프라이빗 평가와 구현 경제로 이어지는 구조</figcaption></figure>
+</div>
+
+<p>이 지도에서 세 갈래의 출발점은 서로 다른 영역에 있다. 하나는 AI 안전의 과학(정렬이 저절로 오지 않음), 하나는 산업 구조(과제의 포화와 모델의 상품화), 하나는 경제 이론(분산된 지식과 정보 역설)이다. 그런데 세 갈래가 같은 결론에서 만난다. <strong>기업은 모델이 아니라 판단 기준을 소유해야 한다.</strong> 모델을 믿을 수 없기 때문에도, 모델이 흔해지기 때문에도, 자기 지식이 새어 나가지 않게 하기 위해서도 그렇다.</p>
+<h2 id="9-비판적으로-읽을-지점"><a href="#9-비판적으로-읽을-지점" class="heading-anchor" aria-hidden="true">#</a> 9. 비판적으로 읽을 지점</h2><p>나델라의 논지는 설득력이 있지만, 그것을 받아들이기 전에 몇 가지를 따져 볼 필요가 있다.</p>
+<h3 id="91-화자의-이해관계"><a href="#91-화자의-이해관계" class="heading-anchor" aria-hidden="true">#</a> 9.1 화자의 이해관계</h3><p>마이크로소프트는 에이전트 관리·보안 제품을 팔고, 자체 모델(MAI)을 라이선스하며, 여러 회사의 모델을 한 플랫폼에서 고르게 해 주는 사업을 한다. &quot;모델은 교체 가능한 부품이 되고, 신뢰는 모델 바깥의 플랫폼에서 확보하며, 기업은 여러 모델을 평가해 골라 쓴다&quot;는 그림은 그 사업 구조와 정확히 맞아떨어진다. 이 사실이 주장을 틀리게 만들지는 않지만, 특정 프런티어 모델 회사 한 곳에 집중된 가치를 플랫폼과 고객 쪽으로 옮기려는 전략적 관점이 함께 들어 있다는 점은 기억해 둘 만하다.</p>
+<h3 id="92-평가는-만들기-어렵다"><a href="#92-평가는-만들기-어렵다" class="heading-anchor" aria-hidden="true">#</a> 9.2 평가는 만들기 어렵다</h3><p>&quot;모든 기업이 프라이빗 평가를 갖는다&quot;는 말은 쉽지만, 실제로 좋은 평가를 만드는 일은 어렵다. 업무의 좋은 결과를 문항과 채점 기준으로 옮기려면 현장 전문가의 시간이 들고, 업무가 바뀌면 평가도 계속 고쳐야 한다. 평가 점수만 좇다 보면, 공개 벤치마크가 겪은 것과 같은 문제, 즉 측정 대상이 목표가 되면 측정이 망가진다는 <strong>굿하트의 법칙</strong>이 사내에서 재현될 수도 있다. 평가가 IP가 되려면, 그 자체가 살아 있는 자산으로 관리되어야 한다.</p>
+<h3 id="93-평가만으로-유출이-막히지는-않는다"><a href="#93-평가만으로-유출이-막히지는-않는다" class="heading-anchor" aria-hidden="true">#</a> 9.3 평가만으로 유출이 막히지는 않는다</h3><p>평가 세트를 사내에 두더라도, 그 평가로 여러 모델을 시험하려면 문항을 모델에 보내야 한다. 이 과정에서 문항 자체가 공급자에게 노출될 수 있다. 계약 조건, 데이터 보존 정책, 로컬 실행 가능 여부가 함께 따라와야 역정보 역설에 대한 방어가 실제로 작동한다. 나델라가 오픈 웨이트와 라이선스 가중치, 자기 트레이스로의 학습을 함께 이야기하는 것도 이 맥락에서 읽을 수 있다.</p>
+<h3 id="94-격리는-안전의-대체물이-아니다"><a href="#94-격리는-안전의-대체물이-아니다" class="heading-anchor" aria-hidden="true">#</a> 9.4 격리는 안전의 대체물이 아니다</h3><p>제로 트러스트 격리는 오늘 할 수 있는 현실적 방어선이지만, 나델라 자신이 강조하듯 정렬을 대신하지는 못한다. 모든 행동을 기록하고 감시해도, 감시하는 쪽의 정책이 위험을 미리 정의하지 못한 행동은 걸러지지 않는다. 사고 과정을 여러 모델로 점검하는 방식도, 사고 과정이 불성실할 수 있다는 한계를 안고 있다. 격리는 피해의 크기를 줄이는 장치이지, 위험을 없애는 장치가 아니다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>주장</th>
+<th>강점</th>
+<th>남는 질문</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>모델 바깥의 제로 트러스트</td>
+<td>정렬 미해결 상태에서도 즉시 적용 가능</td>
+<td>정책이 예상하지 못한 행동, 불성실한 CoT</td>
+</tr>
+<tr>
+<td>토큰의 커모디티화</td>
+<td>가격 경쟁과 과제 포화로 뒷받침</td>
+<td>프런티어 격차가 다시 벌어지면?</td>
+</tr>
+<tr>
+<td>역정보 역설</td>
+<td>사용 흔적의 가치 이전을 정확히 짚음</td>
+<td>계약·기술적 보호 장치가 실제로 있는가</td>
+</tr>
+<tr>
+<td>프라이빗 평가 = IP</td>
+<td>교체 가능한 모델 시대의 협상력</td>
+<td>만들기 어렵고, 굿하트의 법칙 위험</td>
+</tr>
+<tr>
+<td>수평 분업</td>
+<td>경쟁 증가라는 관찰과 부합</td>
+<td>지배적 설계가 나오면 다시 통합될 수도</td>
+</tr>
+</tbody></table>
+</div><h2 id="10-맺음말-무엇을-소유할-것인가"><a href="#10-맺음말-무엇을-소유할-것인가" class="heading-anchor" aria-hidden="true">#</a> 10. 맺음말: 무엇을 소유할 것인가</h2><p>이 논의에서 가장 오래 남는 질문은 &quot;어떤 모델이 가장 좋은가&quot;가 아니다. 모델은 계속 좋아지고, 계속 바뀌고, 점점 흔해진다. 나델라가 던지는 질문은 그 흐름 속에서 <strong>무엇이 바뀌지 않고 남는가</strong>다.</p>
+<p>그의 답은 두 갈래다. 하나는 신뢰다. 완전히 믿을 수 없는 지능을 쓸 때 기댈 곳은 그 지능의 선의가 아니라, 신원·기록·정책·감시로 이루어진 바깥의 구조다. 다른 하나는 판단이다. 무엇이 좋은 결과인지를 정의하는 능력, 그것을 문항과 기준으로 굳혀 어떤 모델이 들어와도 그 위에서 경쟁하게 만드는 능력이 기업의 지식이 된다.</p>
+<p>둘은 결국 같은 원칙의 두 얼굴이다. 남이 만든 지능을 <strong>믿지 않고 쓰는 법</strong>과, 그 지능을 쓰면서 자기 지식이 <strong>새지 않게 쌓는 법</strong>. 하이에크가 말한 흩어진 지식이 AI 시대에도 여전히 기업을 존재하게 하는 이유라면, 그 지식을 지키는 가장 현실적인 형태는 아마도 각 기업이 조용히 쌓아 가는, 남에게 보여 주지 않는 시험지일 것이다.</p>
+
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-28-나델라신뢰아키텍처.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
