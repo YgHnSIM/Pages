@@ -149,9 +149,14 @@ function parseFrontMatter(rawContent) {
 
 /**
  * Estimate reading time in minutes
+ * 
+ * [주의 / 임의 수정 금지]
+ * OS별 줄바꿈(CRLF vs LF) 차이로 인해 Windows 환경에서 \r 문자가 글자 수에 가산되어
+ * 리딩 타임이 부풀려지는 것을 방지하기 위해 계산용 clean 문자열에서 \r을 사전 제거합니다.
+ * 이는 순수 리딩 타임 계산용 로컬 변수(clean)에만 적용되며 원본 본문 텍스트에는 영향을 주지 않습니다.
  */
 function estimateReadingTime(text) {
-  const clean = text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]+>/g, '').trim();
+  const clean = text.replace(/\r/g, '').replace(/```[\s\S]*?```/g, '').replace(/<[^>]+>/g, '').trim();
   const charCount = clean.length;
   return Math.max(1, Math.ceil(charCount / 400));
 }
