@@ -1,0 +1,3330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>기호를 계산하는 재귀 함수와 LISP의 탄생 — 존 매카시(1960) 논문 심층 해설</title>
+  <meta name="description" content="존 매카시의 1960년 논문 「Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I」을 따라 조건식, S-식과 M-식, 다섯 기본 연산(atom, eq, car, cdr, cons), 만능 함수 eval과 자유 사슬(가비지 컬렉션)의 작동 원리를 해부합니다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">기호를 계산하는 재귀 함수와 LISP의 탄생 — 존 매카시(1960) 논문 심층 해설</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#먼저-알아-둘-것-prerequisites" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">먼저 알아 둘 것 (Prerequisites)</span></a></li><li class="depth-2"><a href="#전반적인-해설-overview" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">전반적인 해설 (Overview)</span></a></li><li class="depth-2"><a href="#1-논문이-나온-맥락" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 논문이 나온 맥락</span></a></li><li class="depth-2"><a href="#2-함수와-함수-정의" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 함수와 함수 정의</span></a></li><li class="depth-2"><a href="#3-기호식s-식과-그-함수들" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 기호식(S-식)과 그 함수들</span></a></li><li class="depth-2"><a href="#4-기계-속의-lisp-ibm-704" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 기계 속의 LISP (IBM 704)</span></a></li><li class="depth-2"><a href="#5-다른-형식linear-lisp과-순서도" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 다른 형식(linear LISP)과 순서도</span></a></li><li class="depth-2"><a href="#6-흔한-오해와-오늘날의-의미" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 흔한 오해와 오늘날의 의미</span></a></li><li class="depth-2"><a href="#7-최종-점검-및-복습" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 최종 점검 및 복습</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-25</span>
+          <span class="meta-badge">⏱️ 약 96분</span>
+          
+        </div>
+        <h1 class="article-title">기호를 계산하는 재귀 함수와 LISP의 탄생 — 존 매카시(1960) 논문 심층 해설</h1>
+        <p class="article-subtitle">조건식·재귀·S-식·다섯 기본 연산·만능 함수 eval이 어떻게 프로그래밍 언어가 되었는가</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#컴퓨터과학</span>
+          
+          <span class="tag-pill">#계산이론</span>
+          
+          <span class="tag-pill">#프로그래밍언어</span>
+          
+          <span class="tag-pill">#컴퓨터과학사</span>
+          
+          <span class="tag-pill">#논문리뷰</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-25-매카시LISP.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <style>
+
+/* 아카이브 공통 스타일(데니스노블·언어모델압축 기준) + 인터랙티브 위젯 */
+:root{color-scheme:light only;
+ --bg:#faf8f3;--paper-c:#fff;--ink:#1f2328;--muted:#5b6470;--line:#e6e1d6;--accent:#c8553d;--accent-soft:#fbeee9;--link:#4a6b8a;--new:#3d5f80;--new-soft:#eaf0f6;--radius:14px;
+ --fg:var(--ink);--mut:var(--muted);--card:#fff;--card-fg:var(--ink);--bd:var(--line);--acc:var(--new);--acc-fg:#fff;
+ --paper:#a8432e;--paper-badge:#a8432e;--paper-badge-fg:#fff;--paperbg:var(--accent-soft);--paper-fg:var(--ink);--paper-bd:var(--accent);
+ --int:var(--new);--int-badge:var(--new);--int-badge-fg:#fff;--intbg:var(--new-soft);--int-fg:var(--ink);--int-bd:var(--new);
+ --hl:#fde9a8;--hl-fg:var(--ink);--ok:#2f7a5b;--no:#b4442e;--red:#b4442e;--warn:#9a3412;--code-bg:#f7f4ed;--code-fg:var(--ink);--guide-bg:#fdfcf9;--guide-fg:var(--ink)}
+
+
+
+@media(max-width:640px){}
+a{color:var(--link)}
+header{max-width:780px;margin:0 auto;padding:34px 18px 6px;text-align:left}
+header .mono{display:inline-block;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.04em;color:#a8432e!important;background:var(--accent-soft);padding:4px 10px;border-radius:999px;line-height:1.5}
+header h1{font-size:clamp(26px,5.5vw,42px);line-height:1.3;margin:14px 0 12px;letter-spacing:-.02em}
+
+nav a{display:inline-block;padding:6px 12px;margin:2px 3px 2px 0;border-radius:999px;color:var(--ink);text-decoration:none;font-size:14px;background:var(--paper-c);border:1px solid var(--line)}
+nav a:hover{border-color:var(--accent);color:var(--accent)}
+
+main>section{background:var(--paper-c);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;margin:18px 0 0;scroll-margin-top:60px}
+@media(min-width:640px){main>section{padding:28px 30px}}
+h2{font-size:clamp(21px,4.4vw,28px);line-height:1.35;margin:0 0 12px;letter-spacing:-.015em}
+h3{font-size:18px;margin:22px 0 6px}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:20px}
+.badge{display:inline-block;font-size:12.5px;font-weight:800;padding:2px 10px;border-radius:999px;margin-right:6px;vertical-align:2px;line-height:1.5}
+.b-paper{background:var(--paper-badge);color:#fff}.b-int{background:var(--int-badge);color:#fff}
+.paper{background:var(--accent-soft);color:var(--ink);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;margin:16px 0}
+.int{background:var(--new-soft);color:var(--ink);border-left:4px solid var(--new);border-radius:10px;padding:14px 16px;margin:16px 0}
+.paper p,.int p{margin:6px 0}.paper p:last-child,.int p:last-child{margin-bottom:0}
+.guide{background:#fdfcf9;color:var(--ink);border:1px dashed #d9d2c3;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:16px}
+blockquote{margin:12px 0;padding:10px 16px;background:var(--paper-c);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;font-style:normal}
+.card{background:var(--paper-c);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:16px 0}
+main>section .card{background:#fdfcf9}
+button{font:inherit;font-size:15px;padding:6px 14px;border-radius:999px;border:1px solid var(--new);background:var(--new);color:#fff;cursor:pointer;margin:3px 2px;min-height:36px}
+button.sec{background:var(--paper-c);color:var(--ink);border-color:var(--line)}button.sec:hover{background:#f0ece3}
+button:disabled{opacity:.45;cursor:default}
+input,select,textarea{font:inherit;font-size:15px;padding:5px 9px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);max-width:100%}
+textarea{width:100%;font-family:ui-monospace,Consolas,monospace}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em;overflow-wrap:anywhere}
+pre,.code{font-family:ui-monospace,Consolas,monospace;font-size:14px;background:var(--code-bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;overflow-x:auto}
+pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.code div{padding:0 .4rem;border-radius:4px;white-space:pre}.code div.on{background:var(--hl)}
+.row{display:flex;flex-wrap:wrap;gap:14px}.row>*{flex:1 1 18rem;min-width:0}
+svg{max-width:100%;height:auto}
+svg .node rect,svg .node polygon{fill:#fff;stroke:var(--ink);stroke-width:1.5}svg .node text{fill:var(--ink);font-size:13px}
+svg .node.on rect,svg .node.on polygon{fill:var(--hl);stroke:var(--accent);stroke-width:3}svg path,svg line{stroke:var(--muted);fill:none;stroke-width:1.5}svg .lbl{fill:var(--muted);font-size:11px}
+svg .stroke{stroke:var(--ink);fill:none;stroke-width:1.6}svg .boxf{fill:#fff;stroke:var(--ink);stroke-width:1.6}
+svg .hlf{fill:var(--hl);stroke:var(--accent);stroke-width:3}svg .t{fill:var(--ink);font-size:14px}svg .th{fill:var(--ink);font-size:14px}
+svg .tm{fill:var(--muted);font-size:12px}svg .arrow{stroke:var(--muted);fill:none;stroke-width:1.6}svg .ah{fill:var(--muted)}
+.log{font-family:ui-monospace,monospace;font-size:14px;background:var(--code-bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-height:16rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.log .on{background:var(--hl);border-radius:4px}
+.tape{display:flex;gap:2px;overflow-x:auto;padding:.6rem 0}.cell{min-width:2.2rem;height:2.4rem;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;font-family:monospace;background:#fff;position:relative}
+.cell.head{border:2px solid var(--accent);background:var(--hl)}.cell.head::after{content:"▲";position:absolute;bottom:-1.1rem;color:var(--accent);font-size:.8rem}
+.prog span{font-family:monospace;font-size:1.1rem;padding:0 1px;border-radius:3px}.prog span.on{background:var(--hl);outline:2px solid var(--accent)}
+.quiz .q{margin:12px 0;padding:10px 12px;border:1px dashed #d9d2c3;border-radius:10px;background:#fff}.quiz label{display:block;cursor:pointer;padding:2px 4px;border-radius:6px}
+.fb{font-size:15px;margin-top:4px}.ok{color:var(--ok);font-weight:700}.no{color:var(--no);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 14px}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{color:var(--muted)}td code{word-break:break-all}
+details{margin:12px 0}summary{cursor:pointer;font-weight:700;color:var(--new)}
+details.viz{margin:14px 0;border:1px solid var(--line);border-radius:12px;background:#fdfcf9}
+.src{font-size:14px;color:var(--muted);margin-top:6px}
+.small{font-size:15px;color:var(--muted)}
+.arc-back b,.arc-foot-label{color:#a8432e!important}
+footer{max-width:780px;margin:28px auto 0;color:var(--muted);font-size:14px;padding:0 18px 30px;text-align:left}
+
+
+:where(html){-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:where(img,video,canvas,iframe,embed,object,svg){max-width:100%}
+:where(img,video){height:auto}
+@media (max-width:640px){
+  :where(body){overflow-wrap:break-word}
+  :where(pre){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  :where(table){display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  :where(code,kbd,samp){overflow-wrap:anywhere}
+  :where(input,select,textarea){font-size:16px}
+}
+
+
+:root{--toc-w:240px;color-scheme:light only}
+
+.cf-hero{background:linear-gradient(180deg,#f3efe6 0%,var(--bg,#faf8f3) 100%);border-bottom:1px solid var(--line,#e6e1d6);padding:48px 20px 34px;margin:0;max-width:none;text-align:left}
+.cf-hero-inner{max-width:1180px;margin:0 auto}
+.cf-eyebrow{display:inline-block;font-family:inherit!important;font-size:13px!important;font-weight:700;letter-spacing:.04em;color:#a8432e!important;background:#fbeee9;padding:4px 10px;border-radius:999px;line-height:1.5}
+.cf-hero h1{font-size:clamp(28px,4.4vw,44px)!important;line-height:1.25!important;margin:14px 0 12px!important;letter-spacing:-.02em}
+.cf-hero .cf-lead{font-size:18px;color:#5b6470;margin:0 0 14px;max-width:none}
+.cf-layout{width:100%;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:var(--toc-w) minmax(0,1fr);gap:40px;padding:0 20px;box-sizing:border-box}
+.cf-
+.cf-main>main,.cf-main 
+nav.cf-toc{max-width:none;width:auto;position:sticky;top:20px;align-self:start;margin:36px 0 0!important;max-height:calc(100vh - 40px);overflow:auto;padding-right:4px;background:none;border:0;white-space:normal;z-index:20}
+.cf-toc-t{font-size:13px;color:#5b6470;letter-spacing:.06em;margin:0 0 10px;font-weight:700}
+nav.cf-toc ol{list-style:none;margin:0;padding:0}
+nav.cf-toc li{margin:0;padding:0}
+nav.cf-toc li a{display:flex;gap:8px;align-items:baseline;text-decoration:none;color:#5b6470;font-size:14.5px;line-height:1.45;padding:7px 10px;border-radius:8px;border-left:3px solid transparent;background:none;border-top:0;margin:0}
+nav.cf-toc li a .n{font-weight:700;font-size:13px;color:#6b7280;min-width:18px}
+nav.cf-toc li a:hover{background:#f0ece3;color:#1f2328}
+h2{font-size:clamp(23px,3vw,30px)!important;line-height:1.3!important;letter-spacing:-.015em}
+h3{font-size:19px!important}
+.cf-num{flex:none;display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#1f2328;color:#fff;font-weight:800;font-size:17px;margin:0 12px 0 0;vertical-align:middle;line-height:1;letter-spacing:0}
+.cf-num.ref{background:#3d5f80}
+.cf-num.ref::before{content:"★";font-size:16px}
+.cf-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sec-num{width:40px!important;height:40px!important;font-size:17px!important;margin-top:4px!important}
+@media (max-width:900px){
+  .cf-layout{grid-template-columns:minmax(0,1fr);gap:0;padding:0}
+  nav.cf-toc{position:sticky;top:0;margin:0!important;max-height:none;background:rgba(250,248,243,.96);backdrop-filter:blur(6px);border-bottom:1px solid #e6e1d6;padding:8px 10px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  .cf-toc-t{display:none}
+  nav.cf-toc ol{display:flex;gap:6px;white-space:nowrap}
+  nav.cf-toc li a{border-left:0;border-radius:999px;padding:6px 12px;font-size:14px;background:#f1ede4;color:#1f2328}
+  nav.cf-toc li a .n{color:#5b6470}
+  .cf-
+  
+}
+@media (max-width:640px){
+  .cf-hero{padding:32px 18px 24px}
+  .cf-hero .cf-lead{font-size:17px}
+  .cf-num,.sec-num{width:34px!important;height:34px!important;font-size:15px!important}
+}
+.arc-back b,.arc-foot-label{color:#a8432e!important}
+q{color:#a8432e}
+.badge,.tag-pill{font-size:13px!important}
+.ill{font-size:13px!important;background:#5f6670!important}
+sub,sup{font-size:max(12px,.8em)}
+svg .lbl{font-size:12px}
+.small{font-size:16px!important}
+.src code{font-size:1em}
+main>section,section.sec{background:none!important;border:0!important;border-bottom:1px dashed #e6e1d6!important;border-radius:0!important;padding:36px 0 28px!important;margin:0!important;box-shadow:none!important}
+main>section:last-of-type,section.sec:last-of-type{border-bottom:0!important}
+
+
+</style>
+
+<h2 id="먼저-알아-둘-것-prerequisites"><a href="#먼저-알아-둘-것-prerequisites" class="heading-anchor" aria-hidden="true">#</a> 먼저 알아 둘 것 (Prerequisites)</h2><section id="basics"><h2><span aria-hidden="true" class="cf-num ref"></span>먼저 알아 둘 것</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 논문을 읽는 데 필요한 네 가지 생각, 함수·조건·재귀·기호와 목록.</div>
+<h3>함수: 넣으면 나오는 기계</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>함수는 <b>무엇을 넣으면 정해진 것이 나오는 기계</b>입니다.</p>
+<p>자판기를 떠올려 보세요. 버튼 번호를 넣으면 음료가 나옵니다.</p>
+<p>같은 번호를 넣으면 늘 같은 음료가 나옵니다. 이것이 함수의 핵심입니다.</p></div>
+<div class="card"><figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:360px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg aria-label="함수를 자판기로 나타낸 그림" role="img" viewbox="0 0 360 120">
+<defs><marker id="ah" markerheight="6" markerwidth="6" orient="auto" refx="9" refy="5" viewbox="0 0 10 10"><path class="ah" d="M0,0L10,5L0,10z"></path></marker></defs>
+<rect class="boxf" height="70" rx="10" width="100" x="130" y="20"></rect><text class="t" text-anchor="middle" x="180" y="52">함수</text><text class="tm" text-anchor="middle" x="180" y="72">(자판기)</text>
+<path class="arrow" d="M60,55 H128" marker-end="url(#ah)"></path><text class="t" x="10" y="50">넣는 것</text><text class="tm" x="10" y="70">예: 3</text>
+<path class="arrow" d="M232,55 H300" marker-end="url(#ah)"></path><text class="t" x="305" y="50">나오는 것</text><text class="tm" x="305" y="70">예: 9</text>
+<text class="tm" x="90" y="112">“제곱하기” 함수에 3을 넣으면 9가 나옵니다</text></svg><figcaption>함수를 자판기로 나타낸 그림</figcaption></figure></div>
+<h3>조건: 만약 ~이면</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>조건은 <b>상황에 따라 다른 답을 고르는 규칙</b>입니다.</p>
+<p>예: “비가 오면 우산, 아니면 모자.”</p>
+<p>질문을 위에서부터 차례로 보고, 처음으로 “예”가 나온 줄의 답을 고릅니다.</p></div>
+<div class="card"><table><tr><th>질문(위에서부터)</th><th>답</th></tr><tr><td>비가 오나?</td><td>우산</td></tr><tr><td>햇빛이 강한가?</td><td>모자</td></tr><tr><td>그 밖의 모든 경우</td><td>아무것도 안 챙김</td></tr></table>
+<p class="small" style="margin:.4rem 0 0">이 논문의 ‘조건식’이 바로 이런 모양입니다.</p></div>
+<h3>재귀: 자기 자신을 다시 쓰는 규칙</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>재귀는 <b>문제를 더 작은 같은 문제로 바꾸어 푸는 방법</b>입니다.</p>
+<p>러시아 인형(마트료시카)을 생각해 보세요. “가장 작은 인형 찾기”는 이렇게 풀 수 있습니다.</p>
+<ol><li>인형을 연다.</li><li>안에 인형이 없으면, 지금 인형이 가장 작은 인형이다.</li><li>안에 인형이 있으면, 그 인형으로 1번부터 다시 한다.</li></ol>
+<p>규칙 안에 “다시 한다”가 들어 있지요. 그래도 인형은 점점 작아지니 언젠가 끝납니다.</p></div>
+<div class="card"><figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:360px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg aria-label="러시아 인형 재귀 그림" role="img" viewbox="0 0 360 120">
+<ellipse class="boxf" cx="70" cy="62" rx="55" ry="48"></ellipse><ellipse class="boxf" cx="70" cy="66" rx="38" ry="34"></ellipse><ellipse class="boxf" cx="70" cy="70" rx="22" ry="20"></ellipse><ellipse class="hlf" cx="70" cy="73" rx="9" ry="9"></ellipse>
+<text class="t" x="145" y="40">큰 인형 안에 작은 인형</text><text class="t" x="145" y="64">그 안에 더 작은 인형…</text><text class="t" x="145" y="88">노란 것이 마지막(가장 작은) 인형</text></svg><figcaption>러시아 인형 재귀 그림</figcaption></figure></div>
+<h3>기호와 목록</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p><b>기호</b>는 숫자가 아닌 이름표입니다. 예: <code>APPLE</code>, <code>RED</code>.</p>
+<p><b>목록</b>은 기호를 차례로 늘어놓은 것입니다. 예: 장보기 목록 <code>(APPLE, MILK, EGG)</code>.</p>
+<p>목록 안에 또 목록이 들어갈 수도 있습니다. 예: <code>(APPLE, (MILK, EGG))</code>.</p>
+<p>이 논문은 숫자가 아니라 <b>이런 기호와 목록을 계산하는 방법</b>을 다룹니다.</p></div>
+<div class="card"><figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:360px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg aria-label="목록을 칸과 화살표로 나타낸 그림" role="img" viewbox="0 0 360 110">
+<rect class="boxf" height="32" width="50" x="10" y="20"></rect><rect class="boxf" height="32" width="30" x="60" y="20"></rect><text class="t" text-anchor="middle" x="35" y="41">APPLE</text>
+<path class="arrow" d="M75,36 H118" marker-end="url(#ah)"></path>
+<rect class="boxf" height="32" width="50" x="120" y="20"></rect><rect class="boxf" height="32" width="30" x="170" y="20"></rect><text class="t" text-anchor="middle" x="145" y="41">MILK</text>
+<path class="arrow" d="M185,36 H228" marker-end="url(#ah)"></path>
+<rect class="boxf" height="32" width="50" x="230" y="20"></rect><rect class="boxf" height="32" width="30" x="280" y="20"></rect><text class="t" text-anchor="middle" x="255" y="41">EGG</text><text class="tm" x="285" y="41">끝</text>
+<text class="tm" x="10" y="80">칸마다 왼쪽에 물건, 오른쪽에 ‘다음 칸’을 가리키는 화살표</text><text class="tm" x="10" y="100">마지막 칸의 오른쪽에는 ‘끝’ 표시</text></svg><figcaption>목록을 칸과 화살표로 나타낸 그림</figcaption></figure></div>
+<div class="quiz card" data-quiz="q0"></div>
+</section>
+
+<h2 id="전반적인-해설-overview"><a href="#전반적인-해설-overview" class="heading-anchor" aria-hidden="true">#</a> 전반적인 해설 (Overview)</h2><section id="ov"><h2><span aria-hidden="true" class="cf-num ref"></span>전반적인 해설</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 이 논문이 무엇을 말하는지, 왜 중요한지, 그 뒤에 무엇이 일어났는지.</div>
+<h3>한 줄 요약</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>기호와 목록을 다루는 계산은 <b>아주 적은 재료만으로</b> 모두 쓸 수 있다.</p>
+<p>그리고 그 계산 규칙 자체도 <b>같은 기호와 목록으로 적을 수 있다.</b></p></div>
+<h3>재료는 몇 개뿐</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>매카시가 쓴 재료는 다음과 같습니다.</p>
+<ul><li>목록의 <b>맨 앞</b>을 꺼내는 일</li><li>맨 앞을 뺀 <b>나머지</b>를 꺼내는 일</li><li>두 개를 <b>붙여</b> 새 묶음을 만드는 일</li><li>이것이 <b>낱개 기호</b>인지 묻는 일</li><li>두 기호가 <b>같은지</b> 묻는 일</li></ul>
+<p>여기에 “만약 ~이면” 규칙과 “같은 규칙을 다시 쓰기”(재귀)를 더합니다.</p>
+<p>논문은 이것만으로 컴퓨터가 계산할 수 있는 것은 모두 만들 수 있다고 말합니다.</p></div>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<blockquote>“We get a much larger class of functions (in fact, all computable functions) when we allow ourselves to form new functions of S-expressions by conditional expressions and recursive definition.”</blockquote></div>
+<h3>🎁 예시로 따라가 보기: 상자 속 첫 물건 찾기</h3>
+<div class="card" id="gx">
+<div><button class="sec" id="gxPrev">◀ 이전</button><button id="gxNext">다음 ▶</button> <span class="mono" id="gxNum"></span></div>
+<h4 id="gxTitle" style="margin:.5rem 0 .2rem"></h4><div id="gxSvg"></div><p id="gxCap" style="margin:.3rem 0 0"></p>
+<div class="src">해설용 예시입니다. 다만 같은 계산이 논문에 <code>ff</code>라는 함수로 나옵니다(3절).</div></div>
+<h3>왜 중요한가</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>첫째, 숫자가 아닌 <b>기호</b>를 계산하는 방법을 깔끔하게 정리했습니다.</p>
+<p>둘째, 프로그램을 데이터와 <b>같은 모양</b>으로 적었습니다. 그래서 프로그램이 다른 프로그램을 읽고 실행할 수 있습니다.</p>
+<p>셋째, 그런 실행기, 즉 <b>만능 함수</b>를 몇 줄로 적어 보였습니다.</p>
+<p>넷째, 다 쓴 메모리를 컴퓨터가 <b>스스로 치우는 방법</b>을 설명했습니다.</p></div>
+<h3>그 뒤에 일어난 일</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>논문에 적힌 언어가 <b>LISP</b>입니다. ‘목록 처리기(LISt Processor)’라는 뜻입니다.</p>
+<p>매카시의 회고에 따르면, 함께 일하던 스티브 러셀이 논문의 ‘만능 함수’를 직접 기계어로 옮겨 실제로 돌아가는 실행기를 만들었습니다.</p>
+<p>‘알아서 메모리 치우기’는 오늘날 <b>가비지 컬렉션</b>(쓰레기 수거)이라 불리며 많은 언어가 씁니다.</p>
+<p>제목의 “Part I”에 이어질 Part II는 끝내 쓰이지 않았다고 매카시가 회고했습니다.</p>
+<div class="src">출처: McCarthy, “History of LISP” (ACM SIGPLAN Notices 13(8), 1978) <a href="https://pages.cs.wisc.edu/~horwitz/CS704-NOTES/PAPERS/mccarthy.pdf">PDF</a></div></div>
+<details class="card"><summary>더 알고 싶다면: 논문의 흐름 한눈에 보기</summary>
+<div class="int"><span class="badge b-int">해설·해석</span> 논문은 다음 순서로 나아갑니다.
+<ol><li>함수를 정의하는 도구를 준비한다: 조건식, 재귀 정의, 이름 없는 함수 표기(λ), 이름 붙이기(label).</li>
+<li>계산 대상인 ‘S-식’(기호 묶음)을 정의한다.</li>
+<li>기본 연산 다섯 개로 여러 함수를 만든다.</li>
+<li>함수 자체를 S-식으로 적는 규칙을 정한다.</li>
+<li>S-식으로 적힌 함수를 실행하는 만능 함수 <code>apply</code>/<code>eval</code>을 정의한다.</li>
+<li>IBM 704 컴퓨터의 메모리에 S-식을 담는 방법과 메모리 회수 방법을 설명한다.</li>
+<li>비슷한 다른 방식(linear LISP)과, 순서도를 재귀 함수로 바꾸는 방법을 보인다.</li></ol></div></details>
+<div class="quiz card" data-quiz="qov"></div>
+</section>
+
+<h2 id="1-논문이-나온-맥락"><a href="#1-논문이-나온-맥락" class="heading-anchor" aria-hidden="true">#</a> 1. 논문이 나온 맥락</h2><section id="s1"><h2><span class="cf-num">1<span class="cf-sr">. </span></span>논문이 나온 맥락</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: LISP가 어떤 목적으로, 어떤 컴퓨터에서 만들어졌는지.</div>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 논문 첫 문장입니다.
+<blockquote>“A programming system called LISP (for LISt Processor) has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T.”</blockquote>
+<p>논문은 LISP의 목적을 다음과 같이 밝힙니다.</p>
+<ul><li>‘Advice Taker’라는 시스템을 실험하기 위해 만들었다.</li><li>Advice Taker는 명령문뿐 아니라 서술문도 다루고 “common sense”를 보이도록 구상된 시스템이다.</li><li>Advice Taker 제안은 1958년 11월에 처음 나왔다.</li></ul>
+<p>또 LISP가 여러 단계의 단순화를 거쳐, 어떤 기호식들의 부분 재귀 함수를 나타내는 체계가 되었다고 말합니다. 이 체계는 IBM 704나 다른 어떤 컴퓨터와도 무관하다고 덧붙입니다.</p></div>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>당시 대부분의 프로그램은 <b>숫자 계산</b>이 목적이었습니다.</p>
+<p>매카시는 인공지능 연구를 위해 <b>문장과 논리식 같은 기호</b>를 다루는 도구가 필요했습니다.</p>
+<p>매카시의 회고에 따르면 LISP 개발은 1958년에 시작됐습니다. 또 car, cdr 같은 이름은 IBM 704의 기계어 단어 구조(‘address’ 부분, ‘decrement’ 부분)에서 왔습니다.</p>
+<div class="src">출처: McCarthy, “History of LISP” (1978) <a href="https://pages.cs.wisc.edu/~horwitz/CS704-NOTES/PAPERS/mccarthy.pdf">PDF</a> · <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Wikipedia, “Lisp (programming language)”</a></div></div>
+<div class="quiz card" data-quiz="q1"></div>
+</section>
+
+<h2 id="2-함수와-함수-정의"><a href="#2-함수와-함수-정의" class="heading-anchor" aria-hidden="true">#</a> 2. 함수와 함수 정의</h2><section id="s2"><h2><span class="cf-num">2<span class="cf-sr">. </span></span>함수와 함수 정의</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 매카시가 새로 내놓은 ‘조건식’과, 그것으로 재귀 함수를 정의하는 방법.</div>
+<h3>2-1. 부분 함수와 참·거짓</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<ul><li><b>부분 함수(partial function)</b>: 정의역의 일부에서만 정의된 함수. 계산이 끝나지 않는 경우가 있으니 자연히 생긴다.</li>
+<li><b>명제식(propositional expression)</b>: 값이 T(참) 또는 F(거짓)인 식. 예: <code>x &lt; y</code>, <code>x is prime</code>.</li>
+<li><b>술어(predicate)</b>: 값이 T와 F뿐인 함수.</li></ul></div>
+<h3>2-2. 조건식</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 논문은 조건식이라는 개념이 새롭다고 봅니다(“believed to be new”). 모양은 다음과 같습니다.
+<div class="mono" style="text-align:center;margin:.4rem">(p<sub>1</sub> → e<sub>1</sub>, ⋯, p<sub>n</sub> → e<sub>n</sub>)</div>
+<p>읽는 법은 “p<sub>1</sub>이면 e<sub>1</sub>, 아니고 p<sub>2</sub>이면 e<sub>2</sub>, ⋯”입니다. 값을 정하는 규칙은 다음과 같습니다.</p>
+<ol><li>p들을 왼쪽부터 살핀다.</li><li>값이 정의되지 않은 p보다 먼저 T인 p를 만나면, 그에 대응하는 e의 값이 답이다(그 e가 정의된 경우).</li><li>T인 p보다 정의되지 않은 p를 먼저 만나면, 답은 정의되지 않는다.</li><li>모든 p가 거짓이면, 답은 정의되지 않는다.</li><li>첫 번째로 참인 p에 대응하는 e가 정의되지 않으면, 답은 정의되지 않는다.</li></ol>
+<p>논문의 예:</p>
+<table><tr><td><code>(1 &lt; 2 → 4, 1 &gt; 2 → 3) = 4</code></td><td><code>(2 &lt; 1 → 4, T → 3) = 3</code></td></tr>
+<tr><td><code>(2 &lt; 1 → 0/0, T → 3) = 3</code></td><td><code>(2 &lt; 1 → 3, T → 0/0)</code>은 정의되지 않음</td></tr>
+<tr><td><code>|x| = (x &lt; 0 → −x, T → x)</code></td><td><code>sgn(x) = (x &lt; 0 → −1, x = 0 → 0, T → 1)</code></td></tr></table>
+<p>각주 2에서 매카시는 조건식을 Algol 60에 넣자고 제안했으나 이 표기는 받아들여지지 않았고, Algol 60이 채택한 <code>if … then … else</code>는 John Backus가 제안했다고 적습니다.</p></div>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p><code>0/0</code>처럼 뜻이 없는 식이 있어도, 그 줄에 도달하지 않으면 괜찮다는 점이 중요합니다.</p>
+<p>이 성질 덕분에 다음 절의 재귀 정의가 무한히 돌지 않고 멈출 수 있습니다.</p></div>
+<h3>2-3. 재귀 함수 정의</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 조건식을 쓰면 정의하려는 함수가 식 안에 다시 나와도 순환에 빠지지 않습니다.
+<div class="mono" style="text-align:center;margin:.4rem">n! = (n = 0 → 1, T → n · (n − 1)!)</div>
+<p>논문의 다른 예:</p>
+<ul><li>최대공약수: <code>gcd(m, n) = (m &gt; n → gcd(n, m), rem(n, m) = 0 → m, T → gcd(rem(n, m), m))</code></li>
+<li>뉴턴법 제곱근: <code>sqrt(a, x, ε) = (|x² − a| &lt; ε → x, T → sqrt(a, ½(x + a/x), ε))</code></li></ul>
+<p>논리 연결사도 조건식으로 정의합니다. 예: <code>p ∧ q = (p → q, T → F)</code>, <code>p ∨ q = (p → T, T → q)</code>, <code>¬p = (p → F, T → T)</code>. 그래서 p가 거짓이고 q가 정의되지 않으면 <code>p ∧ q</code>는 거짓이지만 <code>q ∧ p</code>는 정의되지 않습니다. 논문은 이 비가환성이 바람직하다고 말합니다.</p></div>
+<div class="card"><b>🔧 n! 계산 따라가기</b> <span class="badge b-int">해설·해석</span> 논문이 보여 준 2! 계산을 한 단계씩 펼칩니다.
+<div>n = <select id="factN"><option>0</option><option>1</option><option selected="">2</option><option>3</option><option>4</option></select> <button class="sec" id="factPrev">◀ 이전</button><button id="factNext">다음 ▶</button></div>
+<div class="log" id="factLog"></div></div>
+<h3>2-4. 함수와 형식, λ 표기, label</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>“y² + x”는 그 자체로는 함수가 아닙니다. 3과 4를 어느 변수에 넣을지 모르기 때문입니다.</p>
+<p>그래서 “변수 순서는 (x, y)”라고 정해 주는 표기가 필요합니다. 이것이 <b>λ 표기</b>입니다.</p>
+<p>그런데 λ만으로는 자기 자신을 부르는 함수에 이름을 붙일 수 없습니다. 그래서 <b>label</b>을 씁니다.</p></div>
+<details class="card"><summary>더 알고 싶다면: λ와 label의 정확한 정의</summary>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<p>처치(Church)를 따라, <code>y² + x</code> 같은 식을 <b>형식(form)</b>이라 부릅니다. <code>y² + x(3, 4)</code>는 값이 13인지 19인지 불분명합니다.</p>
+<p>E가 변수 x<sub>1</sub>, ⋯, x<sub>n</sub>의 형식이면, <code>λ((x<sub>1</sub>, ⋯, x<sub>n</sub>), E)</code>는 인자를 그 순서대로 E의 변수에 대입해 계산하는 n변수 함수입니다. 예: <code>λ((x, y), y² + x)(3, 4) = 19</code>.</p>
+<p>λ의 변수 목록에 있는 변수는 <b>묶인(bound)</b> 변수라 이름을 바꿔도 뜻이 같습니다. 묶이지 않은 변수는 <b>자유(free)</b> 변수입니다.</p>
+<p><code>label(a, E)</code>는 식 E를 나타내되, E 안의 a는 식 전체를 가리킨다고 해석합니다. 예: <code>label(sqrt, λ((a, x, ε), (|x² − a| &lt; ε → x, T → sqrt(a, ½(x + a/x), ε))))</code>.</p>
+<p>감사의 말에 따르면, λ 표기가 재귀 함수 이름 붙이기에 부족하다는 점은 N. Rochester가 알아챘고, 그는 label과는 다른 해법도 찾았습니다.</p></div></details>
+<div class="quiz card" data-quiz="q2"></div>
+</section>
+
+<h2 id="3-기호식s-식과-그-함수들"><a href="#3-기호식s-식과-그-함수들" class="heading-anchor" aria-hidden="true">#</a> 3. 기호식(S-식)과 그 함수들</h2><section id="s3"><h2><span class="cf-num">3<span class="cf-sr">. </span></span>기호식(S-식)과 그 함수들</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 계산 대상인 S-식, 기본 연산 다섯 개, 그리고 프로그램을 실행하는 만능 함수. 이 글의 중심입니다.</div>
+<h3>3-1. S-식이란</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span> S는 symbolic(기호)의 약자입니다. 정의는 두 줄입니다.
+<ol><li>원자 기호(atomic symbol)는 S-식이다.</li><li>e<sub>1</sub>, e<sub>2</sub>가 S-식이면 <code>(e<sub>1</sub> · e<sub>2</sub>)</code>도 S-식이다.</li></ol>
+<p>원자 기호로는 대문자 라틴 문자와 숫자로 된 문자열을 씁니다. 예: <code>A</code>, <code>ABA</code>, <code>APPLE PIE NUMBER 3</code>. 한 글자가 아닌 이름을 쓰는 이유로 논문은 두 가지를 듭니다.</p>
+<ul><li>프로그램에는 수백 개의 기호가 필요한데, IBM 704가 인쇄할 수 있는 문자는 47개뿐이다.</li><li>영어 단어를 기호로 쓰면 기억하기 쉽다.</li></ul>
+<p>목록 <code>(m<sub>1</sub>, m<sub>2</sub>, ⋯, m<sub>n</sub>)</code>은 <code>(m<sub>1</sub> · (m<sub>2</sub> · (⋯ (m<sub>n</sub> · NIL) ⋯)))</code>의 줄임말입니다. <code>NIL</code>은 목록 끝을 나타내는 원자 기호입니다. 줄임 규칙은 다음 셋입니다.</p>
+<ol><li><code>(m)</code>은 <code>(m · NIL)</code></li><li><code>(m<sub>1</sub>, ⋯, m<sub>n</sub>)</code>은 <code>(m<sub>1</sub> · (⋯ (m<sub>n</sub> · NIL) ⋯))</code></li><li><code>(m<sub>1</sub>, ⋯, m<sub>n</sub> · x)</code>은 <code>(m<sub>1</sub> · (⋯ (m<sub>n</sub> · x) ⋯))</code></li></ol>
+<p class="small">1995년 메모(각주 3): 당시에는 목록 원소를 쉼표로 구분했으므로 기호 안에 빈칸을 허용할 수 있었다.</p></div>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>S-식은 결국 <b>둘씩 묶은 쌍</b>입니다. 쌍 안에 또 쌍이 들어갈 수 있습니다.</p>
+<p>목록은 “첫 원소”와 “나머지 목록”의 쌍을 계속 이어 붙인 것입니다.</p></div>
+<h3>3-2. 기본 함수 다섯 개</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 함수를 적을 때는 S-식과 구별하려고 소문자 이름, 대괄호, 세미콜론을 씁니다(예: <code>car[cons[(A · B); x]]</code>). 논문은 이런 표기를 <b>M-식(meta-expression)</b>이라 부릅니다.
+<table><tr><th>함수</th><th>뜻</th><th>논문의 예</th></tr>
+<tr><td><code>atom[x]</code></td><td>x가 원자 기호면 T, 아니면 F</td><td><code>atom[X] = T</code>, <code>atom[(X · A)] = F</code></td></tr>
+<tr><td><code>eq[x; y]</code></td><td>x, y가 둘 다 원자일 때만 정의. 같은 기호면 T</td><td><code>eq[X; X] = T</code>, <code>eq[X; (X · A)]</code>는 정의되지 않음</td></tr>
+<tr><td><code>car[x]</code></td><td>x가 원자가 아닐 때만 정의. <code>car[(e<sub>1</sub> · e<sub>2</sub>)] = e<sub>1</sub></code></td><td><code>car[((X · A) · Y)] = (X · A)</code></td></tr>
+<tr><td><code>cdr[x]</code></td><td>x가 원자가 아닐 때만 정의. <code>cdr[(e<sub>1</sub> · e<sub>2</sub>)] = e<sub>2</sub></code></td><td><code>cdr[((X · A) · Y)] = Y</code></td></tr>
+<tr><td><code>cons[x; y]</code></td><td>언제나 정의. <code>cons[e<sub>1</sub>; e<sub>2</sub>] = (e<sub>1</sub> · e<sub>2</sub>)</code></td><td><code>cons[(X · A); Y] = ((X · A) · Y)</code></td></tr></table>
+<p>세 함수는 다음 관계를 만족합니다.</p>
+<ul><li><code>car[cons[x; y]] = x</code></li><li><code>cdr[cons[x; y]] = y</code></li><li><code>cons[car[x]; cdr[x]] = x</code> (x가 원자가 아닐 때)</li></ul></div>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<ul><li><b>car</b>: 쌍의 왼쪽(목록이라면 첫 원소)</li><li><b>cdr</b>: 쌍의 오른쪽(목록이라면 첫 원소를 뺀 나머지)</li><li><b>cons</b>: 두 개를 묶어 새 쌍 만들기</li></ul></div>
+<h3>🔧 실습 ① S-식 놀이터 (car · cdr · cons)</h3>
+<div class="card" id="pg">
+<p class="small" style="margin-top:0">S-식을 입력하고 버튼을 눌러 보세요. 점 표기 <code>(A · B)</code>(<code>.</code>도 됨)와 목록 표기 <code>(A, B, C)</code>(빈칸 구분도 됨)를 모두 받습니다. 아래 그림은 논문 4절의 ‘칸과 화살표’ 방식입니다. <span class="badge b-int">해설·해석</span></p>
+<div>x = <input id="pgX" style="width:16rem" value="((A · B), C, D)"/> <select id="pgEx"><option value="">예제…</option><option>((A · B), C, D)</option><option>(A, (B, C), D)</option><option>((A · B) · (C · (E · F)))</option><option>(A · B)</option><option>APPLE</option></select></div>
+<div style="margin-top:.3rem"><button id="pgCar">car[x]</button><button id="pgCdr">cdr[x]</button><button id="pgAtom">atom[x]</button>   y = <input id="pgY" style="width:6rem" value="Z"/> <button id="pgCons">cons[y; x]</button><button id="pgEq">eq[x; y]</button> <button class="sec" id="pgReset">되돌리기</button></div>
+<div style="margin-top:.4rem"><b>현재 x</b>: <span class="mono" id="pgShow"></span><br/><span class="small">점 표기: <span class="mono" id="pgDot"></span></span></div>
+<div class="fb" id="pgMsg"></div><div id="pgSvg" style="overflow-x:auto"></div></div>
+<h3>3-3. 재귀로 만든 S-함수</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<ul><li><b>ff[x]</b>: 괄호를 무시했을 때 x의 첫 원자 기호. <code>ff[x] = [atom[x] → x; T → ff[car[x]]]</code>, 예: <code>ff[((A · B) · C)] = A</code></li>
+<li><b>subst[x; y; z]</b>: z 안의 원자 y를 모두 x로 바꾼 결과. <code>subst[x; y; z] = [atom[z] → [eq[z; y] → x; T → z]; T → cons[subst[x; y; car[z]]; subst[x; y; cdr[z]]]]</code>, 예: <code>subst[(X · A); B; ((A · B) · C)] = ((A · (X · A)) · C)</code></li>
+<li><b>equal[x; y]</b>: 같은 S-식이면 T</li>
+<li><b>null[x]</b> = <code>atom[x] ∧ eq[x; NIL]</code></li></ul>
+<p>목록용 함수로는 다음이 정의됩니다.</p>
+<ul><li><code>append</code>: 두 목록 잇기. 예: <code>append[(A, B); (C, D, E)] = (A, B, C, D, E)</code></li>
+<li><code>among</code>: x가 목록 y의 원소인가</li>
+<li><code>pair</code>: 두 목록의 짝 목록. 예: <code>pair[(A, B, C); (X, (Y, Z), U)] = ((A, X), (B, (Y, Z)), (C, U))</code></li>
+<li><code>assoc</code>: 짝 목록에서 x의 짝 찾기. 예: <code>assoc[X; ((W, (A, B)), (X, (C, D)), (Y, (E, F)))] = (C, D)</code></li>
+<li><code>sublis</code>: 짝 목록대로 한꺼번에 바꾸기</li></ul>
+<p>줄임말로 <code>cadr[x]</code>는 <code>car[cdr[x]]</code>, <code>caddr[x]</code>는 <code>car[cdr[cdr[x]]]</code>입니다.</p></div>
+<h3>🔧 실습 ② 재귀 추적기</h3>
+<div class="card" id="rt">
+<div>함수: <select id="rtF"><option value="ff">ff[((A · B) · C)]</option><option value="subst">subst[(X · A); B; ((A · B) · C)]</option><option value="append">append[(A, B); (C, D, E)]</option></select>
+<button class="sec" id="rtPrev">◀ 이전</button><button id="rtNext">다음 ▶</button><button class="sec" id="rtAll">전부 보기</button> <span class="mono" id="rtNum"></span></div>
+<div class="log" id="rtLog"></div><div class="fb" id="rtRes"></div>
+<p class="small" style="margin:.3rem 0 0"><span class="badge b-int">해설·해석</span> 들여쓰기 깊이가 “함수가 자기 자신을 부른 깊이”입니다. 계산 규칙은 논문의 정의를 그대로 따릅니다.</p></div>
+<h3>3-4. 프로그램을 데이터로: M-식을 S-식으로</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>지금까지 함수는 M-식(소문자, 대괄호)으로 적었습니다.</p>
+<p>매카시는 이 함수들을 <b>S-식으로도 적는 규칙</b>을 정했습니다.</p>
+<p>그러면 함수 자체가 데이터가 됩니다. 함수를 계산하는 함수를 만들 수 있게 됩니다.</p></div>
+<details class="card"><summary>더 알고 싶다면: 번역 규칙 여섯 가지</summary>
+<div class="paper"><span class="badge b-paper">논문 원문</span> M-식 E의 번역을 E*라 씁니다.
+<ol><li>E가 S-식이면 E*는 <code>(QUOTE, E)</code>.</li><li>소문자 변수·함수 이름은 대문자로. 예: car*는 <code>CAR</code>.</li><li><code>f[e<sub>1</sub>; ⋯; e<sub>n</sub>]</code>는 <code>(f*, e<sub>1</sub>*, ⋯, e<sub>n</sub>*)</code>. 예: <code>cons[car[x]; cdr[x]]*</code>는 <code>(CONS, (CAR, X), (CDR, X))</code>.</li><li><code>[p<sub>1</sub> → e<sub>1</sub>; ⋯; p<sub>n</sub> → e<sub>n</sub>]*</code>는 <code>(COND, (p<sub>1</sub>*, e<sub>1</sub>*), ⋯, (p<sub>n</sub>*, e<sub>n</sub>*))</code>.</li><li><code>λ[[x<sub>1</sub>; ⋯; x<sub>n</sub>]; E]*</code>는 <code>(LAMBDA, (x<sub>1</sub>*, ⋯, x<sub>n</sub>*), E*)</code>.</li><li><code>label[a; E]*</code>는 <code>(LABEL, a*, E*)</code>.</li></ol>
+<p>논문은 이 표기가 “writable and somewhat readable”하다고 평합니다.</p></div></details>
+<h3>3-5. 만능 함수 apply와 eval</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p><code>apply</code>는 <b>“함수의 설명서(S-식)”와 “재료(인자)”를 받아 결과를 내는 함수</b>입니다.</p>
+<p>논문은 이것이 이론에서는 만능 튜링 기계의 역할을, 실제로는 인터프리터(프로그램 실행기)의 역할을 한다고 말합니다.</p>
+<p>실제 일은 <code>eval</code>이 합니다. eval은 식 하나와 “이름–값 짝 목록”(a)을 받아 식의 값을 냅니다.</p></div>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 논문의 예:
+<div class="mono" style="overflow-wrap:anywhere">λ[[x; y]; cons[car[x]; y]][(A, B); (C, D)] = apply[(LAMBDA, (X, Y), (CONS, (CAR, X), Y)); ((A, B), (C, D))] = (A, C, D)</div>
+<p><code>apply[f; args] = eval[cons[f; appq[args]]; NIL]</code>. 여기서 appq는 각 인자에 QUOTE를 씌워 “그 자체를 뜻한다”고 표시합니다.</p></div>
+<details class="card"><summary>더 알고 싶다면: eval의 전체 정의와 경우 나누기</summary>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<pre>eval[e; a] = [
+  atom[e] → assoc[e; a];
+  atom[car[e]] → [
+    eq[car[e]; QUOTE] → cadr[e];
+    eq[car[e]; ATOM]  → atom[eval[cadr[e]; a]];
+    eq[car[e]; EQ]    → [eval[cadr[e]; a] = eval[caddr[e]; a]];
+    eq[car[e]; COND]  → evcon[cdr[e]; a];
+    eq[car[e]; CAR]   → car[eval[cadr[e]; a]];
+    eq[car[e]; CDR]   → cdr[eval[cadr[e]; a]];
+    eq[car[e]; CONS]  → cons[eval[cadr[e]; a]; eval[caddr[e]; a]];
+    T → eval[cons[assoc[car[e]; a]; evlis[cdr[e]; a]]; a]];
+  eq[caar[e]; LABEL]  → eval[cons[caddar[e]; cdr[e]]; cons[list[cadar[e]; car[e]]; a]];
+  eq[caar[e]; LAMBDA] → eval[caddar[e]; append[pair[cadar[e]; evlis[cdr[e]; a]]; a]]]
+
+<p>evcon[c; a] = [eval[caar[c]; a] → eval[cadar[c]; a]; T → evcon[cdr[c]; a]]
+evlis[m; a] = [null[m] → NIL; T → cons[eval[car[m]; a]; evlis[cdr[m]; a]]]</pre></p>
+<p>논문의 설명을 정리하면 다음과 같습니다.</p>
+<ol><li>e가 원자면, a에서 e와 짝지어진 것을 찾는다.</li><li>e의 car가 원자면, QUOTE·ATOM·EQ·COND·CAR·CDR·CONS 중 무엇인지에 따라 처리한다. 그 밖의 원자 f면 a에서 f의 짝으로 바꿔 다시 계산한다.</li><li><code>((LABEL, f, E), e<sub>1</sub>, ⋯)</code>는 짝 <code>(f, (LABEL, f, E))</code>를 a 앞에 붙이고 <code>(E, e<sub>1</sub>, ⋯)</code>를 계산한다.</li><li><code>((LAMBDA, (x<sub>1</sub>, ⋯), E), e<sub>1</sub>, ⋯)</code>는 짝 <code>((x<sub>1</sub>, e<sub>1</sub>), ⋯)</code>를 a 앞에 붙이고 E를 계산한다.</li></ol>
+<p>짝 목록 a를 쓰는 이유는 묶인 변수의 충돌(collision of bound variables)을 피하기 위해서라고 논문은 설명합니다.</p>
+<p class="small">1995년 메모(각주 5): “This version isn't quite right.” 실제로 구현된 판과의 비교는 Herbert Stoyan의 글을 보라고 적혀 있습니다.</p></div></details>
+<h3>🔧 실습 ③ eval/apply 단계 보기</h3>
+<div class="card" id="ev">
+<div>예제: <select id="evEx"><option value="0">논문 예 1: (LAMBDA, (X, Y), (CONS, (CAR, X), Y)) 에 ((A, B), (C, D))</option><option value="1">논문 예 2: ff를 LABEL로 정의해 ((A · B)) 에 적용</option></select></div>
+<div><label class="small"><input id="evFix" type="checkbox"/> 수정판으로 실행: 함수 이름을 a에서 찾아 바꿀 때, 이미 계산한 인자에 QUOTE를 씌움 (논문 18–20쪽의 계산 과정처럼)</label></div>
+<div><button class="sec" id="evPrev">◀ 이전</button><button id="evNext">다음 ▶</button><button class="sec" id="evEnd">끝으로</button> <span class="mono" id="evNum"></span></div>
+<div class="log" id="evCur" style="max-height:none"></div>
+<div class="fb" id="evRes"></div>
+<details><summary>지금까지의 호출 기록</summary><div class="log" id="evLog"></div></details>
+<p class="small" style="margin:.3rem 0 0"><span class="badge b-int">해설·해석</span> 기본은 논문에 <b>인쇄된 정의 그대로</b> 실행합니다. 예 2는 인쇄된 정의로 돌리면 중간에 <code>assoc[A; a]</code>가 정의되지 않아 멈춥니다. ‘이미 계산한 인자를 다시 계산하는’ 문제 때문입니다. 1995년 메모가 “isn't quite right”라고 한 것과 관련 있을 수 있지만, 메모가 가리키는 결함이 정확히 이것인지는 <b>확인되지 않음</b>입니다.</p></div>
+<h3>3-6. 함수를 인자로 받는 함수</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<ul><li><code>maplist[x; f] = [null[x] → NIL; T → cons[f[x]; maplist[cdr[x]; f]]]</code></li>
+<li><code>search[x; p; f; u]</code>: 목록에서 성질 p를 가진 원소를 찾아 f를 적용하고, 없으면 인자 없는 함수 u를 계산</li></ul>
+<p>maplist의 쓸모로 논문은 <code>PLUS</code>, <code>TIMES</code>로 된 식의 미분 함수 <code>diff</code>를 보입니다. 예로 <code>(TIMES, X, (PLUS, X, A), Y)</code>, 곧 X(X + A)Y의 미분을 계산합니다. 논문은 이 표기가 본질적으로 폴란드 표기법이라고 말합니다.</p></div>
+<div class="quiz card" data-quiz="q3"></div>
+</section>
+
+<h2 id="4-기계-속의-lisp-ibm-704"><a href="#4-기계-속의-lisp-ibm-704" class="heading-anchor" aria-hidden="true">#</a> 4. 기계 속의 LISP (IBM 704)</h2><section id="s4"><h2><span class="cf-num">4<span class="cf-sr">. </span></span>기계 속의 LISP (IBM 704)</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: S-식이 메모리에 어떻게 담기는지, 그리고 다 쓴 메모리를 어떻게 되찾는지.</div>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 논문은 LISP 시스템이 쓰였거나 쓰일 목적을 다음처럼 꼽습니다.
+<ol><li>LISP 프로그램을 기계어로 옮기는 컴파일러 작성</li><li>어떤 형식 논리 체계의 증명을 검사하는 프로그램</li><li>형식적 미분·적분 프로그램</li><li>술어 논리의 증명 생성 알고리즘 구현</li><li>결과가 숫자가 아닌 공식인 공학 계산</li><li>Advice Taker 프로그래밍</li></ol></div>
+<h3>4-1. 칸과 화살표: 리스트 구조</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<p>기계의 한 ‘단어(word)’를 두 칸짜리 상자로 그립니다. 왼쪽 칸은 <b>address</b> 부분, 오른쪽 칸은 <b>decrement</b> 부분입니다.</p>
+<p>원자가 아닌 S-식 x는 단어 하나로 나타냅니다. address 부분에는 car[x]의 위치가, decrement 부분에는 cdr[x]의 위치가 들어갑니다.</p>
+<p>같은 부분 구조를 여러 곳에서 함께 가리키는 것은 허용됩니다. 하지만 순환(자기 자신을 가리키는 고리)은 허용하지 않습니다.</p>
+<p>리스트 구조의 장점으로 논문은 세 가지를 듭니다.</p>
+<ol><li>다룰 식의 크기와 개수를 미리 알 수 없어도 된다.</li><li>필요 없어진 칸을 하나씩 ‘빈칸 목록’에 돌려줄 수 있다.</li><li>여러 식에 들어 있는 같은 부분식을 한 번만 저장할 수 있다.</li></ol>
+<p>이름의 유래도 이 절에 나옵니다.</p>
+<ul><li>“car” is a mnemonic for “contents of the address part of register.”</li><li>“cdr” stands for “contents of the decrement part of register.”</li><li>“cons” is an abbreviation for “construct.”</li></ul></div>
+<div class="int"><span class="badge b-int">해설·해석</span> 실습 ①의 그림이 바로 이 방식입니다. 왼쪽 칸에서 아래로 가는 화살표가 car, 오른쪽 칸에서 옆으로 가는 화살표가 cdr입니다.</div>
+<h3>4-2. 기호의 정보 목록</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span> 원자 기호는 컴퓨터 안에서 ‘association list’라는 특수한 리스트 구조로 나타냅니다. 여기에는 인쇄용 이름(print name), 숫자 값, 기계어 루틴 위치 같은 정보를 담을 수 있습니다. IBM 704는 36비트 단어를 쓰고, 인쇄 가능한 문자는 6비트씩이라 한 단어에 여섯 글자가 들어갑니다. <span class="small">1995년 메모(각주 6): 이것은 나중에 property list라고 불렸다.</span></div>
+<h3>4-3. 빈칸 목록과 자동 회수</h3>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>새 쌍을 만들 때마다 메모리 칸이 하나씩 필요합니다.</p>
+<p>쓰지 않는 칸은 ‘빈칸 목록’에 모아 둡니다.</p>
+<p>빈칸이 다 떨어지면, 프로그램이 더는 닿을 수 없는 칸을 찾아 빈칸 목록으로 되돌립니다.</p>
+<p>프로그래머가 직접 지울 필요가 없다는 점이 핵심입니다.</p></div>
+<details class="card"><summary>더 알고 싶다면: 회수 과정의 실제 설명</summary>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<p>리스트 구조용 메모리 중 쓰이지 않는 레지스터(처음에는 약 15,000개)는 <b>free-storage list</b>라는 하나의 목록으로 묶입니다. 레지스터 FREE가 그 첫 위치를 가리킵니다.</p>
+<p>회수는 다음 순서로 자동으로 일어납니다.</p>
+<ol><li>빈 레지스터가 필요한데 목록이 비었을 때에만 회수(reclamation) 주기가 시작된다.</li><li>기준 레지스터들에서 car–cdr 사슬로 닿는 모든 레지스터의 부호를 음수로 바꾼다. 이미 음수면 이미 방문한 것으로 본다.</li><li>리스트 구조 영역 전체를 훑어, 부호가 바뀌지 않은 레지스터를 free-storage list에 돌려준다.</li><li>닿을 수 있는 레지스터의 부호를 다시 양수로 돌린다.</li></ol>
+<p>논문은 회수에 몇 초가 걸리므로, 닿을 수 있는 목록이 메모리를 거의 채우지 않아야 효율적이라고 말합니다.</p>
+<p class="small">각주 7(나중에 덧붙인 저자 메모): “We already called this process “garbage collection”, but I guess I chickened out of using it in the paper—or else the Research Laboratory of Electronics grammar ladies wouldn't let me.”</p></div>
+<div class="int"><span class="badge b-int">해설·해석</span> 오늘날 말로는 <b>표시 후 쓸기(mark-and-sweep) 방식의 가비지 컬렉션</b>입니다. 각주에 따르면 ‘garbage collection’이라는 말은 당시 이미 쓰였지만 논문 본문에는 넣지 않았습니다. 다만 이 각주가 1960년 원래 지면에는 없는 나중 메모라는 점에 주의하세요. 위키백과는 가비지 컬렉션 루틴을 MIT 대학원생 Daniel Edwards가 1962년 이전에 개발했다고 적고 있습니다(LISP 1.5 Programmer's Manual 인용). 이 학습서에서 그 매뉴얼을 직접 대조하지는 않았습니다(<b>확인되지 않음</b>).<div class="src">출처: <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Wikipedia, “Lisp (programming language)”</a></div></div></details>
+<h3>4-4. 재귀 함수의 실행과 시스템 현황</h3>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<p>재귀 함수의 루틴은 자기 자신을 서브루틴으로 부릅니다. 이때 임시 레지스터 값이 겹치지 않도록 SAVE와 UNSAVE 루틴이 ‘public push-down list’를 씁니다. <span class="small">1995년 메모(각주 8): 지금은 stack이라고 부른다.</span></p>
+<p>1960년 2월 현황으로 논문은 다음을 적습니다.</p>
+<ul><li>apply의 변형을 IBM 704용 프로그램 APPLY로 옮겼고, 이것이 LISP의 인터프리터 역할을 한다.</li><li>함수를 원하는 만큼 S-식으로 정의할 수 있다.</li><li>S-식을 읽고 인쇄할 수 있다(직접 또는 자기 테이프).</li><li>오류 진단과 선택적 추적 기능이 있다.</li><li>컴파일된 함수는 해석할 때보다 약 60배 빠르다.</li><li>ALGOL 방식의 대입문과 go to를 쓰는 “program feature”가 있다.</li><li>부동소수점 계산은 되지만 비효율적이다.</li><li>프로그래머 매뉴얼을 준비 중이고, IBM 709용 판도 준비 중이다.</li></ul></div>
+<div class="int"><span class="badge b-int">해설·해석</span> 매카시는 회고에서 S. R. 러셀이 eval이 LISP 인터프리터 역할을 할 수 있음을 알아채고 곧바로 손으로 코딩했다고 적었습니다(“S.R. Russell noticed that eval could serve as an interpreter for LISP, promptly hand coded it”). 논문이 말하는 APPLY 프로그램과 이 일이 같은 것인지는 이 학습서에서 <b>확인되지 않음</b>입니다.<div class="src">출처: McCarthy, “History of LISP” (1978) <a href="https://pages.cs.wisc.edu/~horwitz/CS704-NOTES/PAPERS/mccarthy.pdf">PDF</a></div></div>
+<div class="quiz card" data-quiz="q4"></div>
+</section>
+
+<h2 id="5-다른-형식linear-lisp과-순서도"><a href="#5-다른-형식linear-lisp과-순서도" class="heading-anchor" aria-hidden="true">#</a> 5. 다른 형식(linear LISP)과 순서도</h2><section id="s5"><h2><span class="cf-num">5<span class="cf-sr">. </span></span>다른 형식(linear LISP)과 순서도</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 문자열만 쓰는 변형 LISP, 그리고 순서도 프로그램을 재귀 함수로 바꾸는 방법.</div>
+<div class="paper"><span class="badge b-paper">논문 원문</span> <b>linear LISP</b>은 문자열(L-식)을 다룹니다. 함수 세 개와 술어 세 개를 씁니다.
+<ul><li><code>first[x]</code>: 첫 문자. 예: <code>first[ABC] = A</code></li><li><code>rest[x]</code>: 첫 문자를 뺀 나머지. 예: <code>rest[ABC] = BC</code></li><li><code>combine[x; y]</code>: 문자 x를 y 앞에 붙이기. 예: <code>combine[A; BC] = ABC</code></li><li>술어: <code>char[x]</code>(한 문자인가), <code>null[x]</code>(빈 문자열인가), <code>x = y</code>(같은 문자인가)</li></ul>
+<p>장점은 괄호·점·쉼표 같은 특별한 문자가 없다는 것입니다. 단점은 부분식을 꺼내기가 기본 연산이 아니라 꽤 복잡한 연산이라는 것입니다. 수학적으로는 linear LISP이 LISP을 포함하지만, 컴퓨터 루틴으로는 LISP이 본질적으로 더 빠르다고 논문은 말합니다.</p></div>
+<div class="int"><span class="badge b-int">해설·해석</span>
+<p>마지막 절은 방향을 거꾸로 해 봅니다.</p>
+<p>보통 프로그램(순서도)도 재귀 함수로 적을 수 있다는 것입니다.</p>
+<p>순서도의 갈림길마다 “여기서부터 끝까지 일어나는 변화”를 함수 하나로 두면 됩니다.</p></div>
+<details class="card"><summary>더 알고 싶다면: 순서도 → 재귀 함수 공식</summary>
+<div class="paper"><span class="badge b-paper">논문 원문</span>
+<p>기계의 상태를 변수들을 모은 벡터 ξ로 둡니다. 입구 하나·출구 하나인 프로그램 블록은 ξ′ = f(ξ) 꼴의 함수로 정해집니다.</p>
+<p>일반적으로, β가 n갈래 분기점이고 f<sub>1</sub>, ⋯, f<sub>n</sub>이 분기점 β<sub>1</sub>, ⋯, β<sub>n</sub>으로 이어지는 계산이라고 합시다. φ가 β에서 출구까지의 변환, φ<sub>i</sub>가 β<sub>i</sub>에서 출구까지의 변환이면 다음과 같습니다.</p>
+<div class="mono" style="overflow-wrap:anywhere">φ[ξ] = [p<sub>1</sub>[ξ] → φ<sub>1</sub>[f<sub>1</sub>[ξ]]; ⋯; p<sub>n</sub>[ξ] → φ<sub>n</sub>[f<sub>n</sub>[ξ]]]</div>
+<p class="small">위 공식의 마지막 항은 PDF에 <code>φ<sub>n</sub>[ξ]</code>로 인쇄되어 있습니다. 앞 항들과의 일관성으로 보아 <code>φ<sub>n</sub>[f<sub>n</sub>[ξ]]</code>로 읽었는데, 이것은 이 학습서의 해석입니다(1960년 지면과는 <b>확인되지 않음</b>).</p></div></details>
+<div class="quiz card" data-quiz="q5"></div>
+</section>
+
+<h2 id="6-흔한-오해와-오늘날의-의미"><a href="#6-흔한-오해와-오늘날의-의미" class="heading-anchor" aria-hidden="true">#</a> 6. 흔한 오해와 오늘날의 의미</h2><section id="s6"><h2><span class="cf-num">6<span class="cf-sr">. </span></span>흔한 오해와 오늘날의 의미</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 이 논문에 대해 잘못 알려지기 쉬운 점과 남긴 영향.</div>
+<details open=""><summary>오해 1: “LISP 프로그램은 처음부터 괄호투성이 S-식으로 쓰도록 설계됐다.”</summary><div class="paper"><span class="badge b-paper">논문 원문</span> 논문에서 함수는 M-식(<code>car[x]</code>처럼 대괄호와 세미콜론)으로 적고, S-식은 데이터와 ‘함수의 번역’에 씁니다.</div><div class="int"><span class="badge b-int">해설·해석</span> 위키백과에 따르면 M-식은 널리 쓰이지 않았고, 오늘날 LISP 계열 언어는 거의 모두 S-식으로 코드와 데이터를 함께 다룹니다.<div class="src">출처: <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Wikipedia, “Lisp (programming language)”</a></div></div></details>
+<details><summary>오해 2: “논문의 eval은 그대로 완벽하게 돌아간다.”</summary><div class="paper"><span class="badge b-paper">논문 원문</span> 1995년 메모가 “This version isn't quite right.”라고 밝힙니다. 실습 ③에서 인쇄된 정의를 그대로 돌려 보면 예 2가 멈추는 것을 볼 수 있습니다.</div></details>
+<details><summary>오해 3: “이 논문에는 Part II가 있다.”</summary><div class="int"><span class="badge b-int">해설·해석</span> 매카시는 “Part II was never written but was intended to contain applications to computing with algebraic expressions.”라고 회고했습니다.<div class="src">출처: McCarthy, “History of LISP” (1978) <a href="https://pages.cs.wisc.edu/~horwitz/CS704-NOTES/PAPERS/mccarthy.pdf">PDF</a></div></div></details>
+<details><summary>오해 4: “논문 본문에 ‘garbage collection’이라는 말이 나온다.”</summary><div class="paper"><span class="badge b-paper">논문 원문</span> 본문은 ‘reclamation’이라고 씁니다. ‘garbage collection’은 나중에 덧붙인 각주 7에만 나옵니다.</div></details>
+<div class="int"><span class="badge b-int">해설·해석</span> <b>오늘날의 의미</b>: 이 논문의 생각들은 다음과 이어져 있습니다.
+<ul><li>조건식: 오늘날 거의 모든 언어의 if 식·삼항 연산자</li><li>재귀와 고차 함수(maplist 같은 함수를 받는 함수): 함수형 프로그래밍의 기본기</li><li>코드를 데이터로 다루기: 매크로, 인터프리터, 컴파일러를 같은 언어로 쓰는 전통</li><li>자동 메모리 회수: 오늘날 많은 언어의 가비지 컬렉터</li></ul></div>
+<div class="quiz card" data-quiz="q6"></div>
+</section>
+
+<h2 id="7-최종-점검-및-복습"><a href="#7-최종-점검-및-복습" class="heading-anchor" aria-hidden="true">#</a> 7. 최종 점검 및 복습</h2><section id="final"><h2><span aria-hidden="true" class="cf-num ref"></span>최종 복습</h2>
+<div class="guide">📌 <b>이 절에서 알게 될 것</b>: 전체 내용을 문제로 다시 확인하기.</div>
+<div class="quiz card" data-quiz="final"></div>
+<div class="card"><b>점수</b>: <span id="score">0</span> / <span id="total">0</span> <button class="sec" id="resetQ">퀴즈 모두 초기화</button></div>
+</section>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+/* ---------- S-expression core ---------- */
+const NIL="NIL";
+const isAtom=x=>typeof x==="string";
+const cons=(a,b)=>({car:a,cdr:b});
+class Undef extends Error{}
+const car=x=>{if(isAtom(x))throw new Undef(`car[${show(x)}]은 정의되지 않음 (원자에는 car가 없음)`);return x.car};
+const cdr=x=>{if(isAtom(x))throw new Undef(`cdr[${show(x)}]은 정의되지 않음 (원자에는 cdr가 없음)`);return x.cdr};
+const eqA=(x,y)=>{if(!isAtom(x)||!isAtom(y))throw new Undef(`eq[${show(x)}; ${show(y)}]는 정의되지 않음 (둘 다 원자여야 함)`);return x===y?"T":"F"};
+const list=(...xs)=>xs.reduceRight((t,h)=>cons(h,t),NIL);
+function parse(src){const toks=[];const re=/\s*([()·.,]|[A-Z0-9]+)\s*/gy;let m,pos=0;src=src.trim();
+ while(pos<src.length){re.lastIndex=pos;m=re.exec(src);if(!m||m.index!<mark class="md-highlight">pos)throw new Error(`읽을 수 없는 글자: '${src[pos]}' (원자는 대문자와 숫자만)`);toks.push(m[1]</mark>="."?"·":m[1]);pos=re.lastIndex}
+ let i=0;function one(){const t=toks[i++];if(t=<mark class="md-highlight">undefined)throw new Error(&quot;식이 덜 끝났음&quot;);if(t</mark>="(")return seq();if(t=<mark class="md-highlight">&quot;)&quot;||t</mark>="·"||t===",")throw new Error(`'${t}'가 예상 밖 위치에 있음`);return t}
+ function seq(){const items=[];let tail=NIL;while(true){const t=toks[i];if(t=<mark class="md-highlight">undefined)throw new Error(&quot;닫는 괄호가 없음&quot;);if(t</mark>=")"){i++;break}if(t=<mark class="md-highlight">&quot;,&quot;){i++;continue}if(t</mark>="·"){i++;tail=one();if(toks[i]!==")")throw new Error("점 뒤에는 식 하나와 ')'가 와야 함");i++;break}items.push(one())}
+  if(!items.length){if(tail!==NIL)throw new Error("점 앞에 식이 없음");return NIL}return items.reduceRight((t,h)=>cons(h,t),tail)}
+ const r=one();if(i!==toks.length)throw new Error("식 뒤에 남는 글자가 있음");return r}
+function show(x){if(isAtom(x))return x;const items=[];let p=x;while(!isAtom(p)){items.push(show(p.car));p=p.cdr}return "("+items.join(", ")+(p===NIL?"":" · "+p)+")"}
+function dot(x){return isAtom(x)?x:"("+dot(x.car)+" · "+dot(x.cdr)+")"}
+/* ---------- box-and-pointer SVG ---------- */
+function boxSvg(x){const CW=96,RH=64,cells=[],arrows=[],atoms=[];
+ function lay(n,c,r){ // returns width in columns
+  if(isAtom(n)){atoms.push({c,r,t:n});return 1}
+  cells.push({c,r,carAtom:isAtom(n.car)?n.car:null,cdrAtom:isAtom(n.cdr)?n.cdr:null});
+  let wcar=1;if(!isAtom(n.car)){arrows.push({type:"down",c,r});wcar=lay(n.car,c,r+1)}
+  let wcdr=0;if(!isAtom(n.cdr)){arrows.push({type:"right",c,r,to:c+wcar});wcdr=lay(n.cdr,c+wcar,r)}
+  return wcar+wcdr}
+ if(isAtom(x)){return `OBSLOT3ENDOBSLOT`}
+ const w=lay(x,0,0);const rows=Math.max(...cells.map(c=>c.r))+1;const W=w*CW+20,H=rows*RH+10;
+ let s=`OBSLOT4ENDOBSLOT<p class="small" style="margin:.2rem 0 0">왼쪽 칸 = address(car), 오른쪽 칸 = decrement(cdr). 사선은 NIL(목록 끝).</p>`}
+/* ---------- playground ---------- */
+let PGx,PGorig;
+function pgSet(v){PGx=v;$("pgShow").textContent=show(v);$("pgDot").textContent=dot(v);$("pgSvg").innerHTML=boxSvg(v)}
+function pgLoad(){try{PGorig=parse($("pgX").value);pgSet(PGorig);$("pgMsg").textContent=""}catch(e){$("pgMsg").innerHTML=`<span class="no">⚠ ${esc(e.message)}</span>`}}
+function pgDo(f,label){try{const r=f();$("pgMsg").innerHTML=`<span class="ok">${esc(label)} = ${esc(show(r))}</span>`;return r}catch(e){$("pgMsg").innerHTML=`<span class="no">${esc(e.message)}</span>`;return null}}
+function pgY(){try{return parse($("pgY").value)}catch(e){$("pgMsg").innerHTML=`<span class="no">y: ${esc(e.message)}</span>`;return null}}
+$("pgX").onchange=pgLoad;$("pgEx").onchange=()=>{if($("pgEx").value){$("pgX").value=$("pgEx").value;pgLoad()}};
+$("pgCar").onclick=()=>{const r=pgDo(()=>car(PGx),`car[${show(PGx)}]`);if(r!==null)pgSet(r)};
+$("pgCdr").onclick=()=>{const r=pgDo(()=>cdr(PGx),`cdr[${show(PGx)}]`);if(r!==null)pgSet(r)};
+$("pgAtom").onclick=()=>pgDo(()=>isAtom(PGx)?"T":"F",`atom[${show(PGx)}]`);
+$("pgCons").onclick=()=>{const y=pgY();if(y===null)return;const r=pgDo(()=>cons(y,PGx),`cons[${show(y)}; ${show(PGx)}]`);if(r)pgSet(r)};
+$("pgEq").onclick=()=>{const y=pgY();if(y===null)return;pgDo(()=>eqA(PGx,y),`eq[${show(PGx)}; ${show(y)}]`)};
+$("pgReset").onclick=()=>{pgSet(PGorig);$("pgMsg").textContent="처음 식으로 되돌렸습니다."};
+/* ---------- gift stepper ---------- */
+function gift(step){const H="hlf",B="boxf";const outer=step===1?H:B,inner=step===2?H:B,app=step===3?H:B;
+ const tf=(cls)=>cls===H?"th":"t";
+ return `OBSLOT5ENDOBSLOT`}
+const GX=[["1. 문제와 규칙",0,"선물 상자 안에 칸이 둘 있습니다. 칸에는 물건이나 또 다른 상자가 들어 있습니다. 목표는 <b>맨 왼쪽 끝에 있는 첫 물건</b>을 찾는 것입니다. 규칙은 하나입니다. “열어 본 것이 물건이면 그게 답. 상자면 그 상자의 왼쪽 칸으로 가서 같은 규칙을 다시 쓴다.”"],
+ ["2. 큰 상자를 본다",1,"큰 상자는 물건인가요? 아닙니다, 상자입니다. 그러니 규칙대로 <b>왼쪽 칸</b>으로 갑니다."],
+ ["3. 작은 상자를 본다",2,"왼쪽 칸에는 작은 상자가 있습니다. 물건인가요? 아닙니다. 같은 규칙을 다시 써서 작은 상자의 <b>왼쪽 칸</b>으로 갑니다."],
+ ["4. 사과를 본다",3,"이번엔 사과입니다. 물건이지요. 그러니 <b>답은 사과</b>입니다. 여기서 멈춥니다."],
+ ["5. 정리",3,"같은 규칙을 더 작은 상자에 되풀이했습니다. 이것이 <b>재귀</b>입니다. 논문에서는 상자를 <code>((사과 · 배) · 귤)</code>처럼 적고, 이 규칙을 <code>ff</code>라는 함수로 씁니다. 결과도 같습니다: <code>ff[((A · B) · C)] = A</code>."]];
+let gxI=0;function gxShow(){const g=GX[gxI];$("gxTitle").textContent=g[0];$("gxSvg").innerHTML=gift(g[1]);$("gxCap").innerHTML=g[2];$("gxNum").textContent=`${gxI+1} / ${GX.length}`;$("gxPrev").disabled=gxI===0;$("gxNext").disabled=gxI===GX.length-1}
+$("gxPrev").onclick=()=>{if(gxI>0){gxI--;gxShow()}};$("gxNext").onclick=()=>{if(gxI<GX.length-1){gxI++;gxShow()}};
+/* ---------- factorial trace ---------- */
+function factLines(n){const L=[];let pre=[];let k=n;
+ const P=()=>pre.length?pre.join(" · ")+" · ":"";
+ while(true){L.push(`OBSLOT23ENDOBSLOT{k} = 0 → 1, T → OBSLOT24ENDOBSLOT{k} − 1)!)`);if(k===0){L.push(`${P()}1   ← ${k} = 0 이 참이라 첫 줄의 1을 고름`);break}
+  L.push(`OBSLOT25ENDOBSLOT{k} · ${k-1}!   ← ${k} = 0 이 거짓, T → 줄을 고름`);pre.push(k);k--}
+ let v=1;for(const p of pre)v*=p;if(pre.length)L.push(`= ${v}`);return L}
+let FL=[],fI=0;function factShow(){$("factLog").innerHTML=FL.slice(0,fI+1).map((l,i)=>`<div class="${i===fI?"on":""}">${i===0?`${$("factN").value}! = `:"   = "}${esc(l)}</div>`).join("");$("factPrev").disabled=fI===0;$("factNext").disabled=fI===FL.length-1}
+function factLoad(){FL=factLines(+$("factN").value);fI=0;factShow()}
+$("factN").onchange=factLoad;$("factPrev").onclick=()=>{if(fI>0){fI--;factShow()}};$("factNext").onclick=()=>{if(fI<FL.length-1){fI++;factShow()}};
+/* ---------- recursive tracer ---------- */
+function traceRun(name){const L=[];let res;
+ function ff(x,d){L.push({d,t:`ff[OBSLOT31ENDOBSLOT{show(x)}] = ${isAtom(x)?"T":"F"}`});if(isAtom(x)){L.push({d,t:`= ${x}`});return x}const r=ff(car(x),d+1);L.push({d,t:`= ${show(r)}`});return r}
+ function subst(x,y,z,d){L.push({d,t:`subst[${show(x)}; ${y}; ${show(z)}]`});let r;if(isAtom(z)){r=z===y?x:z;L.push({d,t:`  atom이므로 OBSLOT32ENDOBSLOT{z}; ${y}] = T → OBSLOT33ENDOBSLOT{z}; ${y}] = F → OBSLOT34ENDOBSLOT{show(a)}; ${show(b)}]`})}L.push({d,t:`= ${show(r)}`});return r}
+ function append(x,y,d){L.push({d,t:`append[${show(x)}; OBSLOT35ENDOBSLOT{show(x)}] = OBSLOT36ENDOBSLOT{show(car(x))}; ${show(t)}]`})}L.push({d,t:`= ${show(r)}`});return r}
+ if(name==="ff")res=ff(parse("((A · B) · C)"),0);else if(name==="subst")res=subst(parse("(X · A)"),"B",parse("((A · B) · C)"),0);else res=append(parse("(A, B)"),parse("(C, D, E)"),0);
+ return{L,res}}
+let RT,rtI=0;function rtShow(){$("rtLog").innerHTML=RT.L.slice(0,rtI+1).map((l,i)=>`<div class="${i===rtI?"on":""}">${"  ".repeat(l.d)}${esc(l.t)}</div>`).join("");OBSLOT39ENDOBSLOT{rtI+1} / OBSLOT40ENDOBSLOT("rtRes").innerHTML=rtI===RT.L.length-1?`<span class="ok">결과: ${esc(show(RT.res))}</span>`:"";$("rtPrev").disabled=rtI===0;$("rtNext").disabled=rtI===RT.L.length-1}
+function rtLoad(){RT=traceRun($("rtF").value);rtI=0;rtShow()}
+$("rtF").onchange=rtLoad;$("rtPrev").onclick=()=>{if(rtI>0){rtI--;rtShow()}};$("rtNext").onclick=()=>{if(rtI<RT.L.length-1){rtI++;rtShow()}};$("rtAll").onclick=()=>{rtI=RT.L.length-1;rtShow()};
+/* ---------- eval / apply (paper's printed definition) ---------- */
+function runEval(exIdx,fixed){const S=[];let depth=0;const lim={n:0};
+ const cadr=x=>car(cdr(x)),caddr=x=>car(cdr(cdr(x))),caar=x=>car(car(x)),cadar=x=>car(cdr(car(x))),caddar=x=>car(cdr(cdr(car(x))));
+ const shortA=a=>{const s=show(a);return s.length>160?s.slice(0,157)+"…":s};
+ const log=(t,extra)=>{S.push({d:depth,t,extra});if(++lim.n>400)throw new Undef("단계가 너무 많아 멈춤")};
+ function assoc(x,y){if(y=<mark class="md-highlight">NIL)throw new Undef(`assoc[${show(x)}; a]: a에 ${show(x)}의 짝이 없어 정의되지 않음`);return eqA(caar(y),x)</mark>="T"?cadar(y):assoc(x,cdr(y))}
+ function pair(x,y){if(x=<mark class="md-highlight">NIL&amp;&amp;y</mark>=NIL)return NIL;if(!isAtom(x)&&!isAtom(y))return cons(list(car(x),car(y)),pair(cdr(x),cdr(y)));throw new Undef("pair: 변수와 인자 개수가 다름")}
+ function app(x,y){return x===NIL?y:cons(car(x),app(cdr(x),y))}
+ function evlis(m,a){return m===NIL?NIL:cons(ev(car(m),a),evlis(cdr(m),a))}
+ function evcon(c,a){if(c=<mark class="md-highlight">NIL)throw new Undef(&quot;evcon: 참인 조건이 없어 정의되지 않음&quot;);log(`evcon: 조건 ${show(caar(c))} 검사`);return ev(caar(c),a)</mark>="T"?ev(cadar(c),a):evcon(cdr(c),a)}
+ function ev(e,a){log(`eval[${show(e)}; a]`,`a = ${shortA(a)}`);depth++;let r,rule;
+  try{
+  if(isAtom(e)){rule="atom[e] → assoc[e; a]";r=assoc(e,a)}
+  else if(isAtom(car(e))){const f=car(e);
+   if(f==="QUOTE"){rule="QUOTE → cadr[e]";r=cadr(e)}
+   else if(f==="ATOM"){rule="ATOM → atom[eval[cadr[e]; a]]";r=isAtom(ev(cadr(e),a))?"T":"F"}
+   else if(f==="EQ"){rule="EQ → eval[cadr[e]] = eval[caddr[e]]";r=eqA(ev(cadr(e),a),ev(caddr(e),a))}
+   else if(f==="COND"){rule="COND → evcon[cdr[e]; a]";r=evcon(cdr(e),a)}
+   else if(f==="CAR"){rule="CAR → car[eval[cadr[e]; a]]";r=car(ev(cadr(e),a))}
+   else if(f==="CDR"){rule="CDR → cdr[eval[cadr[e]; a]]";r=cdr(ev(cadr(e),a))}
+   else if(f==="CONS"){rule="CONS → cons[eval[cadr[e]]; eval[caddr[e]]]";r=cons(ev(cadr(e),a),ev(caddr(e),a))}
+   else{rule=`T → 함수 이름 ${f}를 a에서 찾아 바꾸고, 인자는 evlis로 계산`+(fixed?" (수정판: 계산한 인자에 QUOTE를 씌움)":"");
+    const fn=assoc(f,a);let args=evlis(cdr(e),a);
+    if(fixed){const q=m=>m===NIL?NIL:cons(list("QUOTE",car(m)),q(cdr(m)));args=q(args)}
+    log(`→ 함수 ${f} = OBSLOT44ENDOBSLOT{show(fn).length>60?"…":""}, 인자 = ${show(args)}`);r=ev(cons(fn,args),a)}}
+  else if(caar(e)==="LABEL"){rule="LABEL → 짝 (f, (LABEL, f, E))를 a 앞에 붙이고 (E, 인자…) 계산";r=ev(cons(caddar(e),cdr(e)),cons(list(cadar(e),car(e)),a))}
+  else if(caar(e)==="LAMBDA"){rule="LAMBDA → 인자를 evlis로 계산해 변수와 짝지어 a 앞에 붙이고 몸체 계산";const vals=evlis(cdr(e),a);const na=app(pair(cadar(e),vals),a);log(`→ 새 짝: ${show(pair(cadar(e),vals))}`);r=ev(caddar(e),na)}
+  else throw new Undef(`eval: 처리할 경우가 없음`);
+  }finally{depth--}
+  log(`= OBSLOT45ENDOBSLOT{rule}]`);return r}
+ const EX=[{f:"(LAMBDA, (X, Y), (CONS, (CAR, X), Y))",args:"((A, B), (C, D))"},{f:"(LABEL, FF, (LAMBDA, (X), (COND, ((ATOM, X), X), ((QUOTE, T), (FF, (CAR, X))))))",args:"((A · B))"}][exIdx];
+ const f=parse(EX.f),args=parse(EX.args);
+ const appq=m=>m===NIL?NIL:cons(list("QUOTE",car(m)),appq(cdr(m)));
+ S.push({d:0,t:`apply[${EX.f}; ${EX.args}]`,extra:"apply[f; args] = eval[cons[f; appq[args]]; NIL]"});
+ let result=null,err=null;try{result=ev(cons(f,appq(args)),NIL)}catch(e){if(e instanceof Undef)err=e.message;else throw e}
+ return{S,result,err}}
+let EV,evI=0;
+function evShow(){const s=EV.S[evI];$("evCur").innerHTML=`<div>${"│ ".repeat(s.d)}<b>${esc(s.t)}</b></div>`+(s.extra?`<div class="small">${esc(s.extra)}</div>`:"");
+ $("evLog").innerHTML=EV.S.slice(0,evI+1).map((x,i)=>`<div class="${i===evI?"on":""}">${"│ ".repeat(x.d)}${esc(x.t)}</div>`).join("");
+ $("evNum").textContent=`${evI+1} / ${EV.S.length}`;$("evPrev").disabled=evI===0;$("evNext").disabled=evI===EV.S.length-1;
+ $("evRes").innerHTML=evI===EV.S.length-1?(EV.err?`<span class="no">멈춤: ${esc(EV.err)}</span>`:`<span class="ok">결과: ${esc(show(EV.result))}</span>`):""}
+function evLoad(){EV=runEval(+$("evEx").value,$("evFix").checked);evI=0;evShow()}
+$("evEx").onchange=evLoad;$("evFix").onchange=evLoad;$("evPrev").onclick=()=>{if(evI>0){evI--;evShow()}};$("evNext").onclick=()=>{if(evI<EV.S.length-1){evI++;evShow()}};$("evEnd").onclick=()=>{evI=EV.S.length-1;evShow()};
+/* ---------- quizzes ---------- */
+const Q={
+q0:[["함수에 같은 것을 넣으면?",["매번 다른 것이 나온다","늘 같은 것이 나온다"],1,"자판기처럼, 같은 입력엔 같은 출력입니다."],
+ ["재귀가 끝없이 돌지 않으려면?",["문제가 점점 작아져 끝나는 경우가 있어야 한다","규칙이 길어야 한다"],0,"인형이 점점 작아지다 마지막 인형에서 멈추는 것과 같습니다."],
+ ["목록 (APPLE, (MILK, EGG))의 원소는 몇 개인가?",["2개","3개"],0,"APPLE과 (MILK, EGG) 두 개입니다. 둘째 원소가 목록일 뿐입니다."]],
+qov:[["논문이 말한 ‘모든 계산 가능한 함수’를 만드는 재료가 아닌 것은?",["조건식","재귀 정의","무작위로 고르기"],2,"기본 연산 + 조건식 + 재귀 정의입니다."],
+ ["상자 예에서 답을 찾는 규칙은?",["오른쪽 칸부터 연다","물건이면 답, 상자면 왼쪽 칸에 같은 규칙"],1,"논문의 ff와 같은 규칙입니다."]],
+q1:[["LISP이 처음 만들어진 컴퓨터로 논문이 밝힌 것은?",["IBM 704","IBM 360","PDP-1"],0,"첫 문장: “…developed for the IBM 704 computer…”"],
+ ["LISP을 만든 목적으로 논문이 든 시스템은?",["Advice Taker","Logic Theorist","FORTRAN"],0,"Advice Taker 실험을 돕기 위해서입니다."]],
+q2:[["(2 < 1 → 0/0, T → 3)의 값은?",["정의되지 않음","3"],1,"첫 조건이 거짓이라 0/0은 계산되지 않습니다."],
+ ["p가 거짓이고 q가 정의되지 않을 때 q ∧ p는?",["거짓","정의되지 않음"],1,"q를 먼저 계산하므로 정의되지 않습니다. 논문은 이를 비가환성이라 부릅니다."],
+ ["재귀 함수에 이름을 붙이려고 도입한 표기는?",["label","QUOTE","cons"],0,"λ만으로는 자기 자신을 가리킬 수 없어서 label을 씁니다."]],
+q3:[["car[((X · A) · Y)]는?",["X","(X · A)","Y"],1,"쌍의 왼쪽 전체입니다."],
+ ["cdr[(A, B, C)]는?",["(B, C)","C","B"],0,"목록에서 첫 원소를 뺀 나머지입니다."],
+ ["eq[X; (X · A)]는?",["F","정의되지 않음"],1,"eq는 두 인자가 모두 원자일 때만 정의됩니다."],
+ ["apply가 이론과 실제에서 하는 역할로 논문이 든 것은?",["만능 튜링 기계 / 인터프리터","컴파일러 / 운영체제"],0,"“…the theoretical role of a universal Turing machine and the practical role of an interpreter.”"]],
+q4:[["“car”는 무엇의 약자라고 논문에 적혀 있나?",["contents of the address part of register","copy and return"],0,"cdr는 decrement part입니다."],
+ ["회수(reclamation)는 언제 시작되나?",["일정 시간마다","빈칸 목록이 바닥났을 때"],1,"“Nothing happens until the program runs out of free storage.”"],
+ ["컴파일된 함수는 해석할 때보다 약 몇 배 빠르다고 했나?",["약 60배","약 6배"],0,"“about 60 times as fast”"]],
+q5:[["linear LISP의 단점으로 논문이 든 것은?",["부분식 꺼내기가 복잡하다","문자를 쓸 수 없다"],0,"괄호가 없는 대신 부분식 추출이 기본 연산이 아닙니다."]],
+q6:[["‘garbage collection’이라는 말이 나오는 곳은?",["논문 본문","나중에 덧붙인 각주"],1,"본문은 reclamation이라고 씁니다."],
+ ["Part II는?",["1961년에 출판되었다","쓰이지 않았다고 매카시가 회고했다"],1,"History of LISP(1978)."]],
+final:[["S-식의 정의 두 줄에 해당하는 것은?",["원자는 S-식, 두 S-식의 쌍도 S-식","숫자는 S-식, 문자열도 S-식"],0,"(e1 · e2)"],
+ ["(A, B)의 점 표기는?",["(A · B)","(A · (B · NIL))"],1,"목록은 NIL로 끝나는 쌍의 사슬입니다."],
+ ["eval[e; a]에서 a는?",["이름과 값의 짝 목록","인자의 개수"],0,"원자 e의 값은 a에서 찾습니다(assoc)."],
+ ["논문의 M-식과 S-식 관계는?",["M-식으로 쓴 함수를 S-식으로 번역할 수 있다","둘은 아무 관계 없다"],0,"그래서 함수가 데이터가 됩니다."],
+ ["논문 각주가 밝힌 Algol 60의 if…then…else 제안자는?",["John Backus","John McCarthy"],0,"각주 2."],
+ ["1995년 메모가 eval에 대해 한 말은?",["완벽하다","This version isn't quite right."],1,"각주 5."]]};
+let score=0,total=0;
+function buildQuiz(){score=0;total=0;document.querySelectorAll("[data-quiz]").forEach(box=>{const k=box.dataset.quiz;box.innerHTML=`<b>✏️ ${k==="final"?"종합 복습":"확인 퀴즈"}</b>`;
+ Q[k].forEach((q,qi)=>{total++;const d=document.createElement("div");d.className="q";d.innerHTML=`<div>${qi+1}. OBSLOT55ENDOBSLOT{k}-OBSLOT56ENDOBSLOT{oi}"> ${esc(o)}</label>`).join("")+`<div class="fb"></div>`;
+  d.querySelectorAll("input").forEach(inp=>inp.onchange=()=>{if(d.dataset.done)return;d.dataset.done=1;const ok=+inp.value===q[2];if(ok)score++;
+   d.querySelector(".fb").innerHTML=(ok?'<span class="ok">정답!</span> ':'<span class="no">아쉬워요.</span> 정답: '+esc(q[1][q[2]])+'. ')+esc(q[3]);d.querySelectorAll("input").forEach(x=>x.disabled=true);$("score").textContent=score});box.appendChild(d)})});
+ $("score").textContent=0;$("total").textContent=total}
+$("resetQ").onclick=buildQuiz;
+pgLoad();gxShow();factLoad();rtLoad();evLoad();buildQuiz();
+</script>
+
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-25-매카시LISP.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>

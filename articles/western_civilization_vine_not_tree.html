@@ -507,6 +507,60 @@
       text-decoration: none;
     }
 
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
@@ -2116,6 +2170,12 @@
           <span class="tag-pill">#해설</span>
           
         </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-11-서양문명.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
       </header>
 
       <section class="content" id="article-content">
@@ -2778,6 +2838,13 @@
 <p>우리가 향유하는 모든 지식과 자유, 기술과 언어는 어느 고결한 소수가 독점하여 일구어낸 기적이 아닙니다. 수천 년 동안 수많은 이름 없는 광부와 상인, 고통받던 노예와 사상가들이 서로에게서 훔치고, 섞고, 피 흘리며 직조해 낸 <strong>인류 전체의 치열한 공동 합작품</strong>입니다. 과거의 있지도 않은 순수성에 갇히는 순간, 다양성이야말로 생존의 핵심인 우리의 미래는 질식하고 말 것입니다.</p>
 
       </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-11-서양문명.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
 
       <footer class="article-footer">
         <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>

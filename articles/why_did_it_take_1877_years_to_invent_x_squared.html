@@ -507,6 +507,60 @@
       text-decoration: none;
     }
 
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
     /* Typography & Markdown Content */
     .content {
       color: var(--text-main);
@@ -2116,6 +2170,12 @@
           <span class="tag-pill">#기호학</span>
           
         </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-19-x제곱_1877년.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
       </header>
 
       <section class="content" id="article-content">
@@ -2670,6 +2730,13 @@ xx   ===&gt;   x² 대신 조판 편의상 xx 사용 (지면 폭 2칸 소모가 
 <p>우리가 오늘날 노트 구석에 무심코 끄적이는 $x^2 = 4$라는 지극히 사소한 수식 한 줄에는, 2천 년 동안 편견과 싸워온 인류의 지적 투쟁과 감옥에서 스러져간 한 천재의 피와 눈물이 고스란히 응축되어 있는 것이다.</p>
 
       </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-19-x제곱_1877년.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
 
       <footer class="article-footer">
         <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
