@@ -1166,7 +1166,7 @@ async function build() {
       tag_string: "AI 컴퓨터과학 에이전트 Go 튜토리얼",
       reading_time: 35,
       url: "articles/build_a_coding_agent_workshop.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-26-코딩에이전트_워크숍.html",
+      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-16-코딩에이전트_워크숍.html",
       _timestamp: new Date("2026-10-15T19:50:00Z").getTime()
     },
     {
@@ -1190,7 +1190,7 @@ async function build() {
       tag_string: "컴퓨터과학 가비지컬렉션 메모리모델 프로그래밍언어 해설",
       reading_time: 20,
       url: "articles/garbage_collection_mark_and_sweep.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-26-가비지컬렉션_마크앤스윕.html",
+      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-15-가비지컬렉션_마크앤스윕.html",
       _timestamp: new Date("2026-10-15T12:00:00Z").getTime()
     },
     {
@@ -1214,7 +1214,7 @@ async function build() {
       tag_string: "컴퓨터과학 Python CPython 메모리모델 해설",
       reading_time: 18,
       url: "articles/python_object_creation_and_binding.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-26-CPython1부_객체바인딩.html",
+      archive_url: "https://yghnsim.github.io/Archive/pages/2026-09-15-CPython1부_객체바인딩.html",
       _timestamp: new Date("2026-09-15T12:00:00Z").getTime()
     },
     {
@@ -1226,7 +1226,7 @@ async function build() {
       tag_string: "컴퓨터과학 Python CPython 시스템프로그래밍 해설",
       reading_time: 22,
       url: "articles/python_callable_and_execution_engine.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-26-CPython2부_실행엔진.html",
+      archive_url: "https://yghnsim.github.io/Archive/pages/2026-09-15-CPython2부_실행엔진.html",
       _timestamp: new Date("2026-09-15T12:01:00Z").getTime()
     },
     {
@@ -1238,7 +1238,7 @@ async function build() {
       tag_string: "컴퓨터과학 컴퓨터구조 메모리모델 해설",
       reading_time: 15,
       url: "articles/cpu_dram_memory_interface.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-26-CPU_DRAM_인터페이스.html",
+      archive_url: "https://yghnsim.github.io/Archive/pages/2026-09-01-CPU_DRAM_인터페이스.html",
       _timestamp: new Date("2026-09-01").getTime()
     }
   ];

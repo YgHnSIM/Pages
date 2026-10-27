@@ -11,7 +11,7 @@ tags:
   - 해설
 summary: 인공지능 분야의 세계적 석학 스튜어트 러셀(Stuart Russell) 교수의 심층 대담을 바탕으로, 고정된 목표를 최적화하던 '표준 모델'의 파탄과 인간 텍스트 모방 학습이 초래한 '자율적 생존 본능'의 위험을 해부한다. 사전에 목표를 확정하지 않고 불확실성을 유지하는 '입증 가능한 유익한 AI(Provably Beneficial AI)'의 수학적 기초, 원자력 규제에 비견되는 '행동적 레드라인(Behavioral Red Lines)', 그리고 인간이 기저귀를 찬 거대한 아기로 전락하지 않기 위해 AI가 '스스로 물러서야 하는' 문명적 조건을 다각도로 논증한다.
 author: Pages AI·컴퓨터과학·기술철학 심층 분석팀
-archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-26-러셀_유익한AI.html"
+archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-14-러셀_유익한AI.html"
 ---
 
 # 불을 다루는 인류 — 스튜어트 러셀의 '입증 가능한 유익한 AI'와 문명적 주체성
