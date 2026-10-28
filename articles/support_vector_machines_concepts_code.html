@@ -1,0 +1,3723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>선 하나를 어디에 그을 것인가 — 서포트 벡터 머신, 임계값에서 커널 트릭까지</title>
+  <meta name="description" content="서포트 벡터 머신(SVM)의 핵심 원리를 1차원 임계값과 최대 마진의 취약성부터 소프트 마진, 서포트 벡터 분류기(SVC), 고차원 투영과 커널 트릭까지 단계별로 해설합니다. 파이썬과 scikit-learn으로 2차 다항 커널 모델과 "직접 제곱한 열 + 선형 커널" 모델이 같은 혼동 행렬과 정확도(약 68%)를 내는 것을 확인하고, 가중치와 편향에서 결정 직선의 기울기와 절편을 구해 보이지 않던 분류기를 그려 봅니다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">선 하나를 어디에 그을 것인가 — 서포트 벡터 머신, 임계값에서 커널 트릭까지</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#서론-데이터-사이를-가르는-가장-견고한-경계선을-찾아서" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서론: 데이터 사이를 가르는 가장 견고한 경계선을 찾아서</span></a></li><li class="depth-2"><a href="#1-선-하나-긋기의-어려움-임계값과-마진" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 선 하나 긋기의 어려움 — 임계값과 마진</span></a></li><li class="depth-3"><a href="#단순-임계값의-한계와-임의성의-위험" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">단순 임계값의 한계와 임의성의 위험</span></a></li><li class="depth-3"><a href="#가장자리-관측과-중점-임계값" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">가장자리 관측과 중점 임계값</span></a></li><li class="depth-3"><a href="#마진margin의-수학적-정의" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">마진(Margin)의 수학적 정의</span></a></li><li class="depth-3"><a href="#최대-마진-분류기maximal-margin-classifier" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">최대 마진 분류기(Maximal Margin Classifier)</span></a></li><li class="depth-2"><a href="#2-이상치의-횡포와-오분류를-허용할-용기-편향-분산과-소프트-마진" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 이상치의 횡포와 오분류를 허용할 용기 — 편향-분산과 소프트 마진</span></a></li><li class="depth-3"><a href="#최대-마진-분류기의-아킬레스건-이상치-민감성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">최대 마진 분류기의 아킬레스건: 이상치 민감성</span></a></li><li class="depth-3"><a href="#오분류를-허용해야-이상치에-둔감해진다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">오분류를 허용해야 이상치에 둔감해진다</span></a></li><li class="depth-3"><a href="#편향-분산-트레이드오프bias-variance-tradeoff의-기하학" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">편향-분산 트레이드오프(Bias-Variance Tradeoff)의 기하학</span></a></li><li class="depth-3"><a href="#소프트-마진soft-margin과-교차검증cross-validation" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">소프트 마진(Soft Margin)과 교차검증(Cross Validation)</span></a></li><li class="depth-2"><a href="#3-서포트-벡터-분류기와-차원의-언어-선면초평면" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 서포트 벡터 분류기와 차원의 언어 — 선·면·초평면</span></a></li><li class="depth-3"><a href="#서포트-벡터support-vector와-이름의-유래" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">서포트 벡터(Support Vector)와 이름의 유래</span></a></li><li class="depth-3"><a href="#2차원-공간에서의-서포트-벡터-분류기-직선" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2차원 공간에서의 서포트 벡터 분류기: 직선</span></a></li><li class="depth-3"><a href="#3차원-공간에서의-서포트-벡터-분류기-평면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3차원 공간에서의 서포트 벡터 분류기: 평면</span></a></li><li class="depth-3"><a href="#차원의-기하학적-통합-flat-affine-부분공간과-초평면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">차원의 기하학적 통합: Flat Affine 부분공간과 초평면</span></a></li><li class="depth-2"><a href="#4-겹친-데이터와-차원-올리기-골디락스-문제와-svm의-세-단계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 겹친 데이터와 차원 올리기 — 골디락스 문제와 SVM의 세 단계</span></a></li><li class="depth-3"><a href="#서포트-벡터-분류기의-한계-quot골디락스quot-데이터셋" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">서포트 벡터 분류기의 한계: &quot;골디락스&quot; 데이터셋</span></a></li><li class="depth-3"><a href="#svm의-직관-math-inline-37-축의-창조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">SVM의 직관: %%MATH_INLINE_37%% 축의 창조</span></a></li><li class="depth-3"><a href="#svm의-세-단계-메커니즘-요약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">SVM의 세 단계 메커니즘 요약</span></a></li><li class="depth-2"><a href="#5-커널-다항-커널의-차수-math-inline-44와-rbf-커널의-가중-최근접-이웃" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 커널: 다항 커널의 차수 %%MATH_INLINE_44%%와 RBF 커널의 가중 최근접 이웃</span></a></li><li class="depth-3"><a href="#변환의-자의성을-극복하는-커널-함수kernel-function" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">변환의 자의성을 극복하는 커널 함수(Kernel Function)</span></a></li><li class="depth-3"><a href="#다항-커널polynomial-kernel과-차수-math-inline-48" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">다항 커널(Polynomial Kernel)과 차수 %%MATH_INLINE_48%%</span></a></li><li class="depth-3"><a href="#방사형-기저-함수-커널-radial-rbf-kernel" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">방사형 기저 함수 커널 (Radial / RBF Kernel)</span></a></li><li class="depth-2"><a href="#6-커널-트릭-변환하지-않고-변환한-것처럼" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 커널 트릭: 변환하지 않고 변환한 것처럼</span></a></li><li class="depth-3"><a href="#커널-트릭kernel-trick의-충격적-실체" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">커널 트릭(Kernel Trick)의 충격적 실체</span></a></li><li class="depth-3"><a href="#왜-커널-트릭이어야만-하는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">왜 커널 트릭이어야만 하는가?</span></a></li><li class="depth-3"><a href="#커널-트릭의-불가피한-대가-보이지-않는-모델" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">커널 트릭의 불가피한 대가: 보이지 않는 모델</span></a></li><li class="depth-2"><a href="#7-코드로-확인하기-데이터-준비스케일링누수-poly-svc-68" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 코드로 확인하기 — 데이터 준비·스케일링·누수, poly SVC 68%</span></a></li><li class="depth-3"><a href="#데이터셋-탐색과-구조-분석" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">데이터셋 탐색과 구조 분석</span></a></li><li class="depth-3"><a href="#데이터-분할과-특성-스케일링-데이터-누수data-leakage의-철저한-방지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">데이터 분할과 특성 스케일링: 데이터 누수(Data Leakage)의 철저한 방지</span></a></li><li class="depth-3"><a href="#다항-커널-svc-모델-학습과-68-정확도의-의미" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">다항 커널 SVC 모델 학습과 68% 정확도의 의미</span></a></li><li class="depth-2"><a href="#8-보이지-않는-모델을-그리기-수동-제곱-선형-커널-같은-결과-기울기절편" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 보이지 않는 모델을 그리기 — 수동 제곱 + 선형 커널, 같은 결과, 기울기·절편</span></a></li><li class="depth-3"><a href="#커널-트릭을-벗겨내는-수동-변환-실험" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">커널 트릭을 벗겨내는 수동 변환 실험</span></a></li><li class="depth-3"><a href="#이론과-실제의-일치" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">이론과 실제의 일치</span></a></li><li class="depth-3"><a href="#가중치math-inline-114와-편향math-inline-115으로부터-기울기와-절편-유도하기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">가중치(%%MATH_INLINE_114%%)와 편향(%%MATH_INLINE_115%%)으로부터 기울기와 절편 유도하기</span></a></li><li class="depth-3"><a href="#포물선-위의-빨간-직선-시각화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">포물선 위의 빨간 직선 시각화</span></a></li><li class="depth-2"><a href="#9-정리-개념-계보도와-머신러닝-실무-지침" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 정리: 개념 계보도와 머신러닝 실무 지침</span></a></li><li class="depth-3"><a href="#선형-분류기의-3단계-진화-계보" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">선형 분류기의 3단계 진화 계보</span></a></li><li class="depth-3"><a href="#3대-선형-분류기-핵심-특성-전수-비교" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3대 선형 분류기 핵심 특성 전수 비교</span></a></li><li class="depth-3"><a href="#코드에서-챙길-다섯-가지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">코드에서 챙길 다섯 가지</span></a></li><li class="depth-2"><a href="#각주" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">각주</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-29</span>
+          <span class="meta-badge">⏱️ 약 66분</span>
+          
+        </div>
+        <h1 class="article-title">선 하나를 어디에 그을 것인가 — 서포트 벡터 머신, 임계값에서 커널 트릭까지</h1>
+        <p class="article-subtitle">마진·소프트 마진·차원 올리기·커널 트릭의 직관을 따라가고, 파이썬 코드로 두 모델이 같은 답을 내는 장면까지 확인한다</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#머신러닝</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-29-SVM.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="서론-데이터-사이를-가르는-가장-견고한-경계선을-찾아서"><a href="#서론-데이터-사이를-가르는-가장-견고한-경계선을-찾아서" class="heading-anchor" aria-hidden="true">#</a> 서론: 데이터 사이를 가르는 가장 견고한 경계선을 찾아서</h2><p>기계학습에서 지도학습 분류(Classification) 문제의 핵심은 하나의 본질적인 질문으로 수렴한다. &quot;서로 다른 두 집단을 가르는 수많은 경계선 중, 미래의 새로운 데이터에 대해서도 가장 안정적으로 정답을 맞힐 경계선은 어디인가?&quot;</p>
+<p>직관적으로 생각하면 두 데이터 군집의 한가운데를 가로지르는 선을 그으면 될 것 같다. 그러나 현실의 데이터는 결코 친절하지 않다. 측정 오차로 인해 상대 진영 깊숙이 침범한 이상치(Outlier)가 존재하고, 두 집단의 경계가 모호하게 뒤섞여 있기도 하며, 심지어는 아무리 정교하게 직선을 그어도 도저히 분리할 수 없는 복잡한 비선형 구조를 띠기도 한다.</p>
+<p>서포트 벡터 머신(Support Vector Machine, SVM)은 이 세 가지 어려움을 하나씩 차례로 넘어서며 만들어진 분류기다. 출발점은 수직선 위에 점 하나를 찍는 일이고, 도착점은 데이터를 실제로 옮기지 않고도 더 높은 차원에서 선을 긋는 &#39;커널 트릭(Kernel Trick)&#39;이다. 각 단계는 앞 방법이 구체적으로 실패하는 장면에서 시작한다. 임의의 임계값이 실패하면 마진이 나오고, 마진이 이상치에 무너지면 소프트 마진이 나오고, 소프트 마진도 겹친 데이터 앞에서 무력해지면 차원을 올린다.</p>
+<p>이 흐름은 엄밀한 최적화 이론 없이도 그림만으로 따라갈 수 있다. 마지막에는 파이썬 코드로, 커널 트릭을 쓴 모델과 변환을 손으로 한 모델이 정말 같은 답을 내는지 확인한다. 본문 중 표준 교과서의 수식으로 덧붙인 내용은 [보충]으로 따로 표시했다.</p>
+<hr>
+<h2 id="1-선-하나-긋기의-어려움-임계값과-마진"><a href="#1-선-하나-긋기의-어려움-임계값과-마진" class="heading-anchor" aria-hidden="true">#</a> 1. 선 하나 긋기의 어려움 — 임계값과 마진</h2><h3 id="단순-임계값의-한계와-임의성의-위험"><a href="#단순-임계값의-한계와-임의성의-위험" class="heading-anchor" aria-hidden="true">#</a> 단순 임계값의 한계와 임의성의 위험</h3><p>분류 문제의 가장 단순한 형태를 상상해 보자. 실험용 생쥐의 체중(mass)이라는 단 하나의 연속형 수치(1차원 특성)를 측정하여, 이 생쥐가 비만(Obese)인지 비비만(Not Obese)인지를 판정하고자 한다.</p>
+<p>1차원 수직선 위에 데이터 포인트를 점으로 찍으면, 일반적으로 가벼운 생쥐(비비만, 적색 점)들은 왼쪽에 모이고, 무거운 생쥐(비만, 녹색 점)들은 오른쪽에 모인다. 이제 새로운 생쥐의 체중을 쟀을 때 비만 여부를 판정하려면, 수직선 위에 기준이 되는 하나의 경계 지점, 즉 <strong>임계값(Threshold)</strong>을 정해야 한다. 임계값보다 체중이 적으면 비비만으로, 임계값보다 크면 비만으로 분류하는 규칙이다.</p>
+<p>문제는 이 임계값을 &quot;어디에&quot; 둘 것인가이다. 만약 아무런 원칙 없이 임계값을 비비만 군집 바로 옆에 두었다고 해 보자. 이때 임계값보다 조금 오른쪽, 그러니까 두 군집 사이 빈 공간에서 비비만 쪽에 더 가까운 자리에 새 생쥐가 들어온다면 어떻게 될까? 이 생쥐는 거리상으로는 비비만 군집에 훨씬 가깝지만, 임계값의 오른쪽에 위치한다는 이유만으로 &#39;비만&#39;으로 판정된다. 이는 상식과 데이터의 분포에 정면으로 위배되는 어색한 결과다. 임의로 그은 임계값은 새로운 데이터에 대해 일반화 능력을 보장하지 못한다.</p>
+<h3 id="가장자리-관측과-중점-임계값"><a href="#가장자리-관측과-중점-임계값" class="heading-anchor" aria-hidden="true">#</a> 가장자리 관측과 중점 임계값</h3><p>이러한 모순을 해결하는 가장 자연스러운 발상은 데이터 군집의 &#39;경계&#39;에 주목하는 것이다. 비비만 군집에서 체중이 가장 무거운 가장자리(edge) 관측과, 비만 군집에서 체중이 가장 가벼운 가장자리 관측을 찾는다. 그리고 <strong>두 가장자리 관측의 정중앙(midpoint)</strong>에 임계값을 배치한다.</p>
+<p>이렇게 중점에 임계값을 두면, 임계값의 왼쪽으로 들어오는 새로운 관측은 수학적으로 반드시 비비만 군집에 더 가깝고, 오른쪽으로 들어오는 관측은 비만 군집에 더 가깝게 된다. 직관과 수학적 타당성이 처음으로 일치하는 순간이다.</p>
+<h3 id="마진margin의-수학적-정의"><a href="#마진margin의-수학적-정의" class="heading-anchor" aria-hidden="true">#</a> 마진(Margin)의 수학적 정의</h3><p>여기서 머신러닝 역사상 가장 중요한 개념 중 하나인 <strong>마진(Margin)</strong>이 도출된다.</p>
+<blockquote>
+<p><strong>마진(Margin)이란?</strong><br>분류 경계면(1차원에서는 임계값)으로부터 가장 가까운 훈련 데이터 관측점까지의 <strong>최단 거리(shortest distance)</strong>를 의미한다.</p>
+</blockquote>
+<p>임계값을 두 군집의 가장자리 관측 정중앙에 놓았을 때, 양쪽 가장자리 관측점까지의 거리는 동일하며, 이 거리가 바로 시스템이 확보할 수 있는 &#39;안전거리&#39;가 된다. 만약 임계값을 정중앙에서 왼쪽이나 오른쪽으로 조금이라도 이동시키면, 한쪽 관측점까지의 거리는 늘어나지만 반대쪽 관측점까지의 거리는 좁아지므로 최단 거리로서의 마진은 감소한다. 즉, <strong>두 가장자리 관측의 정중앙에 위치할 때 마진은 극대화(maximum)된다.</strong></p>
+<h3 id="최대-마진-분류기maximal-margin-classifier"><a href="#최대-마진-분류기maximal-margin-classifier" class="heading-anchor" aria-hidden="true">#</a> 최대 마진 분류기(Maximal Margin Classifier)</h3><p>이처럼 훈련 데이터의 양쪽 군집 사이에서 마진을 가능한 한 가장 크게 확보하는 임계값(또는 초평면)을 찾아 분류를 수행하는 알고리즘을 <strong>최대 마진 분류기(Maximal Margin Classifier)</strong>라고 부른다.</p>
+<p>최대 마진 분류기는 기하학적으로 대단히 우아하다. 도로의 폭(마진)을 최대로 넓혀 차선(임계값)을 도로 중앙에 그리는 것과 같아서, 향후 새로운 관측이 약간의 측정 오차나 노이즈를 안고 들어오더라도 경계를 벗어나 오분류될 위험을 최소화한다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 1: 1차원 데이터에서의 임계값 위치와 마진의 극대화</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">임의 임계값의 취약성과 두 군집 가장자리 중점에서 마진이 최대가 되는 기하학적 구조</text>
+<g transform="translate(40, 90)">
+<rect width="380" height="230" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="32" font-size="17px" font-weight="bold" fill="#334155">(A) 임의의 임계값: 비합리적 분류 발생</text>
+<line x1="30" y1="120" x2="350" y2="120" stroke="#94a3b8" stroke-width="3"/>
+<circle cx="60" cy="120" r="9" fill="#ef4444"/>
+<circle cx="100" cy="120" r="9" fill="#ef4444"/>
+<circle cx="140" cy="120" r="9" fill="#ef4444"/>
+<text x="50" y="155" font-size="16px" fill="#ef4444" font-weight="bold">비비만 군집</text>
+<line x1="160" y1="75" x2="160" y2="165" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6,4"/>
+<text x="115" y="70" font-size="16px" fill="#b45309" font-weight="bold">임의의 임계값</text>
+<circle cx="190" cy="120" r="11" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+<text x="40" y="200" font-size="16px" fill="#1d4ed8" font-weight="bold">새 관측: 비비만에 더 가깝지만</text>
+<text x="40" y="222" font-size="16px" fill="#1d4ed8" font-weight="bold">임계값 오른쪽이라 비만으로 분류</text>
+<rect x="270" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="310" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<text x="280" y="155" font-size="16px" fill="#10b981" font-weight="bold">비만 군집</text>
+</g>
+<g transform="translate(460, 90)">
+<rect width="400" height="230" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="32" font-size="17px" font-weight="bold" fill="#334155">(B) 최대 마진 임계값: 안정적 경계 형성</text>
+<line x1="30" y1="120" x2="370" y2="120" stroke="#94a3b8" stroke-width="3"/>
+<circle cx="60" cy="120" r="9" fill="#ef4444"/>
+<circle cx="100" cy="120" r="9" fill="#ef4444"/>
+<circle cx="140" cy="120" r="10" fill="#ef4444" stroke="#991b1b" stroke-width="2.5"/>
+<rect x="260" y="110" width="20" height="20" rx="3" fill="#10b981" stroke="#065f46" stroke-width="2.5"/>
+<rect x="310" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="345" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<line x1="200" y1="70" x2="200" y2="170" stroke="#6366f1" stroke-width="3.5"/>
+<text x="145" y="65" font-size="16px" fill="#4338ca" font-weight="bold">최대 마진 임계값</text>
+<line x1="140" y1="95" x2="200" y2="95" stroke="#6366f1" stroke-width="2" stroke-dasharray="4,3"/>
+<text x="152" y="90" font-size="16px" fill="#4338ca">마진</text>
+<line x1="200" y1="95" x2="260" y2="95" stroke="#6366f1" stroke-width="2" stroke-dasharray="4,3"/>
+<text x="212" y="90" font-size="16px" fill="#4338ca">마진</text>
+<text x="90" y="195" font-size="16px" fill="#991b1b" font-weight="bold">가장자리 관측</text>
+<text x="240" y="195" font-size="16px" fill="#065f46" font-weight="bold">가장자리 관측</text>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="2-이상치의-횡포와-오분류를-허용할-용기-편향-분산과-소프트-마진"><a href="#2-이상치의-횡포와-오분류를-허용할-용기-편향-분산과-소프트-마진" class="heading-anchor" aria-hidden="true">#</a> 2. 이상치의 횡포와 오분류를 허용할 용기 — 편향-분산과 소프트 마진</h2><h3 id="최대-마진-분류기의-아킬레스건-이상치-민감성"><a href="#최대-마진-분류기의-아킬레스건-이상치-민감성" class="heading-anchor" aria-hidden="true">#</a> 최대 마진 분류기의 아킬레스건: 이상치 민감성</h3><p>완벽해 보이는 최대 마진 분류기에는 치명적인 약점이 숨어 있다. 바로 <strong>이상치(Outlier)에 극도로 취약하다</strong>는 점이다.</p>
+<p>생쥐 체중 데이터셋에 예상치 못한 관측이 하나 섞여 들어왔다고 가정하자. 유전적 특이체질이거나 측정 오류로 인해, 실제로는 &#39;비비만&#39; 생쥐인데 체중이 비만 생쥐 군집 바로 앞까지 육박하는 이상치가 발생했다.</p>
+<p>최대 마진 분류기는 훈련 데이터에 대해 &#39;단 하나의 오분류도 허용하지 않는다(Hard Margin)&#39;는 엄격한 규칙을 따른다. 따라서 비비만 군집의 가장자리 기준점은 대다수 정상 비비만 생쥐가 아니라, 이 외로운 이상치 하나로 강제 이동된다. 그 결과 임계값은 비만 군집 쪽으로 극단적으로 밀려붙게 된다.</p>
+<p>이 상태에서 대다수 정상 관측치들의 중간 영역에 새로운 생쥐 관측값이 유입되면 어떻게 될까? 상식적으로는 당연히 비비만으로 분류되어야 마땅하지만, 이상치에 이끌려 왜곡된 임계값 탓에 &#39;비만&#39;으로 오분류되고 만다. 단 하나의 특이 관측값이 전체 분류 모델의 형태를 완전히 파괴한 것이다.</p>
+<h3 id="오분류를-허용해야-이상치에-둔감해진다"><a href="#오분류를-허용해야-이상치에-둔감해진다" class="heading-anchor" aria-hidden="true">#</a> 오분류를 허용해야 이상치에 둔감해진다</h3><p>이 문제에 직면했을 때 우리가 내릴 수 있는 결론은 역설적이다. <strong>&quot;이상치에 휘둘리지 않는 견고한 분류기를 만들려면, 훈련 데이터에서 일부 오분류를 의도적으로 허용해야 한다.&quot;</strong></p>
+<p>비만 군집 근처에 홀로 떨어진 비비만 이상치 하나를 과감하게 &#39;틀린 것&#39;으로 인정하고 무시하면, 임계값은 다시 대다수 정상 비비만 군집과 비만 군집의 건강한 중점으로 복귀한다. 비록 훈련 세트에서 그 이상치 하나는 오분류되지만, 향후 들어올 수많은 새로운 정상 데이터에 대해서는 압도적으로 정확한 예측을 수행할 수 있게 된다.</p>
+<h3 id="편향-분산-트레이드오프bias-variance-tradeoff의-기하학"><a href="#편향-분산-트레이드오프bias-variance-tradeoff의-기하학" class="heading-anchor" aria-hidden="true">#</a> 편향-분산 트레이드오프(Bias-Variance Tradeoff)의 기하학</h3><p>이 타협은 머신러닝 전 영역을 관통하는 가장 근본적인 딜레마인 <strong>편향-분산 트레이드오프(Bias-Variance Tradeoff)</strong>의 정확한 물리적 현현이다.</p>
+<ul>
+<li><strong>오분류를 절대 허용하지 않는 경우 (엄격한 최대 마진)</strong>:<ul>
+<li>훈련 데이터셋에 자로 잰 듯 완벽하게 들어맞으므로 훈련 데이터에 대한 오차, 즉 <strong>편향(Bias)은 매우 낮다</strong>.</li>
+<li>그러나 훈련 데이터의 사소한 노이즈나 이상치 하나에도 결정 경계가 요동치므로, 새로운 테스트 데이터가 주어지면 성능이 곤두박질친다. 즉 <strong>분산(Variance)이 극도로 높다</strong>. 이는 전형적인 과적합(Overfitting) 상태다.</li>
+</ul>
+</li>
+<li><strong>오분류를 유연하게 허용하는 경우 (소프트 마진)</strong>:<ul>
+<li>훈련 데이터의 일부 점을 틀리게 처리하므로 훈련 오차, 즉 <strong>편향(Bias)은 상대적으로 다소 높아진다</strong>.</li>
+<li>하지만 데이터의 사소한 변동에 둔감해져 결정 경계가 안정되므로, 새로운 미지의 데이터에 대해 훨씬 높은 적중률을 유지한다. 즉 <strong>분산(Variance)이 크게 낮아진다</strong>.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><em>&quot;훈련 데이터에서 조금 틀리고, 테스트 데이터에서 많이 맞힌다.&quot;</em><br>이것이야말로 머신러닝이 일반화(Generalization) 성능을 획득하는 보편적 거래의 법칙이다.</p>
+</blockquote>
+<h3 id="소프트-마진soft-margin과-교차검증cross-validation"><a href="#소프트-마진soft-margin과-교차검증cross-validation" class="heading-anchor" aria-hidden="true">#</a> 소프트 마진(Soft Margin)과 교차검증(Cross Validation)</h3><p>오분류를 허용할 때, 데이터 포인트와 임계값 사이의 거리를 <strong>소프트 마진(Soft Margin)</strong>이라고 부른다. 소프트 마진 환경에서는 데이터 포인트가 마진의 경계선 안쪽으로 침범하거나, 심지어 임계값을 넘어 반대편으로 넘어가 오분류되는 것을 용인한다.</p>
+<p>그렇다면 얼마나 많은 오분류와 마진 침범을 허용해야 하는가? 관측자가 주관적으로 &quot;오분류 2개쯤 봐주자&quot;고 결정할 수는 없다.</p>
+<p>여기서 <strong>교차검증(Cross Validation)</strong>이 등장한다. 소프트 마진 안에 몇 개의 오분류와 몇 개의 관측을 허용할지 여러 방식으로 바꿔 가며, 각 선택이 학습에 쓰지 않은 데이터를 얼마나 잘 맞히는지 비교한다. (교차검증은 보통 데이터를 여러 조각으로 나눠 번갈아 검증용으로 쓰는 방식으로 한다.) 예를 들어 교차검증을 거친 결과 &quot;마진 안쪽에 오분류 1개와 올바르게 분류된 관측 2개가 들어오는 것을 허용하는 소프트 마진&quot;이 검증 세트에서 가장 높은 정확도를 낸다면, 그것이 해당 데이터셋에 대한 최적의 소프트 마진으로 채택된다.</p>
+<div class="callout-box info"><div class="callout-title">노트</div><div class="callout-body"><p><strong>[보충] 표준 교과서의 언어: 마진 폭 $2/\|\mathbf{w}\|$, 슬랙 변수 $\xi_i$, 정규화 파라미터 $C$</strong><a class="footnote-ref" href="#fn-1" id="fnref-1">1</a><br>위의 직관을 최적화 문제로 쓰면 이렇다. 분류기를 $f(\mathbf{x}) = \mathbf{w}\cdot\mathbf{x} + b$, 정답 표지를 $y_i\in\{-1,+1\}$로 두고, 마진 경계를 $f(\mathbf{x})=\pm1$로 맞추면 두 경계 사이 폭은 $2/\|\mathbf{w}\|$다. 그래서 마진을 넓히는 일은 $\|\mathbf{w}\|$를 줄이는 일과 같다.</p>
+<ul>
+<li>하드 마진: $\min \tfrac12\|\mathbf{w}\|^2$, 조건 $y_i(\mathbf{w}\cdot\mathbf{x}_i+b)\ge 1$ (모든 점이 마진 밖, 오분류 0)</li>
+<li>소프트 마진: $\min \tfrac12\|\mathbf{w}\|^2 + C\sum_i \xi_i$, 조건 $y_i(\mathbf{w}\cdot\mathbf{x}_i+b)\ge 1-\xi_i,\ \xi_i\ge 0$</li>
+</ul>
+<p>슬랙 $\xi_i$는 점이 마진을 얼마나 침범했는지 잰다. $\xi_i=0$이면 마진 밖, $0<\xi_i\le1$이면 마진 안이지만 올바른 쪽, $\xi_i>1$이면 임계값을 넘은 오분류다. 최적해에서는 $\xi_i=\max(0,\,1-y_if(\mathbf{x}_i))$, 곧 <strong>힌지 손실</strong>이 된다. $C$가 클수록 침범 비용이 커져 하드 마진에 가까워지고, 작을수록 마진이 넓어지며 더 많은 침범을 허용한다. 따라서 &quot;마진 안에 몇 개를 허용할지 교차검증으로 고른다&quot;는 직관은, 실무에서 $C$를 교차검증으로 고르는 일에 해당한다. 참고로 뒤의 코드는 $C$를 따로 지정하지 않아 scikit-learn 기본값 $C=1$을 쓴다.</p>
+</div></div>
+
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 370" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 2: 이상치로 인한 왜곡 vs 오분류를 허용한 소프트 마진</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">편향을 소폭 희생하여 분산을 낮추고 일반화 능력을 획득하는 메커니즘</text>
+<g transform="translate(40, 90)">
+<rect width="380" height="245" rx="8" fill="#fff1f2" stroke="#fecdd3" stroke-width="1.5"/>
+<text x="20" y="32" font-size="17px" font-weight="bold" fill="#9f1239">(A) 오분류 불허: 이상치에 끌려감</text>
+<line x1="30" y1="120" x2="350" y2="120" stroke="#94a3b8" stroke-width="3"/>
+<circle cx="50" cy="120" r="8" fill="#ef4444"/>
+<circle cx="80" cy="120" r="8" fill="#ef4444"/>
+<circle cx="110" cy="120" r="8" fill="#ef4444"/>
+<circle cx="230" cy="120" r="10" fill="#ef4444" stroke="#881337" stroke-width="2.5"/>
+<text x="195" y="90" font-size="16px" fill="#881337" font-weight="bold">비비만 이상치!</text>
+<path d="M 230,95 L 230,110" stroke="#881337" stroke-width="1.5"/>
+<line x1="250" y1="75" x2="250" y2="175" stroke="#e11d48" stroke-width="3"/>
+<text x="215" y="195" font-size="16px" fill="#e11d48" font-weight="bold">왜곡된 임계값</text>
+<rect x="270" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="305" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="335" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<text x="20" y="225" font-size="16px" fill="#be123c">편향 낮음(훈련 오분류 0), 분산 높음</text>
+</g>
+<g transform="translate(460, 90)">
+<rect width="400" height="245" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+<text x="20" y="32" font-size="17px" font-weight="bold" fill="#14532d">(B) 소프트 마진: 이상치 오분류 허용</text>
+<line x1="30" y1="120" x2="370" y2="120" stroke="#94a3b8" stroke-width="3"/>
+<circle cx="50" cy="120" r="8" fill="#ef4444"/>
+<circle cx="80" cy="120" r="8" fill="#ef4444"/>
+<circle cx="110" cy="120" r="8" fill="#ef4444"/>
+<circle cx="230" cy="120" r="9" fill="#ef4444" opacity="0.6"/>
+<text x="215" y="90" font-size="16px" fill="#b91c1c">(오분류 허용)</text>
+<line x1="190" y1="70" x2="190" y2="175" stroke="#16a34a" stroke-width="3.5"/>
+<text x="150" y="65" font-size="16px" fill="#15803d" font-weight="bold">강건한 임계값</text>
+<rect x="110" y="98" width="160" height="44" fill="#22c55e" fill-opacity="0.15" rx="4"/>
+<line x1="110" y1="95" x2="110" y2="145" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
+<line x1="270" y1="95" x2="270" y2="145" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="145" y="165" font-size="16px" fill="#15803d">소프트 마진 대역</text>
+<rect x="270" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="305" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="335" y="111" width="18" height="18" rx="3" fill="#10b981"/>
+<text x="20" y="225" font-size="16px" fill="#166534">편향 조금 높음, 분산 낮음</text>
+</g>
+</svg></figure>
+</div>
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 3 [보충]: 마진 폭 2/‖w‖와 슬랙 ξ</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">경계 f(x)=±1 사이가 마진, 침범한 정도가 슬랙</text>
+<rect x="40" y="90" width="820" height="290" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<line x1="330" y1="110" x2="330" y2="330" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"/>
+<line x1="450" y1="110" x2="450" y2="330" stroke="#6366f1" stroke-width="3.5"/>
+<line x1="570" y1="110" x2="570" y2="330" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="268" y="352" font-size="16px" fill="#475569">f(x) = −1</text>
+<text x="420" y="352" font-size="16px" fill="#4338ca" font-weight="bold">f(x) = 0</text>
+<text x="545" y="352" font-size="16px" fill="#475569">f(x) = +1</text>
+<line x1="330" y1="128" x2="570" y2="128" stroke="#4338ca" stroke-width="2"/>
+<text x="400" y="122" font-size="18px" fill="#4338ca" font-weight="bold">폭 = 2/‖w‖</text>
+<circle cx="120" cy="200" r="9" fill="#ef4444"/>
+<circle cx="190" cy="260" r="9" fill="#ef4444"/>
+<circle cx="330" cy="230" r="10" fill="#ef4444" stroke="#7f1d1d" stroke-width="2.5"/>
+<text x="140" y="300" font-size="16px" fill="#991b1b">ξ = 0 (경계 위: 서포트 벡터)</text>
+<rect x="661" y="191" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="731" y="251" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="491" y="171" width="18" height="18" rx="3" fill="#10b981" stroke="#065f46" stroke-width="2"/>
+<text x="585" y="160" font-size="16px" fill="#065f46">0 &lt; ξ ≤ 1 (마진 안)</text>
+<rect x="381" y="271" width="18" height="18" rx="3" fill="#10b981" stroke="#065f46" stroke-width="2"/>
+<text x="470" y="290" font-size="16px" fill="#b91c1c" font-weight="bold">ξ &gt; 1 (오분류)</text>
+</svg></figure>
+</div>
+
+
+<hr>
+<h2 id="3-서포트-벡터-분류기와-차원의-언어-선면초평면"><a href="#3-서포트-벡터-분류기와-차원의-언어-선면초평면" class="heading-anchor" aria-hidden="true">#</a> 3. 서포트 벡터 분류기와 차원의 언어 — 선·면·초평면</h2><h3 id="서포트-벡터support-vector와-이름의-유래"><a href="#서포트-벡터support-vector와-이름의-유래" class="heading-anchor" aria-hidden="true">#</a> 서포트 벡터(Support Vector)와 이름의 유래</h3><p>소프트 마진을 채택하여 경계의 위치를 결정하는 분류기를 <strong>서포트 벡터 분류기(Support Vector Classifier, SVC)</strong>라고 부른다.</p>
+<p>왜 하필 &#39;서포트 벡터&#39;라는 독특한 명칭이 붙었을까? 그 비밀은 마진을 형성하는 데이터 포인트의 물리적 역할에 있다. 마진의 가장자리 경계선에 걸쳐 있거나, 마진의 안쪽 및 오분류 영역에 위치한 관측점들을 가리켜 <strong>서포트 벡터(Support Vector)</strong>라고 부른다.</p>
+<p>(해설) 이 점들이 서포트(지지)라고 불릴 만한 이유는, 만약 이 점들을 제외한 저 멀리 바깥쪽에 있는 수백, 수천 개의 데이터 포인트를 제거하거나 위치를 조금 이동시키더라도 결정 경계선은 눈 하나 깜짝하지 않고 그대로 유지되기 때문이다. 경계선의 기울기와 절편, 마진의 폭은 오직 이 소수의 서포트 벡터들에 의해 지탱되고 결정된다.</p>
+<blockquote>
+<p><strong>마진의 본질적 통찰:</strong><br>마진은 &quot;가장 가까운 관측점까지의 거리&quot;로 정의되므로, 분류기의 위치를 결정하는 것은 전체 데이터셋이 아니라 극소수의 가장자리 점(서포트 벡터)들이다. 데이터가 깔끔하게 나뉠 때는 소수의 점만 기억하면 되므로 모델이 간결하다. 반대로 그 소수가 이상치라면 분류기 전체가 끌려간다. 같은 성질이 장점이자 약점이다. 다만 &#39;소수&#39;는 데이터가 얼마나 겹치느냐에 달려 있다. 뒤에서 다룰 혈당 데이터처럼 겹침이 심하면 마진 안으로 들어오는 점이 많아져, 훈련 데이터 796개 중 532개가 서포트 벡터가 된다(코드를 직접 실행해 확인한 값).</p>
+</blockquote>
+<h3 id="2차원-공간에서의-서포트-벡터-분류기-직선"><a href="#2차원-공간에서의-서포트-벡터-분류기-직선" class="heading-anchor" aria-hidden="true">#</a> 2차원 공간에서의 서포트 벡터 분류기: 직선</h3><p>이제 문제를 2차원으로 확장해 보자. 생쥐의 체중(mass)에 더해 두 번째 측정값인 키(height, cm)를 함께 측정했다고 하자.</p>
+<p>데이터는 더 이상 1차원 수직선 위의 점이 아니라 2차원 평면 위의 좌표 $(x_1, x_2)$가 된다. 이때 서포트 벡터 분류기는 하나의 점이 아니라 <strong>1차원 직선(Line)</strong>의 형태를 취한다.</p>
+<p>2차원에서의 소프트 마진은 분류 직선과 평행하게 양쪽으로 펼쳐지는 두 개의 평행선(마진 경계선)으로 나타난다. 두 군집의 서포트 벡터들이 이 평행한 마진 경계선을 떠받친다. 마진 안쪽에 위치하거나 분류선 반대편으로 넘어간 이상치 점은 훈련 과정에서 오분류되지만, 이 선택은 교차검증 결과 장기적으로 더 나은 분류를 준다고 판단된 것이다. 훈련 데이터에서 작은 오차를 받아들이는 대신 테스트 데이터에서 훨씬 잘 맞히는 거래다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 4: 2차원(체중·키)의 서포트 벡터 분류기</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">분류기는 직선, 소프트 마진은 그와 평행한 두 선 사이</text>
+<rect x="40" y="90" width="820" height="310" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<line x1="90" y1="360" x2="820" y2="360" stroke="#94a3b8" stroke-width="2"/>
+<line x1="90" y1="360" x2="90" y2="110" stroke="#94a3b8" stroke-width="2"/>
+<text x="730" y="388" font-size="16px" fill="#475569">체중</text>
+<text x="100" y="128" font-size="16px" fill="#475569">키(cm)</text>
+<polygon points="300,360 420,360 640,110 520,110" fill="#6366f1" fill-opacity="0.10"/>
+<line x1="300" y1="360" x2="520" y2="110" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"/>
+<line x1="420" y1="360" x2="640" y2="110" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"/>
+<line x1="360" y1="360" x2="580" y2="110" stroke="#6366f1" stroke-width="3.5"/>
+<circle cx="160" cy="200" r="9" fill="#ef4444"/>
+<circle cx="200" cy="290" r="9" fill="#ef4444"/>
+<circle cx="250" cy="170" r="9" fill="#ef4444"/>
+<circle cx="300" cy="240" r="9" fill="#ef4444"/>
+<circle cx="414" cy="230" r="11" fill="#ef4444" stroke="#7f1d1d" stroke-width="2.5"/>
+<rect x="452" y="281" width="18" height="18" rx="3" fill="#10b981" stroke="#065f46" stroke-width="2.5"/>
+<rect x="620" y="300" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="680" y="200" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="740" y="270" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="452" y="190" width="18" height="18" rx="3" fill="#10b981" stroke="#065f46" stroke-width="2.5"/>
+<text x="600" y="160" font-size="16px" fill="#4338ca" font-weight="bold">분류기(직선)</text>
+<text x="130" y="335" font-size="16px" fill="#7f1d1d">굵은 테두리 = 서포트 벡터</text>
+<text x="520" y="345" font-size="16px" fill="#b91c1c">마진 안 오분류 1개 허용</text>
+</svg></figure>
+</div>
+
+<h3 id="3차원-공간에서의-서포트-벡터-분류기-평면"><a href="#3차원-공간에서의-서포트-벡터-분류기-평면" class="heading-anchor" aria-hidden="true">#</a> 3차원 공간에서의 서포트 벡터 분류기: 평면</h3><p>여기에 세 번째 특성인 나이(age)를 추가하면 데이터는 3차원 공간에 배치된다.</p>
+<p>3차원 좌표계에서 두 군집을 양분하는 선형 분류기는 직선이 아니라 <strong>2차원 평면(Plane)</strong>이 된다. 새로운 생쥐 관측이 들어오면, 이 관측점이 3차원 공간 속 분류 평면의 위쪽에 놓이는가 아래쪽에 놓이는가를 따져 클래스를 판정한다.</p>
+<p>만약 네 번째 특성으로 혈압(blood pressure)을 추가한다면 어떻게 될까? 데이터는 4차원 공간에 존재하게 된다. 안타깝게도 인간의 뇌와 2차원 종이는 4차원 공간을 직접 그릴 수 없다.</p>
+<h3 id="차원의-기하학적-통합-flat-affine-부분공간과-초평면"><a href="#차원의-기하학적-통합-flat-affine-부분공간과-초평면" class="heading-anchor" aria-hidden="true">#</a> 차원의 기하학적 통합: Flat Affine 부분공간과 초평면</h3><p>여기서 우리는 수학이 차원을 다루는 일반화된 언어를 마주하게 된다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="center">데이터 차원 ($N$)</th>
+<th align="center">서포트 벡터 분류기의 기하학적 형태</th>
+<th align="center">수학적 공식 명칭 (부분공간)</th>
+<th align="center">일상적 표현</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>1차원</strong> (체중)</td>
+<td align="center"><strong>0차원</strong> 부분공간</td>
+<td align="center">Flat affine 0-dimensional subspace</td>
+<td align="center"><strong>점 (Point)</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>2차원</strong> (체중, 키)</td>
+<td align="center"><strong>1차원</strong> 부분공간</td>
+<td align="center">Flat affine 1-dimensional subspace</td>
+<td align="center"><strong>직선 (Line)</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>3차원</strong> (체중, 키, 나이)</td>
+<td align="center"><strong>2차원</strong> 부분공간</td>
+<td align="center">Flat affine 2-dimensional subspace</td>
+<td align="center"><strong>평면 (Plane)</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>4차원 이상</strong> ($N$차원)</td>
+<td align="center"><strong>$(N-1)$차원</strong> 부분공간</td>
+<td align="center">Flat affine $(N-1)$-dimensional subspace</td>
+<td align="center"><strong>초평면 (Hyperplane)</strong></td>
+</tr>
+</tbody></table>
+</div><p>수학적으로 엄밀히 말하자면, 1차원의 점이든 2차원의 선이든 3차원의 면이든 모두 자신이 속한 공간보다 차원이 하나 작은 <strong>평평한 아핀 부분공간(Flat Affine Subspace)</strong>이며, 이들을 총칭하여 <strong>초평면(Hyperplane)</strong>이라 부른다.</p>
+<p>그러나 인간은 냅킨 위에 쓱쓱 그릴 수 있는 1차원 선이나 2차원 면에 대해서는 친숙한 단어(&#39;직선&#39;, &#39;평면&#39;)를 사용하고, 차원이 4차원 이상으로 올라가 머릿속으로 시각화할 수 없을 때 비로소 &#39;초평면&#39;이라는 거창한 학술 용어를 꺼내 드는 경향이 있다. 본질적으로 이들은 모두 동일한 선형 분할 경계면이다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 5: 데이터 차원에 따른 분류기(Flat Affine 부분공간)의 진화</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">모든 분류기는 N차원 공간을 이등분하는 (N-1)차원의 평평한 초평면이다</text>
+<g transform="translate(30, 95)">
+<rect width="190" height="195" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="15" y="30" font-size="17px" font-weight="bold" fill="#334155">1차원 공간 (N=1)</text>
+<line x1="20" y1="100" x2="170" y2="100" stroke="#94a3b8" stroke-width="2.5"/>
+<circle cx="50" cy="100" r="7" fill="#ef4444"/>
+<circle cx="140" cy="100" r="7" fill="#10b981"/>
+<circle cx="95" cy="100" r="8" fill="#6366f1"/>
+<line x1="95" y1="65" x2="95" y2="135" stroke="#6366f1" stroke-width="2.5"/>
+<text x="55" y="160" font-size="16px" font-weight="bold" fill="#4338ca">분류기: 0차원 점</text>
+<text x="25" y="182" font-size="16px" fill="#64748b">flat affine 0차원</text>
+</g>
+<g transform="translate(245, 95)">
+<rect width="195" height="195" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="15" y="30" font-size="17px" font-weight="bold" fill="#334155">2차원 공간 (N=2)</text>
+<line x1="30" y1="130" x2="165" y2="130" stroke="#94a3b8" stroke-width="1.5"/>
+<line x1="30" y1="130" x2="30" y2="50" stroke="#94a3b8" stroke-width="1.5"/>
+<circle cx="60" cy="70" r="6" fill="#ef4444"/>
+<circle cx="75" cy="95" r="6" fill="#ef4444"/>
+<rect x="120" y="75" width="12" height="12" rx="2" fill="#10b981"/>
+<rect x="140" y="105" width="12" height="12" rx="2" fill="#10b981"/>
+<line x1="105" y1="45" x2="95" y2="135" stroke="#6366f1" stroke-width="2.5"/>
+<text x="55" y="160" font-size="16px" font-weight="bold" fill="#4338ca">분류기: 1차원 선</text>
+<text x="30" y="182" font-size="16px" fill="#64748b">flat affine 1차원</text>
+</g>
+<g transform="translate(465, 95)">
+<rect width="195" height="195" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="15" y="30" font-size="17px" font-weight="bold" fill="#334155">3차원 공간 (N=3)</text>
+<polygon points="40,110 110,60 160,85 90,135" fill="#6366f1" fill-opacity="0.3" stroke="#6366f1" stroke-width="2"/>
+<circle cx="70" cy="65" r="5" fill="#ef4444"/>
+<circle cx="60" cy="85" r="8" fill="#ef4444"/>
+<rect x="120" y="95" width="10" height="10" rx="2" fill="#10b981"/>
+<rect x="135" y="115" width="14" height="14" rx="2" fill="#10b981"/>
+<text x="50" y="160" font-size="16px" font-weight="bold" fill="#4338ca">분류기: 2차원 면</text>
+<text x="30" y="182" font-size="16px" fill="#64748b">flat affine 2차원</text>
+</g>
+<g transform="translate(685, 95)">
+<rect width="185" height="195" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="15" y="30" font-size="17px" font-weight="bold" fill="#334155">4차원 이상 (N≥4)</text>
+<g transform="translate(45, 55)">
+<rect x="10" y="10" width="75" height="65" rx="6" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2" stroke-dasharray="4,2"/>
+<text x="18" y="48" font-size="18px" font-weight="bold" fill="#4338ca">(N−1)차원</text>
+</g>
+<text x="30" y="160" font-size="16px" font-weight="bold" fill="#4338ca">분류기: 초평면</text>
+<text x="25" y="182" font-size="16px" fill="#64748b">그릴 수 없는 고차원</text>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="4-겹친-데이터와-차원-올리기-골디락스-문제와-svm의-세-단계"><a href="#4-겹친-데이터와-차원-올리기-골디락스-문제와-svm의-세-단계" class="heading-anchor" aria-hidden="true">#</a> 4. 겹친 데이터와 차원 올리기 — 골디락스 문제와 SVM의 세 단계</h2><h3 id="서포트-벡터-분류기의-한계-quot골디락스quot-데이터셋"><a href="#서포트-벡터-분류기의-한계-quot골디락스quot-데이터셋" class="heading-anchor" aria-hidden="true">#</a> 서포트 벡터 분류기의 한계: &quot;골디락스&quot; 데이터셋</h3><p>서포트 벡터 분류기(SVC)는 이상치와 약간의 중첩을 능숙하게 처리할 수 있어 대단히 실용적이다. 하지만 데이터의 본질적 분포가 선형적으로 분리 불가능할 정도로 뒤엉켜 있다면 어떻게 될까?</p>
+<p>대표적인 예시가 신약의 <strong>약물 투여량(Drug Dosage)</strong>에 따른 환자의 치료 효과 데이터다.</p>
+<ul>
+<li>투여량이 너무 적으면 약효가 없어 치료되지 않는다(미치유, 적색 점).</li>
+<li>투여량이 너무 많으면 독성 부작용 때문에 치료되지 않는다(미치유, 적색 점).</li>
+<li>오직 투여량이 중간의 적정 범위에 있을 때만 환자가 완치된다(치유, 녹색 점).</li>
+</ul>
+<p>동화 《골디락스와 세 마리 곰》에서 너무 뜨겁지도 차갑지도 않은 &#39;딱 알맞은(just right)&#39; 죽을 찾는 것처럼, 효과를 보는 구간이 중앙에 샌드위치처럼 끼어 있는 이른바 <strong>골디락스 문제</strong>다.</p>
+<p>이 1차원 수직선 위에서는 임계값(0차원 점)을 어디에 단 하나 긋더라도 대량의 오분류가 불가피하다. 왼쪽을 가르면 오른쪽 미치유 환자들이 오분류되고, 오른쪽을 가르면 왼쪽 미치유 환자들이 오분류된다. 서포트 벡터 분류기(SVC)는 이처럼 샌드위치 형태로 중첩된 비선형 데이터를 선형적으로 가르는 데 완전히 무력하다.</p>
+<h3 id="svm의-직관-math-inline-37-축의-창조"><a href="#svm의-직관-math-inline-37-축의-창조" class="heading-anchor" aria-hidden="true">#</a> SVM의 직관: $y = \text{dosage}^2$ 축의 창조</h3><p>여기서 서포트 벡터 머신(SVM)은 발상을 바꾼다. <strong>&quot;1차원에서 직선으로 가를 수 없다면, 데이터를 2차원으로 들어 올려 가르면 되지 않는가?&quot;</strong></p>
+<p>새로운 차원을 만들기 위해 환자에게서 새로운 피를 뽑거나 추가 검사를 할 필요는 전혀 없다. 우리가 이미 가지고 있는 유일한 특성인 &#39;투여량($x$)&#39;을 제곱하여, 이를 새로운 세로축 좌표 $y$로 삼는 것이다.</p>
+<p>$$y = x^2$$</p>
+<p>예를 들어 투여량이 $0.5$였던 환자는 새로운 평면에서 $(0.5, 0.5^2) = (0.5, 0.25)$라는 2차원 좌표를 얻는다. 모든 환자의 관측점을 $(x, x^2)$로 변환하여 2차원 평면에 산점도를 그리면 어떻게 될까?</p>
+<p>데이터 포인트들은 2차 곡선, 즉 <strong>포물선(Parabola)</strong> 위에 정렬된다(투여량은 음수가 없으므로 포물선의 오른쪽 절반).</p>
+<ul>
+<li>투여량이 적었던 미치유 환자들은 원점 가까운 왼쪽 아래에 놓인다.</li>
+<li>투여량이 적정했던 치유 환자들은 곡선의 중간쯤에 놓인다.</li>
+<li>투여량이 많았던 미치유 환자들은 오른쪽 위로 가파르게 올라간다.</li>
+</ul>
+<p>투여량은 0 이상이므로 점들은 오른쪽 위로 휘어 올라가는 곡선 위에 놓인다. 곡선이 아래로 볼록하기 때문에, 양 끝의 미치유 환자를 잇는 선보다 가운데 치유 환자들이 아래쪽에 있다. 그래서 그 사이로 <strong>비스듬한 직선 하나</strong>를 그으면 직선 아래는 치유, 위는 미치유로 나뉜다.</p>
+<p>1차원에서는 죽었다 깨어나도 하나의 점으로 분리할 수 없었던 데이터가, 차원을 하나 높여 포물선으로 구부려 놓자 단순한 직선 하나로 우아하게 양분되는 것이다.</p>
+<blockquote>
+<p><strong>특성 표현에 대한 통찰:</strong><br>추가된 차원은 외부에서 관측한 새로운 정보가 아니라, 기존 데이터를 수학적으로 재해석하여 &#39;지어낸(fabricated)&#39; 것이다. 데이터가 보유한 근원적 정보의 총량은 변하지 않았지만, <strong>표현(Representation)의 기하학적 형태</strong>가 바뀌는 것만으로도 선형 분리가 불가능했던 문제가 자명한 선형 분리 문제로 전환된다.</p>
+</blockquote>
+<h3 id="svm의-세-단계-메커니즘-요약"><a href="#svm의-세-단계-메커니즘-요약" class="heading-anchor" aria-hidden="true">#</a> SVM의 세 단계 메커니즘 요약</h3><p>이 직관이 바로 서포트 벡터 머신(SVM)의 핵심 알고리즘 전체를 관통하는 3단계 공식이다.</p>
+<ol>
+<li><strong>저차원 데이터에서 시작한다</strong>: 원래 데이터는 비교적 낮은 차원(예: 1차원 투여량)에 머물러 있으며, 이 상태에서는 선형 분리가 불가능하다.</li>
+<li><strong>고차원 공간으로 매핑(투영)한다</strong>: 수학적 변환을 통해 데이터를 더 높은 차원(예: $x^2$를 추가한 2차원 평면)으로 들어 올린다.</li>
+<li><strong>고차원에서 선형 서포트 벡터 분류기를 찾는다</strong>: 고차원 공간 속에서 두 그룹을 완벽하게 또는 최적의 소프트 마진으로 가르는 평평한 초평면(직선이나 면)을 학습한다.</li>
+</ol>
+<p>새로운 환자가 들어왔을 때의 판정 역시 명쾌하다. 새로운 환자의 투여량을 똑같이 제곱하여 2차원 공간에 점을 찍은 뒤, 그 점이 고차원 분류 직선의 위쪽에 놓이는지 아래쪽에 놓이는지만 확인하면 끝난다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 6: 골디락스 문제 해결 — 1D 비선형 데이터를 2D 포물선으로 들어 올려 선형 분리</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">기존 특성을 제곱(x²)하여 차원을 추가함으로써 단순한 직선으로 분리하는 SVM의 직관</text>
+<g transform="translate(40, 95)">
+<rect width="360" height="255" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="30" font-size="17px" font-weight="bold" fill="#334155">(A) 1차원: 임계값 하나로는 불가</text>
+<line x1="30" y1="130" x2="330" y2="130" stroke="#94a3b8" stroke-width="3"/>
+<circle cx="50" cy="130" r="8" fill="#ef4444"/>
+<circle cx="75" cy="130" r="8" fill="#ef4444"/>
+<text x="40" y="165" font-size="16px" fill="#ef4444" font-weight="bold">미치유</text>
+<rect x="135" y="121" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="170" y="121" width="18" height="18" rx="3" fill="#10b981"/>
+<rect x="205" y="121" width="18" height="18" rx="3" fill="#10b981"/>
+<text x="160" y="165" font-size="16px" fill="#10b981" font-weight="bold">치유</text>
+<circle cx="265" cy="130" r="8" fill="#ef4444"/>
+<circle cx="295" cy="130" r="8" fill="#ef4444"/>
+<text x="260" y="165" font-size="16px" fill="#ef4444" font-weight="bold">미치유</text>
+<text x="30" y="210" font-size="16px" fill="#b91c1c" font-weight="bold">어떤 점을 찍어도 대량 오분류 발생!</text>
+<text x="30" y="235" font-size="16px" fill="#64748b">적정량에서만 치유</text>
+</g>
+<g transform="translate(440, 95)">
+<rect width="420" height="275" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="30" font-size="17px" font-weight="bold" fill="#334155">(B) 2차원: y = x² 추가로 직선 분리</text>
+<line x1="50" y1="210" x2="390" y2="210" stroke="#94a3b8" stroke-width="2"/>
+<text x="320" y="232" font-size="16px" fill="#64748b">투여량 x</text>
+<line x1="50" y1="210" x2="50" y2="45" stroke="#94a3b8" stroke-width="2"/>
+<text x="58" y="58" font-size="16px" fill="#64748b">y = x²</text>
+<path d="M 50,210 Q 215,210 380,50" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4,4"/>
+<circle cx="76" cy="209" r="8" fill="#ef4444"/>
+<circle cx="103" cy="206" r="8" fill="#ef4444"/>
+<rect x="174" y="176" width="16" height="16" rx="3" fill="#10b981"/>
+<rect x="207" y="162" width="16" height="16" rx="3" fill="#10b981"/>
+<rect x="240" y="144" width="16" height="16" rx="3" fill="#10b981"/>
+<circle cx="330" cy="94" r="8" fill="#ef4444"/>
+<circle cx="363" cy="66" r="8" fill="#ef4444"/>
+<line x1="66" y1="232" x2="380" y2="79" stroke="#6366f1" stroke-width="3"/>
+<text x="120" y="100" font-size="16px" fill="#4338ca" font-weight="bold">비스듬한 직선 분류기</text>
+<text x="60" y="258" font-size="16px" fill="#15803d" font-weight="bold">직선 아래 = 치유, 위 = 미치유</text>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="5-커널-다항-커널의-차수-math-inline-44와-rbf-커널의-가중-최근접-이웃"><a href="#5-커널-다항-커널의-차수-math-inline-44와-rbf-커널의-가중-최근접-이웃" class="heading-anchor" aria-hidden="true">#</a> 5. 커널: 다항 커널의 차수 $d$와 RBF 커널의 가중 최근접 이웃</h2><h3 id="변환의-자의성을-극복하는-커널-함수kernel-function"><a href="#변환의-자의성을-극복하는-커널-함수kernel-function" class="heading-anchor" aria-hidden="true">#</a> 변환의 자의성을 극복하는 커널 함수(Kernel Function)</h3><p>앞선 예시를 보며 자연스러운 의문이 솟구칠 것이다. &quot;왜 하필 제곱($x^2$)인가? 세제곱($x^3$)이나 네제곱은 안 되는가? 아니면 $\frac{\pi}{4}\sqrt{x}$ 같은 엉뚱한 식은 어떤가? 최적의 변환 함수는 도대체 어떻게 정하는가?&quot;</p>
+<p>데이터를 고차원으로 보내는 변환 규칙은 이론상 무한히 존재한다. 만약 분석가가 매번 주관적인 감으로 변환 공식을 지어내야 한다면 기계학습이라 부를 수 없을 것이다. SVM은 이 수학을 가능하고 효율적으로 만들기 위해 고차원 분류기를 체계적으로 찾는 도구를 쓴다. 그것이 <strong>커널 함수(Kernel Function)</strong>다.</p>
+<p>커널 함수는 임의의 주먹구구식 변환 대신, 수학적으로 잘 정의된 규칙에 따라 고차원 공간 속에서 관측 쌍 간의 기하학적 관계를 탐색할 수 있도록 돕는다.</p>
+<h3 id="다항-커널polynomial-kernel과-차수-math-inline-48"><a href="#다항-커널polynomial-kernel과-차수-math-inline-48" class="heading-anchor" aria-hidden="true">#</a> 다항 커널(Polynomial Kernel)과 차수 $d$</h3><p>가장 대표적인 커널 중 하나가 <strong>다항 커널(Polynomial Kernel)</strong>이다. 다항 커널은 다항식의 차수를 결정하는 핵심 파라미터 <strong>$d$(degree)</strong>를 지닌다.</p>
+<ul>
+<li><strong>$d = 1$</strong>: 1차원 원래 공간에서 관측 쌍 사이의 선형적 관계를 계산한다. (단순 선형 분류기와 동일)</li>
+<li><strong>$d = 2$</strong>: 투여량의 제곱($x^2$)을 기반으로 두 번째 차원을 체계적으로 생성하여 2차원 공간에서의 관계를 계산한다.</li>
+<li><strong>$d = 3$</strong>: 투여량의 세제곱($x^3$) 차원까지 포함하여 3차원 공간에서의 관측 쌍 관계를 계산한다.</li>
+<li><strong>$d \ge 4$</strong>: 4차원, 5차원 이상의 고차원 공간으로 차원을 점진적으로 확장하여 초평면을 탐색한다.</li>
+</ul>
+<p>중요한 점은 분석가가 차수 $d$를 임의로 찍어서 맞추는 것이 아니라, <strong>교차검증(Cross Validation)</strong>을 통해 $d=1, 2, 3, 4\dots$를 체계적으로 대입해 보며 검증 성능이 가장 높은 최적의 차수 $d$를 데이터로부터 과학적으로 도출한다는 사실이다.</p>
+<div class="callout-box info"><div class="callout-title">노트</div><div class="callout-body"><p><strong>[보충] 다항 커널의 식</strong><a class="footnote-ref" href="#fn-2" id="fnref-2">2</a><br>두 관측 $a, b$에 대해 다항 커널은 $K(a,b) = (a\cdot b + r)^d$로 쓴다. $r$은 모든 값에 더하는 상수(뒤 코드의 <code>coef0</code>), $d$는 차수다. scikit-learn은 여기에 계수 $\gamma$를 붙여 $(\gamma\, a\cdot b + r)^d$를 계산하는데, 기본값 <code>gamma=&#39;scale&#39;</code>은 $1/(\text{특성 수}\times\text{분산})$이라 표준화한 특성 하나만 쓰는 뒤의 예에서는 $\gamma=1$이 된다.</p>
+</div></div>
+
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 7: 다항 커널의 차수 d가 정하는 차원</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">d가 커질수록 관계를 계산하는 공간의 차원이 늘어난다. 좋은 d는 교차검증으로</text>
+<g transform="translate(30, 95)">
+<rect x="0" y="0" width="195" height="200" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="20" y="34" font-size="20px" font-weight="bold" fill="#1d4ed8">d = 1</text>
+<text x="20" y="72" font-size="16px" fill="#1e40af">원래 1차원 그대로</text>
+<text x="20" y="100" font-size="16px" fill="#1e40af">(x)</text>
+<line x1="20" y1="150" x2="175" y2="150" stroke="#94a3b8" stroke-width="2.5"/>
+<line x1="98" y1="125" x2="98" y2="175" stroke="#6366f1" stroke-width="3"/>
+<rect x="215" y="0" width="195" height="200" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+<text x="235" y="34" font-size="20px" font-weight="bold" fill="#15803d">d = 2</text>
+<text x="235" y="72" font-size="16px" fill="#166534">제곱 차원 추가</text>
+<text x="235" y="100" font-size="16px" fill="#166534">(x, x²)</text>
+<path d="M 240,180 Q 300,180 385,120" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+<rect x="430" y="0" width="195" height="200" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="2"/>
+<text x="450" y="34" font-size="20px" font-weight="bold" fill="#7e22ce">d = 3</text>
+<text x="450" y="72" font-size="16px" fill="#6b21a8">세제곱 차원까지</text>
+<text x="450" y="100" font-size="16px" fill="#6b21a8">(x, x², x³)</text>
+<polygon points="460,175 530,130 600,150 530,190" fill="#a855f7" fill-opacity="0.25" stroke="#a855f7" stroke-width="2"/>
+<rect x="645" y="0" width="195" height="200" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+<text x="665" y="34" font-size="20px" font-weight="bold" fill="#334155">d ≥ 4</text>
+<text x="665" y="72" font-size="16px" fill="#334155">차원이 더 늘어남</text>
+<text x="665" y="100" font-size="16px" fill="#334155">(그릴 수 없음)</text>
+<text x="665" y="160" font-size="16px" fill="#334155">초평면으로 분류</text>
+</g>
+</svg></figure>
+</div>
+
+<h3 id="방사형-기저-함수-커널-radial-rbf-kernel"><a href="#방사형-기저-함수-커널-radial-rbf-kernel" class="heading-anchor" aria-hidden="true">#</a> 방사형 기저 함수 커널 (Radial / RBF Kernel)</h3><p>또 하나의 대표적인 커널은 <strong>방사형 커널(Radial Kernel)</strong>, 흔히 <strong>RBF(Radial Basis Function) 커널</strong>이라 부르는 것이다. ([보충] scikit-learn <code>SVC</code>의 기본 커널도 RBF다.)</p>
+<p>RBF 커널의 가장 충격적인 특징은 데이터를 <strong>무한 차원(Infinite Dimensions)</strong>의 공간으로 매핑하여 서포트 벡터 분류기를 찾는다는 점이다. 무한 차원은 칠판에도, 모니터에도, 인간의 뇌 속에도 그릴 수 없다. 그렇다면 무한 차원에서 작동하는 RBF 커널을 우리는 어떻게 직관적으로 이해할 수 있을까?</p>
+<p>놀랍게도 RBF 커널이 새로운 데이터를 분류할 때 보이는 실제 거동은 지극히 친숙하고 직관적인 모델인 <strong>가중 최근접 이웃(Weighted Nearest Neighbors)</strong>처럼 행동한다.</p>
+<blockquote>
+<p><strong>RBF 커널의 직관적 물리:</strong><br>새로운 데이터 포인트가 주어졌을 때, </p>
+<ol>
+<li>그 데이터와 <strong>매우 가까운 이웃 관측점들</strong>은 새로운 점의 판정에 <strong>막대한 영향력(큰 가중치)</strong>을 행사한다.</li>
+<li>반면 <strong>멀리 떨어진 관측점들</strong>은 분류에 <strong>작은 영향</strong>만 준다. ([보충] 아래 식에서 보듯 영향력은 거리의 제곱에 대해 지수적으로 줄어든다.)</li>
+</ol>
+<p>(해설) 결국 새 점 주변에 어떤 클래스의 이웃이 가까이 모여 있는지가 분류를 크게 좌우한다.</p>
+</blockquote>
+<p>무한 차원이라는 현란한 수학적 외피 속에, &quot;가까운 이웃들의 목소리에 가장 귀를 기울인다&quot;는 가장 상식적인 국소적 기하학 원리가 살아 숨 쉬고 있는 것이다.</p>
+<div class="callout-box info"><div class="callout-title">노트</div><div class="callout-body"><p><strong>[보충] RBF 커널의 수식과 감마($\gamma$) 파라미터</strong><a class="footnote-ref" href="#fn-2">2</a><br>RBF 커널의 직관적 물리 동작을 수학 문헌의 엄밀한 수식으로 보충하자면, RBF 커널은 두 벡터 $\mathbf{x}_i, \mathbf{x}_j$ 사이의 유클리드 거리를 이용해 다음과 같이 정의된다.
+$$K(\mathbf{x}_i, \mathbf{x}_j) = \exp\left(-\gamma \|\mathbf{x}_i - \mathbf{x}_j\|^2\right)$$
+여기서 하이퍼파라미터 $\gamma$(gamma)는 가중치가 거리 대비 얼마나 가파르게 감소하는지를 결정하는 대역폭(Bandwidth) 역할을 한다. $\gamma$가 너무 크면 아주 가까운 이웃만 고려하므로 결정 경계가 복잡하게 굴곡져 과적합 위험이 커지고, $\gamma$가 너무 작으면 먼 이웃들까지 둔감하게 반영하여 단순한 경계를 형성한다. 실무에서는 $\gamma$와 $C$를 함께 교차검증으로 고른다.</p>
+</div></div>
+
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 8: 방사형 기저 함수(RBF) 커널의 물리 — 가중 최근접 이웃의 직관</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">무한 차원의 분류기지만, 새 점에는 가까운 관측이 크게, 먼 관측이 작게 영향</text>
+<g transform="translate(50, 95)">
+<rect width="800" height="215" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<circle cx="380" cy="110" r="14" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3"/>
+<text x="345" y="145" font-size="16px" font-weight="bold" fill="#1d4ed8">새 관측값 (x*)</text>
+<rect x="300" y="95" width="22" height="22" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+<path d="M 330,106 L 360,108" stroke="#10b981" stroke-width="5"/>
+<text x="240" y="85" font-size="16px" font-weight="bold" fill="#047857">가까운 이웃 (큰 영향력!)</text>
+<rect x="420" y="60" width="20" height="20" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+<path d="M 415,75 L 395,95" stroke="#10b981" stroke-width="4"/>
+<rect x="360" y="40" width="20" height="20" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+<path d="M 370,65 L 375,90" stroke="#10b981" stroke-width="4.5"/>
+<circle cx="120" cy="80" r="10" fill="#ef4444"/>
+<path d="M 140,85 L 355,108" stroke="#ef4444" stroke-width="1" stroke-dasharray="6,5" opacity="0.4"/>
+<text x="90" y="60" font-size="16px" fill="#991b1b">먼 이웃 (작은 영향)</text>
+<circle cx="150" cy="150" r="10" fill="#ef4444"/>
+<path d="M 165,145 L 360,115" stroke="#ef4444" stroke-width="1" stroke-dasharray="6,5" opacity="0.4"/>
+<circle cx="650" cy="120" r="10" fill="#ef4444"/>
+<path d="M 635,118 L 400,111" stroke="#ef4444" stroke-width="1" stroke-dasharray="6,5" opacity="0.4"/>
+<text x="610" y="95" font-size="16px" fill="#991b1b">먼 이웃 (작은 영향)</text>
+<rect x="220" y="170" width="360" height="32" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+<text x="240" y="192" font-size="16px" font-weight="bold" fill="#065f46">가까운 녹색 이웃 영향이 커서 '치유'</text>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="6-커널-트릭-변환하지-않고-변환한-것처럼"><a href="#6-커널-트릭-변환하지-않고-변환한-것처럼" class="heading-anchor" aria-hidden="true">#</a> 6. 커널 트릭: 변환하지 않고 변환한 것처럼</h2><h3 id="커널-트릭kernel-trick의-충격적-실체"><a href="#커널-트릭kernel-trick의-충격적-실체" class="heading-anchor" aria-hidden="true">#</a> 커널 트릭(Kernel Trick)의 충격적 실체</h3><p>여기서 SVM의 가장 영리한 부분인 <strong>커널 트릭(Kernel Trick)</strong>이 등장한다.</p>
+<p>지금까지의 설명을 들으면 누구나 이렇게 상상할 것이다. 
+&quot;아, SVM은 데이터를 가져와서 실제로 $x^2, x^3\dots$을 일일이 계산해 거대한 고차원 데이터 테이블을 만든 뒤, 그 고차원 공간에서 복잡한 초평면 연산을 수행하는구나!&quot;</p>
+<p><strong>하지만 그것은 완전히 틀렸다.</strong> 
+현실의 SVM은 데이터를 고차원으로 실제로 변환하는 계산을 <strong>단 한 번도 수행하지 않는다.</strong></p>
+<blockquote>
+<p><strong>커널 트릭의 핵심 정의:</strong><br>커널 함수는 데이터를 실제로 고차원 공간으로 변환(프로젝션)하지 않고도, <strong>오직 저차원 공간의 원래 데이터 좌표만을 사용하여</strong>, 마치 데이터가 고차원에 매핑되었을 때 나타날 두 점 사이의 기하학적 관계(내적, Dot Product)를 수학적으로 완벽하게 계산해내는 영리한 기법이다.</p>
+</blockquote>
+<p>개념은 그대로다. 여전히 &quot;고차원으로 옮겨 그곳에서 서포트 벡터 분류기를 찾는다&quot;. 달라지는 것은 옮기는 계산을 실제로 하지 않는다는 점뿐이다.</p>
+<div class="callout-box info"><div class="callout-title">[보충] 작은 예로 확인하는 커널 트릭</div><div class="callout-body"><p>뒤의 코드와 같은 설정인 $r=\tfrac12,\ d=2$의 다항 커널을 1차원 값 $a, b$에 대해 풀어 보자.
+$$(ab+\tfrac12)^2 = a^2b^2 + ab + \tfrac14 = (a^2,\ a,\ \tfrac12)\cdot(b^2,\ b,\ \tfrac12)$$
+왼쪽은 원래 숫자 두 개로 곱하고 더하고 제곱하는 계산이고, 오른쪽은 각 점을 3차원 좌표 $(x^2, x, \tfrac12)$로 옮긴 뒤 내적한 값이다. 둘은 언제나 같다. 예를 들어 $a=1, b=2$이면 왼쪽은 $(2+0.5)^2=6.25$, 오른쪽은 $1\cdot4+1\cdot2+0.25=6.25$다. 세 번째 좌표 $\tfrac12$는 모든 점에서 같아서 분류에 영향을 주지 않으므로, 실질적으로는 $(x, x^2)$ 평면에서 선을 긋는 것과 같다. 이것이 앞의 투여량 예와 뒤의 코드 실험을 잇는 다리다.</p>
+</div></div>
+
+
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 9 [보충]: (ab + ½)²은 3차원 좌표의 내적과 같다</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">a = 1, b = 2일 때 두 길로 계산한 값이 모두 6.25</text>
+<rect x="40" y="95" width="380" height="205" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+<text x="60" y="130" font-size="18px" font-weight="bold" fill="#15803d">커널로 바로 계산</text>
+<text x="60" y="175" font-size="18px" fill="#166534">(1 × 2 + 0.5)²</text>
+<text x="60" y="215" font-size="18px" fill="#166534">= 2.5² = 6.25</text>
+<text x="60" y="270" font-size="16px" fill="#166534">새 좌표를 만들지 않음</text>
+<rect x="480" y="95" width="380" height="205" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+<text x="500" y="130" font-size="18px" font-weight="bold" fill="#c2410c">좌표로 옮긴 뒤 내적</text>
+<text x="500" y="175" font-size="18px" fill="#9a3412">(1, 1, ½) · (4, 2, ½)</text>
+<text x="500" y="215" font-size="18px" fill="#9a3412">= 4 + 2 + 0.25 = 6.25</text>
+<text x="500" y="270" font-size="16px" fill="#9a3412">점마다 (x², x, ½)를 계산</text>
+<text x="433" y="205" font-size="26px" font-weight="bold" fill="#334155">=</text>
+</svg></figure>
+</div>
+
+<h3 id="왜-커널-트릭이어야만-하는가"><a href="#왜-커널-트릭이어야만-하는가" class="heading-anchor" aria-hidden="true">#</a> 왜 커널 트릭이어야만 하는가?</h3><p>커널 트릭이 머신러닝의 축복인 이유는 명확하다.</p>
+<ol>
+<li><strong>계산량을 줄인다</strong>: 
+차원이 높아질수록 좌표를 실제로 만들고 저장하는 비용이 커진다. 커널 트릭은 원래 좌표로 몇 번의 연산만 해서 고차원의 관계를 얻는다.</li>
+<li><strong>무한 차원(RBF 커널)의 현실적 계산 실현</strong>:
+어떤 컴퓨터도 데이터를 실제로 무한 차원 좌표로 바꿔 담을 수는 없다. 커널 트릭 덕분에 원래 데이터만으로 무한 차원에서의 관계를 계산할 수 있고, 그래서 RBF 커널을 쓸 수 있다.</li>
+</ol>
+<h3 id="커널-트릭의-불가피한-대가-보이지-않는-모델"><a href="#커널-트릭의-불가피한-대가-보이지-않는-모델" class="heading-anchor" aria-hidden="true">#</a> 커널 트릭의 불가피한 대가: 보이지 않는 모델</h3><p>그러나 세상에 공짜 점심은 없다. 커널 트릭은 경이로운 연산 속도를 선물한 대신, 실무자에게 치명적인 대가를 요구한다.</p>
+<blockquote>
+<p><strong>커널 트릭의 트레이드오프:</strong><br>모델이 학습을 마친 뒤에도, 고차원 공간에 변환된 데이터의 $x, y$ 좌표는 메모리상에 <strong>애초에 존재하지 않는다.</strong> 따라서 우리는 모델로부터 고차원 데이터의 좌표를 꺼낼 수도 없고, 모델이 찾은 멋진 고차원 초평면을 눈으로 시각화할 수도 없다!</p>
+</blockquote>
+<p>이것이 파이썬 코드로 SVM을 다룰 때 많은 입문자들이 부딪히는 거대한 벽이다. &quot;기껏 모델을 학습시켰는데, 왜 고차원 산점도와 결정 평면을 <code>plt.plot</code>으로 그릴 수 없는가?&quot; 
+좌표 자체가 계산된 적이 없기 때문이다. 따라서 모델의 동작을 눈으로 직접 확인하고 검증하려면, 분석가가 손으로 직접 수동 변환을 수행하여 눈앞에 펼쳐 보여야 한다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 10: 명시적 고차원 변환 vs 커널 트릭(Kernel Trick)의 연산 구조 비교</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">실제 고차원 좌표를 만들지 않고 저차원에서 동일한 내적 결과를 얻는 수학적 지름길</text>
+<g transform="translate(40, 95)">
+<rect width="380" height="215" rx="8" fill="#fff1f2" stroke="#fecdd3" stroke-width="1.5"/>
+<text x="20" y="30" font-size="17px" font-weight="bold" fill="#9f1239">(A) 직접 변환 (무겁고 비효율적)</text>
+<rect x="25" y="55" width="100" height="40" rx="6" fill="#ffffff" stroke="#e11d48"/>
+<text x="35" y="80" font-size="16px" fill="#9f1239">저차원 (x)</text>
+<path d="M 135,75 L 185,75" stroke="#e11d48" stroke-width="2.5"/>
+<text x="140" y="65" font-size="16px" fill="#e11d48">Φ(x)</text>
+<rect x="195" y="50" width="160" height="50" rx="6" fill="#ffffff" stroke="#e11d48"/>
+<text x="205" y="75" font-size="16px" font-weight="bold" fill="#9f1239">실제 고차원 매핑</text>
+<text x="205" y="93" font-size="16px" fill="#64748b">(x, x², x³ …)</text>
+<path d="M 275,105 L 275,133" stroke="#e11d48" stroke-width="2.5"/>
+<rect x="180" y="135" width="190" height="45" rx="6" fill="#ffe4e6" stroke="#e11d48"/>
+<text x="195" y="162" font-size="16px" font-weight="bold" fill="#9f1239">내적 Φ(x)·Φ(z)</text>
+<text x="25" y="208" font-size="16px" fill="#be123c">한계: 계산량 증가, 무한 차원 불가</text>
+</g>
+<g transform="translate(460, 95)">
+<rect width="400" height="215" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+<text x="20" y="30" font-size="17px" font-weight="bold" fill="#14532d">(B) 커널 트릭 (가볍고 우아한 지름길)</text>
+<rect x="25" y="55" width="110" height="40" rx="6" fill="#ffffff" stroke="#16a34a"/>
+<text x="33" y="80" font-size="16px" fill="#14532d">원래 x, z</text>
+<path d="M 145,75 Q 300,60 300,135" fill="none" stroke="#16a34a" stroke-width="3.5"/>
+<text x="160" y="55" font-size="16px" font-weight="bold" fill="#15803d">K(x, z)로 바로</text>
+<rect x="220" y="140" width="165" height="45" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+<text x="232" y="168" font-size="16px" font-weight="bold" fill="#15803d">같은 고차원 관계값</text>
+<text x="25" y="125" font-size="16px" fill="#15803d" font-weight="bold">고차원 좌표 생성 없음</text>
+<text x="25" y="150" font-size="16px" fill="#15803d" font-weight="bold">무한 차원(RBF)도 계산 가능</text>
+<text x="25" y="205" font-size="16px" fill="#166534">대가: 좌표가 없어 시각화 불가</text>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="7-코드로-확인하기-데이터-준비스케일링누수-poly-svc-68"><a href="#7-코드로-확인하기-데이터-준비스케일링누수-poly-svc-68" class="heading-anchor" aria-hidden="true">#</a> 7. 코드로 확인하기 — 데이터 준비·스케일링·누수, poly SVC 68%</h2><h3 id="데이터셋-탐색과-구조-분석"><a href="#데이터셋-탐색과-구조-분석" class="heading-anchor" aria-hidden="true">#</a> 데이터셋 탐색과 구조 분석</h3><p>이제 이론적 토대를 바탕으로 실제 파이썬과 scikit-learn 환경에서 SVM을 구현해 보자.
+사용할 데이터는 995행짜리 <code>data_diabetes.csv</code>이고(당뇨 없음 497행, 있음 498행으로 거의 반반), 세 개의 열로 되어 있다.</p>
+<ol>
+<li><code>glucose</code>: 혈당 값 (20~70 범위의 정수, 학습용으로 만든 값)</li>
+<li><code>bloodpressure</code>: 혈압 값</li>
+<li><code>diabetes</code>: 당뇨병 진단 여부 ($0$: 정상/음성, $1$: 당뇨/양성)</li>
+</ol>
+<p>데이터를 불러와 혈당(<code>glucose</code>) 단 하나의 특성만으로 당뇨 발병 여부(<code>diabetes</code>)를 1차원 수직선상에 시각화해 보면, 앞의 약물 투여량 예와 같은 구조가 나타난다. 혈당과 혈압을 함께 그린 2차원 산점도에서도 두 클래스는 가운데에서 크게 겹친다.</p>
+<ul>
+<li>당뇨가 없는 정상 환자(클래스 $0$, 주황색 원)들은 혈당 수치 중간 영역에 집중적으로 뭉쳐 있다.</li>
+<li>당뇨 환자(클래스 $1$, 파란색 x)들은 양쪽 끝에 퍼져 있다. 그래도 가운데에서 두 클래스가 상당히 겹친다.</li>
+</ul>
+<p>결측치(<code>isnull().sum()</code>)가 전혀 없음을 확인한 후, 우리는 혈압을 제외하고 오직 혈당 수치 하나만을 독립변수 $X$로, 당뇨 여부를 종속변수 $y$로 분리한다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python">import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# 1. 데이터 로드 및 분리
+df = pd.read_csv("data_diabetes.csv")
+X = df.drop(['diabetes', 'bloodpressure'], axis=1) # glucose 특성만 유지
+y = df['diabetes']</code></pre>
+</div><blockquote>
+<p><strong>라이브러리 메모:</strong><br><code>SVC</code>는 종속변수 $y$를 1차원 배열로 받기를 기대한다. 열 하나를 <code>df[&#39;diabetes&#39;]</code>로 꺼내면 자동으로 1차원(Series)이 되고, <code>df[[&#39;diabetes&#39;]]</code>처럼 대괄호를 한 겹 더 쓰면 데이터프레임으로 남는다.</p>
+<p>이름도 짚어 둘 만하다. 서포트 벡터 &#39;분류기&#39;인 <code>SVC</code>가 서포트 벡터 &#39;머신&#39; 모듈(<code>sklearn.svm</code>)에 들어 있다. 이 글의 용어로 말하면 <code>SVC</code>는 커널을 지정하는 순간 SVM 전체를 수행한다. 이름만 보고 &#39;선형 분류기만 하는 함수&#39;로 오해하기 쉬운 지점이다.</p>
+</blockquote>
+<h3 id="데이터-분할과-특성-스케일링-데이터-누수data-leakage의-철저한-방지"><a href="#데이터-분할과-특성-스케일링-데이터-누수data-leakage의-철저한-방지" class="heading-anchor" aria-hidden="true">#</a> 데이터 분할과 특성 스케일링: 데이터 누수(Data Leakage)의 철저한 방지</h3><p>이제 데이터를 80%의 훈련 세트와 20%의 테스트 세트로 분할한다(<code>test_size=0.2, random_state=42</code>).</p>
+<p>SVM은 데이터를 스케일링하면 더 잘 작동한다. (해설) 마진과 커널이 모두 점 사이의 거리와 내적으로 계산되므로, 특성마다 단위가 다르면 숫자가 큰 특성이 결과를 좌우하기 쉽다. 그래서 평균을 빼고 표준편차로 나누어 평균 0, 표준편차 1로 맞추는 <code>StandardScaler</code>가 필수적이다.</p>
+<p>여기서 데이터 분석의 성패를 가르는 치명적인 규칙이 존재한다. 바로 <strong>데이터 누수(Data Leakage)의 차단</strong>이다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python"># 2. 훈련/테스트 세트 분할
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# 3. 스케일러 정의 및 '데이터 누수 방지' 적용
+scaler = StandardScaler().set_output(transform="pandas")
+
+# ★ 핵심: 훈련 데이터로만 평균과 표준편차를 학습(fit)한다
+X_train_scaled = scaler.fit_transform(X_train)
+
+# ★ 핵심: 테스트 데이터는 훈련 세트의 통계량을 사용해 변환(transform)만 한다
+X_test_scaled = scaler.transform(X_test)</code></pre>
+</div><blockquote>
+<p><strong>데이터 누수 차단의 원칙:</strong><br>테스트 세트는 &#39;미지의 미래 데이터&#39;를 시뮬레이션하는 공간이다. 만약 전체 데이터나 테스트 세트를 포함하여 평균과 표준편차를 계산(<code>fit</code>)해 버리면, 모델은 테스트 세트의 분포 정보를 미리 엿보게(누수) 된다. 이는 실전 배포 시 성능 폭락으로 이어진다. 스케일러의 기준 통계량은 <strong>오직 훈련 데이터로부터만 도출(<code>fit_transform</code>)</strong>하고, 테스트 세트는 그 기준을 일방적으로 적용(<code>transform</code>)받아야만 정직한 모델 평가가 보장된다.</p>
+</blockquote>
+<p>스케일링을 거치면 원래 $20 \sim 70$이던 혈당 값이 대략 $-4 \sim 4$ 안쪽으로 줄어든다(훈련 데이터 기준 약 $-3.7 \sim 3.9$, 테스트 데이터 약 $-3.7 \sim 3.1$). 분포의 모양은 바뀌지 않고 위치와 폭만 바뀐다.</p>
+<h3 id="다항-커널-svc-모델-학습과-68-정확도의-의미"><a href="#다항-커널-svc-모델-학습과-68-정확도의-의미" class="heading-anchor" aria-hidden="true">#</a> 다항 커널 SVC 모델 학습과 68% 정확도의 의미</h3><p>이제 scikit-learn의 <code>SVC</code>를 활용해 2차 다항 커널 모델을 훈련시킨다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python"># 4. 다항 커널 SVC 학습
+poly_model = SVC(kernel='poly', degree=2, coef0=0.5)
+poly_model.fit(X_train_scaled, y_train)
+
+# 5. 테스트 데이터 예측 및 평가
+y_pred = poly_model.predict(X_test_scaled)
+poly_cm = pd.crosstab(y_test, y_pred, rownames=['Actual'], colnames=['Predicted'])
+poly_acc = accuracy_score(y_test, y_pred)
+
+print(poly_cm)
+print(f"Accuracy: {poly_acc:.2f}")</code></pre>
+</div><p>여기서 <code>degree=2</code>는 제곱 차원을 더하는 2차 변환이고, <code>coef0=0.5</code>는 커널 계산에서 모든 값에 더하는 상수다(앞 [보충]의 $r$). 0.5라는 값은 다항 커널을 설명할 때 쓴 예시 값을 그대로 가져온 것이다. 학습 과정에서 모델은 커널 트릭을 사용하므로 실제 고차원 좌표를 생성하지 않고 오직 관계값만을 빠르게 연산한다.</p>
+<p>테스트 세트를 통과시킨 모델의 평가 결과는 다음과 같다.</p>
+<ul>
+<li><strong>혼동 행렬 (Confusion Matrix)</strong>:
+$$\begin{pmatrix} 74 & 19 \\ 44 & 62 \end{pmatrix}$$<ul>
+<li>정상 환자(0) 93명 중 74명을 정확히 맞히고, 19명을 당뇨로 오분류했다.</li>
+<li>당뇨 환자(1) 106명 중 62명을 정확히 맞히고, 44명을 정상으로 오분류했다.</li>
+</ul>
+</li>
+<li><strong>정확도 (Accuracy)</strong>: <strong>약 68%</strong> ($0.6834\dots$, $199$개 테스트 샘플 중 $136$개 정답)</li>
+</ul>
+<p>68%는 높은 숫자가 아니다. 하지만 이 데이터는 가운데에서 두 클래스가 크게 겹친다. 그 상태에서 수직선 하나만 그어 &quot;왼쪽은 1, 오른쪽은 0&quot; 식으로 나누면 이보다 못하다. (해설) 같은 분할로 직접 재 보면, 훈련 데이터에서 가장 좋은 임계값 하나를 골라도 테스트 정확도는 약 57%이고, 전부 다수 클래스(1)로 찍으면 약 53%(106/199)다. 혈당 하나로 68%를 냈다는 것은 겹침을 감안하면 &quot;훌륭하진 않지만 형편없지도 않은&quot; 결과다. 성능 숫자는 데이터 구조와 함께 읽어야 한다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 11: 같은 혈당 하나로 낸 테스트 정확도 비교</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">테스트 199건 기준. 겹침이 심해 직선 하나로는 한계가 뚜렷하다</text>
+<line x1="250" y1="95" x2="250" y2="300" stroke="#94a3b8" stroke-width="2"/>
+<text x="40" y="140" font-size="17px" fill="#334155">전부 1로 예측</text>
+<rect x="250" y="115" width="319" height="38" fill="#cbd5e1"/>
+<text x="580" y="141" font-size="17px" fill="#334155">53.3%</text>
+<text x="40" y="200" font-size="17px" fill="#334155">임계값 하나</text>
+<rect x="250" y="175" width="341" height="38" fill="#fdba74"/>
+<text x="602" y="201" font-size="17px" fill="#9a3412">56.8%</text>
+<text x="40" y="260" font-size="17px" font-weight="bold" fill="#1d4ed8">2차 다항 커널</text>
+<rect x="250" y="235" width="410" height="38" fill="#3b82f6"/>
+<text x="671" y="261" font-size="17px" font-weight="bold" fill="#1d4ed8">68.3%</text>
+<text x="250" y="325" font-size="16px" fill="#64748b">막대 길이 = 정확도 (0%에서 시작)</text>
+</svg></figure>
+</div>
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 12: scikit-learn 데이터 전처리 및 누수 방지 파이프라인</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">훈련 세트의 평균·표준편차만을 추출하여 테스트 세트에 단방향 전파하는 안전한 구조</text>
+<g transform="translate(40, 95)">
+<rect x="0" y="30" width="180" height="150" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="15" y="60" font-size="17px" font-weight="bold" fill="#334155">전체 995행</text>
+<text x="25" y="90" font-size="16px" fill="#64748b">• glucose (혈당)</text>
+<text x="25" y="115" font-size="16px" fill="#64748b">• diabetes (당뇨)</text>
+<text x="15" y="145" font-size="16px" fill="#0284c7">8:2로 분할</text>
+<path d="M 190,75 L 260,50" stroke="#0284c7" stroke-width="2.5"/>
+<path d="M 190,135 L 260,160" stroke="#0284c7" stroke-width="2.5"/>
+<rect x="270" y="15" width="230" height="75" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="285" y="42" font-size="16px" font-weight="bold" fill="#1d4ed8">훈련 세트 X_train (80%)</text>
+<text x="285" y="68" font-size="16px" fill="#2563eb">fit_transform()</text>
+<path d="M 505,50 L 555,80" stroke="#3b82f6" stroke-width="2.5"/>
+<path d="M 505,160 L 555,135" stroke="#f97316" stroke-width="2.5"/>
+<rect x="270" y="125" width="230" height="75" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+<text x="285" y="152" font-size="16px" font-weight="bold" fill="#c2410c">테스트 세트 X_test (20%)</text>
+<text x="285" y="178" font-size="16px" fill="#ea580c">transform()만 (누수 차단)</text>
+<rect x="560" y="45" width="260" height="120" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+<text x="575" y="75" font-size="17px" font-weight="bold" fill="#15803d">스케일링 결과</text>
+<text x="575" y="105" font-size="16px" fill="#166534">훈련: 평균 0, 표준편차 1</text>
+<text x="575" y="130" font-size="16px" fill="#166534">테스트: 훈련 통계량 적용</text>
+<text x="575" y="155" font-size="16px" fill="#047857" font-weight="bold">범위: 20~70 → 약 −4~4</text>
+</g>
+</svg></figure>
+</div>
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 13: 혼동 행렬(Confusion Matrix) 상세 구조 및 68% 정확도 해부</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">테스트 샘플 199개에 대한 실제값과 예측값의 2×2 교차 집계표</text>
+<g transform="translate(60, 95)">
+<text x="140" y="25" font-size="17px" font-weight="bold" fill="#334155">예측: 정상 (0)</text>
+<text x="310" y="25" font-size="17px" font-weight="bold" fill="#334155">예측: 당뇨 (1)</text>
+<text x="-50" y="85" font-size="17px" font-weight="bold" fill="#334155">실제: 정상 (0)</text>
+<text x="-50" y="185" font-size="17px" font-weight="bold" fill="#334155">실제: 당뇨 (1)</text>
+<rect x="110" y="40" width="160" height="90" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+<text x="155" y="80" font-size="26px" font-weight="bold" fill="#065f46">74</text>
+<text x="135" y="110" font-size="16px" fill="#047857">진음성 TN</text>
+<rect x="280" y="40" width="160" height="90" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+<text x="335" y="80" font-size="26px" font-weight="bold" fill="#c2410c">19</text>
+<text x="305" y="110" font-size="16px" fill="#ea580c">위양성 FP</text>
+<rect x="110" y="140" width="160" height="90" rx="8" fill="#fff1f2" stroke="#f43f5e" stroke-width="2"/>
+<text x="165" y="180" font-size="26px" font-weight="bold" fill="#9f1239">44</text>
+<text x="135" y="210" font-size="16px" fill="#be123c">위음성 FN</text>
+<rect x="280" y="140" width="160" height="90" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="335" y="180" font-size="26px" font-weight="bold" fill="#1e40af">62</text>
+<text x="305" y="210" font-size="16px" fill="#2563eb">진양성 TP</text>
+<g transform="translate(480, 40)">
+<rect width="280" height="190" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="25" y="40" font-size="18px" font-weight="bold" fill="#1e293b">성과 종합 요약</text>
+<text x="25" y="75" font-size="16px" fill="#334155">• 전체 평가 샘플: 199건</text>
+<text x="25" y="105" font-size="16px" fill="#15803d">• 정답 맞힘: 74 + 62 = 136건</text>
+<text x="25" y="135" font-size="16px" fill="#b91c1c">• 오분류: 19 + 44 = 63건</text>
+<rect x="20" y="145" width="240" height="35" rx="6" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="35" y="169" font-size="17px" font-weight="bold" fill="#0369a1">정확도 약 68%</text>
+</g>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="8-보이지-않는-모델을-그리기-수동-제곱-선형-커널-같은-결과-기울기절편"><a href="#8-보이지-않는-모델을-그리기-수동-제곱-선형-커널-같은-결과-기울기절편" class="heading-anchor" aria-hidden="true">#</a> 8. 보이지 않는 모델을 그리기 — 수동 제곱 + 선형 커널, 같은 결과, 기울기·절편</h2><h3 id="커널-트릭을-벗겨내는-수동-변환-실험"><a href="#커널-트릭을-벗겨내는-수동-변환-실험" class="heading-anchor" aria-hidden="true">#</a> 커널 트릭을 벗겨내는 수동 변환 실험</h3><p>우리는 앞서 커널 트릭의 치명적 한계를 확인했다. <code>poly_model</code>은 내부에서 좌표를 계산하지 않으므로, 데이터가 포물선 위에서 어떻게 갈라지는지 시각화할 수 있는 좌표값을 제공하지 않는다.</p>
+<p>그렇다면 모델이 실제로 포물선 위에서 직선 초평면을 그어 분류하고 있다는 사실을 어떻게 증명하고 눈으로 볼 수 있을까?
+방법은 단순하다. <strong>우리가 직접 손으로 2차원 특성을 만들고, 가장 단순한 선형 커널(<code>kernel=&#39;linear&#39;</code>)을 돌려보는 것이다.</strong></p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python"># 1. 수동 특성 공학: glucose^2 열 추가
+X_linear_train = X_train_scaled.copy()
+X_linear_train["glucose^2"] = X_train_scaled["glucose"] ** 2
+
+X_linear_test = X_test_scaled.copy()
+X_linear_test["glucose^2"] = X_test_scaled["glucose"] ** 2
+
+# 2. 선형 커널 SVC 학습 (변환 없이 직선 초평면만 탐색)
+linear_model = SVC(kernel='linear')
+linear_model.fit(X_linear_train, y_train)
+
+# 3. 테스트 세트 예측 및 혼동 행렬
+y_pred_linear = linear_model.predict(X_linear_test)
+linear_cm = pd.crosstab(y_test, y_pred_linear, rownames=['Actual'], colnames=['Predicted'])
+linear_acc = accuracy_score(y_test, y_pred_linear)</code></pre>
+</div><p>선형 커널은 데이터에 그 어떤 차원 변환도 가하지 않고 주어진 좌표 그대로에서 최적의 직선(초평면)만을 긋는다. 이미 우리가 $x$와 $x^2$라는 2차원 좌표를 직접 만들어서 떠먹여 주었기 때문이다.</p>
+<h3 id="이론과-실제의-일치"><a href="#이론과-실제의-일치" class="heading-anchor" aria-hidden="true">#</a> 이론과 실제의 일치</h3><p>이제 두 모델의 성적표를 나란히 대조해 보자.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">비교 항목</th>
+<th align="center">모델 1: 다항 커널 (<code>kernel=&#39;poly&#39;, degree=2</code>)</th>
+<th align="center">모델 2: 수동 제곱 특성 + 선형 커널 (<code>kernel=&#39;linear&#39;</code>)</th>
+<th align="center">일치 여부</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>적용 기법</strong></td>
+<td align="center">커널 트릭 (좌표 생성 없음)</td>
+<td align="center">수동 $x^2$ 열 생성 (2차원 명시적 매핑)</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="left"><strong>혼동 행렬</strong></td>
+<td align="center">$\begin{pmatrix} 74 & 19 \\ 44 & 62 \end{pmatrix}$</td>
+<td align="center">$\begin{pmatrix} 74 & 19 \\ 44 & 62 \end{pmatrix}$</td>
+<td align="center"><strong>동일</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>정확도</strong></td>
+<td align="center"><strong>68.34%</strong> ($0.6834$)</td>
+<td align="center"><strong>68.34%</strong> ($0.6834$)</td>
+<td align="center"><strong>동일</strong></td>
+</tr>
+</tbody></table>
+</div><p>커널 트릭으로 1차원에서 관계만 계산한 모델과, 실제로 $x^2$ 축을 만들어 2차원에서 직선을 그은 모델이 <strong>같은 혼동 행렬과 같은 정확도</strong>를 낸다. 테스트 199건 각각의 예측도 모두 같다.</p>
+<p>이론과 실제가 맞아떨어지는 장면이다. 커널 트릭은 &quot;고차원으로 옮겨 선을 긋는 일&quot;을 계산만 줄여서 그대로 해낸다.</p>
+<div class="callout-box info"><div class="callout-title">[보충] 왜 같은 답이 나오나, 그리고 언제나 같은가</div><div class="callout-body"><p>앞 [보충]에서 본 대로 $(ab+\tfrac12)^2$은 좌표 $(x^2, x, \tfrac12)$의 내적이고, 이 예에서는 scikit-learn의 $\gamma$도 1이다. 그래서 다항 커널 모델은 사실상 $(x, x^2)$ 평면에서 선형 SVM을 푼다. 다만 두 모델이 수학적으로 완전히 같은 문제는 아니다. 커널 쪽에는 상수 좌표 $\tfrac12$의 가중치가 정규화 항에 함께 들어가고, <code>coef0</code>나 $\gamma$가 달라지면 $x$와 $x^2$ 좌표의 상대적 크기도 달라진다. 그러니 &quot;언제나 똑같다&quot;기보다 &quot;같은 공간에서 거의 같은 선을 찾기 때문에 이 데이터에서는 예측이 모두 일치했다&quot;고 이해하는 편이 정확하다.</p>
+</div></div>
+
+
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 14: 두 길, 같은 결과</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">커널 트릭 모델과 손으로 변환한 모델이 같은 혼동 행렬을 낸다</text>
+<rect x="30" y="100" width="190" height="70" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+<text x="48" y="130" font-size="16px" font-weight="bold" fill="#334155">표준화한 glucose</text>
+<text x="48" y="155" font-size="16px" fill="#475569">(1차원)</text>
+<path d="M 220,120 L 290,100" stroke="#3b82f6" stroke-width="2.5"/>
+<path d="M 220,160 L 290,245" stroke="#f97316" stroke-width="2.5"/>
+<rect x="290" y="80" width="300" height="70" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="305" y="108" font-size="16px" font-weight="bold" fill="#1d4ed8">kernel='poly', degree=2</text>
+<text x="305" y="135" font-size="16px" fill="#1e40af">coef0=0.5 (좌표 생성 없음)</text>
+<rect x="290" y="210" width="300" height="100" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+<text x="305" y="238" font-size="16px" font-weight="bold" fill="#c2410c">① glucose^2 열을 직접 추가</text>
+<text x="305" y="265" font-size="16px" fill="#9a3412">② kernel='linear'</text>
+<text x="305" y="292" font-size="16px" fill="#9a3412">(직선만 찾음, 기울기 계산 가능)</text>
+<path d="M 590,115 L 650,180" stroke="#3b82f6" stroke-width="2.5"/>
+<path d="M 590,260 L 650,210" stroke="#f97316" stroke-width="2.5"/>
+<rect x="650" y="140" width="220" height="110" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+<text x="668" y="170" font-size="16px" font-weight="bold" fill="#15803d">같은 혼동 행렬</text>
+<text x="668" y="198" font-size="17px" fill="#166534">[[74, 19],</text>
+<text x="668" y="222" font-size="17px" fill="#166534"> [44, 62]]</text>
+<text x="668" y="244" font-size="16px" fill="#166534">정확도 0.68</text>
+<text x="30" y="350" font-size="16px" fill="#64748b">테스트 199건의 예측이 하나하나 모두 같다</text>
+</svg></figure>
+</div>
+
+<h3 id="가중치math-inline-114와-편향math-inline-115으로부터-기울기와-절편-유도하기"><a href="#가중치math-inline-114와-편향math-inline-115으로부터-기울기와-절편-유도하기" class="heading-anchor" aria-hidden="true">#</a> 가중치($w$)와 편향($b$)으로부터 기울기와 절편 유도하기</h3><p>이제 우리는 2차원 평면의 $x$축(<code>glucose</code>)과 $y$축(<code>glucose^2</code>) 좌표를 명시적으로 가지고 있으므로, <code>linear_model</code>이 학습한 결정 직선의 방정식을 유도하여 산점도 위에 빨간 직선으로 직접 그려 넣을 수 있다.</p>
+<p>그러나 scikit-learn은 우리에게 중학교 수학 시간에 배운 친숙한 기울기($m$)와 $y$절편($k$)을 직접 반환해 주지 않는다. 대신 다차원 공간의 초평면 방정식 계수인 <strong>가중치 벡터($\mathbf{w}$)</strong>와 <strong>편향($b$)</strong>을 제공한다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python">w = linear_model.coef_[0]        # 가중치 벡터: [w0, w1]
+b = linear_model.intercept_[0]   # 편향: 스칼라 값 b</code></pre>
+</div><p>2차원 평면에서 초평면의 일반 방정식은 다음과 같이 표현된다.</p>
+<p>$$w_0 x + w_1 y + b = 0$$</p>
+<p>우리가 원하는 것은 가로축이 $x$, 세로축이 $y$인 직교좌표계에서 직선의 표준형인 $y = (\text{기울기})x + (\text{절편})$ 꼴이다. 위 식을 $y$에 대해 정리하면 다음과 같은 아름다운 변환식이 유도된다.</p>
+<p>$$w_1 y = -w_0 x - b$$</p>
+<p>$$y = \left(-\frac{w_0}{w_1}\right)x + \left(-\frac{b}{w_1}\right)$$</p>
+<p>따라서 분류 직선의 기울기와 절편은 다음과 같이 계산된다.</p>
+<p>$$\text{기울기 (Slope)} = -\frac{w_0}{w_1}$$</p>
+<p>$$y\text{절편 (y-Intercept)} = -\frac{b}{w_1}$$</p>
+<p>실제 모델 파라미터를 추출해 계산한 결과는 다음과 같다.</p>
+<ul>
+<li>가중치 벡터: $w_0 \approx 0.949368$, $w_1 \approx 1.750278$</li>
+<li>편향: $b \approx -1.120897$</li>
+<li><strong>기울기 (Slope)</strong>:
+$$\text{slope} = -\frac{0.94936762}{1.75027796} \approx \mathbf{-0.5424} \quad (\text{약 } -0.542)$$</li>
+<li><strong>$y$절편 ($y$-Intercept)</strong>:
+$$y\text{\_intercept} = -\frac{-1.12089748}{1.75027796} \approx \mathbf{0.6404} \quad (\text{약 } 0.640)$$</li>
+</ul>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python">slope = -w[0] / w[1]
+y_intercept = -b / w[1]
+
+print(f"Slope: {slope:.3f}")           # -0.542
+print(f"y-Intercept: {y_intercept:.3f}") #  0.640</code></pre>
+</div><h3 id="포물선-위의-빨간-직선-시각화"><a href="#포물선-위의-빨간-직선-시각화" class="heading-anchor" aria-hidden="true">#</a> 포물선 위의 빨간 직선 시각화</h3><p>기울기 $-0.542$와 절편 $0.640$으로 2차원 산점도 위에 빨간 결정 직선을 그으면(matplotlib의 <code>axline</code>에 절편 점과 기울기를 넘기면 된다), SVM이 한 일이 눈에 보인다.</p>
+<p>표준화한 혈당은 0을 중심으로 음수와 양수가 모두 있으므로, 점들은 $y = x^2$ 포물선을 따라 U자 모양으로 늘어선다. 빨간 직선은 포물선의 바닥을 비스듬히 가로지른다. 계산해 보면 직선 아래에 들어가는 구간은 표준화 혈당 약 $-1.1$에서 $0.6$ 사이다.</p>
+<ul>
+<li><strong>직선 아래쪽의 오목한 영역</strong>: 정상 환자(클래스 0, 주황색 원)들의 대다수가 몰려 있어 <strong>클래스 0</strong>으로 판정된다.</li>
+<li><strong>직선 위쪽 영역</strong>: 양쪽으로 올라가는 당뇨 환자(클래스 1, 파란색 x)들이 있어 <strong>클래스 1</strong>로 판정된다. 다만 바닥 근처에도 1이 적지 않게 섞여 있어, 이들은 0으로 잘못 분류된다. 혼동 행렬의 위음성 44건이 바로 이들이다.</li>
+</ul>
+<p>1차원에서 가운데와 양 끝으로 갈라져 있던 데이터가, 2차원 포물선 위에서는 직선 하나로 나뉜다. 커널 트릭이 보이지 않게 한 일을 손으로 다시 해서 눈으로 확인한 셈이다.</p>
+<div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 15: (glucose, glucose²) 평면의 결정 직선</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">개념도(점은 예시). 직선 y = −0.542x + 0.640은 실제 학습값</text>
+<g transform="translate(60, 90)">
+<rect width="780" height="360" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<line x1="100" y1="240" x2="700" y2="240" stroke="#94a3b8" stroke-width="2"/>
+<line x1="400" y1="250" x2="400" y2="25" stroke="#94a3b8" stroke-width="2"/>
+<text x="410" y="35" font-size="16px" fill="#475569">glucose²</text>
+<text x="390" y="262" font-size="16px" fill="#94a3b8">0</text>
+<polyline points="130,42 139,55 148,68 157,80 166,91 175,102 184,113 193,124 202,134 211,143 220,152 229,161 238,169 247,176 256,184 265,190 274,197 283,203 292,208 301,213 310,218 319,222 328,226 337,229 346,232 355,234 364,236 373,238 382,239 391,240 400,240 409,240 418,239 427,238 436,236 445,234 454,232 463,229 472,226 481,222 490,218 499,213 508,208 517,203 526,197 535,190 544,184 553,176 562,169 571,161 580,152 589,143 598,134 607,124 616,113 625,102 634,91 643,80 652,68 661,55 670,42" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="6,4"/>
+<circle cx="310" cy="218" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="337" cy="229" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="364" cy="236" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="391" cy="240" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="409" cy="240" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="436" cy="236" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="274" cy="197" r="8" fill="#f97316" fill-opacity="0.85"/>
+<circle cx="472" cy="226" r="8" fill="#f97316" fill-opacity="0.85"/>
+<path d="M 141,61 L 155,75 M 141,75 L 155,61" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 177,106 L 191,120 M 177,120 L 191,106" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 213,145 L 227,159 M 213,159 L 227,145" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 249,177 L 263,191 M 249,191 L 263,177" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 276,196 L 290,210 M 276,210 L 290,196" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 483,211 L 497,225 M 483,225 L 497,211" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 519,190 L 533,204 M 519,204 L 533,190" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 555,162 L 569,176 M 555,176 L 569,162" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 591,127 L 605,141 M 591,141 L 605,127" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 636,73 L 650,87 M 636,87 L 650,73" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 366,231 L 380,245 M 366,245 L 380,231" stroke="#1d4ed8" stroke-width="3"/>
+<path d="M 411,232 L 425,246 M 411,246 L 425,232" stroke="#1d4ed8" stroke-width="3"/>
+<line x1="130" y1="190" x2="670" y2="262" stroke="#ef4444" stroke-width="4"/>
+<text x="140" y="30" font-size="16px" font-weight="bold" fill="#1d4ed8">직선 위 → 당뇨(1)</text>
+<text x="40" y="285" font-size="16px" font-weight="bold" fill="#c2410c">직선 아래 → 정상(0)</text>
+<text x="575" y="295" font-size="16px" fill="#475569">glucose (표준화)</text>
+<rect x="210" y="300" width="320" height="42" rx="6" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+<text x="225" y="326" font-size="16px" font-weight="bold" fill="#b91c1c">결정 직선: y = −0.542x + 0.640</text>
+<text x="560" y="335" font-size="16px" fill="#c2410c">● 0(정상)</text>
+<text x="660" y="335" font-size="16px" fill="#1d4ed8">✕ 1(당뇨)</text>
+</g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="9-정리-개념-계보도와-머신러닝-실무-지침"><a href="#9-정리-개념-계보도와-머신러닝-실무-지침" class="heading-anchor" aria-hidden="true">#</a> 9. 정리: 개념 계보도와 머신러닝 실무 지침</h2><h3 id="선형-분류기의-3단계-진화-계보"><a href="#선형-분류기의-3단계-진화-계보" class="heading-anchor" aria-hidden="true">#</a> 선형 분류기의 3단계 진화 계보</h3><p>지금까지의 흐름을 한 줄로 이으면, 앞 방법의 구체적 실패가 다음 방법을 부르는 계보가 된다.</p>
+
+<div class="code-block-wrapper ascii-diagram">
+  <div class="code-header">
+    <span class="code-lang lang-generic">도식</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-text">[1단계] 단순 임계값
+   ↓ (문제점: 임의의 위치 설정 시 비직관적 오분류 발생)
+[2단계] 최대 마진 분류기 (Maximal Margin Classifier)
+   ↓ (문제점: 이상치 하나에 경계선이 통째로 왜곡되는 극단적 분산)
+[3단계] 서포트 벡터 분류기 (Support Vector Classifier, SVC)
+   ↓ (해결책: 소프트 마진 도입, 교차검증으로 편향-분산 균형 달성)
+   ↓ (문제점: 골디락스 예제처럼 데이터가 샌드위치 형태로 얽히면 선형 분리 불가)
+[4단계] 서포트 벡터 머신 (Support Vector Machine, SVM)
+   └─ 해결책: 고차원 투영 + 커널 함수(다항, RBF) + 커널 트릭을 통한 효율적 계산</code></pre>
+</div><div class="svg-scroll" style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:900px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:0; min-width:640px; display:block;">
+<text x="30" y="40" font-size="20px" font-weight="bold" fill="#1e293b">도식 16: 서포트 벡터 머신(SVM) 알고리즘 진화 계보도</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">앞 단계의 구체적 실패와 한계를 극복하며 정립된 체계적 발전 경로</text>
+<g transform="translate(30, 95)">
+<rect x="0" y="20" width="240" height="110" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="18" y="48" font-size="17px" font-weight="bold" fill="#1d4ed8">1. 최대 마진 분류기</text>
+<text x="18" y="74" font-size="16px" fill="#1e40af">• 마진 극대화 임계값</text>
+<text x="18" y="98" font-size="16px" fill="#b91c1c">• 한계: 이상치에 민감</text>
+<text x="18" y="120" font-size="16px" fill="#dc2626">• 오분류 불허 (하드 마진)</text>
+<path d="M 245,75 L 305,75" stroke="#64748b" stroke-width="3"/>
+<text x="250" y="65" font-size="16px" fill="#475569">극복</text>
+<rect x="310" y="20" width="250" height="110" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+<text x="325" y="48" font-size="17px" font-weight="bold" fill="#15803d">2. 서포트 벡터 분류기</text>
+<text x="325" y="74" font-size="16px" fill="#166534">• 소프트 마진 (오분류 허용)</text>
+<text x="325" y="98" font-size="16px" fill="#166534">• 교차검증으로 마진 선택</text>
+<text x="325" y="120" font-size="16px" fill="#b91c1c">• 한계: 심한 겹침에 무력</text>
+<path d="M 565,75 L 625,75" stroke="#64748b" stroke-width="3"/>
+<text x="570" y="65" font-size="16px" fill="#475569">도약</text>
+<rect x="630" y="10" width="235" height="130" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="2.5"/>
+<text x="645" y="38" font-size="17px" font-weight="bold" fill="#7e22ce">3. 서포트 벡터 머신</text>
+<text x="645" y="64" font-size="16px" fill="#6b21a8">• 차원 올리기 (x² 등)</text>
+<text x="645" y="88" font-size="16px" fill="#6b21a8">• 커널: 다항 d, RBF</text>
+<text x="645" y="112" font-size="16px" fill="#6b21a8">• 커널 트릭</text>
+<text x="645" y="132" font-size="16px" fill="#059669" font-weight="bold">겹친 데이터도 분류</text>
+<rect x="0" y="165" width="865" height="48" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="25" y="195" font-size="16px" font-weight="bold" fill="#334155">각 단계는 앞 방법이 실패하는 장면에서 출발한다</text>
+</g>
+</svg></figure>
+</div>
+
+<h3 id="3대-선형-분류기-핵심-특성-전수-비교"><a href="#3대-선형-분류기-핵심-특성-전수-비교" class="heading-anchor" aria-hidden="true">#</a> 3대 선형 분류기 핵심 특성 전수 비교</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">비교 기준</th>
+<th align="left">최대 마진 분류기 (Maximal Margin)</th>
+<th align="left">서포트 벡터 분류기 (SVC)</th>
+<th align="left">서포트 벡터 머신 (SVM)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>마진 유형</strong></td>
+<td align="left">오분류 불허 마진</td>
+<td align="left">소프트 마진</td>
+<td align="left">고차원에서의 소프트 마진</td>
+</tr>
+<tr>
+<td align="left"><strong>오분류 허용 여부</strong></td>
+<td align="left">절대 불허 (오차 허용 0개)</td>
+<td align="left">유연하게 허용 (교차검증 결정)</td>
+<td align="left">유연하게 허용 (교차검증 결정)</td>
+</tr>
+<tr>
+<td align="left"><strong>이상치 민감도</strong></td>
+<td align="left">극도로 민감 (과적합 위험)</td>
+<td align="left">강건함 (이상치에 둔감)</td>
+<td align="left">강건함 (이상치에 둔감)</td>
+</tr>
+<tr>
+<td align="left"><strong>편향-분산 특성</strong></td>
+<td align="left">낮은 편향, 높은 분산</td>
+<td align="left">편향 조금 높음, 분산 낮음</td>
+<td align="left">커널과 마진 선택으로 균형</td>
+</tr>
+<tr>
+<td align="left"><strong>작동 공간</strong></td>
+<td align="left">원래의 원본 데이터 차원</td>
+<td align="left">원래의 원본 데이터 차원</td>
+<td align="left">변환된 고차원 (또는 무한 차원)</td>
+</tr>
+<tr>
+<td align="left"><strong>비선형 중첩 해결</strong></td>
+<td align="left">불가능</td>
+<td align="left">불가능 (선형 분할만 가능)</td>
+<td align="left"><strong>가능</strong> (커널을 통한 초평면 분할)</td>
+</tr>
+<tr>
+<td align="left"><strong>분류기를 정하는 것</strong></td>
+<td align="left">두 가장자리 관측의 중점</td>
+<td align="left">교차검증으로 고른 소프트 마진</td>
+<td align="left">커널(종류·차수)과 소프트 마진, 계산은 커널 트릭</td>
+</tr>
+<tr>
+<td align="left"><strong>고르는 값</strong></td>
+<td align="left">없음</td>
+<td align="left">마진 안에 허용할 오분류·관측 수 ([보충] $C$)</td>
+<td align="left">커널 종류, 차수 $d$ ([보충] RBF의 $\gamma$, $C$)</td>
+</tr>
+</tbody></table>
+</div><h3 id="코드에서-챙길-다섯-가지"><a href="#코드에서-챙길-다섯-가지" class="heading-anchor" aria-hidden="true">#</a> 코드에서 챙길 다섯 가지</h3><ol>
+<li><strong>특성을 스케일링하라</strong>:
+SVM은 스케일링하면 더 잘 작동한다. 거리와 내적으로 계산하므로, 단위가 다른 특성을 그대로 넣으면 숫자가 큰 쪽이 결과를 좌우한다.</li>
+<li><strong>스케일러는 훈련 데이터로만 학습하라</strong>:
+데이터 누수를 막기 위해 <code>scaler.fit_transform(X_train)</code>과 <code>scaler.transform(X_test)</code>의 엄격한 분리를 몸에 새겨야 한다.</li>
+<li><strong>숫자 뒤에 숨은 기하학적 분포를 먼저 보라</strong>:
+정확도 68%만 보면 실망스럽다. 그러나 가운데가 크게 겹친 데이터에서 임계값 하나로는 57% 남짓에 그친다. 산점도로 데이터 구조를 먼저 보고 숫자를 읽어라.</li>
+<li><strong>시각화가 필요할 때는 수동 특성을 설계하라</strong>:
+커널 트릭은 경이로운 속도를 제공하지만 내부 좌표를 지워 버린다. 결정 경계를 그려 봐야 한다면, 수동으로 다항 특성을 추가하고 선형 커널을 적용하여 기울기와 절편을 직접 추출하라.</li>
+<li><strong>용어의 계층을 엄격히 구분하라</strong>:
+scikit-learn에서는 서포트 벡터 &#39;분류기&#39;라는 이름의 <code>SVC</code>가 <code>svm</code> 모듈에 있고, 커널을 주면 SVM 전체를 수행한다. 개념상 서포트 벡터 분류기(고른 공간에서 선 긋기)와 SVM(차원을 올린 뒤 선 긋기)의 차이를 알고 있으면 이름에 헷갈리지 않는다.</li>
+</ol>
+<hr>
+<h2 id="각주"><a href="#각주" class="heading-anchor" aria-hidden="true">#</a> 각주</h2><section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1">소프트 마진 최적화와 슬랙 변수의 표준적 정식화는 C. Cortes &amp; V. Vapnik, &quot;Support-Vector Networks&quot;, <em>Machine Learning</em> 20 (1995)에서 비롯한다. 본문의 [보충] 블록은 이 표준 형식을 요약한 것이다.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<li id="fn-2">다항 커널 $(\gamma,a\cdot b + r)^d$, RBF 커널 $\exp(-\gamma|a-b|^2)$, <code>gamma=&#39;scale&#39;</code>의 정의와 <code>SVC</code>의 기본 커널(RBF)·기본 <code>C=1.0</code>은 scikit-learn의 <code>sklearn.svm.SVC</code> 문서 기준이다.<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li></ol></section>
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-29-SVM.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
