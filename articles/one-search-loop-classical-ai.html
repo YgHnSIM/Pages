@@ -1,0 +1,3530 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>인공지능의 심장을 관통하는 단 하나의 루프 — BFS에서 몬테카를로 트리 탐색까지</title>
+  <meta name="description" content="BFS부터 A*, 담금질 기법, 빔 탐색, 유전 알고리즘, 미니맥스, MCTS까지 고전 AI의 탐색 알고리즘은 모두 하나의 탐색 루프에서 '다음에 무엇을 볼 것인가'를 고르는 한 줄만 다르다. 미로·8퀸·틱택토 예제로 다섯 질문을 따라가며 그 계보와 Deep Blue, AlphaGo, 그리고 서튼의 '쓰라린 교훈'까지 해설한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">인공지능의 심장을 관통하는 단 하나의 루프 — BFS에서 몬테카를로 트리 탐색까지</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#서론-지능의-미망을-걷어내면-나타나는-단-하나의-루프" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서론: 지능의 미망을 걷어내면 나타나는 단 하나의 루프</span></a></li><li class="depth-2"><a href="#1-탐색-문제의-정식화-상태-공간과-기억의-탄생" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 탐색 문제의 정식화: 상태 공간과 기억의 탄생</span></a></li><li class="depth-3"><a href="#11-배터리-16의-미로-로봇과-무작위-보행의-파멸" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 배터리 16의 미로 로봇과 무작위 보행의 파멸</span></a></li><li class="depth-3"><a href="#12-상태와-상태-공간-5가지-구성요소의-정식화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 상태와 상태 공간: 5가지 구성요소의 정식화</span></a></li><li class="depth-3"><a href="#13-탐색-트리와-탐색-그래프-기억이-낭비를-제거한다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.3 탐색 트리와 탐색 그래프: 기억이 낭비를 제거한다</span></a></li><li class="depth-2"><a href="#2-경로-찾기의-첫걸음-bfs-dfs-그리고-양방향-탐색" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 경로 찾기의 첫걸음: BFS, DFS, 그리고 양방향 탐색</span></a></li><li class="depth-3"><a href="#21-공통-탐색-루프의-작동-원리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 공통 탐색 루프의 작동 원리</span></a></li><li class="depth-3"><a href="#22-너비-우선-탐색bfs-가장-오래된-것이-만드는-동심원의-물결" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 너비 우선 탐색(BFS): 가장 오래된 것이 만드는 동심원의 물결</span></a></li><li class="depth-3"><a href="#23-깊이-우선-탐색dfs-가장-새로운-것이-파고드는-미로의-막다른-골목" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 깊이 우선 탐색(DFS): 가장 새로운 것이 파고드는 미로의 막다른 골목</span></a></li><li class="depth-3"><a href="#24-알고리즘의-4대-평가-기준과-격자-미로-성적표" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.4 알고리즘의 4대 평가 기준과 격자 미로 성적표</span></a></li><li class="depth-3"><a href="#25-양방향-탐색bidirectional-search-파면의-충돌과-외곽-고리의-절감" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.5 양방향 탐색(Bidirectional Search): 파면의 충돌과 외곽 고리의 절감</span></a></li><li class="depth-2"><a href="#3-걸음마다-무게가-다를-때-균일-비용-탐색ucs과-다익스트라" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 걸음마다 무게가 다를 때: 균일 비용 탐색(UCS)과 다익스트라</span></a></li><li class="depth-3"><a href="#31-비와-웅덩이-가장-적은-걸음이-가장-비싼-길이-되는-순간" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 비와 웅덩이: 가장 적은 걸음이 가장 비싼 길이 되는 순간</span></a></li><li class="depth-3"><a href="#32-균일-비용-탐색ucs-우선순위-큐와-누적-비용-math-inline-35" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 균일 비용 탐색(UCS): 우선순위 큐와 누적 비용 %%MATH_INLINE_35%%</span></a></li><li class="depth-3"><a href="#33-다익스트라dijkstra의-위대한-유산" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 다익스트라(Dijkstra)의 위대한 유산</span></a></li><li class="depth-2"><a href="#4-미래를-내다보는-눈-휴리스틱-탐욕-탐색-그리고-a" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 미래를 내다보는 눈: 휴리스틱, 탐욕 탐색, 그리고 A*</span></a></li><li class="depth-3"><a href="#41-무정보-탐색의-맹목성과-휴리스틱-math-inline-41의-탄생" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 무정보 탐색의 맹목성과 휴리스틱 %%MATH_INLINE_41%%의 탄생</span></a></li><li class="depth-3"><a href="#42-탐욕-최선-우선-탐색greedy-best-first-search-눈앞의-유혹과-파멸" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 탐욕 최선 우선 탐색(Greedy Best-First Search): 눈앞의 유혹과 파멸</span></a></li><li class="depth-3"><a href="#43-a-알고리즘-과거와-미래의-수학적-조화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 A* 알고리즘: 과거와 미래의 수학적 조화</span></a></li><li class="depth-3"><a href="#44-sri의-역사와-허용성admissibility-절대-과대평가하지-말라" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.4 SRI의 역사와 허용성(Admissibility): 절대 과대평가하지 말라</span></a></li><li class="depth-3"><a href="#45-대규모-벤치마크-규모가-커질수록-빛나는-휴리스틱의-힘" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.5 대규모 벤치마크: 규모가 커질수록 빛나는 휴리스틱의 힘</span></a></li><li class="depth-2"><a href="#5-경로가-아닌-최종-상태만-중요할-때-언덕-오르기와-담금질-기법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 경로가 아닌 최종 상태만 중요할 때: 언덕 오르기와 담금질 기법</span></a></li><li class="depth-3"><a href="#51-국소-탐색local-search과-8퀸-문제-메모리-폭발의-탈출구" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 국소 탐색(Local Search)과 8퀸 문제: 메모리 폭발의 탈출구</span></a></li><li class="depth-3"><a href="#52-언덕-오르기hill-climbing-짙은-안개-속의-등산과-국소-최적해의-함정" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 언덕 오르기(Hill Climbing): 짙은 안개 속의 등산과 국소 최적해의 함정</span></a></li><li class="depth-3"><a href="#53-무작위-재시작random-restart-판을-엎는-무자비한-끈기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 무작위 재시작(Random Restart): 판을 엎는 무자비한 끈기</span></a></li><li class="depth-3"><a href="#54-담금질-기법simulated-annealing-일부러-나쁜-수를-두는-역발상의-승리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.4 담금질 기법(Simulated Annealing): 일부러 나쁜 수를 두는 역발상의 승리</span></a></li><li class="depth-3"><a href="#55-경사하강법gradient-descent과의-거울상" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.5 경사하강법(Gradient Descent)과의 거울상</span></a></li><li class="depth-2"><a href="#6-선택지의-확장과-결합-빔-탐색과-유전-알고리즘" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 선택지의 확장과 결합: 빔 탐색과 유전 알고리즘</span></a></li><li class="depth-3"><a href="#61-빔-탐색beam-search-폭-math-inline-134개의-시선과-quot지금-2등이-나중에-1등이-된다quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 빔 탐색(Beam Search): 폭 %%MATH_INLINE_134%%개의 시선과 &quot;지금 2등이 나중에 1등이 된다&quot;</span></a></li><li class="depth-3"><a href="#62-유전-알고리즘genetic-algorithm-상태들의-교배와-적합도의-진화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 유전 알고리즘(Genetic Algorithm): 상태들의 교배와 적합도의 진화</span></a></li><li class="depth-3"><a href="#63-정직한-평가-화려한-은유보다-단순한-기준선baseline과-먼저-경주하라" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 정직한 평가: 화려한 은유보다 단순한 기준선(Baseline)과 먼저 경주하라</span></a></li><li class="depth-2"><a href="#7-적대적-환경의-지능-미니맥스와-몬테카를로-트리-탐색" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 적대적 환경의 지능: 미니맥스와 몬테카를로 트리 탐색</span></a></li><li class="depth-3"><a href="#71-적대적-탐색adversarial-search과-미니맥스minimax" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 적대적 탐색(Adversarial Search)과 미니맥스(Minimax)</span></a></li><li class="depth-3"><a href="#72-shannon의-수와-정적-평가-함수-조기-종료의-법칙" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 Shannon의 수와 정적 평가 함수: 조기 종료의 법칙</span></a></li><li class="depth-3"><a href="#73-deep-blue와-전문가-시스템의-황혼" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 Deep Blue와 전문가 시스템의 황혼</span></a></li><li class="depth-3"><a href="#74-몬테카를로-트리-탐색mcts과-alphago-바둑판을-뒤흔든-무작위의-반란" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.4 몬테카를로 트리 탐색(MCTS)과 AlphaGo: 바둑판을 뒤흔든 무작위의 반란</span></a></li><li class="depth-2"><a href="#8-심화-쓰라린-교훈the-bitter-lesson-탐색과-학습의-웅대한-승리" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. [심화] 쓰라린 교훈(The Bitter Lesson): 탐색과 학습의 웅대한 승리</span></a></li><li class="depth-2"><a href="#9-결론-모든-탐색-뒤에-흐르는-단-하나의-루프" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 결론: 모든 탐색 뒤에 흐르는 단 하나의 루프</span></a></li><li class="depth-3"><a href="#91-탐색-알고리즘-마스터-치트시트master-cheat-sheet" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 탐색 알고리즘 마스터 치트시트(Master Cheat Sheet)</span></a></li><li class="depth-3"><a href="#92-일곱-논거와-열-통찰" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 일곱 논거와 열 통찰</span></a></li><li class="depth-2"><a href="#각주-및-참고문헌" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">각주 및 참고문헌</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-29</span>
+          <span class="meta-badge">⏱️ 약 104분</span>
+          
+        </div>
+        <h1 class="article-title">인공지능의 심장을 관통하는 단 하나의 루프 — BFS에서 몬테카를로 트리 탐색까지</h1>
+        <p class="article-subtitle">Deep Blue와 AlphaGo를 관통하는 상태 공간 탐색의 계보, 5대 질문으로 재구성한 고전 AI 알고리즘과 비터 레슨(The Bitter Lesson)</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#컴퓨터과학</span>
+          
+          <span class="tag-pill">#자료구조</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-29-고전AI탐색.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="서론-지능의-미망을-걷어내면-나타나는-단-하나의-루프"><a href="#서론-지능의-미망을-걷어내면-나타나는-단-하나의-루프" class="heading-anchor" aria-hidden="true">#</a> 서론: 지능의 미망을 걷어내면 나타나는 단 하나의 루프</h2><p>1997년 5월, IBM의 딥 블루(Deep Blue)가 체스 세계 챔피언 가리 카스파로프(Garry Kasparov)를 꺾었을 때 세상은 기계가 마침내 인간의 깊은 통찰력을 복제했다고 믿었다. 2016년 3월에는 딥마인드(DeepMind)의 알파고(AlphaGo)가 이세돌 9단을 4대 1로 이겼다. 바둑의 가능한 판 국면 수는 약 $10^{170}$개에 달하여 관측 가능한 우주 전체의 원자 수($\approx 10^{80}$개)를 넘어선다.<a class="footnote-ref" href="#fn-1" id="fnref-1">1</a> 그리고 스마트폰 길 안내는 거대한 도로망에서 가장 빠른 길을 찾는다.</p>
+<p>체스판, 바둑판, 그리고 복잡한 도로망. 겉보기에 완전히 달라 보이는 이 세 거대한 성취의 심장부에는 사실 완전히 동일한 하나의 엔진이 박동하고 있다. 그것은 바로 <strong>탐색(Search)</strong>이다.</p>
+<p>BFS, UCS, A*, 휴리스틱, 언덕 오르기, 담금질 기법, 빔 탐색, 미니맥스, MCTS 같은 이름들은 보통 서로 다른 장의 독립된 상자처럼 배운다. 그러나 이 알고리즘들은 모두 <strong>하나의 단순한 탐색 루프</strong>에서 나오고, 그 안에서 <strong>&quot;다음에 무엇을 볼 것인가(choose next)&quot;를 정하는 한 줄</strong>이 이름과 성격을 가른다.</p>
+<p>이 거대한 계보는 다섯 가지의 본질적인 질문의 사다리를 따라 전개된다.</p>
+<ol>
+<li><strong>질문 ①: 어떻게든 목적지에 닿는 길을 찾을 것인가?</strong> (BFS, DFS, 양방향 탐색)</li>
+<li><strong>질문 ②: 걸음마다 소모가 다를 때, 가장 비용이 적게 드는 길을 어떻게 찾을 것인가?</strong> (UCS / 다익스트라)</li>
+<li><strong>질문 ③: 무모한 전방위 탐색을 피해, 어떻게 더 적은 칸만 보고 영리하게 갈 것인가?</strong> (휴리스틱, 탐욕 최선 우선 탐색, A*)</li>
+<li><strong>질문 ④: 경로의 과정은 전혀 중요하지 않고, 오직 완성된 최종 답만 필요하다면 어떻게 할 것인가?</strong> (언덕 오르기, 담금질 기법, 빔 탐색, 유전 알고리즘)</li>
+<li><strong>질문 ⑤: 나를 쓰러뜨리려는 지적인 상대방이 실시간으로 맞서 올 때는 어떻게 판단할 것인가?</strong> (미니맥스, 몬테카를로 트리 탐색, 알파고)</li>
+</ol>
+<p>배터리 16의 미로 로봇에서 8퀸과 틱택토, 체스와 바둑까지 이 루프를 따라간다.</p>
+<hr>
+<h2 id="1-탐색-문제의-정식화-상태-공간과-기억의-탄생"><a href="#1-탐색-문제의-정식화-상태-공간과-기억의-탄생" class="heading-anchor" aria-hidden="true">#</a> 1. 탐색 문제의 정식화: 상태 공간과 기억의 탄생</h2><h3 id="11-배터리-16의-미로-로봇과-무작위-보행의-파멸"><a href="#11-배터리-16의-미로-로봇과-무작위-보행의-파멸" class="heading-anchor" aria-hidden="true">#</a> 1.1 배터리 16의 미로 로봇과 무작위 보행의 파멸</h3><p>가로 10칸, 세로 7칸으로 이루어진 2차원 격자 미로가 있다. 짙은 색으로 칠해진 칸은 통과할 수 없는 벽이고, 흰색 칸은 지나갈 수 있는 바닥이다. 미로의 왼쪽 구석(3행 1열)에는 배터리가 거의 방전된 작은 탐사 로봇이 멈춰 서 있고, 반대편 오른쪽 끝(3행 9열)에는 생존을 위한 충전기가 놓여 있다.</p>
+<p>로봇의 남은 배터리는 정확히 <strong>16 단위</strong>다. 바닥 칸을 한 번 이동할 때마다 1의 배터리가 소모된다. 인간 관찰자는 미로 전체를 조감도(Bird&#39;s-eye view)로 한눈에 내려다볼 수 있으므로 최단 탈출 경로가 불과 <strong>10걸음</strong>이라는 사실을 즉각 직관한다. 하지만 시야가 자기 발밑으로 국한된 로봇에게 미로는 칠흑 같은 암흑이다.</p>
+<p>만약 로봇이 아무런 계획 없이 매 순간 동서남북 중 갈 수 있는 방향을 무작위로 골라 발을 떼는 <strong>무작위 보행(Random Walk)</strong>을 감행한다면 어떻게 될까? 시뮬레이션 환경에서 10,000회의 무작위 보행을 실행한 결과, 로봇이 우연히 충전기에 도달하기까지 걸린 걸음 수는 <strong>평균 337걸음</strong>에 달했다. 배터리가 16뿐인 로봇에게 337걸음의 방황은 100%의 확률로 완전 방전과 영구 정지를 의미한다.</p>
+<p>그래서 로봇은 움직이기 전에 머릿속에서 경로를 먼저 시뮬레이션해야 한다. 이것이 <strong>탐색(Search)</strong>이다.</p>
+<blockquote>
+<p>AI는 대부분의 순간 결코 영리하지 않다. 시스템은 단지 무수히 많은 가능성을 믿을 수 없을 만큼 빠른 속도로 시도해 볼 뿐이다. AI가 유일하게 영리해지는 지점은 단 하나, <strong>&quot;다음에 무엇을 시도할 것인가(choose next)&quot;를 현명하게 결정하는 순간</strong>이다.</p>
+</blockquote>
+<h3 id="12-상태와-상태-공간-5가지-구성요소의-정식화"><a href="#12-상태와-상태-공간-5가지-구성요소의-정식화" class="heading-anchor" aria-hidden="true">#</a> 1.2 상태와 상태 공간: 5가지 구성요소의 정식화</h3><p>문제를 계산 가능한 알고리즘에 올리기 위해서는 현실의 복잡한 물리 세계를 엄밀한 수학적 언어로 추상화해야 한다. 이를 <strong>문제 정식화(Problem Formulation)</strong>라고 부르며, 모든 탐색 문제는 다음 다섯 조각으로 정의된다.</p>
+<p>상태(State)는 특정 시점에서 탐색에 중요한 정보의 스냅숏이다. 미로에서 상태는 로봇의 좌표 $(r, c)$이며, 벽을 제외한 바닥 칸이 <strong>48개</strong>이므로 상태도 48개다. 상태들과 그 사이의 한 걸음 전이를 모두 모은 것이 상태 공간이다. 이 위에서 문제를 정의하는 다섯 조각은 다음과 같다.</p>
+<ol>
+<li><strong>초기 상태(Initial State):</strong> 탐색이 시작되는 출발점이다. 여기서는 로봇의 위치인 $(3, 1)$이다.</li>
+<li><strong>행동(Actions):</strong> 특정 상태에서 시스템이 취할 수 있는 합법적인 선택지다. 로봇은 상, 하, 좌, 우로 한 칸 이동하는 4가지 행동을 취할 수 있다.</li>
+<li><strong>전이 모델(Transition Model):</strong> 특정 상태에서 어떤 행동을 취했을 때 도달하게 되는 다음 상태를 정의한다. 오른쪽으로 가면 $(r, c+1)$이 되고, 벽으로 돌진하는 행동은 제자리에 머문다.</li>
+<li><strong>목표 검사(Goal Test):</strong> 현재 상태가 탐색을 종료할 목적지인지 판별하는 조건이다. &quot;현재 좌표가 충전기 위치인 $(3, 9)$인가?&quot;라는 명제로 표현된다.</li>
+<li><strong>경로 비용(Path Cost):</strong> 출발점부터 목표점까지의 경로를 따라 누적된 비용의 총합이다. 초기 미로에서는 각 걸음마다 배터리 1이 소모되므로 총 걸음 수가 곧 경로 비용이 된다.</li>
+</ol>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">도메인</th>
+<th align="left">상태 (State)</th>
+<th align="left">합법적 행동 (Action)</th>
+<th align="left">목표 조건 (Goal Test)</th>
+<th align="left">경로 비용 (Cost)</th>
+<th align="left">상태 공간 규모</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>격자 미로</strong></td>
+<td align="left">로봇의 현재 좌표 $(r, c)$</td>
+<td align="left">상·하·좌·우 1칸 이동</td>
+<td align="left">충전기 좌표 도달</td>
+<td align="left">걸음 수 (배터리 1/보)</td>
+<td align="left">48개 상태</td>
+</tr>
+<tr>
+<td align="left"><strong>8퍼즐</strong></td>
+<td align="left">$3 \times 3$ 격자 위 8개 타일 배치</td>
+<td align="left">빈칸으로 인접 타일 밀기</td>
+<td align="left">1부터 8까지 순서대로 정렬</td>
+<td align="left">타일 이동 횟수 (1/회)</td>
+<td align="left">181,440개 도달 상태<a class="footnote-ref" href="#fn-2" id="fnref-2">2</a></td>
+</tr>
+<tr>
+<td align="left"><strong>루빅스 큐브</strong></td>
+<td align="left">$3 \times 3 \times 3$ 큐브의 색 배치</td>
+<td align="left">면 회전</td>
+<td align="left">모든 면이 단색</td>
+<td align="left">회전 횟수</td>
+<td align="left">약 $4.3 \times 10^{19}$개<a class="footnote-ref" href="#fn-3" id="fnref-3">3</a></td>
+</tr>
+<tr>
+<td align="left"><strong>Google 도로망</strong></td>
+<td align="left">도로망의 지점</td>
+<td align="left">연결된 도로 주행</td>
+<td align="left">목적지 도달</td>
+<td align="left">주행 시간</td>
+<td align="left">약 2억 개 상태<a class="footnote-ref" href="#fn-4" id="fnref-4">4</a></td>
+</tr>
+<tr>
+<td align="left"><strong>스도쿠</strong></td>
+<td align="left">부분적으로 채워진 $9 \times 9$ 숫자판</td>
+<td align="left">빈칸에 숫자 기입</td>
+<td align="left">규칙에 맞는 완결판</td>
+<td align="left">최종 배치만 평가</td>
+<td align="left">(확인 필요)</td>
+</tr>
+<tr>
+<td align="left"><strong>자동 텍스트 완성</strong></td>
+<td align="left">지금까지의 단어열</td>
+<td align="left">다음 단어 추가</td>
+<td align="left">메시지 완성</td>
+<td align="left">문장 전체의 확률</td>
+<td align="left">매우 큼</td>
+</tr>
+<tr>
+<td align="left"><strong>체스</strong></td>
+<td align="left">기물 배치 및 차례(Turn) 정보</td>
+<td align="left">합법적인 기물 이동</td>
+<td align="left">상대 킹의 체크메이트</td>
+<td align="left">게임 승패 (적대적 탐색)</td>
+<td align="left">약 $10^{120}$개 (섀넌 수)<a class="footnote-ref" href="#fn-5" id="fnref-5">5</a></td>
+</tr>
+</tbody></table>
+</div><p>[해설] 이 5대 구성요소의 보편성은 경이롭다. 미로 탈출과 8퍼즐, 루빅스 큐브뿐만 아니라 현대 LLM의 문장 생성과 체스 게임까지 완벽하게 동일한 틀 안에서 기술된다. 단, 스도쿠와 텍스트 완성은 경로 자체가 아니라 &#39;최종 도달한 상태의 적합도&#39;만을 평가하며(질문 ④), 체스는 상대방이 나에게 가장 치명적인 수로 맞서 온다는 점(질문 ⑤)에서 경로 탐색과 갈라진다.</p>
+<h3 id="13-탐색-트리와-탐색-그래프-기억이-낭비를-제거한다"><a href="#13-탐색-트리와-탐색-그래프-기억이-낭비를-제거한다" class="heading-anchor" aria-hidden="true">#</a> 1.3 탐색 트리와 탐색 그래프: 기억이 낭비를 제거한다</h3><p>로봇이 내부 메모리 속에서 경로 계획을 수립할 때, 출발 노드를 루트(Root)로 두고 각 행동에 따른 다음 상태들을 가지(Branch)로 뻗어 나가는 가상 구조를 구축한다. 이것이 <strong>탐색 트리(Search Tree)</strong>다.</p>
+<p>그러나 순진한 탐색 트리는 치명적인 결함을 품고 있다. <strong>트리는 자신이 과거에 어디를 방문했는지를 기억하지 못한다.</strong><br>예를 들어 출발점 $(3, 1)$에서 &#39;오른쪽&#39;으로 이동하여 $(3, 2)$에 도달한 로봇이, 다음 분기에서 &#39;왼쪽&#39;으로 이동하면 다시 출발점인 $(3, 1)$로 복귀한다. 트리는 이 두 상태가 물리적으로 동일한 칸이라는 사실을 인지하지 못한 채, 무한히 반복되는 왕복 경로를 서로 다른 새로운 가지로 착각하여 계속 뻗어 나간다.</p>
+<p>시뮬레이션 결과, 기억 장치가 없는 순수 탐색 트리는 가로 10, 세로 7의 작은 미로에서 충전기를 찾아내기까지 무려 <strong>4,115개의 가상 계획</strong>을 검토해야 했다. 그리고 이 4,115개의 계획 중 <strong>4,030개는 아무런 진전 없이 왔던 길을 무의미하게 왔다 갔다 한 헛발질</strong>이었다.</p>
+<p>이 거대한 계산 낭비를 일거에 해결하는 열쇠는 단 하나, 시스템에 <strong>기억(Memory)</strong>을 부여하는 것이다.<br>이미 방문한 상태를 닫힌 목록에 기록하고 다시 나오면 건너뛰면, 트리의 가지들이 미로의 실제 칸 위로 접힌다. 이것이 <strong>탐색 그래프(Search Graph)</strong>다.</p>
+<blockquote>
+<p><strong>핵심 테제: 트리와 그래프의 분수령</strong><br>&quot;탐색 트리는 지나온 곳을 잊어버리고, 탐색 그래프는 기억한다.&quot;<br>기억을 장착한 탐색 그래프는 4,115개의 계획을 검토하던 낭비를 단 <strong>44개의 칸만 탐색</strong>하는 우아한 효율로 압축한다.</p>
+</blockquote>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
+<text x="30" y="42" font-size="20px" font-weight="bold" fill="#0f172a">도식 1: 공통 탐색 루프(Universal Search Loop)와 5대 갈래</text>
+<text x="30" y="68" font-size="14px" fill="#64748b">모든 고전·현대 탐색 알고리즘은 하나의 핵심 루프를 공유하며, 'choose_next'의 자료구조와 평가 기준에 의해 분화된다.</text>
+<g transform="translate(40, 95)">
+<rect width="360" height="350" rx="10" fill="#f8fafc" stroke="#3b82f6" stroke-width="2"/>
+<rect width="360" height="38" rx="10" fill="#3b82f6"/>
+<text x="180" y="25" font-size="15px" font-weight="bold" fill="#ffffff" text-anchor="middle">공통 탐색 루프 (The One Search Loop)</text>
+<text x="20" y="65" font-family="monospace" font-size="13px" fill="#1e293b" font-weight="bold">frontier = [initial_state]</text>
+<text x="20" y="85" font-family="monospace" font-size="13px" fill="#1e293b" font-weight="bold">came_from = {initial_state: None}</text>
+<text x="20" y="115" font-family="monospace" font-size="13px" fill="#0f172a">while frontier is not empty:</text>
+<rect x="35" y="128" width="295" height="26" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="42" y="146" font-family="monospace" font-size="13px" fill="#b45309" font-weight="bold">node = choose_next(frontier) ★</text>
+<text x="40" y="178" font-family="monospace" font-size="13px" fill="#0f172a">if is_goal(node):</text>
+<text x="60" y="198" font-family="monospace" font-size="13px" fill="#15803d">return reconstruct_path(came_from)</text>
+<text x="40" y="230" font-family="monospace" font-size="13px" fill="#0f172a">for next_state in neighbors(node):</text>
+<text x="60" y="250" font-family="monospace" font-size="13px" fill="#0f172a">if next_state not in visited:</text>
+<text x="80" y="270" font-family="monospace" font-size="13px" fill="#2563eb">came_from[next_state] = node</text>
+<text x="80" y="290" font-family="monospace" font-size="13px" fill="#2563eb">frontier.add(next_state)</text>
+<rect x="20" y="315" width="320" height="24" rx="4" fill="#e0f2fe"/>
+<text x="180" y="331" font-size="12px" fill="#0369a1" text-anchor="middle" font-weight="bold">★ 단 한 줄의 'choose_next'가 알고리즘을 결정한다</text>
+</g>
+<g transform="translate(430, 95)">
+<rect x="0" y="0" width="490" height="58" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.2"/>
+<text x="15" y="24" font-size="13px" font-weight="bold" fill="#166534">질문 ① 어떤 경로든 일단 찾기</text>
+<text x="15" y="44" font-size="12px" fill="#15803d">BFS (FIFO 큐, 오래된 순) | DFS (LIFO 스택, 최근 순) | 양방향 (두 파면의 충돌)</text>
+<rect x="0" y="70" width="490" height="58" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.2"/>
+<text x="15" y="94" font-size="13px" font-weight="bold" fill="#1e40af">질문 ② 걸음마다 비용이 다를 때 최저 비용 찾기</text>
+<text x="15" y="114" font-size="12px" fill="#2563eb">UCS / 다익스트라 (우선순위 큐, 누적 비용 g(n) 최소 선택, 완화 갱신)</text>
+<rect x="0" y="140" width="490" height="58" rx="8" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.2"/>
+<text x="15" y="164" font-size="13px" font-weight="bold" fill="#6b21a8">질문 ③ 덜 뒤지고 목표로 빠르게 접근하기</text>
+<text x="15" y="184" font-size="12px" fill="#7e22ce">탐욕 최선 우선 (h(n) 최소) | A* 알고리즘 (f(n) = g(n) + h(n) 최소, 허용적 추정)</text>
+<rect x="0" y="210" width="490" height="68" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.2"/>
+<text x="15" y="234" font-size="13px" font-weight="bold" fill="#9a3412">질문 ④ 경로 없이 최종 완성 배치만 필요할 때 (국소 탐색)</text>
+<text x="15" y="254" font-size="12px" fill="#c2410c">언덕 오르기 (이웃 중 최선) | 담금질 기법 (볼츠만 확률 수용) | 빔 탐색 (상위 K개) | 유전 (교차·변이)</text>
+<rect x="0" y="290" width="490" height="58" rx="8" fill="#fdf2f8" stroke="#fbcfe8" stroke-width="1.2"/>
+<text x="15" y="314" font-size="13px" font-weight="bold" fill="#9d174d">질문 ⑤ 나를 무너뜨리려는 상대방이 맞설 때 (적대적 탐색)</text>
+<text x="15" y="334" font-size="12px" fill="#be185d">미니맥스 (최악 가정 백트래킹) | 몬테카를로 트리 탐색 (MCTS: 선택·확장·시뮬레이션·역전파)</text>
+</g>
+</svg></figure>
+<hr>
+<h2 id="2-경로-찾기의-첫걸음-bfs-dfs-그리고-양방향-탐색"><a href="#2-경로-찾기의-첫걸음-bfs-dfs-그리고-양방향-탐색" class="heading-anchor" aria-hidden="true">#</a> 2. 경로 찾기의 첫걸음: BFS, DFS, 그리고 양방향 탐색</h2><h3 id="21-공통-탐색-루프의-작동-원리"><a href="#21-공통-탐색-루프의-작동-원리" class="heading-anchor" aria-hidden="true">#</a> 2.1 공통 탐색 루프의 작동 원리</h3><p>첫 번째 질문은 단순하다. &quot;비용이나 시간의 최적성을 따지기 전에, 출발지에서 목적지까지 도달하는 유효한 경로를 어떻게든 찾아낼 수 있는가?&quot;</p>
+<p>탐색을 시작할 때 로봇은 아직 방문하지 않은 미개척 후보지들을 보관할 작업 목록을 유지해야 한다. 컴퓨터 과학 교과서에서 이 목록을 <strong>프론티어(Frontier, 개척지 목록)</strong> 또는 대기열(To-do List)이라고 부른다.</p>
+<p>루프의 생명 주기는 다음과 같이 진행된다.</p>
+<ol>
+<li>프론티어에서 검토할 상태 하나를 꺼낸다 (<code>choose_next</code>). 꺼내진 상태는 즉시 &#39;탐색 완료(Explored)&#39;로 집계된다.</li>
+<li>꺼낸 상태가 목표(충전기)인지 검사한다 (<code>is_goal</code>).</li>
+<li>목표가 아니라면, 그 상태의 이웃(상·하·좌·우 열린 칸)들을 생성한다.</li>
+<li>이전에 도달한 적이 없는 새로운 이웃이라면, 역추적 표(<code>came_from</code>)에 &#39;어디서 이 칸으로 왔는지&#39; 부모 상태의 좌표를 기록하고, 그 이웃을 프론티어에 집어넣는다.</li>
+<li>충전기가 프론티어에서 꺼내질 때까지 이 과정을 무한히 반복한다.</li>
+</ol>
+<p>탐색이 성공하면 충전기에서부터 <code>came_from</code> 포인터를 거꾸로 거슬러 올라가 출발점까지 연결되는 완전한 주행 경로를 복원한다. 이 뼈대 안에서 알고리즘의 성패를 가르는 유일한 질문은 이것이다. <strong>&quot;프론티어에 쌓여 있는 수많은 후보 칸 중, 지금 당장 어느 칸을 먼저 꺼내어 조사할 것인가?&quot;</strong></p>
+<h3 id="22-너비-우선-탐색bfs-가장-오래된-것이-만드는-동심원의-물결"><a href="#22-너비-우선-탐색bfs-가장-오래된-것이-만드는-동심원의-물결" class="heading-anchor" aria-hidden="true">#</a> 2.2 너비 우선 탐색(BFS): 가장 오래된 것이 만드는 동심원의 물결</h3><p>가장 직관적인 선택 규칙은 <strong>&quot;프론티어에 가장 먼저 들어와서 가장 오래 기다린 칸을 먼저 꺼내는 것&quot;</strong>이다.<br>자료구조의 관점에서 이는 <strong>선입선출(FIFO: First-In, First-Out) 큐(Queue)</strong>를 사용하는 것을 의미한다. 이를 <strong>너비 우선 탐색(Breadth-First Search, BFS)</strong>이라 부른다.</p>
+<p>로봇의 출발점 $(3, 1)$에서 시작해 보자. 출발점을 꺼내면 오른쪽 칸 $(3, 2)$와 왼쪽 칸 $(3, 0)$이 프론티어에 등록된다. 둘 다 출발점으로부터 정확히 1걸음 떨어진 상태들이다.</p>
+<ul>
+<li>BFS는 가장 오래 기다린 오른쪽 칸을 먼저 꺼낸다. 그 칸의 상·하 이웃들이 큐의 맨 뒤에 추가된다. 이들은 출발점으로부터 2걸음 거리다.</li>
+<li>다음으로 왼쪽 칸을 꺼낸다. 그 이웃들이 다시 큐의 맨 뒤에 합류한다. 이들 역시 2걸음 거리다.</li>
+<li>새로운 칸은 언제나 줄의 맨 끝에 서므로, 큐 안에 대기 중인 모든 칸은 항상 &#39;출발점으로부터의 거리 순&#39;으로 정렬된다.</li>
+</ul>
+<p>결과적으로 BFS의 확장은 잔잔한 연못에 돌을 던졌을 때 동심원을 그리며 퍼져나가는 물결(Ripple)과 완벽하게 일치한다. 1걸음 떨어진 모든 칸을 샅샅이 뒤진 뒤에야 비로소 2걸음 떨어진 칸들을 살피고, 그 뒤에 3걸음 칸들로 나아간다.</p>
+<p>BFS 물결은 10번째 고리(Ring 10)에 도달하는 순간 충전기 $(3, 9)$를 건드린다. <code>came_from</code> 표를 역추적하면 정확히 <strong>10걸음짜리 최단 경로</strong>가 회수된다. 미로의 전체 48개 바닥 칸 중 <strong>44개의 칸을 꼼꼼하게 탐색</strong>한 결과다.</p>
+<p>[해설] 왜 BFS가 찾은 경로는 언제나 최소 걸음 수임이 수학적으로 보장되는가?<br>BFS는 $k$번째 고리를 모두 검사하기 전에는 $k+1$번째 고리로 넘어가지 않는다. 그러니 목표를 처음 꺼내는 순간보다 더 짧은 경로는 있을 수 없다.<br><strong>&quot;가장 오래된 것을 먼저 본다(Oldest first)&quot;는 것은 곧 &quot;출발지에서 가장 가까운 것을 먼저 본다(Nearest first)&quot;는 뜻이며, 이는 필연적으로 &quot;가장 적은 걸음 수(Fewest steps)&quot;라는 최적성을 낳는다.</strong></p>
+<h3 id="23-깊이-우선-탐색dfs-가장-새로운-것이-파고드는-미로의-막다른-골목"><a href="#23-깊이-우선-탐색dfs-가장-새로운-것이-파고드는-미로의-막다른-골목" class="heading-anchor" aria-hidden="true">#</a> 2.3 깊이 우선 탐색(DFS): 가장 새로운 것이 파고드는 미로의 막다른 골목</h3><p>그렇다면 반대로 <strong>&quot;프론티어에 가장 늦게 들어온, 가장 새로운 칸을 먼저 꺼내면&quot;</strong> 어떻게 될까?<br>자료구조로는 <strong>후입선출(LIFO: Last-In, First-Out) 스택(Stack)</strong>을 사용하는 것이며, 이것이 바로 <strong>깊이 우선 탐색(Depth-First Search, DFS)</strong>이다.</p>
+<p>DFS의 동작은 BFS와 정반대의 풍경을 연출한다.</p>
+<ul>
+<li>출발점에서 왼쪽 칸이 큐의 맨 나중에 들어왔다면, DFS는 그 왼쪽 칸을 즉시 집어 든다.</li>
+<li>그리고 그 칸의 이웃을 스택의 맨 위에 얹고, 다음 턴에 방금 얹은 그 이웃을 곧바로 파고든다.</li>
+<li>로봇은 동심원을 그리지 않고, 미로의 한쪽 골목길 끝까지 맹렬한 기세로 직진하여 벽에 부딪힐 때까지 파고든 뒤에야 비로소 갈림길로 되돌아 나온다(Backtracking).</li>
+</ul>
+<p>미로 실험에서 DFS는 매우 기이한 성적표를 받아든다. 충전기를 찾기까지 방문한 칸 수는 불과 <strong>19칸</strong>으로, BFS가 44칸을 뒤진 것에 비해 절반도 일하지 않았다. 그러나 찾아낸 경로는 무려 <strong>16걸음</strong>이나 걸리는 꼬불꼬불한 우회로였다.<br>배터리가 정확히 16인 로봇은 충전기에 닿는 그 찰나에 배터리가 &#39;0&#39;이 되어 간신히 멈춰 선다. 여유는 전혀 없었다.</p>
+<p>DFS는 빠르게 깊은 곳으로 침투하지만, 자신이 찾은 경로가 최단 경로라는 어떠한 보장도 제공하지 못한다. 최적성(Optimality)이 결여되어 있는 것이다.</p>
+<h3 id="24-알고리즘의-4대-평가-기준과-격자-미로-성적표"><a href="#24-알고리즘의-4대-평가-기준과-격자-미로-성적표" class="heading-anchor" aria-hidden="true">#</a> 2.4 알고리즘의 4대 평가 기준과 격자 미로 성적표</h3><p>컴퓨터 과학에서 탐색 알고리즘을 평가할 때 사용하는 객관적인 4대 잣대는 다음과 같다.</p>
+<ol>
+<li><strong>완전성(Completeness):</strong> 해답(목표)이 물리적으로 존재할 때, 알고리즘이 그것을 반드시 찾아내는가?</li>
+<li><strong>최적성(Optimality):</strong> 알고리즘이 찾아낸 해답이 존재하는 모든 경로 중 최저 비용(최소 걸음)임을 보장하는가?</li>
+<li><strong>시간 복잡도(Time Complexity):</strong> 해를 찾기까지 탐색(방문)한 총 상태(칸)의 수가 얼마인가?</li>
+<li><strong>공간 복잡도(Space Complexity):</strong> 탐색 과정에서 프론티어와 방문 목록에 동시에 기억하고 있어야 하는 최대 상태의 수가 얼마인가?</li>
+</ol>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">탐색 알고리즘</th>
+<th align="left"><code>choose_next</code> 기준</th>
+<th align="left">자료구조</th>
+<th align="center">완전성</th>
+<th align="center">최적성</th>
+<th align="center">탐색한 칸 수 (시간)</th>
+<th align="center">기억한 칸 수 (메모리)</th>
+<th align="center">결과 경로 길이</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>너비 우선 탐색 (BFS)</strong></td>
+<td align="left">가장 오래된 상태</td>
+<td align="left">FIFO 큐</td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>보장</strong> (단위 비용 시)</td>
+<td align="center">44칸</td>
+<td align="center">46칸 (방문 44 + 대기 2)</td>
+<td align="center"><strong>10걸음</strong> (최적)</td>
+</tr>
+<tr>
+<td align="left"><strong>깊이 우선 탐색 (DFS)</strong></td>
+<td align="left">가장 최근 추가 상태</td>
+<td align="left">LIFO 스택</td>
+<td align="center">그래프 탐색 시 보장<a class="footnote-ref" href="#fn-6" id="fnref-6">6</a></td>
+<td align="center"><strong>불가</strong></td>
+<td align="center"><strong>19칸</strong></td>
+<td align="center">25칸 (방문 19 + 대기 6)</td>
+<td align="center">16걸음 (비효율)</td>
+</tr>
+<tr>
+<td align="left"><strong>양방향 탐색 (Bidirectional)</strong></td>
+<td align="left">시작·목표 양방향 번갈기</td>
+<td align="left">듀얼 FIFO 큐</td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>27칸</strong> (16 + 11)</td>
+<td align="center">36칸</td>
+<td align="center"><strong>10걸음</strong> (최적)</td>
+</tr>
+</tbody></table>
+</div><h3 id="25-양방향-탐색bidirectional-search-파면의-충돌과-외곽-고리의-절감"><a href="#25-양방향-탐색bidirectional-search-파면의-충돌과-외곽-고리의-절감" class="heading-anchor" aria-hidden="true">#</a> 2.5 양방향 탐색(Bidirectional Search): 파면의 충돌과 외곽 고리의 절감</h3><p>BFS는 10걸음의 최적 경로를 찾아내지만, 48칸 중 44칸을 뒤져야 할 정도로 일의 양이 많았다. 탐색량을 획기적으로 줄이면서도 최단 경로의 최적성을 그대로 유지할 방법은 없을까?</p>
+<p>여기서 등장하는 기법이 <strong>양방향 탐색(Bidirectional Search)</strong>이다.<br>아이디어는 우아하다. 로봇의 출발점 $(3, 1)$에서 전방 탐색의 물결을 퍼뜨리는 동시에, 충전기 $(3, 9)$에서도 역방향 탐색의 물결을 거꾸로 퍼뜨린다. 두 물결이 번갈아 확장되다가 중간 지점에서 서로 맞닿는 순간 탐색을 즉시 멈추고 양쪽 경로를 결합한다.</p>
+<p>미로 실험 결과, 양방향 탐색은 <strong>10걸음 최적 경로</strong>를 완벽하게 유지하면서도 탐색한 칸 수를 <strong>27칸(로봇 쪽 16칸 + 충전기 쪽 11칸)</strong>으로 대폭 줄였다. 기억한 칸 수 역시 36칸에 불과했다.</p>
+<p>[해설] 왜 양방향 탐색은 칸 수를 줄일 수 있는가?<br>출발지에서 목표까지의 최단 거리를 $d$, 분기 계수(Branching factor, 한 칸에서 갈 수 있는 평균 선택지 수)를 $b$라 하자.<br>단방향 BFS의 탐색량은 고리가 거듭될수록 지수함수적으로 증가하여 대략 $b^d$에 비례한다.<br>그러나 양방향 탐색은 양쪽에서 각각 절반의 깊이($d/2$)까지만 전진하므로, 탐색량은 대략 $2 \cdot b^{d/2}$가 된다([해설] 교과서적 근사).</p>
+<p>실제로 20수만에 풀리는 고난도 <strong>8퍼즐(8-Puzzle)</strong> 문제를 단방향 BFS로 풀었을 때는 무려 <strong>57,593개의 상태</strong>를 뒤져야 했다.<br>양방향 탐색은 단 <strong>957개 상태</strong>로 같은 최적해를 찾았다. 8퍼즐의 고리는 평균 1.56배씩 커지고 마지막 19번째 고리에만 12,208개 상태가 있는데, 양방향 탐색은 이 가장 큰 외곽 고리를 건너뛴다.</p>
+<p>그러나 양방향 탐색에는 치명적인 제약이 따른다. <strong>목표 상태가 단 하나의 구체적인 스냅숏으로 명확하게 주어져 있어야만 역방향 물결을 시작할 수 있다는 점</strong>이다.<br>미로는 충전기의 좌표가 $(3, 9)$로 명확하다. 하지만 체스 게임의 목표인 &#39;체크메이트&#39;는 셀 수 없이 많은 기물 배치로 이루어질 수 있다. 어디서부터 역방향 물결을 퍼뜨려야 할지 알 수 없으므로, 이러한 열린 목표 문제에는 양방향 탐색을 원천적으로 적용할 수 없다.</p>
+<hr>
+<h2 id="3-걸음마다-무게가-다를-때-균일-비용-탐색ucs과-다익스트라"><a href="#3-걸음마다-무게가-다를-때-균일-비용-탐색ucs과-다익스트라" class="heading-anchor" aria-hidden="true">#</a> 3. 걸음마다 무게가 다를 때: 균일 비용 탐색(UCS)과 다익스트라</h2><h3 id="31-비와-웅덩이-가장-적은-걸음이-가장-비싼-길이-되는-순간"><a href="#31-비와-웅덩이-가장-적은-걸음이-가장-비싼-길이-되는-순간" class="heading-anchor" aria-hidden="true">#</a> 3.1 비와 웅덩이: 가장 적은 걸음이 가장 비싼 길이 되는 순간</h3><p>지금까지의 미로에서는 모든 바닥 칸을 한 걸음 디딜 때마다 동일하게 1의 배터리가 소모되었다.<br>걸음당 비용이 균일하다면 &#39;가장 적은 걸음 수&#39;가 곧 &#39;가장 적은 배터리 소모&#39;를 의미하며, BFS는 완벽한 최적해를 보장한다.</p>
+<p>하지만 현실의 세계는 결코 균일하지 않다. 고속도로를 달릴 때와 진흙탕을 건널 때의 연료 소모가 다르고, 평지를 걸을 때와 험준한 산악 지형을 오를 때의 체력 소모가 다르다.</p>
+<p>미로에 갑작스러운 비가 내리기 시작한다. 로봇의 출발점 바로 위쪽 복도에 깊은 <strong>물웅덩이(Puddle) 2칸</strong>이 고인다. 웅덩이 한 칸을 지날 때는 <strong>배터리 5</strong>가 든다.</p>
+<p>이제 BFS가 찾아낸 10걸음짜리 최단 경로를 냉정하게 계산해 보자.<br>그 경로는 상단 복도를 직선으로 가로지르기 때문에 웅덩이 2칸을 정면으로 통과한다.
+$$\text{BFS 경로 비용} = (8 \text{개의 마른 칸} \times 1) + (2 \text{개의 웅덩이 칸} \times 5) = 8 + 10 = 18 \text{ 배터리}$$</p>
+<p>로봇이 가진 전체 배터리는 16뿐이다. BFS가 안내한 길을 맹목적으로 따르던 로봇은 충전기를 불과 두 칸 앞둔 지점에서 완전히 방전되어 작동을 멈춘다.<br>반면 미로 아래쪽으로 크게 우회하는 또 다른 길이 있다. 이 우회로는 총 <strong>14걸음</strong>이나 걸리는 긴 경로지만, 길 전체에 웅덩이가 하나도 없는 마른 바닥이다.
+$$\text{하단 우회로 비용} = 14 \text{개의 마른 칸} \times 1 = 14 \text{ 배터리}$$</p>
+<p>로봇은 14 배터리만을 소모하고 충전기에 무사히 안착하며, 심지어 2의 배터리가 여유로 남는다.<br>이 장면은 탐색 이론의 가장 근본적인 교훈을 던진다. <strong>&quot;가장 적은 걸음 수(Fewest steps)가 결코 가장 저렴한 경로(Cheapest path)를 의미하지 않는다.&quot;</strong></p>
+<h3 id="32-균일-비용-탐색ucs-우선순위-큐와-누적-비용-math-inline-35"><a href="#32-균일-비용-탐색ucs-우선순위-큐와-누적-비용-math-inline-35" class="heading-anchor" aria-hidden="true">#</a> 3.2 균일 비용 탐색(UCS): 우선순위 큐와 누적 비용 $g(n)$</h3><p>걸음마다 비용이 다를 때 시스템은 단순히 걸음 수를 세는 대신, 실제로 소모된 배터리 총량을 추적해야 한다.<br>출발 상태에서 현재 상태 $n$까지 도달하는 데 실제로 누적된 총 경로 비용을 우리는 수학 기호 <strong>$g(n)$</strong>으로 표기한다.</p>
+<p>질문 ②에 답하는 알고리즘이 바로 <strong>균일 비용 탐색(Uniform Cost Search, UCS)</strong>이다.<br>UCS의 선택 규칙은 간결하다. <strong>&quot;프론티어에 들어 있는 상태들 중, 지금까지 쓴 누적 비용 $g(n)$이 가장 작은 상태를 먼저 꺼낸다.&quot;</strong></p>
+<p>이 규칙을 구현하기 위해 프론티어의 자료구조가 극적으로 진화한다. 단순히 먼저 온 순서대로 줄을 서는 큐(Queue)나 나중에 온 것을 쌓는 스택(Stack) 대신, 항목마다 중요도 점수를 매겨 가장 점수가 낮은(비용이 싼) 항목을 즉각 반환하는 <strong>우선순위 큐(Priority Queue)</strong>를 도입한다.</p>
+<p>이를 위해 공통 탐색 루프에 두 가지 중요한 수정이 가해진다.</p>
+<ol>
+<li><strong>비용 추적 표(<code>cost</code> 또는 <code>battery</code>):</strong> 각 칸에 도달하기 위해 지금까지 발견된 최소 비용 $g(n)$을 기록하는 해시 테이블을 관리한다.</li>
+<li><strong>완화(Relaxation)를 통한 재방문 허용:</strong> 맑은 날에는 특정 칸에 &#39;가장 먼저 도달한 경로&#39;가 언제나 최선이었다. 하지만 비가 오는 날에는 처음 발견한 길이 비싼 웅덩이를 거쳐온 길일 수 있다. 따라서 <strong>이미 방문했던 칸이라 할지라도, 나중에 더 저렴한 우회로를 통해 그 칸에 도달할 수 있는 새로운 경로를 발견하면, 비용 표의 수치를 갱신하고 프론티어에 그 칸을 다시 집어넣어 하류 경로들을 업데이트</strong>한다.</li>
+</ol>
+<p>[해설] 왜 이 알고리즘의 이름에 &#39;균일(Uniform)&#39;이라는 단어가 붙었는가?<br>&#39;균일&#39;은 모든 걸음의 비용이 같다는 뜻이 결코 아니다. 반대로 걸음마다 비용이 천차만별일 때, 탐색의 파면이 &#39;누적 비용이 같은 등고선(Equi-cost contours)&#39;을 따라 균일하게 퍼져나간다는 물리적 의미를 담고 있다.</p>
+<p>미로에서 UCS를 실행하면, 로봇 주변의 마른 칸들은 비용 1, 2, 3, 4 순으로 빠르게 확장된다. 그러다 상단 복도의 웅덩이 칸을 만나면 비용이 단숨에 $3 + 5 = 8$로 치솟는다. 우선순위 큐는 비용이 8인 웅덩이 칸을 대기열의 맨 뒤로 밀어내 버리고, 비용이 4, 5, 6, 7로 유지되는 하단의 마른 우회로 칸들을 계속 먼저 탐색한다.<br>결국 UCS는 하단 우회로를 통해 <strong>비용 14의 최적 경로</strong>를 찾아내며 로봇을 살려낸다.</p>
+<p>단, UCS의 정직성은 가혹한 대가를 요구한다. 가장 싼 경로를 완벽하게 증명하기 위해, 웅덩이를 둘러싼 거의 모든 마른 칸을 먼저 뒤져야 하므로 미로의 전체 <strong>48개 상태를 모조리 탐색하고 기억</strong>하게 된다.</p>
+<h3 id="33-다익스트라dijkstra의-위대한-유산"><a href="#33-다익스트라dijkstra의-위대한-유산" class="heading-anchor" aria-hidden="true">#</a> 3.3 다익스트라(Dijkstra)의 위대한 유산</h3><p>우리가 방금 구축한 균일 비용 탐색(UCS)은 사실 컴퓨터 과학 역사상 가장 위대한 알고리즘 중 하나로 꼽히는 <strong>다익스트라 알고리즘(Dijkstra&#39;s Algorithm)</strong>의 또 다른 이름이다.</p>
+<p>1956년 에츠허르 데이크스트라(Edsger W. Dijkstra)는 약혼녀와 암스테르담에서 장을 보다 카페 테라스에 앉아 커피를 마시던 중, 네덜란드 도시 사이의 최단 경로를 구하는 방법을 <strong>약 20분 만에, 종이와 연필 없이</strong> 고안했다. 이 알고리즘은 1959년 세 쪽짜리 논문으로 발표되었다.<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a></p>
+<p>[해설] 다익스트라 알고리즘과 UCS는 같은 기계다. 흔히 다익스트라는 한 출발점에서 모든 정점까지의 최단 거리를 구하는 형태로, UCS는 목표를 꺼내는 즉시 멈추는 형태로 소개된다는 차이가 있을 뿐이다.</p>
+<p>우리가 매일 사용하는 스마트폰의 길 안내 시스템 역시 이 거인의 어깨 위에 서 있다.<br>도로망에서 미로의 칸은 도로망의 지점이 되고, 배터리 소모는 주행 시간이 된다. 운전자가 어떤 경로를 선호하는지 학습하는 Google 연구진의 논문은 약 <strong>2억 개 상태</strong>의 도로망을 구축했고, 그 경로 계산에 다익스트라 알고리즘을 쓴다.<a class="footnote-ref" href="#fn-4">4</a> (논문의 플래너 설명 방식은 확인 필요)</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
+<text x="30" y="38" font-size="18px" font-weight="bold" fill="#0f172a">도식 2: 10×7 격자 미로에서 4대 탐색 알고리즘의 파면(Wavefront) 및 궤적 비교</text>
+<text x="30" y="62" font-size="13px" fill="#64748b">비가 내려 웅덩이(비용 5)가 생긴 환경에서 걸음 수 위주(BFS), 과거 비용 위주(UCS), 미래 추정 위주(Greedy), 통합 균형(A*)의 거동 차이</text>
+<g transform="translate(30, 85)">
+<rect width="430" height="300" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="30" font-size="14px" font-weight="bold" fill="#dc2626">(A) 실패 사례: BFS와 탐욕 최선 우선 탐색 (비용 18 > 16)</text>
+<rect x="20" y="50" width="390" height="150" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+<rect x="140" y="80" width="150" height="30" fill="#334155" rx="3"/>
+<rect x="250" y="110" width="40" height="60" fill="#334155" rx="3"/>
+<circle cx="50" cy="115" r="12" fill="#3b82f6"/>
+<text x="50" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
+<text x="50" y="145" font-size="11px" fill="#1e40af" text-anchor="middle" font-weight="bold">로봇 (3,1)</text>
+<circle cx="380" cy="115" r="12" fill="#10b981"/>
+<text x="380" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
+<text x="380" y="145" font-size="11px" fill="#065f46" text-anchor="middle" font-weight="bold">충전기 (3,9)</text>
+<rect x="180" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
+<rect x="220" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
+<text x="218" y="71" font-size="11px" font-weight="bold" fill="#1e3a8a" text-anchor="middle">웅덩이(비용5×2)</text>
+<path d="M 50 115 L 140 115 L 140 66 L 300 66 L 300 115 L 340 115" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-dasharray="6,4"/>
+<circle cx="340" cy="115" r="6" fill="#ef4444"/>
+<text x="340" y="105" font-size="11px" font-weight="bold" fill="#dc2626" text-anchor="middle">비용 18, 방전</text>
+<text x="20" y="225" font-size="12px" fill="#334155"><tspan font-weight="bold">• BFS:</tspan> 걸음 수(10)만 보아 웅덩이 직진, 비용 18 발생으로 방전 실패</text>
+<text x="20" y="248" font-size="12px" fill="#334155"><tspan font-weight="bold">• Greedy:</tspan> 충전기와 가까워 보이는 상단만 맹목 추종(11칸 탐색), 비용 18 실패</text>
+<text x="20" y="272" font-size="12px" fill="#dc2626" font-weight="bold">공통 원인: 과거의 누적 비용(g)을 무시하거나 미래의 무게를 모름</text>
+</g>
+<g transform="translate(500, 85)">
+<rect width="430" height="300" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="30" font-size="14px" font-weight="bold" fill="#166534">(B) 최적 성공 사례: UCS와 A* (하단 우회로, 비용 14 &lt; 16)</text>
+<rect x="20" y="50" width="390" height="150" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+<rect x="140" y="80" width="150" height="30" fill="#334155" rx="3"/>
+<rect x="250" y="110" width="40" height="60" fill="#334155" rx="3"/>
+<circle cx="50" cy="115" r="12" fill="#3b82f6"/>
+<text x="50" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
+<circle cx="380" cy="115" r="12" fill="#10b981"/>
+<text x="380" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
+<rect x="180" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
+<rect x="220" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
+<path d="M 50 115 L 100 115 L 100 180 L 330 180 L 330 115 L 380 115" fill="none" stroke="#16a34a" stroke-width="3.5"/>
+<text x="215" y="172" font-size="12px" font-weight="bold" fill="#15803d" text-anchor="middle">마른 하단 우회로 (14걸음, 비용 14)</text>
+<text x="20" y="225" font-size="12px" fill="#334155"><tspan font-weight="bold">• UCS (다익스트라):</tspan> 웅덩이 회피 성공(비용 14), 그러나 48칸 전수 탐색</text>
+<text x="20" y="248" font-size="12px" fill="#334155"><tspan font-weight="bold">• A* (f = g + h):</tspan> 하단 우회로 완벽 선택(비용 14), 단 32칸만 탐색!</text>
+<text x="20" y="272" font-size="12px" fill="#15803d" font-weight="bold">승리의 비결: 과거 누적 비용(g)과 미래 추정(h)의 완벽한 수학적 조화</text>
+</g>
+</svg></figure>
+<hr>
+<h2 id="4-미래를-내다보는-눈-휴리스틱-탐욕-탐색-그리고-a"><a href="#4-미래를-내다보는-눈-휴리스틱-탐욕-탐색-그리고-a" class="heading-anchor" aria-hidden="true">#</a> 4. 미래를 내다보는 눈: 휴리스틱, 탐욕 탐색, 그리고 A*</h2><h3 id="41-무정보-탐색의-맹목성과-휴리스틱-math-inline-41의-탄생"><a href="#41-무정보-탐색의-맹목성과-휴리스틱-math-inline-41의-탄생" class="heading-anchor" aria-hidden="true">#</a> 4.1 무정보 탐색의 맹목성과 휴리스틱 $h(n)$의 탄생</h3><p>균일 비용 탐색(UCS)은 마침내 비 내리는 미로에서 비용 14의 안전한 우회로를 찾아냈다. 그러나 그 대가는 처절했다. 미로의 전체 48개 칸을 단 한 칸도 남김없이 전부 뒤져야 했다.</p>
+<p>UCS가 이토록 엄청난 계산을 낭비하는 이유는 무엇일까?<br>UCS의 파면은 충전기 반대쪽으로도 똑같이 퍼진다. 지금까지 쓴 배터리($g$)만 셀 뿐, 충전기가 어느 쪽에 있는지 모르기 때문이다. 이처럼 목적지의 방향성을 모른 채 사방으로 균등하게 퍼지는 방식을 <strong>무정보 탐색(Uninformed Search)</strong> 또는 맹목 탐색이라 부른다.</p>
+<p>만약 인간이 그 미로 속에 서 있다면 결코 그렇게 행동하지 않을 것이다. 인간은 눈을 들어 충전기가 대략 오른쪽 어딘가에 있다는 사실을 인지하고, 가급적 오른쪽을 향하는 통로부터 우선적으로 탐색할 것이다.</p>
+<p>알고리즘에 이 직관적인 공간 감각을 선물하는 도구가 바로 <strong>휴리스틱(Heuristic, 발견법 추정치)</strong>이며, 기호로는 <strong>$h(n)$</strong>으로 표기한다.</p>
+<blockquote>
+<p><strong>휴리스틱 $h(n)$의 정의</strong><br>현재 상태 $n$에서 목표 상태까지 도달하는 데 앞으로 추가로 소모될 잔여 경로 비용을 <strong>대략적으로 어림잡아 추정한 값(Estimate)</strong>이다.</p>
+</blockquote>
+<p>미로 문제에서 가장 단순하면서도 강력한 휴리스틱은 <strong>맨해튼 거리(Manhattan Distance)</strong>다.<br>격자 도시인 뉴욕 맨해튼의 블록을 걷듯이, 벽과 웅덩이가 물리적으로 아예 존재하지 않는 평원이라고 가정하고 가로로 떨어진 칸 수와 세로로 떨어진 칸 수를 단순히 더하는 것이다.
+$$h(n) = |\text{목표행} - \text{현재행}| + |\text{목표열} - \text{현재열}|$$</p>
+<p>로봇의 출발점 $(3, 1)$에서 충전기 $(3, 9)$까지의 거리를 계산해 보면, 세로 차이는 $3-3=0$이고 가로 차이는 $9-1=8$이므로 휴리스틱 추정치는 $h = 8$이다.<br>실제 최적 경로의 비용이 14인 것과 비교하면 8이라는 숫자는 실제보다 작다. 휴리스틱은 벽이나 웅덩이 같은 현실의 장애물을 보지 못하는 단순화된 지도이기 때문이다. 지형의 장애물을 무시하고 지도 위에 자를 대고 잰 직선거리(As the crow flies, 까마귀가 날아가는 거리) 역시 동일한 원리의 유클리드 휴리스틱이다.</p>
+<p>휴리스틱을 장착하여 목적지의 방향성을 감지하며 나아가는 탐색을 <strong>정보 탐색(Informed Search)</strong>이라 부른다.</p>
+<h3 id="42-탐욕-최선-우선-탐색greedy-best-first-search-눈앞의-유혹과-파멸"><a href="#42-탐욕-최선-우선-탐색greedy-best-first-search-눈앞의-유혹과-파멸" class="heading-anchor" aria-hidden="true">#</a> 4.2 탐욕 최선 우선 탐색(Greedy Best-First Search): 눈앞의 유혹과 파멸</h3><p>휴리스틱 $h(n)$을 손에 쥔 로봇이 시도할 수 있는 가장 단순한 발상은 이것이다. <strong>&quot;프론티어에 있는 상태들 중, 목표까지 남은 거리 추정치 $h(n)$이 가장 작은 칸을 무조건 먼저 꺼낸다.&quot;</strong><br>목표에 당장 가장 가까워 보이는 칸을 맹목적으로 집어삼킨다고 하여 이를 <strong>탐욕 최선 우선 탐색(Greedy Best-First Search)</strong>이라 부른다.</p>
+<p>내부 구조상 탐욕 탐색은 UCS와 완전히 동일한 우선순위 큐를 사용한다. 단 하나의 차이는 <strong>정렬의 기준값</strong>뿐이다.<br>UCS가 누적 비용 $g(n)$으로 큐를 정렬했다면, 탐욕 탐색은 잔여 추정치 $h(n)$으로 큐를 정렬한다.</p>
+<p>미로에서 탐욕 탐색을 실행하면 눈이 번쩍 뜨이는 속도가 나온다.</p>
+<ul>
+<li>출발점($h=8$)에서 오른쪽 칸은 $h=7$, 왼쪽 칸은 $h=9$이므로 거침없이 오른쪽을 택한다.</li>
+<li>그 다음 상·하 이웃의 $h$가 모두 8로 같아지자, 먼저 목록에 들어온 상단 복도로 진입한다.</li>
+<li>그 이후로는 한 걸음 갈 때마다 $h$가 7, 6, 5, 4, 3, 2, 1, 0으로 매 걸음 1씩 줄어들기 때문에, 탐욕 알고리즘은 단 한 번의 머뭇거림도 없이 충전기를 향해 돌진한다.</li>
+<li>하단 우회로는 쳐다보지도 않는다. 충전기에 도달하기까지 탐색한 칸 수는 <strong>불과 11칸</strong>, 기억한 칸 수도 18칸에 불과하여 지금까지의 모든 알고리즘 중 가장 적게 일했다.</li>
+</ul>
+<p>그러나 로봇이 찾아낸 경로를 복원하는 순간 비극이 드러난다.<br>탐욕 알고리즘이 내달린 상단 복도는 다름 아닌 <strong>웅덩이 2칸이 고여 있던 그 길</strong>이었다.<br>경로 비용은 $8 + 5 + 5 = 18$로 폭증했고, 배터리가 16인 로봇은 충전기 바로 앞에서 멈춰 서며 붉은 낙제점(X)을 받는다.</p>
+<p>[해설] 탐욕 탐색의 치명적인 맹점은 무엇인가?<br>탐욕 알고리즘은 &#39;앞으로 남은 거리($h$)&#39;에만 온 신경을 집중할 뿐, <strong>&#39;지금까지 발을 들이며 치른 대가($g$)&#39;를 완전히 망각</strong>한다. 눈앞에 보이는 목적지가 가까워 보인다는 이유만으로 발밑이 용암이든 진흙탕이든 가리지 않고 뛰어드는 단견(Myopia)에 빠져 있는 것이다.</p>
+<h3 id="43-a-알고리즘-과거와-미래의-수학적-조화"><a href="#43-a-알고리즘-과거와-미래의-수학적-조화" class="heading-anchor" aria-hidden="true">#</a> 4.3 A* 알고리즘: 과거와 미래의 수학적 조화</h3><p>이제 두 알고리즘의 성적표가 극명하게 갈라졌다.</p>
+<ul>
+<li><strong>균일 비용 탐색(UCS):</strong> 지금까지 쓴 배터리 $g(n)$만 본다. 완벽하게 안전하고 저렴한 경로를 찾아내지만, 48칸을 모조리 뒤지는 무식한 계산량을 치른다.</li>
+<li><strong>탐욕 탐색(Greedy):</strong> 앞으로 남은 거리 추정치 $h(n)$만 본다. 11칸만 보고 달려가지만, 웅덩이를 지나 비용 18로 방전된다.</li>
+</ul>
+<p>그렇다면 답은 자명하다. <strong>과거의 비용 $g(n)$과 미래의 추정치 $h(n)$을 더하면 되지 않는가?</strong></p>
+<p>이 위대한 결합이 바로 그 유명한 평가 함수 $f(n)$이다.
+$$f(n) = g(n) + h(n)$$</p>
+<ul>
+<li>$g(n)$: 출발지에서 현재 상태 $n$까지 오는 데 실제로 지출한 확정 비용</li>
+<li>$h(n)$: 현재 상태 $n$에서 목표 상태까지 가는 데 들 것으로 예상되는 추정 비용</li>
+<li><strong>$f(n)$:</strong> 현재 상태 $n$을 경유하여 출발지부터 목적지까지 완주할 때 발생할 <strong>&#39;전체 여행 경로의 총비용에 대한 합리적 추정치&#39;</strong></li>
+</ul>
+<p>프론티어의 우선순위 큐를 이 $f(n)$이 가장 작은 순서대로 정렬하여 탐색하는 알고리즘, 이것이 바로 인공지능 탐색의 금자탑인 *<em>A</em> 알고리즘(A-Star Search)**이다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">python</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-python"># 자료구조의 시각에서 본 세 알고리즘의 본질적 일체성
+# 셋은 동일한 우선순위 큐를 사용하며, 오직 정렬 키(Key)만 다를 뿐이다.
+
+def choose_next_ucs(frontier):
+    return frontier.pop_min(key=lambda node: g[node])              # f = g
+
+def choose_next_greedy(frontier):
+    return frontier.pop_min(key=lambda node: h[node])              # f = h
+
+def choose_next_astar(frontier):
+    return frontier.pop_min(key=lambda node: g[node] + h[node])    # f = g + h</code></pre>
+</div><p>A*의 발걸음을 미로에서 추적해 보자. 각 칸에는 $g, h, f$ 세 개의 숫자가 함께 적힌다.</p>
+<ol>
+<li>출발점 $(3, 1)$의 비용은 $g=0, h=8$이므로 $f = 0 + 8 = 8$이다.</li>
+<li>오른쪽 칸은 $g=1, h=7$이므로 $f = 1 + 7 = 8$이다. 반면 왼쪽 칸은 $g=1, h=9$이므로 $f = 1 + 9 = 10$이다. $f$가 8인 오른쪽 칸으로 전진한다.</li>
+<li>A*는 먼저 $f=8$인 칸들을 모두 처리하고, 이어 $f=10$, $f=12$인 칸들을 차례로 처리한다. 왼쪽 칸($f=10$)도 이때 열어 본다. 탐욕 탐색은 하지 않던 일이다.</li>
+<li>그다음에야 $f=14$인 칸들에 이르는데, 첫 번째 웅덩이도 그중 하나다. 로봇 위 복도의 웅덩이 칸은 $g=3+5=8$, $h=6$으로 $f=14$다. 마른 아래쪽 줄도 모두 $f=14$다. 중간의 한 칸은 처음엔 웅덩이를 거쳐 $g=10$으로 기록되었다가, 더 싼 길이 발견되어 $g=8$로 고쳐지고 $f$도 16에서 14로 내려간다.</li>
+<li>A*는 $f \le 14$인 칸만 살펴보고 $f \ge 16$인 칸은 건너뛴 채, <strong>비용 14의 최적 경로</strong>를 찾아낸다. 두 번째 웅덩이를 지나는 길($f=18$)은 끝내 열어 보지 않는다.</li>
+</ol>
+<p>이 과정에서 A*가 탐색한 칸 수는 <strong>32칸</strong>, 기억한 칸 수는 38칸에 불과했다.<br>UCS가 48칸을 모조리 뒤졌던 것에 비하면 탐색량을 33% 이상 덜어내면서도, 탐욕 탐색처럼 함정에 빠지지 않고 완벽한 최적해를 수확한 것이다.</p>
+<h3 id="44-sri의-역사와-허용성admissibility-절대-과대평가하지-말라"><a href="#44-sri의-역사와-허용성admissibility-절대-과대평가하지-말라" class="heading-anchor" aria-hidden="true">#</a> 4.4 SRI의 역사와 허용성(Admissibility): 절대 과대평가하지 말라</h3><p>A* 알고리즘은 1968년 SRI(당시 Stanford Research Institute)의 피터 하트(Peter Hart), 닐스 닐슨(Nils Nilsson), 버트럼 라파엘(Bertram Raphael)이 발표했다.<a class="footnote-ref" href="#fn-8" id="fnref-8">8</a> 이들은 셰이키(Shakey)라는 로봇을 위해 A<em>를 만들었고, SRI는 오늘날 휴대폰의 길 안내도 여전히 셰이키를 위해 설계된 A</em>를 쓴다고 말한다.</p>
+<p>당시 논문에서 저자들은 추정치 $h(n)$(논문 표기로는 모자를 쓴 $\hat{h}$)을 수학적으로 <strong>&#39;하한(Lower Bound)&#39;</strong>이라 불렀다.<br>그리고 A*가 반드시 최적 경로를 찾아내기 위해 휴리스틱이 충족해야 하는 절대적인 대원칙을 수학적으로 증명했다. 그것이 바로 <strong>허용성(Admissibility)</strong>이다.</p>
+<blockquote>
+<p><strong>A*의 핵심 정리: 허용성(Admissibility) 조건 (Hart et al., 1968 Theorem 1)</strong><br>휴리스틱 $h(n)$이 임의의 상태 $n$에서 목표 상태까지 도달하는 실제 최소 잔여 비용 $h^*(n)$을 <strong>어떠한 경우에도 과대평가(Overestimate)하지 않을 때</strong>, 즉 모든 상태 $n$에 대해 다음 부등식이 성립할 때,
+$$0 \le h(n) \le h^*(n)$$
+<em><em>A</em> 알고리즘은 반드시 최적 경로(Cheapest Path)를 찾아낸다.</em>*</p>
+</blockquote>
+<p>[해설] 왜 과대평가하지 않는 추정치가 최적성을 보장하는가?<br>최적 경로 비용을 $C^*$(미로에서는 14)라 하면, 허용적 휴리스틱에서는 최적 경로 위 노드의 $f$가 $C^*$를 넘지 않는다.
+A*는 $f$가 작은 노드부터 꺼내므로, 더 비싼 경로 위의 노드는 최적 경로 후보보다 먼저 꺼내져 해답이 될 수 없다. <strong>과대평가하지 않는 추정치는 더 나쁜 경로가 먼저 채택되는 일을 막는다.</strong></p>
+<p>반대로 휴리스틱이 실제를 과대평가하면 어떻게 될까?<br>미로 실험에서 맨해튼 거리에 인위적으로 3을 곱한 왜곡된 휴리스틱($h' = 3h$)을 주입해 보았다.<br>평가 함수는 $f = g + 3h$가 되어 미래 추정치의 목소리가 과거 비용보다 3배나 커졌다. 그 결과 A*는 탐욕 탐색처럼 변질되어 버렸다. 단 14칸만을 탐색하는 빠른 속도를 보였지만, 웅덩이로 직진하여 <strong>비용 18짜리 불량 경로</strong>를 최적해라고 내놓으며 참담하게 실패했다.</p>
+<h3 id="45-대규모-벤치마크-규모가-커질수록-빛나는-휴리스틱의-힘"><a href="#45-대규모-벤치마크-규모가-커질수록-빛나는-휴리스틱의-힘" class="heading-anchor" aria-hidden="true">#</a> 4.5 대규모 벤치마크: 규모가 커질수록 빛나는 휴리스틱의 힘</h3><p>10×7 격자 미로에서 A*가 거둔 효율(32칸 vs 48칸)은 문제의 크기가 커질수록 폭발적인 위력을 발휘한다.</p>
+<p>가로 45칸, 세로 25칸으로 이루어진 큰 미로에서 세 알고리즘을 경주시킨 벤치마크 결과는 다음과 같다.</p>
+<ul>
+<li><em><em>A</em> 알고리즘:</em>* 최적 비용 <strong>54</strong>를 달성하면서, 단 <strong>215칸</strong>만을 탐색했다.</li>
+<li><strong>균일 비용 탐색 (UCS):</strong> 동일한 최적 비용 <strong>54</strong>를 찾아냈지만, 무려 <strong>701칸</strong>을 샅샅이 뒤졌다. A*가 UCS에 비해 계산량을 <strong>70% 가까이 절감</strong>한 것이다.</li>
+<li><strong>탐욕 최선 우선 탐색:</strong> 불과 <strong>64칸</strong>만 보고 번개처럼 달렸지만, 찾아낸 경로의 비용은 무려 <strong>84</strong>로 최적해보다 1.5배 이상 비쌌다.</li>
+</ul>
+<p>20수의 이동이 필요한 <strong>8퍼즐(8-Puzzle)</strong> 문제에서는 휴리스틱의 정밀도에 따른 극적인 격차가 드러난다.</p>
+<ul>
+<li><strong>단위 비용 BFS (무정보 탐색):</strong> 57,593개의 상태를 무차별적으로 전개했다.</li>
+<li><em><em>A</em> (제자리에 있지 않은 타일 수 휴리스틱):</em>* 시작 상태에서 $h=6$인 단순 추정을 사용했을 때, 탐색 상태 수는 <strong>3,667개</strong>로 급감했다.</li>
+<li><em><em>A</em> (각 타일의 맨해튼 거리 합산 휴리스틱):</em>* 시작 상태에서 $h=14$로 실제 정답(20)에 훨씬 더 가깝게 설계된 정교한 추정을 주입하자, 탐색 상태 수는 단 <strong>283개</strong>로 곤두박질쳤다.</li>
+</ul>
+<blockquote>
+<p><strong>휴리스틱의 제2 법칙</strong><br>휴리스틱 추정치 $h(n)$이 허용성을 위반하지 않는 한도 내에서 <strong>실제 정답 비용 $h^*(n)$에 바짝 다가설수록, 낭비되는 탐색이 크게 줄어든다.</strong></p>
+</blockquote>
+<hr>
+<h2 id="5-경로가-아닌-최종-상태만-중요할-때-언덕-오르기와-담금질-기법"><a href="#5-경로가-아닌-최종-상태만-중요할-때-언덕-오르기와-담금질-기법" class="heading-anchor" aria-hidden="true">#</a> 5. 경로가 아닌 최종 상태만 중요할 때: 언덕 오르기와 담금질 기법</h2><h3 id="51-국소-탐색local-search과-8퀸-문제-메모리-폭발의-탈출구"><a href="#51-국소-탐색local-search과-8퀸-문제-메모리-폭발의-탈출구" class="heading-anchor" aria-hidden="true">#</a> 5.1 국소 탐색(Local Search)과 8퀸 문제: 메모리 폭발의 탈출구</h3><p>지금까지 우리가 다룬 질문들은 모두 &quot;출발지에서 목적지까지 어떻게 갈 것인가&quot;라는 &#39;경로(Path)&#39;를 찾는 문제였다.<br>하지만 세상에는 경로의 형성 과정은 티끌만큼도 중요하지 않고, 오직 <strong>&#39;모든 제약조건을 만족하는 최종 완성 배치(Final State)&#39;</strong> 하나만이 유일한 목적인 방대한 문제 군이 존재한다.</p>
+<p>신문 귀퉁이의 스도쿠(Sudoku)를 풀 때를 생각해 보라. 누구도 당신이 1번 칸을 먼저 채웠는지, 9번 칸을 나중에 채웠는지 묻지 않는다. 제출된 최종 격자가 규칙에 맞게 채워져 있는가만이 유일한 평가 기준이다.</p>
+<p>이러한 최적화 문제를 대표하는 고전적 벤치마크가 바로 <strong>8퀸 문제(8-Queens Problem)</strong>다.<br>체스판($8 \times 8$ 격자) 위에 8개의 퀸(Queen)을 배치하되, 어떤 퀸도 서로를 공격할 수 없도록(같은 행, 같은 열, 같은 대각선 상에 두 퀸이 마주 보지 않도록) 배치하는 문제다.</p>
+<p>문제를 정식화하기 위해, 각 열(Column)에 정확히 하나의 퀸만 둘 수 있다는 합리적 제약을 둔다.<br>그러면 하나의 상태는 8개 열에서 각 퀸이 위치한 행(Row) 번호, 즉 8자리 정수(예: <code>1-7-5-0-3-1-2-4</code>)로 완벽하게 표현된다. 이 제약 아래에서도 가능한 전체 상태의 수는 $8^8 = 16,777,216$개(약 1,677만 개)에 달하지만, 그중 서로 공격하지 않는 정답 해는 <strong>단 92개</strong>뿐이다.</p>
+<p>만약 이 문제를 앞서 배운 체계적 탐색(BFS)으로 풀려고 시도하면 어떻게 될까?<br>시작 판에서부터 퀸을 하나씩 움직여 보며 큐에 넣는 BFS를 돌려보면, 충격적인 메모리 폭발(Memory Blowup)이 발생한다. 불과 6,328개의 판을 탐색했을 때, 프론티어 큐에 대기 중인 상태 수는 무려 <strong>73,327개</strong>까지 불어나 시스템 메모리를 질식시켜 버린다.</p>
+<p>해답으로 가는 &#39;경로&#39;를 기억할 필요가 없다면, 왜 수만 개의 과거 분기들을 메모리에 쥐고 끙끙대야 하는가?<br>단 하나의 판만 손에 쥐고, 그것을 조금씩 뜯어고쳐 더 나은 판으로 변형해 가면 되지 않는가? 이 발상에서 출발한 패러다임이 바로 <strong>국소 탐색(Local Search)</strong>이다.</p>
+<h3 id="52-언덕-오르기hill-climbing-짙은-안개-속의-등산과-국소-최적해의-함정"><a href="#52-언덕-오르기hill-climbing-짙은-안개-속의-등산과-국소-최적해의-함정" class="heading-anchor" aria-hidden="true">#</a> 5.2 언덕 오르기(Hill Climbing): 짙은 안개 속의 등산과 국소 최적해의 함정</h3><p>국소 탐색의 가장 단순한 형태는 <strong>언덕 오르기(Hill Climbing, 경사상승법)</strong>다.<br>시스템은 현재 판 상태 단 하나만을 메모리에 보관한다. 그리고 현재 상태에서 퀸 하나를 같은 열의 다른 행으로 한 칸 옮겨서 만들 수 있는 모든 직속 이웃 상태들을 생성한다. 열이 8개이고 각 열마다 7개의 다른 행이 있으므로, 이웃 판의 수는 정확히 $8 \times 7 = \mathbf{56\text{개}}$다.</p>
+<p>알고리즘의 동작은 지극히 기계적이다.</p>
+<ol>
+<li>현재 판에서 서로를 공격하고 있는 퀸의 쌍(Attacking pairs)의 수를 센다. 공격 쌍이 적을수록 더 높은 고지(높은 가치)다.</li>
+<li>56개의 이웃 판들을 전부 평가하여, <strong>공격 쌍의 수가 가장 크게 줄어드는(가장 좋은) 이웃 판 하나를 골라 그 판으로 자리를 옮긴다.</strong></li>
+<li>56개 이웃 중 어느 것도 현재 판보다 공격 쌍을 줄여주지 못하는 상태에 도달하면 탐색을 즉시 종료한다.</li>
+</ol>
+<p>실제로 운이 좋은 실행에서는 이 알고리즘이 마법 같은 속도를 뽐낸다. 공격 쌍이 5개였던 판에서 출발하여 $5 \to 3 \to 2 \to 1 \to 0$으로 불과 네 번의 점프 만에 정답에 도달했고, 검토한 판의 수는 $56 \times 4 = 224\text{개}$에 불과했다. 메모리는 판 하나(최대 56개)면 충분하므로 공간 복잡도는 $O(1)$이다.</p>
+<p>언덕 오르기는 <strong>짙은 안개 속에서 산을 오르는 등산가</strong>와 같다. 그는 오직 자기 발밑의 경사도만 느낄 수 있을 뿐, 앞을 내다보는 계획도 없고 뒤를 돌아보는 기억도 없다. 그저 발밑에서 가장 가파르게 위로 솟은 방향으로 한 발짝 내딛을 뿐이다.</p>
+<p>그래서 주변 56개 이웃이 모두 현재보다 낫지 않은 국소 최적해나 평원에 갇혀 멈춘다.</p>
+<p>실제로 무작위로 생성한 1,000개의 8퀸 판에 언덕 오르기를 돌려본 결과, <strong>정답을 찾아낸 판은 단 161개(약 16.1%)에 불과</strong>했다. 나머지 839개는 더 나아갈 수 없는 판에 갇혔다. 미로 문제에서도 언덕 오르기를 돌리면 잔여 거리 $h=7$인 막다른 벽 앞에서 더 이상 나아가지 못하고 멈춘다.</p>
+<h3 id="53-무작위-재시작random-restart-판을-엎는-무자비한-끈기"><a href="#53-무작위-재시작random-restart-판을-엎는-무자비한-끈기" class="heading-anchor" aria-hidden="true">#</a> 5.3 무작위 재시작(Random Restart): 판을 엎는 무자비한 끈기</h3><p>가짜 봉우리에 갇혔을 때 취할 수 있는 가장 우직한 처방은 <strong>무작위 재시작(Random Restart Hill Climbing)</strong>이다.<br>알고리즘이 더 이상 나아가지 못하고 갇히면, 미련 없이 현재 판을 쓰레기통에 내던져 버리고 <strong>완전히 새로운 무작위 배치에서 처음부터 다시 등산을 시작</strong>한다.</p>
+<p>언덕 오르기 한 번의 성공률이 약 16%라면, 주사위를 대여섯 번 던지면 한 번은 성공할 것이라는 확률적 계산이다.<br>실제로 1,000개의 문제에 무작위 재시작을 적용한 결과, <strong>평균 6.8번(약 7번)의 재시도</strong> 만에 1,000개 문제 전부를 100% 풀어냈다.</p>
+<p>그러나 이 방식은 너무나 투박하다. 퀸 7개가 완벽하게 정렬되어 있고 단 1개의 퀸만 잘못 놓여 있는 유망한 판이라 할지라도, 막히는 순간 판 전체를 무자비하게 폐기하고 백지에서 다시 시작해야 하기 때문이다. 이로 인해 해 하나를 얻기 위해 검토해야 하는 판의 수는 <strong>평균 1,507개</strong>에 달했다.</p>
+<h3 id="54-담금질-기법simulated-annealing-일부러-나쁜-수를-두는-역발상의-승리"><a href="#54-담금질-기법simulated-annealing-일부러-나쁜-수를-두는-역발상의-승리" class="heading-anchor" aria-hidden="true">#</a> 5.4 담금질 기법(Simulated Annealing): 일부러 나쁜 수를 두는 역발상의 승리</h3><p>&quot;가짜 봉우리에 갇혔을 때, 판 전체를 내던지지 않고 아주 가끔 고의로 내리막길(나쁜 수)을 걸어 내려올 수는 없을까?&quot;</p>
+<p>이 발상은 금속 담금질(풀림)에서 왔다. 뜨거운 금속을 천천히 식히면 원자들이 요동치며 결함을 빠져나와 낮은 에너지 상태로 정렬된다.</p>
+<p>1983년 IBM의 연구원 스콧 커크패트릭(Scott Kirkpatrick), C. 대니얼 겔라트(C. Daniel Gelatt), 마리오 베키(Mario P. Vecchi)는 이 현상을 최적화 알고리즘으로 옮겼고, 이를 <strong>담금질 기법(Simulated Annealing)</strong>이라 명명했다.<a class="footnote-ref" href="#fn-9" id="fnref-9">9</a> 그들의 원문 논문은 바로 우리가 직면한 문제, 즉 &quot;국소 탐색이 국소 최적해에 갇히는 병폐를 어떻게 돌파할 것인가&quot;에서 출발했으며, 이 기법을 컴퓨터 칩 설계에 썼다.</p>
+<p>담금질 기법의 메커니즘은 다음과 같다.</p>
+<ol>
+<li>56개 이웃을 전부 검사하지 않고, 무작위로 이웃 판 하나를 툭 골라잡는다 (따라서 한 걸음에 단 1개의 판만 본다!).</li>
+<li>그 수가 현재보다 더 좋거나 같은 수라면 <strong>무조건 수용</strong>한다.</li>
+<li>그 수가 현재보다 더 나쁜 수(공격 쌍이 늘어나는 수)라 할지라도, <strong>일정한 확률 $P$에 따라 그 나쁜 수를 기꺼이 받아들인다.</strong></li>
+<li>매 단계마다 시스템의 가상 온도 $T$에 냉각 계수 $0.999$를 곱해 서서히 식힌다 ($T \leftarrow T \times 0.999$).</li>
+</ol>
+<p>[해설] 나쁜 수를 받아들일 확률은 통계역학의 볼츠만 인자와 같은 꼴이다.
+$$P = \exp\left(-\frac{\Delta E}{T}\right) \approx 0.37^{\frac{\Delta E}{T}}$$
+여기서 $\Delta E$는 그 수가 초래하는 추가 공격 쌍의 수이고, $T$는 현재 온도다. 공격 쌍이 늘어날수록 확률은 줄어든다.</p>
+<ul>
+<li>온도가 높을 때($T \approx 1$): $\Delta E=1$인 나쁜 수는 100번 중 약 37번, $\Delta E=3$이면 $0.37^3$으로 100번 중 약 5번 통과한다.</li>
+<li>온도가 차갑게 식었을 때($T \approx 0.1$): $\Delta E=1$이 분모의 0.1로 인해 10배로 증폭되어, 통과 확률은 $0.37^{10} \approx 0.00005$(10만 번 중 약 5번)로 급감한다. 이제 시스템은 철저하게 좋은 수만을 고르며 미세 조정으로 수렴한다.</li>
+</ul>
+<p>공격 쌍이 1개 남아 언덕 오르기가 멈췄던 막다른 판에 담금질 기법을 투입해 보았다.<br>시스템은 17단계에서 공격 쌍 1개에 도달했지만, 아직 온도가 따뜻했기에 나쁜 수를 연속으로 받아들이며 봉우리를 박차고 나왔다. 탐색 과정에서 총 <strong>37번의 나쁜 수를 고의로 수용</strong>했고, 한때는 공격 쌍이 11개까지 치솟는 극심한 혼란을 겪기도 했다.<br>그러나 <strong>343단계에 도달하는 순간, 공격 쌍이 정확히 0개인 완벽한 정답 판에 안착</strong>했다. 이때 온도는 $T=0.71$로 탐색 종료 임계값인 0.01보다 까마득히 높았다. 얼어붙어서 멈춘 것이 아니라, 문제를 완벽하게 풀어냈기 때문에 멈춘 것이다!</p>
+<p>1,000개의 8퀸 문제에서 담금질 기법은 <strong>991개(99.1%)를 해결</strong>하는 압도적 승리를 거두었다.<br>더욱 놀라운 것은 효율이었다. 언덕 오르기는 매 걸음 56개의 판을 전수 조사해야 했지만, 담금질 기법은 매 걸음 단 1개의 무작위 판만 평가한다. 결과적으로 해 하나를 찾는 데 검토한 판의 수는 <strong>평균 1,156개</strong>로, 무작위 재시작(1,507개)보다 약 <strong>350개나 적은 일</strong>을 하고도 문제를 해결했다.</p>
+<p>[해설] 담금질 기법이 거둔 승리의 본질은 무엇인가?<br>담금질 기법의 내부에는 <strong>&#39;부드러운 국소적 재시작(Gentle Local Restart)&#39;</strong>이 내장되어 있다. 판 전체를 버리는 대신, 잘 맞춰진 부분은 두고 한두 걸음 나쁜 수를 밟으며 물러선다.</p>
+<h3 id="55-경사하강법gradient-descent과의-거울상"><a href="#55-경사하강법gradient-descent과의-거울상" class="heading-anchor" aria-hidden="true">#</a> 5.5 경사하강법(Gradient Descent)과의 거울상</h3><p>현대 딥러닝과 머신러닝을 지탱하는 가장 거대한 기둥인 <strong>경사하강법(Gradient Descent)</strong>을 알고 있는 독자라면, 방금 배운 국소 탐색에서 깊은 기시감을 느꼈을 것이다.</p>
+<p>그 직관은 완벽하게 옳다. 경사하강법은 <strong>언덕 오르기를 상하로 뒤집어 놓은 완벽한 거울상</strong>이다.</p>
+<ul>
+<li>언덕 오르기가 보상(가치) 곡면을 따라 가장 높은 봉우리를 향해 기어오르는 알고리즘이라면,</li>
+<li>경사하강법은 인공신경망의 손실(Loss, 오차) 곡면을 따라 가장 깊은 골짜기를 향해 미끄러져 내려가는 알고리즘이다.</li>
+</ul>
+<p>따라서 경사하강법도 언덕 오르기와 같은 함정, 즉 <strong>국소 최솟값에 갇힐 위험</strong>을 공유한다. [해설] 국소 탐색의 교훈이 현대 머신러닝에도 그대로 이어지는 셈이다.</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
+<text x="30" y="38" font-size="18px" font-weight="bold" fill="#0f172a">도식 3: 국소 탐색 지형과 담금질 기법의 볼츠만 확률 탈출 동역학</text>
+<text x="30" y="62" font-size="13px" fill="#64748b">언덕 오르기가 국소 최적해에 갇히는 이유와, 온도가 식어감에 따라 나쁜 수 수용 확률 P가 수렴하는 메커니즘</text>
+<g transform="translate(30, 85)">
+<rect width="450" height="285" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(A) 에너지(공격 쌍 수) 곡면과 두 알고리즘의 궤적</text>
+<path d="M 30 180 Q 70 80 120 190 Q 160 250 210 110 Q 250 40 300 230 Q 360 260 410 130" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<circle cx="120" cy="190" r="7" fill="#ef4444"/>
+<text x="120" y="215" font-size="11px" font-weight="bold" fill="#dc2626" text-anchor="middle">국소 최적해 (공격쌍 1개)</text>
+<path d="M 70 120 L 115 185" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+<text x="50" y="110" font-size="11px" fill="#ef4444">언덕 오르기: 여기서 고립</text>
+<text x="210" y="95" font-size="11px" fill="#b45309" text-anchor="middle" font-weight="bold">장벽 (공격쌍 11개까지 치솟음)</text>
+<circle cx="300" cy="230" r="9" fill="#10b981"/>
+<text x="300" y="255" font-size="12px" font-weight="bold" fill="#047857" text-anchor="middle">전역 최적해 (공격쌍 0개, 343단계)</text>
+<path d="M 120 190 Q 160 140 210 110 Q 260 80 300 230" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6,4"/>
+<text x="215" y="170" font-size="11px" fill="#b45309" font-weight="bold">담금질: 따뜻할 때 장벽을 넘어 탈출!</text>
+</g>
+<g transform="translate(500, 85)">
+<rect width="430" height="285" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(B) 온도에 따른 열등한 수 수용 확률 P</text>
+<rect x="25" y="45" width="380" height="42" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
+<text x="215" y="71" font-size="14px" font-weight="bold" fill="#92400e" text-anchor="middle">P = exp(-ΔE / T) ≈ 0.37^(ΔE / T)</text>
+<g transform="translate(25, 105)">
+<rect width="380" height="155" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="15" y="26" font-size="13px" font-weight="bold" fill="#0f172a">1,000회 8퀸 벤치마크 대조</text>
+<line x1="15" y1="36" x2="365" y2="36" stroke="#e2e8f0"/>
+<text x="15" y="60" font-size="12px" fill="#475569"><tspan font-weight="bold">• 단순 언덕 오르기:</tspan> 성공률 16.1% (83.9% 고립 실패)</text>
+<text x="15" y="85" font-size="12px" fill="#475569"><tspan font-weight="bold">• 무작위 재시작:</tspan> 성공률 100%, 해당 1,507개 판 평가</text>
+<text x="15" y="110" font-size="12px" fill="#15803d"><tspan font-weight="bold">• 담금질 기법:</tspan> 성공률 99.1%, 해당 1,156개 판 평가 (350개 절감!)</text>
+<text x="15" y="135" font-size="11px" fill="#0284c7" font-weight="bold">핵심: 전체를 엎지 않고 국소적 나쁜 수를 허용하는 '내장된 재시작'</text>
+</g>
+</g>
+</svg></figure>
+<hr>
+<h2 id="6-선택지의-확장과-결합-빔-탐색과-유전-알고리즘"><a href="#6-선택지의-확장과-결합-빔-탐색과-유전-알고리즘" class="heading-anchor" aria-hidden="true">#</a> 6. 선택지의 확장과 결합: 빔 탐색과 유전 알고리즘</h2><h3 id="61-빔-탐색beam-search-폭-math-inline-134개의-시선과-quot지금-2등이-나중에-1등이-된다quot"><a href="#61-빔-탐색beam-search-폭-math-inline-134개의-시선과-quot지금-2등이-나중에-1등이-된다quot" class="heading-anchor" aria-hidden="true">#</a> 6.1 빔 탐색(Beam Search): 폭 $K$개의 시선과 &quot;지금 2등이 나중에 1등이 된다&quot;</h3><p>언덕 오르기나 담금질 기법은 모두 메모리 속에 오직 <strong>&#39;단 하나의 상태(One Board)&#39;</strong>만을 유지했다.<br>하지만 상태 하나만 쥐고 가는 것이 과연 항상 최선일까?</p>
+<p>이제 로봇은 미로를 탈출하여 친구 샘(Sam)에게 무사 귀환을 알리는 짧은 문자 메시지를 스마트폰으로 전송하려 한다. 스마트폰 키보드의 자동 완성 엔진처럼, 직전에 작성된 단어를 바탕으로 다음에 올 단어의 확률을 예측하여 <strong>&#39;가장 완성될 확률이 높은 최선의 문장&#39;</strong>을 찾는 과제다.</p>
+<p>로봇에게 입력된 시작 단어가 <code>&quot;The robot&quot;</code>이라고 하자. 그 뒤에 올 수 있는 첫 번째 단어의 확률이 다음과 같이 주어졌다고 가정해 보자 (설명의 직관을 위해 손으로 만든 단순 모형이다).</p>
+<ul>
+<li><code>&quot;is&quot;</code>: 확률 0.5 (50%)</li>
+<li><code>&quot;got&quot;</code>: 확률 0.4 (40%)</li>
+<li><code>&quot;fell&quot;</code>: 확률 0.1 (10%)</li>
+</ul>
+<p>각 단어에 뒤이어 문장이 종결될 때까지의 결합 확률은, 각 단어가 등장할 조건부 확률들을 차례로 곱한 값이다.</p>
+<ul>
+<li><code>&quot;is&quot;</code> 뒤에는 <code>&quot;lost&quot;</code>가 0.4의 확률로 따라온다 $\implies 0.5 \times 0.4 = \mathbf{0.20}$ (20%)</li>
+<li>반면 <code>&quot;got&quot;</code> 뒤에는 <code>&quot;home&quot;</code>이라는 단어가 무려 0.9의 높은 확률로 따라온다 $\implies 0.4 \times 0.9 = \mathbf{0.36}$ (36%)</li>
+<li>그 외 <code>&quot;got lost&quot;</code>는 $0.4 \times 0.1 = 0.04$, <code>&quot;is tired&quot;</code>나 <code>&quot;is home&quot;</code>은 각각 0.15다.</li>
+</ul>
+<p>만약 언덕 오르기처럼 오직 최고의 선택지 딱 하나만 쥐고 가는 탐욕적 방식(Greedy)을 쓴다면 어떻게 될까?<br>첫 번째 단어로 가장 확률이 높은 <code>&quot;is&quot;</code>(0.5)를 덥석 집어든다. 그리고 그 뒤에서 가장 높은 <code>&quot;lost&quot;</code>(0.4)를 택한다. 그 결과 로봇이 조합해 낸 문장은 <code>&quot;The robot is lost&quot;</code>이며, 이 문장의 전체 확률은 <strong>0.20</strong>에 그친다.</p>
+<p>탐욕 알고리즘이 버려버린 2등 선택지를 보라. 첫 단어 <code>&quot;got&quot;</code>은 0.4로 비록 0.5보다 낮아 2등으로 밀려났지만, 그 뒤에 <code>&quot;home&quot;</code>(0.9)이라는 강력한 보상이 기다리고 있었다. 단 하나만을 쥐고 가는 알고리즘은 이 2등 선택지를 영원히 망각해 버린다.</p>
+<p>&quot;그렇다면 매 단계마다 가장 유망한 상위 $K$개의 후보를 동시에 손에 쥐고 확장하면 어떨까?&quot;<br>이 아이디어가 바로 <strong>빔 탐색(Beam Search)</strong>이다. 여기서 유지하는 후보의 개수 $K$를 <strong>빔 폭(Beam Width)</strong>이라 부른다.</p>
+<ul>
+<li>$K=1$일 때, 빔 탐색은 우리가 앞서 배운 언덕 오르기(탐욕 선택)와 완벽하게 동일해진다.</li>
+<li>$K=2$로 빔의 폭을 넓혀보자.<ol>
+<li>첫 번째 단어에서 1등인 <code>&quot;is&quot;</code>(0.5)와 2등인 <code>&quot;got&quot;</code>(0.4) 두 개를 모두 버리지 않고 빔 안에 보관한다.</li>
+<li>다음 단계에서 두 단어에 뒤따를 수 있는 모든 후속 문장들의 결합 확률을 일제히 계산한다.</li>
+<li>전체 후보들 중 가장 점수가 높은 상위 2개를 추려내니, 1등은 <code>&quot;The robot got home&quot;</code>($0.36$), 2등은 <code>&quot;The robot is lost&quot;</code>($0.20$)가 된다.</li>
+<li>로봇은 결합 확률 0.36의 훨씬 더 훌륭한 문장을 최종 출력으로 채택한다.</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p><strong>지금 2등으로 보이는 선택지가 나중에는 1등일 수 있다.</strong></p>
+</blockquote>
+<p>실제 산업계의 거대 AI 시스템들도 이 빔 탐색을 엔진으로 삼아왔다. 2016년 발표된 구글의 신경망 기계번역(GNMT) 시스템은 번역 문장을 생성할 때 통상 <strong>$K = 8 \sim 12$의 빔 탐색</strong>을 기본으로 사용했다.<a class="footnote-ref" href="#fn-10" id="fnref-10">10</a> 빔을 2개만 유지해도 BLEU 점수는 조금만 낮아졌다고 보고되었다.</p>
+<h3 id="62-유전-알고리즘genetic-algorithm-상태들의-교배와-적합도의-진화"><a href="#62-유전-알고리즘genetic-algorithm-상태들의-교배와-적합도의-진화" class="heading-anchor" aria-hidden="true">#</a> 6.2 유전 알고리즘(Genetic Algorithm): 상태들의 교배와 적합도의 진화</h3><p>빔 탐색의 문장들은 각자 자랄 뿐 서로의 좋은 조각을 섞지 않는다. 두 유망한 판의 좋은 절반을 이어 붙이면 어떨까? 이 생물학적 유추가 <strong>유전 알고리즘(Genetic Algorithm, GA)</strong>이다. 8퀸에 적용하는 절차는 다음과 같다.
+8퀸 문제에 유전 알고리즘을 적용하는 절차는 다음과 같다.</p>
+<ol>
+<li><strong>개체군(Population):</strong> 무작위로 생성된 50개의 서로 다른 판을 하나의 세대(Generation)로 유지한다.</li>
+<li><strong>유전자 부호화(Chromosome):</strong> 각 판은 퀸이 위치한 행 번호를 나타내는 8자리 문자열(예: <code>17503124</code>)로 표현된다.</li>
+<li><strong>적합도(Fitness)와 룰렛 휠 선택:</strong> 서로 공격하지 않는 퀸 쌍의 수가 많을수록 적합도가 높다. 8개의 퀸이 만들 수 있는 전체 쌍의 수는 $\binom{8}{2} = \frac{8 \times 7}{2} = \mathbf{28\text{개}}$다.<br>각 판은 &#39;공격하지 않는 쌍의 수&#39;만큼 복권 추첨권을 부여받는다. 공격 쌍이 3개인 판은 $28 - 3 = 25$장의 추첨권을 얻고, 공격 쌍이 10개인 엉망인 판은 $28 - 10 = 18$장의 추첨권만 얻는다. 적합도가 높은 우수한 부모 판일수록 다음 세대를 낳을 확률이 높아진다.</li>
+<li><strong>교차(Crossover):</strong> 추첨된 두 부모 판을 무작위 열(예: 4번째 열 뒤)에서 수직으로 자른 뒤, 앞쪽 절반과 뒤쪽 절반을 이어 붙여 자식 판을 만든다.<ul>
+<li>실제로 한 실험에서 부모 판 1은 공격 쌍이 5개였지만 판의 왼쪽 절반이 완벽했고, 부모 판 2는 공격 쌍이 8개였지만 판의 오른쪽 절반이 완벽했다.</li>
+<li>4열 뒤에서 두 판을 교차시키자, <strong>공격 쌍이 5개와 8개였던 두 부모로부터 단숨에 공격 쌍이 0개인 기적의 자식 판이 탄생</strong>했다!</li>
+</ul>
+</li>
+<li><strong>변이(Mutation):</strong> 교차만으로는 부모들이 갖고 있지 않은 새로운 행 번호를 만들어낼 수 없다. 따라서 자식 5개 중 1개꼴(약 20% 확률)로 한 열의 퀸 위치를 무작위 행으로 돌연변이시킨다.</li>
+</ol>
+<p>인공지능의 표준 교과서인 러셀과 노빅(Stuart Russell &amp; Peter Norvig)의 저서에서도 8퀸 문제를 유전 알고리즘의 대표적 교육 예제로 채택하고 있다.<a class="footnote-ref" href="#fn-11" id="fnref-11">11</a></p>
+<h3 id="63-정직한-평가-화려한-은유보다-단순한-기준선baseline과-먼저-경주하라"><a href="#63-정직한-평가-화려한-은유보다-단순한-기준선baseline과-먼저-경주하라" class="heading-anchor" aria-hidden="true">#</a> 6.3 정직한 평가: 화려한 은유보다 단순한 기준선(Baseline)과 먼저 경주하라</h3><p>생물학적 은유는 매혹적이지만, 1,000회 실험의 성적은 초라했다.</p>
+<ul>
+<li>정답을 찾은 실행은 <strong>824번</strong>이었고, 그중 절반은 312세대를 넘겼다. 나머지 176번은 1,000세대가 지나도록 답을 찾지 못했다.</li>
+<li>성공한 전형적 실행 하나가 살펴본 판은 <strong>15,675개</strong>였다.</li>
+</ul>
+<p>담금질 기법은 991번 성공했고 해 하나에 1,156개 판을 보았다. 유전 알고리즘은 열 배가 넘는 일을 하고도 성공률이 더 낮았다.</p>
+<blockquote>
+<p><strong>교훈:</strong> 화려한 아이디어일수록 먼저 가장 단순한 기준선과 경주시켜 보라.</p>
+</blockquote>
+<p>물론 유전 알고리즘이 늘 지는 것은 아니다. <strong>NASA의 ST5 위성 임무</strong>에서는 유전 알고리즘으로 설계한 안테나가 2006년 발사되었고, 설계자들은 이를 우주로 간 최초의 진화된 하드웨어라고 불렀다.<a class="footnote-ref" href="#fn-12" id="fnref-12">12</a></p>
+<p>단, 빔 탐색과 유전 알고리즘은 <strong>완전성을 보장하지 못한다.</strong> $K=1$이면 첫 단어에서 <code>&quot;got&quot;</code>을 버려 <code>&quot;got home&quot;</code>을 영영 잃고, 유전 알고리즘은 세대가 먼저 바닥날 수 있다.</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
+<text x="30" y="38" font-size="18px" font-weight="bold" fill="#0f172a">도식 4: 적대적 게임 탐색의 진화 — 미니맥스에서 몬테카를로 트리 탐색(MCTS)과 알파고까지</text>
+<text x="30" y="62" font-size="13px" fill="#64748b">완전 탐색 트리의 역전파(Minimax)와, 무작위 롤아웃을 신경망 추정으로 승화시킨 4단계 MCTS 아키텍처</text>
+<g transform="translate(30, 85)">
+<rect width="420" height="325" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(A) 미니맥스(Minimax) 점수 역전파</text>
+<circle cx="210" cy="70" r="14" fill="#3b82f6"/>
+<text x="210" y="75" font-size="12px" font-weight="bold" fill="#ffffff" text-anchor="middle">+1</text>
+<text x="40" y="75" font-size="12px" fill="#1e40af" font-weight="bold">나 (MAX): 최댓값 선택</text>
+<line x1="210" y1="84" x2="120" y2="135" stroke="#94a3b8" stroke-width="2"/>
+<line x1="210" y1="84" x2="210" y2="135" stroke="#94a3b8" stroke-width="2"/>
+<line x1="210" y1="84" x2="300" y2="135" stroke="#22c55e" stroke-width="3"/>
+<rect x="106" y="135" width="28" height="24" rx="4" fill="#ef4444"/>
+<text x="120" y="151" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">-1</text>
+<rect x="196" y="135" width="28" height="24" rx="4" fill="#ef4444"/>
+<text x="210" y="151" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">0</text>
+<rect x="286" y="135" width="28" height="24" rx="4" fill="#ef4444" stroke="#15803d" stroke-width="2"/>
+<text x="300" y="151" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">+1</text>
+<text x="40" y="151" font-size="12px" fill="#b91c1c" font-weight="bold">상대 (MIN): 최솟값 선택</text>
+<line x1="300" y1="159" x2="260" y2="210" stroke="#94a3b8" stroke-width="1.5"/>
+<line x1="300" y1="159" x2="340" y2="210" stroke="#94a3b8" stroke-width="1.5"/>
+<circle cx="260" cy="210" r="10" fill="#e2e8f0"/>
+<text x="260" y="214" font-size="10px" fill="#334155" text-anchor="middle">+1</text>
+<circle cx="340" cy="210" r="10" fill="#e2e8f0"/>
+<text x="340" y="214" font-size="10px" fill="#334155" text-anchor="middle">+1</text>
+<text x="40" y="214" font-size="12px" fill="#64748b">최종 승패: 승(+1) 무(0) 패(-1)</text>
+<rect x="20" y="245" width="380" height="65" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="30" y="268" font-size="12px" fill="#334155">• 상대방은 나에게 가장 불리한 수(MIN)를 둔다고 가정</text>
+<text x="30" y="288" font-size="12px" fill="#334155">• 틱택토 549,946개 국면 완벽 탐색 시 필연적 '무승부'</text>
+<text x="30" y="303" font-size="11px" fill="#2563eb" font-weight="bold">• 한계: 체스(10¹²⁰), 바둑(10¹⁷⁰)에서는 계산 폭발로 불가능</text>
+</g>
+<g transform="translate(480, 85)">
+<rect width="450" height="325" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(B) MCTS의 4단계 순환 주기와 알파고(AlphaGo)</text>
+<g transform="translate(20, 45)">
+<rect x="0" y="0" width="195" height="52" rx="6" fill="#eff6ff" stroke="#3b82f6"/>
+<text x="10" y="22" font-size="12px" font-weight="bold" fill="#1e40af">1. 선택 (Selection)</text>
+<text x="10" y="40" font-size="11px" fill="#2563eb">승률 높은 수 + UCB 탐험 보너스</text>
+<rect x="215" y="0" width="195" height="52" rx="6" fill="#f0fdf4" stroke="#22c55e"/>
+<text x="225" y="22" font-size="12px" font-weight="bold" fill="#15803d">2. 확장 (Expansion)</text>
+<text x="225" y="40" font-size="11px" fill="#16a34a">미탐색 유효 수 하나를 트리에 등록</text>
+<rect x="0" y="65" width="195" height="52" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
+<text x="10" y="87" font-size="12px" font-weight="bold" fill="#b45309">3. 평가 (Simulation/Eval)</text>
+<text x="10" y="105" font-size="11px" fill="#d97706">가치망 추정 + 빠른 롤아웃</text>
+<rect x="215" y="65" width="195" height="52" rx="6" fill="#faf5ff" stroke="#a855f7"/>
+<text x="225" y="87" font-size="12px" font-weight="bold" fill="#6b21a8">4. 역전파 (Backup)</text>
+<text x="225" y="105" font-size="11px" fill="#7e22ce">시뮬레이션 승패를 루트까지 갱신</text>
+</g>
+<g transform="translate(20, 180)">
+<rect width="410" height="120" rx="6" fill="#1e293b"/>
+<text x="15" y="26" font-size="13px" font-weight="bold" fill="#38bdf8">알파고(AlphaGo, 2016)의 신경망 결합 아키텍처</text>
+<text x="15" y="52" font-size="12px" fill="#e2e8f0"><tspan fill="#4ade80" font-weight="bold">• 정책망(Policy Network):</tspan> 250개 후보 수 중 유망한 몇 가지만 골라 트리에 제안</text>
+<text x="15" y="74" font-size="12px" fill="#e2e8f0"><tspan fill="#facc15" font-weight="bold">• 가치망(Value Network):</tspan> 끝까지 두지 않고도 현재 판세의 승률을 즉각 추정</text>
+<text x="15" y="98" font-size="12px" fill="#cbd5e1"><tspan font-weight="bold">• 최종 착수:</tspan> 탐색이 끝난 후 '가장 많이 방문한(Most Visited) 수'를 선택</text>
+</g>
+</g>
+</svg></figure>
+<hr>
+<h2 id="7-적대적-환경의-지능-미니맥스와-몬테카를로-트리-탐색"><a href="#7-적대적-환경의-지능-미니맥스와-몬테카를로-트리-탐색" class="heading-anchor" aria-hidden="true">#</a> 7. 적대적 환경의 지능: 미니맥스와 몬테카를로 트리 탐색</h2><h3 id="71-적대적-탐색adversarial-search과-미니맥스minimax"><a href="#71-적대적-탐색adversarial-search과-미니맥스minimax" class="heading-anchor" aria-hidden="true">#</a> 7.1 적대적 탐색(Adversarial Search)과 미니맥스(Minimax)</h3><p>지금까지 로봇은 홀로 움직였다.</p>
+<p>하지만 이제 친구 샘(Sam)이 나타나 로봇에게 <strong>틱택토(Tic-Tac-Toe, $3 \times 3$ 삼목 놓기)</strong> 대결을 신청한다.<br>환경이 돌변했다. 이제 로봇의 앞에는 <strong>로봇의 승리를 필사적으로 저지하고 자신을 패배시키려는 독립적이고 지적인 상대방</strong>이 존재한다. 이것이 질문 ⑤에 답하는 <strong>적대적 탐색(Adversarial Search)</strong>의 세계다.</p>
+<p>적대적 게임 트리에서 점수는 다음과 같이 정의된다.</p>
+<ul>
+<li>로봇(나)의 승리: $+1$</li>
+<li>로봇(나)의 패배: $-1$</li>
+<li>무승부: $0$</li>
+</ul>
+<p>나의 목표는 점수를 극대화하는 <strong>MAX 플레이어</strong>가 되는 것이고, 상대방(샘)은 나의 점수를 최소화하려는 <strong>MIN 플레이어</strong>로 행동한다.<br>여기서 도출되는 고전 알고리즘이 바로 <strong>미니맥스(Minimax)</strong>다.</p>
+<p>미니맥스의 대전제는 냉혹하다. <strong>&quot;상대방은 결코 실수를 범하지 않으며, 매 턴마다 나에게 가장 치명적인 최선의 응수(Minimizing my score)를 둘 것이다.&quot;</strong><br>알고리즘은 게임 트리의 바닥(단말 노드)까지 내려가 승패 결과를 확인한 뒤, 그 점수를 트리 위로 끌어올린다(Backpropagation).</p>
+<ul>
+<li>상대방의 차례인 노드에서는 자식 노드 중 <strong>가장 작은 점수(Min)</strong>를 위로 올린다.</li>
+<li>나의 차례인 노드에서는 자식 노드 중 <strong>가장 큰 점수(Max)</strong>를 선택한다.</li>
+</ul>
+<p>반쯤 진행된 틱택토 판에서 미니맥스를 돌려보면, 중앙이나 변이 아니라 모서리에 두는 수만이 최종 점수 $+1$(승리 보장)로 계산되어 정확하게 모서리를 점령한다.<br>무작위로 수를 두는 초보 상대와 2,000판의 틱택토를 두게 했을 때, 미니맥스 로봇은 <strong>1,805승 195무 0패</strong>를 기록하며 단 한 번도 패배하지 않았다.</p>
+<p>완전한 빈 판에서 출발하는 틱택토의 전체 게임 트리는 <strong>총 549,946개의 국면</strong>으로 이루어져 있다. 전수 검사의 결론은 <strong>&quot;양측이 완벽하게 둔다면 틱택토는 필연적으로 무승부(Score 0)&quot;</strong>라는 사실이다.</p>
+<h3 id="72-shannon의-수와-정적-평가-함수-조기-종료의-법칙"><a href="#72-shannon의-수와-정적-평가-함수-조기-종료의-법칙" class="heading-anchor" aria-hidden="true">#</a> 7.2 Shannon의 수와 정적 평가 함수: 조기 종료의 법칙</h3><p>그러나 체스판으로 무대를 옮기는 순간, 미니맥스의 순진한 전수 조사는 산산조각 난다.</p>
+<p>1950년 &#39;정보이론의 아버지&#39; 클로드 섀넌(Claude Shannon)은 기념비적인 논문에서 체스의 게임 트리 복잡도를 계산했다.<a class="footnote-ref" href="#fn-5">5</a><br>섀넌은 체스의 가능한 수순을 약 $\mathbf{10^{120}}$가지로 추산했다. 어떤 컴퓨터도 이 트리를 끝까지 읽을 수 없다.</p>
+<p>섀넌이 제시한 돌파구는 <strong>탐색의 조기 종료(Early Stopping)</strong>와 <strong>정적 평가 함수(Static Evaluation Function)</strong>의 도입이었다.<br>몇 수 앞에서 탐색을 멈추고, 그 자리에서 체스 말의 가치를 기계적으로 합산하여 점수를 매기는 것이다.</p>
+<ul>
+<li>폰(Pawn) = 1점</li>
+<li>나이트(Knight) = 3점</li>
+<li>비숍(Bishop) = 3점</li>
+<li>룩(Rook) = 5점</li>
+<li>퀸(Queen) = 9점</li>
+</ul>
+<p>이 평가 함수는 본질적으로 <strong>&#39;게임판을 위한 휴리스틱(Game Heuristic)&#39;</strong>이다.</p>
+<p>하지만 조기 종료 탐색에는 가혹한 법칙이 지배한다.<br>틱택토에서 트리를 끝까지 다 읽는 &#39;전체 탐색 로봇&#39;과, 불과 2수 앞만 내다보고 어설픈 추정 평가 함수로 국면을 매기는 &#39;2수 조기 종료 로봇&#39;을 맞붙여 보았다.</p>
+<ul>
+<li>2수 앞만 보는 로봇은 한 판에 평균 140개의 국면만 계산하는 놀라운 경량성을 보였다.</li>
+<li>반면 전체 탐색 로봇은 한 판에 약 307,000개의 국면을 무겁게 계산했다.</li>
+<li>그러나 둘 사이의 200판 대결 결과, <strong>전체 탐색 로봇이 86승 114무를 거두었고, 조기 종료 로봇은 단 한 번도 이기지 못했다.</strong></li>
+</ul>
+<blockquote>
+<p><strong>적대적 탐색의 냉혹한 공리</strong><br><strong>&quot;나무의 바닥을 보지 못하고 일찍 멈추는 탐색은, 오직 자기 평가 함수의 지능만큼만 똑똑할 수 있다.&quot;</strong>  </p>
+</blockquote>
+<h3 id="73-deep-blue와-전문가-시스템의-황혼"><a href="#73-deep-blue와-전문가-시스템의-황혼" class="heading-anchor" aria-hidden="true">#</a> 7.3 Deep Blue와 전문가 시스템의 황혼</h3><p>1997년 가리 카스파로프를 무너뜨린 IBM의 <strong>딥 블루(Deep Blue)</strong>는 바로 이 &#39;미니맥스 + 초고속 하드웨어 + 정교한 휴리스틱 평가 함수&#39; 아키텍처의 정점이었다.</p>
+<p>딥 블루의 기술적 실체는 마법이 아니었다.<br>IBM은 딥 블루가 초당 2억 개의 국면을 검색한다고 밝혔고, 2002년 설계진의 논문은 1997년 대국의 평균을 초당 약 1억 2,600만 국면으로 기록했다.<a class="footnote-ref" href="#fn-13" id="fnref-13">13</a></p>
+<p>딥 블루의 강함은 무차별 계산력에서 나왔다.
+그리고 서튼에 따르면 대부분의 컴퓨터 체스 연구자들은 실망했다. 인간의 체스 이해를 프로그램에 넣는 데 매달려 왔기 때문이다.</p>
+<p>이 장면은 1980년대의 <strong>전문가 시스템(Expert Systems)</strong>의 몰락과 기묘하게 겹쳐진다.<br>전문가 시스템은 인간 전문가의 지식을 <code>if-then</code> 규칙(예: &quot;앞에 벽이 있으면 오른쪽으로 돈다&quot;)으로 적어 넣었다. 전문가에게서 그 지식을 끌어내는 일, 즉 <strong>지식 획득 문제(knowledge acquisition problem)</strong>가 어려운 부분이었다. 그래도 전문가 시스템은 데이터로 학습하는 신경망이 부상하기 전까지 AI의 미래로 널리 여겨졌다.</p>
+<h3 id="74-몬테카를로-트리-탐색mcts과-alphago-바둑판을-뒤흔든-무작위의-반란"><a href="#74-몬테카를로-트리-탐색mcts과-alphago-바둑판을-뒤흔든-무작위의-반란" class="heading-anchor" aria-hidden="true">#</a> 7.4 몬테카를로 트리 탐색(MCTS)과 AlphaGo: 바둑판을 뒤흔든 무작위의 반란</h3><p>체스보다 훨씬 더 가혹한 암흑이 기다리고 있었다. 바로 <strong>바둑(Go)</strong>이었다.<br>체스는 한 턴에 둘 수 있는 수의 선택지가 평균 35가지에 불과하지만, 바둑판($19 \times 19$)은 매 턴마다 <strong>평균 250가지의 합법적인 착점</strong>이 쏟아져 나온다. 분기 계수가 35에서 250으로 7배 커지면, 트리 탐색 공간은 매 수마다 폭발적으로 증폭된다.</p>
+<p>더 큰 문제는 국면을 평가하기 어렵다는 점이었다. 2016년 딥마인드의 네이처 논문도 바둑의 어려움으로 국면과 수를 평가하기 어렵다는 점을 꼽았다.<a class="footnote-ref" href="#fn-14" id="fnref-14">14</a></p>
+<p>평가 함수조차 만들 수 없는 250 갈래의 미궁 속에서 어떻게 다음 한 수를 찾을 것인가?<br>연구자들은 기상천외한 우회로를 개척했다. <strong>&quot;평가 함수를 포기하고, 게임이 끝날 때까지 두 선수가 무작위로 아무렇게나 돌을 두는 판을 수천 번 돌려본 뒤, 승률이 가장 높은 수를 고르면 되지 않는가?&quot;</strong><br>무작위 시뮬레이션을 통해 통계적 기댓값을 구하는 이 기법을 <strong>몬테카를로 방법(Monte Carlo Method)</strong>이라 부른다.</p>
+<p>틱택토의 중간 국면에서 이 순수 몬테카를로를 돌려보았다. 세 후보 수(중앙, 변, 모서리)에서 각각 양측이 무작위로 게임이 끝날 때까지 100판씩 롤아웃(Rollout)을 진행했다.</p>
+<ul>
+<li>중앙을 둔 뒤 무작위 100판: 로봇이 46판 승리</li>
+<li>우측 변을 둔 뒤 무작위 100판: 로봇이 48판 승리</li>
+<li>모서리를 둔 뒤 무작위 100판: 로봇이 <strong>100판 전승</strong></li>
+</ul>
+<p>놀랍게도 틱택토 지식이나 평가 함수도 없이, 순수한 무작위 주사위 던지기만으로 시스템은 승리를 보장하는 모서리 수를 정확하게 짚어냈다!</p>
+<p>그러나 순수 몬테카를로에는 치명적인 편향(Bias)이 도사리고 있다.<br>중앙을 둔 뒤 46번이나 이길 수 있었던 이유는 <strong>&#39;무작위 상대가 온갖 멍청한 실수를 저질러 주었기 때문&#39;</strong>이다. 상대의 최선을 가정하지 않고 실수에 기대는 셈이다. 게다가 모든 후보에 똑같이 100판씩 쓴다.</p>
+<p>이 문제를 해결하기 위해 시뮬레이션을 거듭할수록 똑똑하게 트리를 비대칭적으로 키워나가는 알고리즘이 바로 <strong>몬테카를로 트리 탐색(Monte Carlo Tree Search, MCTS)</strong>이다.</p>
+<p>MCTS는 매 시뮬레이션마다 다음 4단계를 무한히 순환한다.</p>
+<ol>
+<li><strong>선택 (Selection):<strong> 트리의 루트에서 시작하여 아래로 걸어 내려간다. 이때 지금까지 가장 승률이 높았던 유망한 수들을 우선적으로 선택하되(</strong>탐용, Exploitation<strong>), 아직 방문 횟수가 적어 잠재력이 미검증된 수들에게도 가산점을 주어(</strong>탐험, Exploration</strong>) 균형을 잡는다. [해설] 이런 탐험 보너스의 대표 공식이 UCB1이다.</li>
+<li><strong>확장 (Expansion):</strong> 트리가 아직 가보지 않은 새로운 착점 노드에 도달하면, 그 수를 트리의 새로운 잎 노드로 등록한다.</li>
+<li><strong>평가 / 시뮬레이션 (Evaluation / Simulation):</strong> 그 새로운 노드에서부터 게임이 끝날 때까지 두 선수가 빠르게 무작위로 돌을 놓아 승패 결과를 뽑아낸다.</li>
+<li><strong>역전파 (Backup):</strong> 시뮬레이션 결과(승리 또는 패배)를 방금 거쳐온 경로 상의 모든 부모 노드들에게 거꾸로 전달하여, 방문 횟수와 승리 횟수를 일제히 누적 갱신한다.</li>
+</ol>
+<p>MCTS는 300번의 시뮬레이션 중 <strong>238번</strong>을 모서리에, 중앙과 변에는 31번씩만 썼다. 트리를 키우며 순수 몬테카를로의 편향을 줄이고, 끝나면 <strong>가장 많이 방문한 수</strong>(모서리)를 둔다.</p>
+<p>그리고 2016년, 딥마인드의 <strong>알파고(AlphaGo)</strong>는 이 MCTS의 뼈대 위에 딥러닝 인공신경망이라는 두 개의 날개를 달았다.</p>
+<ul>
+<li><strong>정책망(Policy Network):</strong> 유망한 수를 제안해, 250가지 후보 가운데 몇 개만 살펴보게 한다.</li>
+<li><strong>가치망(Value Network):</strong> 판을 보고 누가 이기고 있는지 추정한다. 알파고는 새 국면을 이 추정과 끝까지 빠르게 두어 보는 롤아웃, 두 방식으로 함께 평가한다.</li>
+</ul>
+<p>알파고는 무차별 탐색에 학습된 직관을 결합해 이세돌 9단을 4대 1로 이겼다.</p>
+<hr>
+<h2 id="8-심화-쓰라린-교훈the-bitter-lesson-탐색과-학습의-웅대한-승리"><a href="#8-심화-쓰라린-교훈the-bitter-lesson-탐색과-학습의-웅대한-승리" class="heading-anchor" aria-hidden="true">#</a> 8. [심화] 쓰라린 교훈(The Bitter Lesson): 탐색과 학습의 웅대한 승리</h2><p>튜링상 수상자인 AI 연구자 리처드 서튼(Richard Sutton)은 2019년 짧은 에세이를 발표했다. 그 글의 제목이 바로 <strong>《쓰라린 교훈(The Bitter Lesson)》</strong>이다.<a class="footnote-ref" href="#fn-15" id="fnref-15">15</a></p>
+<p>서튼이 밝힌 지난 70년 인공지능 역사의 가장 쓰라린 진실은 다음과 같다.</p>
+<blockquote>
+<p>서튼의 에세이는 70년 AI 연구의 가장 큰 교훈으로, 계산을 활용하는 범용 방법이 결국 가장 효과적이었다는 점을 꼽는다.</p>
+</blockquote>
+<p>서튼은 체스 연구의 역사를 가장 뼈아픈 실례로 꼽는다.<br>딥 블루가 카스파로프를 이긴 것은 인간의 체스 지식이 아니라 계산력 덕분이었고, 인간의 이해를 프로그램에 넣으려던 연구자들은 실망했다.</p>
+<p>서튼은 이렇게 임의의 규모로 확장되는 것처럼 보이는 방법으로 두 가지, <strong>탐색(Search)과 학습(Learning)</strong>을 꼽는다.</p>
+<ol>
+<li><strong>탐색 (Search):</strong> 주어진 규칙과 상태 공간 안에서 계산 자원을 투입할수록 더 깊고 넓은 미래를 시뮬레이션하는 능력</li>
+<li><strong>학습 (Learning):</strong> 방대한 데이터로부터 가치와 정책을 스스로 조정하며 지식을 축적하는 능력</li>
+</ol>
+<p>1997년의 <strong>딥 블루(Deep Blue)</strong>는 순수한 <strong>&#39;탐색(Search)&#39;</strong>이 이룩한 거대한 승리였다.<br>[해설] 1980년대 전문가 시스템의 한계는 사람이 규칙을 적어 넣는 방식의 한계로 읽을 수 있다.
+그리고 2016년의 <strong>알파고(AlphaGo)</strong>는 서튼이 지목한 그 두 개의 기둥, 즉 <strong>&#39;탐색(MCTS)&#39;과 &#39;학습(심층 강화학습 신경망)&#39;이 역사상 가장 완벽한 형태로 결합</strong>하여 인간 지성의 최고봉을 정복한 사건이었다.</p>
+<hr>
+<h2 id="9-결론-모든-탐색-뒤에-흐르는-단-하나의-루프"><a href="#9-결론-모든-탐색-뒤에-흐르는-단-하나의-루프" class="heading-anchor" aria-hidden="true">#</a> 9. 결론: 모든 탐색 뒤에 흐르는 단 하나의 루프</h2><h3 id="91-탐색-알고리즘-마스터-치트시트master-cheat-sheet"><a href="#91-탐색-알고리즘-마스터-치트시트master-cheat-sheet" class="heading-anchor" aria-hidden="true">#</a> 9.1 탐색 알고리즘 마스터 치트시트(Master Cheat Sheet)</h3><p>수많은 고유명사들—너비 우선 탐색부터 몬테카를로 트리 탐색까지—은 결코 교과서의 분절된 챕터 속에 갇힌 별개의 상자가 아니었다.<br>모든 알고리즘은 <strong>&quot;프론티어에서 상태를 꺼내고, 목표인지 검사하며, 이웃을 기억에 담는다&quot;는 단 하나의 공통 루프</strong> 위에서 정확하게 호흡한다.</p>
+<p>차이를 만들어낸 것은 오직 프론티어의 자료구조와, 그 안에서 <strong>&quot;다음에 무엇을 볼 것인가(<code>choose_next</code>)&quot;를 판별하는 단 한 줄의 수학적 기준</strong>이었다.<br>이 웅대한 계보를 하나의 마스터 표로 일목요연하게 정리한다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">알고리즘</th>
+<th align="left">프론티어 자료구조</th>
+<th align="left"><code>choose_next</code> 선택 기준</th>
+<th align="center">완전성</th>
+<th align="center">최적성</th>
+<th align="center">시간 (탐색량)</th>
+<th align="center">공간 (메모리)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>너비 우선 탐색 (BFS)</strong></td>
+<td align="left">선입선출(FIFO) 큐</td>
+<td align="left">가장 오래 기다린 상태 (가장 가까운 순)</td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>보장</strong> (단위 비용 시)</td>
+<td align="center">$O(b^d)$ (미로 44칸)</td>
+<td align="center">$O(b^d)$ (미로 46칸)</td>
+</tr>
+<tr>
+<td align="left"><strong>깊이 우선 탐색 (DFS)</strong></td>
+<td align="left">후입선출(LIFO) 스택</td>
+<td align="left">가장 최근에 들어온 상태 (가장 깊은 순)</td>
+<td align="center">그래프 시 보장</td>
+<td align="center"><strong>불가</strong> (16걸음 우회)</td>
+<td align="center">$O(b^m)$ (미로 19칸)</td>
+<td align="center">$O(bm)$ (미로 25칸)</td>
+</tr>
+<tr>
+<td align="left"><strong>양방향 탐색 (Bidirectional)</strong></td>
+<td align="left">듀얼 FIFO 큐</td>
+<td align="left">시작과 목표에서 번갈아 파면 확장</td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>보장</strong> (단위 비용 시)</td>
+<td align="center">$O(2 \cdot b^{d/2})$ (27칸)</td>
+<td align="center">$O(2 \cdot b^{d/2})$ (36칸)</td>
+</tr>
+<tr>
+<td align="left"><strong>균일 비용 탐색 (UCS / Dijkstra)</strong></td>
+<td align="left">우선순위 큐 (Priority Queue)</td>
+<td align="left">누적 비용 $g(n)$이 가장 작은 상태</td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>보장</strong> (최저 비용)</td>
+<td align="center">$O(b^{1 + \lfloor C^*/\epsilon \rfloor})$ (48칸 전수)</td>
+<td align="center">$O(b^{1 + \lfloor C^*/\epsilon \rfloor})$ (48칸)</td>
+</tr>
+<tr>
+<td align="left"><strong>탐욕 최선 우선 (Greedy Best-First)</strong></td>
+<td align="left">우선순위 큐</td>
+<td align="left">잔여 거리 추정치 $h(n)$이 최소인 상태</td>
+<td align="center">불가</td>
+<td align="center"><strong>불가</strong> (웅덩이 비용 18)</td>
+<td align="center">나쁨(최악 $O(b^m)$), 미로 11칸</td>
+<td align="center">$O(b^m)$ (미로 18칸)</td>
+</tr>
+<tr>
+<td align="left"><em><em>A</em> 알고리즘</em>*</td>
+<td align="left">우선순위 큐</td>
+<td align="left">종합 평가 $f(n) = g(n) + h(n)$ 최소</td>
+<td align="center"><strong>보장</strong></td>
+<td align="center"><strong>보장</strong> (허용적 $h$ 시)</td>
+<td align="center">휴리스틱 품질에 비례 (32칸)</td>
+<td align="center">$O(b^d)$ (미로 38칸)</td>
+</tr>
+<tr>
+<td align="left"><strong>언덕 오르기 (Hill Climbing)</strong></td>
+<td align="left">단일 상태 ($O(1)$)</td>
+<td align="left">56개 이웃 중 가치 최선 상태</td>
+<td align="center">불가 (16.1%)</td>
+<td align="center"><strong>불가</strong> (국소 최적해 갇힘)</td>
+<td align="center">빠름 (성공 시 224판)</td>
+<td align="center"><strong>$O(1)$</strong> (판 1개)</td>
+</tr>
+<tr>
+<td align="left"><strong>무작위 재시작 언덕 오르기</strong></td>
+<td align="left">단일 상태 + 재시작</td>
+<td align="left">갇히면 백지에서 새 무작위 판 등산</td>
+<td align="center">극한 시 보장</td>
+<td align="center"><strong>보장</strong> (충분한 시도 시)</td>
+<td align="center">판당 1,507회 평가</td>
+<td align="center"><strong>$O(1)$</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>담금질 기법 (Simulated Annealing)</strong></td>
+<td align="left">단일 상태 + 가상 온도 $T$</td>
+<td align="left">무작위 1개 이웃, 확률 $P$로 나쁜 수 수용</td>
+<td align="center">극한 시 보장</td>
+<td align="center"><strong>사실상 최적</strong> (99.1%)</td>
+<td align="center">판당 1,156회 평가 (350개 절감)</td>
+<td align="center"><strong>$O(1)$</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>빔 탐색 (Beam Search)</strong></td>
+<td align="left">크기 $K$의 배열/힙</td>
+<td align="left">매 단계 상위 $K$개 후보만 유지</td>
+<td align="center">불가</td>
+<td align="center"><strong>불가</strong> (근사 최적)</td>
+<td align="center">$O(K \cdot b \cdot m)$</td>
+<td align="center">$O(K \cdot m)$</td>
+</tr>
+<tr>
+<td align="left"><strong>유전 알고리즘 (Genetic Algorithm)</strong></td>
+<td align="left">$N=50$ 개체군 풀</td>
+<td align="left">적합도 비례 추첨, 교차, 변이</td>
+<td align="center">불가 (82.4%)</td>
+<td align="center"><strong>불가</strong> (비결정론적)</td>
+<td align="center">해당 15,675회 평가 (낭비 심함)</td>
+<td align="center">$O(N)$ (개체군 크기)</td>
+</tr>
+<tr>
+<td align="left"><strong>미니맥스 (Minimax)</strong></td>
+<td align="left">게임 트리 백트래킹</td>
+<td align="left">상대의 최선(Min)에 맞서는 최댓값(Max)</td>
+<td align="center"><strong>보장</strong> (유한 게임)</td>
+<td align="center"><strong>보장</strong> (완벽 플레이 시)</td>
+<td align="center">$O(b^m)$ (체스 $10^{120}$ 불가)</td>
+<td align="center">$O(bm)$ (깊이 제한)</td>
+</tr>
+<tr>
+<td align="left"><strong>몬테카를로 트리 탐색 (MCTS)</strong></td>
+<td align="left">비대칭 동적 트리</td>
+<td align="left">UCB1 (탐용 + 탐험) 기반 시뮬레이션</td>
+<td align="center">점근적 보장</td>
+<td align="center"><strong>우수</strong> (방문 횟수 최대 착수)</td>
+<td align="center">계산 자원에 비례 확장</td>
+<td align="center">트리에 비례</td>
+</tr>
+</tbody></table>
+</div><h3 id="92-일곱-논거와-열-통찰"><a href="#92-일곱-논거와-열-통찰" class="heading-anchor" aria-hidden="true">#</a> 9.2 일곱 논거와 열 통찰</h3><ol>
+<li>모든 탐색은 같은 루프를 돌고, <code>choose_next</code> 한 줄이 알고리즘을 가른다. 2. 기억(닫힌 목록)이 4,115개 계획을 44칸으로 줄인다. 3. 좋은 휴리스틱은 탐색을 줄이지만, 과대평가하면 최적성을 잃는다. 4. 경로가 필요 없으면 판 하나만 쥐는 국소 탐색이 메모리를 아끼고, 담금질이 덫을 벗어난다. 5. 상대가 있으면 최악을 가정해야 하고, 일찍 멈추는 탐색은 평가 함수만큼만 똑똑하다. 6. 화려한 아이디어는 단순한 기준선과 먼저 겨뤄야 한다(유전 알고리즘 15,675판 vs 담금질 1,156판). 7. 계산과 함께 확장되는 탐색과 학습이 결국 이겨 왔다.</li>
+</ol>
+<p>통찰로 정리하면, 영리한 것은 다음에 무엇을 볼지 고르는 한 줄뿐이고, 자료구조의 선택(FIFO, 우선순위 큐)이 보장을 결정하며, 양방향 탐색의 이득은 고리가 빠르게 커질 때 크다. UCS·탐욕·A*는 정렬 키($g, h, g+h$)만 다르고, 담금질에는 부드러운 재시작이 내장되어 있으며, 국소 탐색과 경사하강법은 같은 함정을 공유한다. 무작위 롤아웃은 상대의 실수에 기대는 편향이 있고 MCTS가 이를 줄인다. 그리고 흩어진 알고리즘들은 다섯 질문의 사다리로 하나로 엮인다.</p>
+<p>상태를 정의하라.<br>무엇을 할 수 있는지 나열하라.<br>지나온 길을 기억하라.<br>그리고 <strong>다음에 무엇을 볼지 현명하게 선택하라.</strong></p>
+<p>인공지능의 모든 마법은, 영원히 멈추지 않는 이 단 하나의 루프 안에서 비로소 완성된다.</p>
+<hr>
+<h2 id="각주-및-참고문헌"><a href="#각주-및-참고문헌" class="heading-anchor" aria-hidden="true">#</a> 각주 및 참고문헌</h2><section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1">바둑의 합법적 국면 수는 약 $2.08 \times 10^{170}$으로 계산되었다(John Tromp, &quot;The number of legal Go positions&quot;, 2016). 관측 가능한 우주의 원자 수는 흔히 약 $10^{80}$으로 추정된다.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<li id="fn-2">8퍼즐의 전체 $3 \times 3$ 격자 순열은 $9! = 362,880$개이지만, 타일을 미끄러뜨리는 합법적인 이동으로 도달 가능한 순열은 전체의 정확히 절반인 $9! / 2 = 181,440$개다 (홀수 순열과 짝수 순열의 수학적 불변성).<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li>
+<li id="fn-3">표준 $3 \times 3 \times 3$ 루빅스 큐브의 고유한 도달 가능 상태 수는 정확히 $43,252,003,274,489,856,000$개(약 43 퀸틸리언)다.<a class="backlink" href="#fnref-3" aria-label="본문으로">↩</a></li>
+<li id="fn-4">Matt Barnes et al., &quot;Massively Scalable Inverse Reinforcement Learning in Google Maps&quot;, ICLR 2024 (arXiv:2305.11290). 논문은 Google Maps 도로망으로 2억 개 상태(200M state)의 MDP를 구축했다고 밝힌다.<a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
+<li id="fn-5">Claude E. Shannon, &quot;Programming a Computer for Playing Chess&quot;, <em>Philosophical Magazine</em>, Ser.7, Vol. 41, No. 314, March 1950. 섀넌은 체스의 게임 트리 복잡도를 약 $10^{120}$으로 추산했다.<a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li>
+<li id="fn-6">그래프 탐색(Graph Search) 환경에서 DFS는 방문한 노드를 기억(Closed set)하므로 유한 그래프에서 반드시 종료하며 완전성을 갖는다. 그러나 방문 기억이 없는 트리 탐색(Tree Search) DFS는 사이클(무한 루프)에 빠질 수 있어 완전성을 잃는다.<a class="backlink" href="#fnref-6" aria-label="본문으로">↩</a></li>
+<li id="fn-7">Edsger W. Dijkstra, &quot;A note on two problems in connexion with graphs&quot;, <em>Numerische Mathematik</em>, 1, pp. 269–271, 1959. 1956년, 약혼녀, 카페 테라스, 약 20분, 종이와 연필 없이: P. L. Frana &amp; T. J. Misa, &quot;An Interview with Edsger W. Dijkstra&quot;, <em>Communications of the ACM</em>, 53(8), 2010.<a class="backlink" href="#fnref-7" aria-label="본문으로">↩</a></li>
+<li id="fn-8">Peter E. Hart, Nils J. Nilsson, Bertram Raphael, &quot;A Formal Basis for the Heuristic Determination of Minimum Cost Paths&quot;, <em>IEEE Transactions on Systems Science and Cybernetics</em>, Vol. 4, No. 2, pp. 100–107, July 1968. 이 논문의 Theorem 1에서 $h(n) \le h^<em>(n)$일 때 A</em>의 최적성이 증명되었다.<a class="backlink" href="#fnref-8" aria-label="본문으로">↩</a></li>
+<li id="fn-9">Scott Kirkpatrick, C. Daniel Gelatt, Mario P. Vecchi, &quot;Optimization by Simulated Annealing&quot;, <em>Science</em>, Vol. 220, No. 4598, pp. 671–680, May 1983.<a class="backlink" href="#fnref-9" aria-label="본문으로">↩</a></li>
+<li id="fn-10">Yonghui Wu et al., &quot;Google&#39;s Neural Machine Translation System: Bridging the Gap between Human and Machine Translation&quot;, <em>arXiv:1609.08144</em>, 2016. GNMT의 디코딩 과정에서 $K=8\sim 12$ 빔 서치가 사용되었으며, 빔 폭 축소에 따른 BLEU 점수 트레이드오프가 실측되었다.<a class="backlink" href="#fnref-10" aria-label="본문으로">↩</a></li>
+<li id="fn-11">Stuart Russell and Peter Norvig, <em>Artificial Intelligence: A Modern Approach</em>, 4th Edition, Pearson, 2020, Chapter 4 &quot;Search in Complex Environments&quot; (8-Queens Genetic Algorithm Example).<a class="backlink" href="#fnref-11" aria-label="본문으로">↩</a></li>
+<li id="fn-12">Jason D. Lohn, Gregory S. Hornby, Derek S. Linden, &quot;An Evolved Antenna for Deployment on NASA&#39;s Space Technology 5 Mission&quot; (2005, 게재처 확인 필요). ST5는 2006년 발사되었다.<a class="backlink" href="#fnref-12" aria-label="본문으로">↩</a></li>
+<li id="fn-13">Murray Campbell, A. Joseph Hoane Jr., Feng-hsiung Hsu, &quot;Deep Blue&quot;, <em>Artificial Intelligence</em>, Vol. 134, pp. 57–83, 2002.<a class="backlink" href="#fnref-13" aria-label="본문으로">↩</a></li>
+<li id="fn-14">David Silver et al., &quot;Mastering the game of Go with deep neural networks and tree search&quot;, <em>Nature</em>, Vol. 529, pp. 484–489, 2016.<a class="backlink" href="#fnref-14" aria-label="본문으로">↩</a></li>
+<li id="fn-15">Richard S. Sutton, &quot;The Bitter Lesson&quot;, Incomplete Ideas, March 13, 2019.<a class="backlink" href="#fnref-15" aria-label="본문으로">↩</a></li></ol></section>
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-29-고전AI탐색.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
