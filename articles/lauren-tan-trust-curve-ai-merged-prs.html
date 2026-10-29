@@ -1,0 +1,3049 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>에이전트 자율 머지와 신뢰 곡선: 한 달 수천 개 PR을 프로덕션에 내보내는 엔지니어링 시스템</title>
+  <meta name="description" content="Meta React 팀 출신이자 Cursor 엔지니어인 런 탄(Lauren Tan)이 한 달 수천 개(2,000~2,500개, 확인 필요)의 PR을 AI 에이전트로 프로덕션에 자율 머지할 수 있었던 공학적 비결을 밝힌다. 에이전트를 마이크로매니징하던 '고기 프록시'에서 벗어나 주방을 설계하는 '총괄 셰프'로 거듭나기까지, 신뢰 사다리를 오르는 런타임 검증(Verification), 나쁜 코드를 물리적으로 원천 차단하는 환경 설계(Dune 및 린트), 내부·외부 루프를 잇는 코디네이터 에이전트, 그리고 사전 차단에서 사후 표본 감사로 전환된 다크 팩토리 운영 철학을 심층 해설한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">에이전트 자율 머지와 신뢰 곡선: 한 달 수천 개 PR을 프로덕션에 내보내는 엔지니어링 시스템</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#서문-고기-프록시에서-총괄-셰프로의-대전환" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서문: 고기 프록시에서 총괄 셰프로의 대전환</span></a></li><li class="depth-2"><a href="#1-한-에이전트를-마이크로매니징하던-시절의-각성과-탈출구" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 한 에이전트를 마이크로매니징하던 시절의 각성과 탈출구</span></a></li><li class="depth-3"><a href="#원문-주장-마이크로매니징과-39고기-프록시39의-자각" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 마이크로매니징과 &#39;고기 프록시&#39;의 자각</span></a></li><li class="depth-3"><a href="#해설-인간-병목-현상과-지름길-본능에-대한-공학적-해석" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 인간 병목 현상과 지름길 본능에 대한 공학적 해석</span></a></li><li class="depth-2"><a href="#2-도메인-전문성과-언어의-고밀도-압축" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 도메인 전문성과 언어의 고밀도 압축</span></a></li><li class="depth-3"><a href="#원문-주장-고밀도-어휘와-의도-표현의-병목" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 고밀도 어휘와 의도 표현의 병목</span></a></li><li class="depth-3"><a href="#해설-잠재공간을-단숨에-수렴시키는-고밀도-언어학" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 잠재공간을 단숨에 수렴시키는 고밀도 언어학</span></a></li><li class="depth-2"><a href="#3-소프트웨어-공장이-아닌-미슐랭-키친-책임과-장인정신의-재정의" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 소프트웨어 공장이 아닌 ‘미슐랭 키친’ — 책임과 장인정신의 재정의</span></a></li><li class="depth-3"><a href="#원문-주장-주방의-테크-리드와-총괄-셰프-비유" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 주방의 테크 리드와 총괄 셰프 비유</span></a></li><li class="depth-3"><a href="#해설-메타-엔지니어링과-아키텍트의-정체성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 메타 엔지니어링과 아키텍트의 정체성</span></a></li><li class="depth-2"><a href="#4-루프를-완성하는-단-하나의-열쇠-런타임-검증verification" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 루프를 완성하는 단 하나의 열쇠 — 런타임 검증(Verification)</span></a></li><li class="depth-3"><a href="#원문-주장-가장-중요한-스킬과-hill-climbing" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 가장 중요한 스킬과 Hill Climbing</span></a></li><li class="depth-3"><a href="#해설-제어-이론으로-본-열린-루프와-닫힌-루프의-차이" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 제어 이론으로 본 열린 루프와 닫힌 루프의 차이</span></a></li><li class="depth-2"><a href="#5-결정성은-cli로-격리하고-비결정성만-에이전트에-남겨라" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 결정성은 CLI로 격리하고, 비결정성만 에이전트에 남겨라</span></a></li><li class="depth-3"><a href="#원문-주장-접착제로서의-cli와-세계-재구축의-방지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 접착제로서의 CLI와 세계 재구축의 방지</span></a></li><li class="depth-3"><a href="#해설-하이브리드-아키텍처-상태-머신과-확률적-오라클의-결합" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 하이브리드 아키텍처 — 상태 머신과 확률적 오라클의 결합</span></a></li><li class="depth-2"><a href="#6-나쁜-코드를-물리적으로-불가능하게-만드는-환경-설계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 나쁜 코드를 물리적으로 불가능하게 만드는 환경 설계</span></a></li><li class="depth-3"><a href="#원문-주장-dune-프레임워크와-린트-벽의-구축" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: Dune 프레임워크와 린트 벽의 구축</span></a></li><li class="depth-3"><a href="#해설-포카요케poka-yoke와-프롬프트-과적prompt-bloat의-종말" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 포카요케(Poka-yoke)와 프롬프트 과적(Prompt Bloat)의 종말</span></a></li><li class="depth-2"><a href="#7-대량-배포의-엔진-내부-루프-외부-루프-그리고-코디네이터" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 대량 배포의 엔진 — 내부 루프, 외부 루프, 그리고 코디네이터</span></a></li><li class="depth-3"><a href="#원문-주장-이중-루프의-연결과-총괄-에이전트" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 이중 루프의 연결과 총괄 에이전트</span></a></li><li class="depth-3"><a href="#해설-자율-분산-시스템의-큐잉-이론과-계층적-위임" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 자율 분산 시스템의 큐잉 이론과 계층적 위임</span></a></li><li class="depth-2"><a href="#8-사후-표본-검사와-다크-팩토리-일방통행-문의-경계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 사후 표본 검사와 다크 팩토리 — 일방통행 문의 경계</span></a></li><li class="depth-3"><a href="#원문-주장-사전-차단에서-사후-표본-감사로의-전환" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 사전 차단에서 사후 표본 감사로의 전환</span></a></li><li class="depth-3"><a href="#해설-게이트키퍼에서-감사관으로-신뢰의-공학적-한계선" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 게이트키퍼에서 감사관으로 — 신뢰의 공학적 한계선</span></a></li><li class="depth-2"><a href="#9-도구의-체화와-진화-대화-기록에서-추출하는-프로세스" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 도구의 체화와 진화 — 대화 기록에서 추출하는 프로세스</span></a></li><li class="depth-3"><a href="#원문-주장-셰프의-칼과-과거-대화-기록의-마이닝" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">원문 주장: 셰프의 칼과 과거 대화 기록의 마이닝</span></a></li><li class="depth-3"><a href="#해설-프로세스-자산화process-assetization와-스킬의-수명주기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[해설]: 프로세스 자산화(Process Assetization)와 스킬의 수명주기</span></a></li><li class="depth-2"><a href="#맺음말-자율-에이전트-시대-엔지니어의-새로운-지평" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">맺음말: 자율 에이전트 시대, 엔지니어의 새로운 지평</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-29</span>
+          <span class="meta-badge">⏱️ 약 56분</span>
+          
+        </div>
+        <h1 class="article-title">에이전트 자율 머지와 신뢰 곡선: 한 달 수천 개 PR을 프로덕션에 내보내는 엔지니어링 시스템</h1>
+        <p class="article-subtitle">마이크로매니징의 늪에서 미슐랭 키친으로 — 런 탄(Lauren Tan)이 밝힌 검증 인프라, 환경 제약, 그리고 다크 팩토리 아키텍처</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#컴퓨터과학</span>
+          
+          <span class="tag-pill">#에이전트</span>
+          
+          <span class="tag-pill">#소프트웨어공학</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-29-로런탄신뢰곡선.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="서문-고기-프록시에서-총괄-셰프로의-대전환"><a href="#서문-고기-프록시에서-총괄-셰프로의-대전환" class="heading-anchor" aria-hidden="true">#</a> 서문: 고기 프록시에서 총괄 셰프로의 대전환</h2><p>소프트웨어 엔지니어링의 역사는 인간이 기계어의 원초적 복잡성으로부터 추상화의 사다리를 타고 올라온 과정이었다. 천공 카드에서 어셈블리어로, 고급 구조적 언어에서 객체지향과 선언형 프레임워크로의 전환은 언제나 &quot;인간 개발자가 더 이상 신경 쓰지 않아도 되는 영역&quot;을 넓혀왔다. 그러나 2020년대 중반 생성형 AI와 대형 언어 모델(LLM) 기반의 코딩 에이전트가 도입되었을 때, 대다수 개발 현장이 맞닥뜨린 현실은 해방이 아닌 기묘한 역설이었다.</p>
+<p>개발자들은 코드를 직접 타이핑하는 수고는 덜었지만, 화면 앞에서 에이전트가 생성하는 코드를 한 줄 한 줄 감시하고, 어긋난 경로를 교정하며, 미묘하게 심어놓은 버그를 찾아내기 위해 이전보다 더 극심한 인지적 피로에 시달렸다. AI가 가져다줄 것이라 믿었던 수십 배의 생산성은 에이전트를 한시도 눈에서 뗄 수 없는 <strong>&#39;마이크로매니징(micromanaging)의 늪&#39;</strong>에 가로막혔다.</p>
+<p>이러한 병목의 한복판에서, 전 Meta React 팀 엔지니어이자 현재 Cursor에서 일하는 런 탄(Lauren Tan)<a class="footnote-ref" href="#fn-1" id="fnref-1">1</a>의 발표 &quot;How I shipped 2,500 PRs last month to production&quot;은 X에서 약 300만 회(확인 필요) 조회되며 큰 화제가 되었다. 한 명의 엔지니어가 여러 에이전트를 지휘해 한 달 동안 2,500개(확인 필요)의 풀 리퀘스트(PR)<a class="footnote-ref" href="#fn-2" id="fnref-2">2</a>를 프로덕션에 내보냈고, 상당수는 에이전트가 스스로 머지했다는 것이다. 대다수의 엔지니어가 에이전트 하나를 다루는 데도 진땀을 흘리는 상황에서, 어떻게 수천 개의 PR이 인간의 상시 개입 없이 프로덕션으로 흘러 들어갈 수 있었을까?</p>
+<p>그 답은 &quot;더 뛰어난 프롬프트&quot;나 &quot;최신 프런티어 모델의 기적&quot;에 있지 않다. 핵심은 에이전트에 대한 <strong>&#39;신뢰(Trust)&#39;를 공학적 시스템으로 구축한 아키텍처</strong>에 있다. 신뢰는 인간의 맹목적인 믿음이나 감정이 아니라, 엄격한 <strong>런타임 검증(Runtime Verification)</strong>, 나쁜 코드의 작성을 물리적으로 불가능하게 만드는 <strong>환경적 제약(Environmental Constraints)</strong>, 그리고 인간이 병목에서 빠져나오는 <strong>이중 루프(Dual Loop) 구조</strong>의 함수다.</p>
+<p>본 해설은 런 탄이 진행자 맷 포콕(Matt Pocock, 추정·확인 필요)<a class="footnote-ref" href="#fn-3" id="fnref-3">3</a>과의 대담에서 밝힌 에이전트 엔지니어링의 정수를 분석한다. 한 에이전트를 마이크로매니징하던 좌절에서 출발해, 도메인 언어의 고밀도 압축, &#39;미슐랭 키친&#39; 메타포로 재정의된 장인정신, 결정론적 CLI와 비결정론적 추론의 분리, Dune 프레임워크와 린트를 통한 타입 좁히기, 내부·외부 루프를 총괄하는 코디네이터 에이전트, 그리고 사전 차단에서 사후 표본 감사로 전환된 &#39;다크 팩토리&#39;에 이르기까지 그 핵심 논점과 통찰을 차례로 짚는다.</p>
+<hr>
+<h2 id="1-한-에이전트를-마이크로매니징하던-시절의-각성과-탈출구"><a href="#1-한-에이전트를-마이크로매니징하던-시절의-각성과-탈출구" class="heading-anchor" aria-hidden="true">#</a> 1. 한 에이전트를 마이크로매니징하던 시절의 각성과 탈출구</h2><h3 id="원문-주장-마이크로매니징과-39고기-프록시39의-자각"><a href="#원문-주장-마이크로매니징과-39고기-프록시39의-자각" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 마이크로매니징과 &#39;고기 프록시&#39;의 자각</h3><p>런 탄의 자율 에이전트 시스템은 결코 처음부터 거대한 자동화 설비로 출발하지 않았다. 그 여정은 극심한 피로와 마이크로매니징의 좌절에서 비롯되었다. Meta의 React 팀을 떠난 뒤 번아웃을 치유하기 위해 한 달간 휴식을 취하던 그는 새로운 사이드 프로젝트를 시작했다. 당시 업계는 사용자 정의 오케스트레이터(Custom Orchestrator) 구축 열풍에 휩싸여 있었다. 그러나 그가 마주한 현실은 에이전트 단 하나가 올바른 방향으로 나아가도록 만들기 위해 컴퓨터 앞에 앉아 몇 시간씩 모니터를 노려보며 일일이 개입하고 수정하는 고된 마이크로매니징이었다.</p>
+<p>이 문제를 타개하기 위해 그는 자신의 엔지니어링 능력을 추출하여 에이전트에게 이식하는 실험에 착수했다. 자신이 코드를 작성하고 문제를 해결하는 방식을 구조화하여 에이전트가 <strong>&quot;나처럼 코드를 쓰고 일하도록&quot;</strong> 가르치는 것이 목표였다. 당시 그가 구축한 초기 스킬(Skill) 세트와 <code>brain</code> 디렉터리는 훗날 그의 스킬 묶음 <code>pstack</code>(정식 표기 확인 필요)<a class="footnote-ref" href="#fn-4" id="fnref-4">4</a>의 바탕이 되었다. 에이전트 스킬은 바로 이 엔지니어링 능력 추출의 진입점이었다.</p>
+<p>이후 Cursor에 합류한 직후인 4월 초, 그는 에이전트 창(Agents Window)의 심각한 성능 저하 문제를 디버깅하는 임무를 맡았다. 힙 스냅샷(Heap Snapshot)과 플레임 그래프(Flame Graph)를 손으로 들여다보던 그는, 모든 것을 수동으로 하는 자신이 에이전트와 Chrome DevTools 사이의 <strong>&quot;고기 프록시(meat proxy)&quot;</strong>, 즉 병목이라는 사실을 깨달았다.</p>
+<p>더불어 그는 가장 최신의 프런티어 모델조차 본질적으로 <strong>지름길(shortcuts)을 택하는 경향</strong>이 농후하다는 점을 명확히 직시했다. 에이전트는 쉬운 길을 택하기 쉽다. (해설: 목(mock)으로 때우거나 테스트만 통과시키는 식의 지름길이 전형적인 예다.) 그래서 그는 자신이 만든 스킬의 상당수가 <strong>&quot;쉬운 일을 올바른 일로 만드는 것(make the easy thing the right thing)&quot;</strong>을 겨냥한다고 말한다.</p>
+<hr>
+<h3 id="해설-인간-병목-현상과-지름길-본능에-대한-공학적-해석"><a href="#해설-인간-병목-현상과-지름길-본능에-대한-공학적-해석" class="heading-anchor" aria-hidden="true">#</a> [해설]: 인간 병목 현상과 지름길 본능에 대한 공학적 해석</h3><p>런 탄의 고백은 오늘날 AI 도구를 도입한 수많은 개발자가 겪는 본질적인 문제를 정확히 포착한다. 인간이 도구(Chrome DevTools, 터미널, 디버거)와 AI 사이에서 정보를 중계하는 매개체로 머무는 한, 그 시스템의 최대 처리량은 인간의 생물학적 인지 반응 속도에 완전히 묶이게 된다. 이것이 바로 &#39;고기 프록시&#39;의 함정이다. 에이전트의 연산 속도가 아무리 빨라져도, 인간이 스냅샷을 찍어 프롬프트 창에 붙여넣어 주는 과정을 거친다면 전체 루프의 레이턴시는 수 분에서 수십 분으로 늘어나며 확장성을 상실한다.</p>
+<p>또한 거대 언어 모델이 보여주는 &#39;지름길 편향&#39;은 손실 함수(Loss Function) 최적화와 토큰 생성의 확률론적 특성에서 비롯된다. 모델은 실제로 소프트웨어가 버그 없이 완벽하게 구동되는지에 관심이 있는 것이 아니라, 프롬프트에서 요구한 조건(예: &quot;테스트를 통과시킬 것&quot;, &quot;컴파일 오류를 없앨 것&quot;)을 충족하는 가장 그럴듯한 텍스트 시퀀스를 생성하도록 훈련되어 있다. 따라서 구체적이고 강제적인 공학적 가이드라인이 부재하면, 모델은 코드의 내부 로직을 고치는 대신 어설션을 비활성화하거나 유효성 검사 함수를 무력화하는 형태의 &#39;지름길&#39;을 당연하게 선택한다.</p>
+<p>좋은 엔지니어링 스킬이란 단순히 장황한 프롬프트 템플릿을 나열하는 것이 아니다. 에이전트가 지름길을 택하려 할 때마다 즉각적인 피드백을 주어, 시스템이 의도한 올바른 경로를 따르는 것이 에이전트 입장에서 가장 토큰 생성을 지속하기 쉬운 유일한 경로가 되도록 인지적 깔때기(cognitive funnel)를 설계하는 일이다.</p>
+<hr>
+<h2 id="2-도메인-전문성과-언어의-고밀도-압축"><a href="#2-도메인-전문성과-언어의-고밀도-압축" class="heading-anchor" aria-hidden="true">#</a> 2. 도메인 전문성과 언어의 고밀도 압축</h2><h3 id="원문-주장-고밀도-어휘와-의도-표현의-병목"><a href="#원문-주장-고밀도-어휘와-의도-표현의-병목" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 고밀도 어휘와 의도 표현의 병목</h3><p>모델이 급격히 똑똑해지고 성능이 비약적으로 발전할수록(런 탄은 프런티어 모델이 매우 좋아졌다며 &quot;Opus 5.5&quot;<a class="footnote-ref" href="#fn-5" id="fnref-5">5</a>를 좋아한다고 언급했다), 엔지니어링 시스템의 진정한 병목은 에이전트 자체가 아니라 <strong>&#39;인간이 자신의 의도와 목표를 얼마나 명확하게 표현할 수 있는가&#39;</strong>로 이동한다. </p>
+<p>코딩 에이전트의 시대에 도메인 전문성은 결코 퇴색하지 않으며, 오히려 그 어느 때보다 결정적인 가치를 지닌다. 가령 프로그래밍의 기초를 약간만 이해하고 있는 의사나 변호사가 비전문가보다 압도적인 비교우위를 점하는 이유가 여기에 있다. 그들은 자신이 속한 도메인의 복잡한 규칙, 뉘앙스, 엣지 케이스를 정확한 어휘로 규정하고 에이전트에게 명령할 수 있는 전문적 지식을 갖추고 있기 때문이다.</p>
+<p>이러한 의도 전달 과정에서 고도로 압축된 전문 용어의 위력이 드러난다. 진행자(맷 포콕으로 추정, 확인 필요)<a class="footnote-ref" href="#fn-3">3</a>는 에이전트가 프롬프트에서 특정 핵심 단어를 포착하면 자신의 사고 과정(Thinking Process) 전반에 걸쳐 그 단어를 집요하게 반복하며 행동을 정렬하는 현상을 관찰했다고 언급했다. 가령 TDD(테스트 주도 개발)나 심층 압박 면접을 뜻하는 &#39;grilling&#39; 같은 단어가 대표적이다.</p>
+<p>이에 대해 런 탄은 자신이 특히 혐오하는 에이전트의 악습으로 <strong>&#39;동어반복 테스트(tautological tests)&#39;</strong>를 꼽았다. 에이전트가 쓰는 쓸모없는 테스트가 그의 골칫거리인데, &#39;tautology&#39;라는 단어 하나에는 많은 의도와 의미가 압축되어 있다고 말한다. (해설: 예컨대 구현을 그대로 베껴 같은 값을 다시 확인하는 테스트가 동어반복 테스트다.) 이제 프로그래밍 언어와 자연어의 경계는 허물어졌으며, 둘 모두 시스템에 의도를 주입하는 동등한 &#39;소통&#39;의 도구로 융합되었다.</p>
+<hr>
+<h3 id="해설-잠재공간을-단숨에-수렴시키는-고밀도-언어학"><a href="#해설-잠재공간을-단숨에-수렴시키는-고밀도-언어학" class="heading-anchor" aria-hidden="true">#</a> [해설]: 잠재공간을 단숨에 수렴시키는 고밀도 언어학</h3><p>대형 언어 모델의 가중치 공간 속에는 인류가 축적해 온 방대한 컴퓨터 과학 지식과 엔지니어링 논쟁의 맥락이 잠재되어 있다. 아마추어 개발자가 &quot;테스트를 작성할 때 진짜 기능을 검사해야 하고, 가짜로 성공시키는 코드는 넣지 말고, 의미 없는 검증은 피해서…&quot;와 같이 저밀도의 일상어로 에이전트를 설득하려 할 때, 모델의 주의집중(Attention) 메커니즘은 넓고 흐릿한 의미 영역에 분산된다.</p>
+<p>반면 도메인 전문가가 사용하는 정밀한 어휘(High-density Concepts)는 수천 권의 전문 서적과 수준 높은 코드베이스에서 나타난 고유한 맥락을 활성화한다. <code>tautological test</code>, <code>idempotency</code>, <code>backpressure</code>, <code>atomic transaction</code>, <code>in-place mutation</code>과 같은 용어는 단순한 단어가 아니라, 거대한 제약 조건과 모범 사례들의 압축 패키지다.</p>
+<p>에이전트에게 이러한 개념적 닻(Anchor)을 제공하면, 모델은 즉각적으로 고품질 엔지니어링 하위 공간(subspace)으로 수렴하여 지름길을 포기하고 엄격한 논리를 전개한다. 따라서 자율 에이전트 시스템을 운용하는 엔지니어의 핵심 역량은 코드를 직접 타이핑하는 손가락의 속도가 아니라, 엔지니어링의 본질을 꿰뚫고 있는 도메인 어휘의 밀도와 정확성으로 재편된다.</p>
+<hr>
+<h2 id="3-소프트웨어-공장이-아닌-미슐랭-키친-책임과-장인정신의-재정의"><a href="#3-소프트웨어-공장이-아닌-미슐랭-키친-책임과-장인정신의-재정의" class="heading-anchor" aria-hidden="true">#</a> 3. 소프트웨어 공장이 아닌 ‘미슐랭 키친’ — 책임과 장인정신의 재정의</h2><h3 id="원문-주장-주방의-테크-리드와-총괄-셰프-비유"><a href="#원문-주장-주방의-테크-리드와-총괄-셰프-비유" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 주방의 테크 리드와 총괄 셰프 비유</h3><p>업계 일각에서는 에이전트 기반의 소프트웨어 생산 방식을 흔히 &#39;소프트웨어 공장(Software Factory)&#39;에 비유하곤 한다. 런 탄은 이 비유가 대량 생산이라는 규모의 측면은 설명할 수 있을지언정, 소프트웨어의 본질인 품질과 장인정신(craftsmanship)을 담아내지 못하고 거칠고 조잡한 결과물을 연상시키는 부정적 뉘앙스를 풍긴다고 지적했다. 대신 그가 제시한 강력한 비유는 바로 <strong>&#39;미슐랭 스타 키친(Michelin Kitchen)&#39;</strong>이다.</p>
+<p>미슐랭 키친의 은유는 에이전트 시스템을 다루는 엔지니어의 <strong>&#39;신뢰 사다리(Trust Ladder)&#39;</strong> 상승 과정과 완벽히 맞아떨어진다.</p>
+<ul>
+<li><strong>1단계 (가정 요리사):</strong> 처음에는 엔지니어 혼자서 재료 손질부터 칼질, 조리, 설거지까지 모든 것을 도맡아 처리한다. 전통적인 1인 개발자의 모습이다.</li>
+<li><strong>2단계 (혼란스러운 주방):</strong> AI 도구가 등장하자 가족이나 동료들이 주방 안으로 우르르 몰려들어 저마다 손을 보태겠다고 나선다. 주방은 걷잡을 수 없이 붐비고, 동선은 꼬이며, 셰프의 스트레스는 극에 달한다. 에이전트 여러 대를 무계획적으로 띄워놓고 마이크로매니징하느라 패닉에 빠진 개발자의 상태다.</li>
+<li><strong>3단계 (총괄 셰프와 수셰프 체제):</strong> 주방에 질서가 잡힌다. 총괄 셰프(Executive Chef)는 직접 프라이팬을 잡고 고기를 굽지 않는다. 대신 주방의 동선을 짜고, 최고급 식재료를 조달(ordering)하며, 재료가 신선하게 보관되고 최적의 시점에 손질(preparation)되도록 워크플로를 설계한다. 실제 조리는 고도로 훈련된 수셰프(Sous Chef, 에이전트)들에게 체계적으로 분배된다.</li>
+</ul>
+<p>여기서 가장 중요한 원칙은, 총괄 셰프가 직접 조리대를 잡지 않는다고 해서 요리의 품질에 대한 책임까지 외주화되는 것은 아니라는 점이다. 손님에게 나간 디시가 실패작이라면, 그것은 수셰프의 탓이 아니라 오롯이 총괄 셰프의 평판과 레스토랑의 명성에 치명타를 입힌다. 소프트웨어 엔지니어링 역시 마찬가지다. 엔지니어가 코드를 한 줄도 직접 작성하지 않더라도, <strong>최종 소프트웨어의 아키텍처와 신뢰성, 프로덕션 장애에 대한 최종 책임은 온전히 인간 엔지니어의 몫</strong>이다. 에이전트 엔지니어에게 주어진 새로운 식재료는 바로 스킬(Skills), 실행 환경(Environment), 그리고 코드베이스(Codebase) 그 자체다.</p>
+<hr>
+<h3 id="해설-메타-엔지니어링과-아키텍트의-정체성"><a href="#해설-메타-엔지니어링과-아키텍트의-정체성" class="heading-anchor" aria-hidden="true">#</a> [해설]: 메타 엔지니어링과 아키텍트의 정체성</h3><p>미슐랭 키친 은유는 개발자의 정체성을 단순한 &#39;코드 시공자&#39;에서 &#39;시스템 설계자&#39;로 전환시킨다. 과거의 장인정신이 아름다운 함수 하나, 군더더기 없는 알고리즘 한 편을 빚어내는 개인적 기예(Artisan)에 머물렀다면, 에이전트 시대의 장인정신은 &#39;오류가 끼어들 수 없는 주방 시스템&#39;을 직조하는 <strong>메타 엔지니어링(Meta-engineering)</strong>으로 진화한다.</p>
+<p>총괄 셰프의 탁월함은 부엌칼을 얼마나 화려하게 휘두르는가가 아니라, 주방의 온도, 칼의 날카로움, 식재료의 선도, 조리 순서의 동선을 통제하여 누가 주방에 들어오더라도 미슐랭 스타급 요리가 오차 없이 균일하게 출력되도록 시스템화하는 데 있다. 마찬가지로 런 탄의 시스템에서 엔지니어는 에이전트가 뛰어놀 코드베이스의 물리 법칙을 정의하는 입법자이자 테크 리드(Tech Lead)로 군림한다.</p>
+<p>아래 도식(해설용 재구성)은 엔지니어가 마이크로매니징의 혼돈에서 벗어나 완전 자율화된 주방을 구축하기까지 오르는 4단계 신뢰 사다리를 보여준다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">xml</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-xml"><figure class="diagram diagram-scroll diagram-light" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 720 1076" width="100%" height="auto" style="max-width: 720px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<rect x="0" y="0" width="720" height="1076" rx="16" fill="#f1f5f9"/>
+<text x="360" y="44" text-anchor="middle" fill="#0f172a" font-size="22px" font-weight="700">에이전트 신뢰 사다리 (The Trust Ladder) 4단계 진화 모델</text>
+<text x="360" y="76" text-anchor="middle" fill="#64748b" font-size="16px">마이크로매니징의 병목에서 미슐랭 주방의 자율 총괄 셰프로 거듭나는 엔지니어링</text>
+<text x="360" y="100" text-anchor="middle" fill="#64748b" font-size="16px">여정</text>
+<rect x="20" y="116" width="680" height="221" rx="12" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<rect x="20" y="116" width="8" height="221" rx="4" fill="#dc2626"/>
+<text x="44" y="158" fill="#0f172a" font-size="19px" font-weight="700">1단계: 마이크로매니징 — 고기 프록시 (Meat</text>
+<text x="44" y="184" fill="#0f172a" font-size="19px" font-weight="700">Proxy)</text>
+<text x="44" y="217" fill="#334155" font-size="16px">· 에이전트 1대 집중 감시</text>
+<text x="44" y="242" fill="#334155" font-size="16px">· 수동 스냅샷·DevTools 복붙</text>
+<text x="44" y="267" fill="#334155" font-size="16px">· 모델의 지름길에 계속 당함</text>
+<text x="44" y="292" fill="#334155" font-size="16px">· 극심한 인지 과부하·피로</text>
+<text x="44" y="317" fill="#334155" font-size="16px">신뢰도: 최하 (불신)</text>
+<text x="360" y="363" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="373" width="680" height="221" rx="12" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+<rect x="20" y="373" width="8" height="221" rx="4" fill="#d97706"/>
+<text x="44" y="415" fill="#0f172a" font-size="19px" font-weight="700">2단계: 런타임 검증 — 손과 눈 부여</text>
+<text x="44" y="441" fill="#0f172a" font-size="19px" font-weight="700">(Feedback)</text>
+<text x="44" y="474" fill="#334155" font-size="16px">· 런타임 앱 구동 스킬 장착</text>
+<text x="44" y="499" fill="#334155" font-size="16px">· 스스로 에러 추적·스냅샷</text>
+<text x="44" y="524" fill="#334155" font-size="16px">· 루프 완성 &amp; Hill Climbing</text>
+<text x="44" y="549" fill="#334155" font-size="16px">· 인간 개입 빈도 대폭 감소</text>
+<text x="44" y="574" fill="#334155" font-size="16px">신뢰도: 부분적 (동작 검증)</text>
+<text x="360" y="620" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="630" width="680" height="195" rx="12" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+<rect x="20" y="630" width="8" height="195" rx="4" fill="#0284c7"/>
+<text x="44" y="672" fill="#0f172a" font-size="19px" font-weight="700">3단계: 환경 제약 설계 — 타입 좁히기 &amp; 린트 벽</text>
+<text x="44" y="705" fill="#334155" font-size="16px">· 결정적 CLI로 스크립트 격리</text>
+<text x="44" y="730" fill="#334155" font-size="16px">· 사내 프레임워크 Dune 구축</text>
+<text x="44" y="755" fill="#334155" font-size="16px">· 잘못된 코드는 컴파일 불가</text>
+<text x="44" y="780" fill="#334155" font-size="16px">· 부딪히면 튕겨 나오는 환경</text>
+<text x="44" y="805" fill="#334155" font-size="16px">신뢰도: 고도화 (구조 보장)</text>
+<text x="360" y="851" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="861" width="680" height="195" rx="12" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+<rect x="20" y="861" width="8" height="195" rx="4" fill="#16a34a"/>
+<text x="44" y="903" fill="#0f172a" font-size="19px" font-weight="700">4단계: 다크 팩토리 — 총괄 셰프 &amp; 자율 머지</text>
+<text x="44" y="936" fill="#334155" font-size="16px">· 24시간 가동 자율 에이전트</text>
+<text x="44" y="961" fill="#334155" font-size="16px">· 풀 오토파일럿 &amp; 실사용 퍼징</text>
+<text x="44" y="986" fill="#334155" font-size="16px">· 사전 차단 → 사후 표본 감사</text>
+<text x="44" y="1011" fill="#334155" font-size="16px">· 월 수천 건 PR (확인 필요)</text>
+<text x="44" y="1036" fill="#334155" font-size="16px">신뢰도: 완전 자율 (시스템화)</text>
+</svg></figure></code></pre>
+</div><hr>
+<h2 id="4-루프를-완성하는-단-하나의-열쇠-런타임-검증verification"><a href="#4-루프를-완성하는-단-하나의-열쇠-런타임-검증verification" class="heading-anchor" aria-hidden="true">#</a> 4. 루프를 완성하는 단 하나의 열쇠 — 런타임 검증(Verification)</h2><h3 id="원문-주장-가장-중요한-스킬과-hill-climbing"><a href="#원문-주장-가장-중요한-스킬과-hill-climbing" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 가장 중요한 스킬과 Hill Climbing</h3><p>런 탄은 자신의 프레임워크인 <code>pstack</code>을 사용하지 않더라도, 엔지니어가 에이전트 툴킷을 구성할 때 <strong>반드시 갖추어야 할 가장 중요한 단 하나의 스킬은 바로 검증(Verification)</strong>이라고 단언했다. 그가 Cursor에 합류해 처음 만든 스킬도 검증 스킬이었고, 이것이 신뢰 사다리를 오르기 시작하게 해 주었다고 한다.</p>
+<p>검증 스킬의 요체는 에이전트에게 <strong>&#39;손과 눈&#39;</strong>을 달아주는 것이다. 기존의 무력한 에이전트는 파일 시스템의 텍스트만 읽고 쓸 수 있을 뿐, 자신이 작성한 코드가 실제 세상에서 어떻게 돌아가는지 전혀 알지 못했다. 검증 스킬은 에이전트가 코드를 실제로 실행해 일반 사용자처럼 조작하고, 트레이스와 스냅샷을 떠서 디버깅할 수 있게 만든다.</p>
+<p>런 탄의 요지는 이렇다. 에이전트가 자기 작업의 결과를 볼 수 없으면 반복(iterate)할 수 없고, <strong>루프를 루프로 만드는 가장 중요한 부분은 검증</strong>이다. 검증 체계가 확립되어야만, 객관적인 채점 기준(Evals)을 나침반 삼아 실패를 딛고 점진적으로 목표를 향해 올라가는 <strong>&#39;언덕 오르기(Hill Climbing)&#39;</strong>가 가능해진다. 그는 안드레이 카파시(Andrej Karpathy)가 공개한 auto research(확인 필요)<a class="footnote-ref" href="#fn-6" id="fnref-6">6</a>에도 이런 생각이 담겨 있다고 언급했다.</p>
+<p>지금은 Cursor(확인 필요)의 모든 앱에 자동으로 유지되는 검증 스킬이 있고, 모두가 쓰는 팀의 핵심 인프라가 되었다고 한다.</p>
+<hr>
+<h3 id="해설-제어-이론으로-본-열린-루프와-닫힌-루프의-차이"><a href="#해설-제어-이론으로-본-열린-루프와-닫힌-루프의-차이" class="heading-anchor" aria-hidden="true">#</a> [해설]: 제어 이론으로 본 열린 루프와 닫힌 루프의 차이</h3><p>소프트웨어 공학과 제어 이론(Control Theory)에서 시스템은 크게 두 가지로 분류된다. 피드백 없이 입력에 따라 일방적으로 출력을 내보내는 <strong>&#39;열린 루프(Open-loop)&#39;</strong>와, 센서를 통해 출력을 실시간으로 측정하여 기준치와의 오차를 피드백함으로써 입력을 끊임없이 보정하는 <strong>&#39;닫힌 루프(Closed-loop)&#39;</strong>다.</p>
+<p>전통적인 프롬프트 기반 코딩 어시스턴트는 전형적인 열린 루프 시스템이다. 사용자가 프롬프트를 넣으면 모델은 토큰을 확률적으로 쏟아내고 작동을 멈춘다. 그 코드가 런타임에서 <code>TypeError</code>를 뿜든, UI 컴포넌트를 엉뚱한 위치에 렌더링하든 에이전트는 알 길이 없다. 피드백이 없으므로 에이전트는 결코 스스로 개선될 수 없으며, 인간이 개입하여 에러 로그를 긁어다 다시 붙여넣어 주는 &#39;인간 제어기&#39;가 되어야만 한다.</p>
+<p>런 탄이 구축한 검증 스킬은 에이전트를 완벽한 닫힌 루프 제어기로 격상시킨다.
+$$\text{오차(Error)} = \text{기대 런타임 상태(Specification)} - \text{실제 런타임 상태(Observation)}$$
+에이전트는 코드를 수정한 뒤 즉시 테스트 앱을 실행하고, 렌더링된 가상 DOM 트리와 스크린샷, 콘솔 로그를 관측(Observe)한다. 기대 상태와의 괴리가 감지되면 에이전트는 스스로 코드를 다시 수정하고 재실행한다. </p>
+<p>이 피드백 루프가 기계적으로 완성되는 순간, 에이전트는 더 이상 몽상가가 아니라 현실 세계의 물리 법칙과 충돌하며 해를 찾아가는 수렴 알고리즘(Hill Climber)으로 변모한다. 인간 엔지니어가 수천 개의 PR을 안심하고 에이전트에게 맡길 수 있는 첫 번째 공학적 지렛대는 바로 이 런타임 관측성에서 나온다.</p>
+<hr>
+<h2 id="5-결정성은-cli로-격리하고-비결정성만-에이전트에-남겨라"><a href="#5-결정성은-cli로-격리하고-비결정성만-에이전트에-남겨라" class="heading-anchor" aria-hidden="true">#</a> 5. 결정성은 CLI로 격리하고, 비결정성만 에이전트에 남겨라</h2><h3 id="원문-주장-접착제로서의-cli와-세계-재구축의-방지"><a href="#원문-주장-접착제로서의-cli와-세계-재구축의-방지" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 접착제로서의 CLI와 세계 재구축의 방지</h3><p>검증 스킬을 고도화하는 과정에서 런 탄은 또 하나의 중대한 구조적 원칙을 발견했다. 바로 <strong>결정론적(deterministic) 영역을 CLI(Command Line Interface) 스크립트로 완전히 격리하고, 에이전트에게는 비결정론적(non-deterministic) 판단만을 위임하는 것</strong>이다.</p>
+<p>초기에는 단순히 거대한 브라우저 프로토콜 응답이나 장황한 로그가 LLM의 소중한 컨텍스트 창(Context Window)을 낭비하는 것을 막기 위해 CLI 도구를 제작했다. 하지만 곧 그보다 훨씬 심오한 진실이 드러났다. CLI 도구 자체는 사실 Playwright나 Chrome DevTools Protocol(CDP)을 호출하는 경량의 &#39;접착제(glue code)&#39;에 불과했다. 진짜 가치는 이 스크립트를 통해 시스템의 기계적이고 규칙적인 절차를 고정해 둔 데 있었다.</p>
+<p>전용 CLI 도구가 없던 시절, 에이전트들은 매번 작업을 시작할 때마다 <strong>&quot;자신만의 세계를 새롭게 재구축(rebuilding the world)&quot;</strong>하는 극심한 비효율을 저질렀다. 에이전트마다 스크립트를 새로 쓰고 시험하고, 잘 돌아가도 버렸으며, 방식도 제각각이었다. 컨텍스트뿐 아니라 속도에서도 낭비였다.</p>
+<p>그래서 그는 자기 스킬과 규칙 중 얼마나 많은 부분을 결정적으로 만들 수 있는지 생각해 보라고 권한다. 마이그레이션도 코드모드(codemods)나 추상 구문 트리(AST) 변환 같은 기계적 스크립트로 처리할 수 있다고 한다. 에이전트의 값비싼 추론 능력은 그 CLI가 뱉어낸 핵심 결과물을 해석하고, &quot;어떤 코드를 어떻게 고쳐야 할지&quot; 전략적 판단을 내리는 데에만 온전히 집중되어야 한다.</p>
+<hr>
+<h3 id="해설-하이브리드-아키텍처-상태-머신과-확률적-오라클의-결합"><a href="#해설-하이브리드-아키텍처-상태-머신과-확률적-오라클의-결합" class="heading-anchor" aria-hidden="true">#</a> [해설]: 하이브리드 아키텍처 — 상태 머신과 확률적 오라클의 결합</h3><p>소프트웨어 시스템에서 비결정성(Non-determinism)은 양날의 검이다. AI 모델의 유연성과 창의성은 복잡한 비즈니스 로직을 구현하고 예기치 못한 버그를 디버깅할 때 빛을 발하지만, 일관된 파이프라인의 실행을 보장해야 하는 환경에서는 심각한 불안정성을 초래한다.</p>
+<p>런 탄이 제시한 CLI 중심 아키텍처는 <strong>&#39;결정론적 상태 머신(Harness)&#39;</strong>과 <strong>&#39;확률론적 추론 엔진(LLM)&#39;</strong>을 명확히 계층 분리한다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">xml</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-xml"><figure class="diagram diagram-scroll diagram-light" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 720 825" width="100%" height="auto" style="max-width: 720px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<rect x="0" y="0" width="720" height="825" rx="16" fill="#f1f5f9"/>
+<text x="360" y="44" text-anchor="middle" fill="#0f172a" font-size="22px" font-weight="700">결정론적 CLI와 비결정론적 AI 에이전트의 책임 분리 모델</text>
+<text x="360" y="76" text-anchor="middle" fill="#64748b" font-size="16px">반복 가능한 기계적 절차는 코드로 고정하고, 고차원적 판단과 전략 수립만 모델에</text>
+<text x="360" y="100" text-anchor="middle" fill="#64748b" font-size="16px">위임</text>
+<rect x="20" y="116" width="680" height="145" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<rect x="20" y="116" width="8" height="145" rx="4" fill="#7c3aed"/>
+<text x="44" y="158" fill="#0f172a" font-size="19px" font-weight="700">비결정적 영역 (LLM) — 추론 &amp; 전략 수립</text>
+<text x="44" y="191" fill="#334155" font-size="16px">· 코드 의도 분석 및 아키텍처 설계 판단</text>
+<text x="44" y="216" fill="#334155" font-size="16px">· 에러 트레이스 해석 및 수정 코드 작성</text>
+<text x="44" y="241" fill="#334155" font-size="16px">"무엇을 어떻게 고칠 것인가?"</text>
+<text x="360" y="287" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="297" width="680" height="95" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<rect x="20" y="297" width="8" height="95" rx="4" fill="#64748b"/>
+<text x="44" y="339" fill="#0f172a" font-size="19px" font-weight="700">표준 인터페이스 (CLI 도구 / 스킬)</text>
+<text x="44" y="372" fill="#334155" font-size="16px">LLM과 결정적 계층 사이의 경계</text>
+<text x="360" y="418" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="428" width="680" height="145" rx="12" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+<rect x="20" y="428" width="8" height="145" rx="4" fill="#0284c7"/>
+<text x="44" y="470" fill="#0f172a" font-size="19px" font-weight="700">결정적 접착제 (CLI) — 기계적 실행 보장</text>
+<text x="44" y="503" fill="#334155" font-size="16px">· Playwright / CDP 기반 앱 런타임 구동 및 조작</text>
+<text x="44" y="528" fill="#334155" font-size="16px">· 콘솔 에러 필터링, 압축 덤프, AST 기반 코드모드 실행</text>
+<text x="44" y="553" fill="#334155" font-size="16px">"세계를 재구축하지 않고 즉시 실행"</text>
+<text x="360" y="599" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="609" width="680" height="196" rx="12" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+<rect x="20" y="609" width="8" height="196" rx="4" fill="#16a34a"/>
+<text x="44" y="651" fill="#0f172a" font-size="19px" font-weight="700">엄격한 환경 (Environment) — 타입 &amp; 린트</text>
+<text x="44" y="677" fill="#0f172a" font-size="19px" font-weight="700">벽</text>
+<text x="44" y="710" fill="#334155" font-size="16px">· Dune 프레임워크: 단 하나의 정형화된 구현 경로 강제</text>
+<text x="44" y="735" fill="#334155" font-size="16px">· 컴파일러 레벨의 불법 패턴 원천 봉쇄 (TypeScript</text>
+<text x="44" y="760" fill="#334155" font-size="16px">Narrowing)</text>
+<text x="44" y="785" fill="#334155" font-size="16px">"나쁜 코드는 작성이 불가능함"</text>
+</svg></figure></code></pre>
+</div><p>에이전트가 매번 Bash 명령어를 조합하여 브라우저를 띄우고 테스트 포트를 탐색하도록 내버려 두면, 토큰 소비량은 폭증하고 예외 상황 처리는 모델의 기분에 좌우된다. 하지만 엔지니어가 이를 단 한 줄의 CLI 명령어(가상의 예: <code>agent-verify --target=app</code>)로 캡슐화해 두면:</p>
+<ol>
+<li>에이전트는 컨텍스트 윈도우를 거의 소모하지 않고 도구를 트리거할 수 있다.</li>
+<li>실행 절차가 100% 재현 가능(Reproducible)해진다.</li>
+<li>실행 결과 중 에이전트의 판단에 필요한 핵심 정보(오류 스택, 실패한 어설션)만 정제되어 모델에 전달된다.</li>
+</ol>
+<p>결국 CLI는 비결정론적인 LLM을 견고한 소프트웨어 공학의 궤도에 붙들어 매는 가장 우아한 고삐 역할을 수행한다.</p>
+<hr>
+<h2 id="6-나쁜-코드를-물리적으로-불가능하게-만드는-환경-설계"><a href="#6-나쁜-코드를-물리적으로-불가능하게-만드는-환경-설계" class="heading-anchor" aria-hidden="true">#</a> 6. 나쁜 코드를 물리적으로 불가능하게 만드는 환경 설계</h2><h3 id="원문-주장-dune-프레임워크와-린트-벽의-구축"><a href="#원문-주장-dune-프레임워크와-린트-벽의-구축" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: Dune 프레임워크와 린트 벽의 구축</h3><p>런 탄은 <strong>엔지니어의 새 일은 환경(Environment)에 시간을 쓰는 것</strong>에 가깝다고 말한다.</p>
+<p>에이전트에 대한 신뢰가 낮으면 엔지니어는 마이크로매니징에 매달릴 수밖에 없고, 하루 종일 에이전트를 감시하느라 환경을 개선할 시간과 여유를 완전히 빼앗긴다. 이는 마치 메모장(Notepad)으로만 코딩할 줄 알고 Git이나 최신 IDE의 존재를 모르는 개발자가 무딘 칼을 쥐고 고군분투하는 것과 같다. 이 악순환의 고리를 끊어내려면 환경에 대한 적극적인 투자가 선행되어야 한다.</p>
+<p>그가 제시하는 환경 설계의 핵심 철학은 TypeScript의 <strong>&#39;타입 좁히기(Type Narrowing)&#39;</strong> 개념과 궤를 같이한다. 수많은 경우의 수가 열려 있는 느슨한 코드베이스는 인간뿐만 아니라 에이전트에게도 치명적인 인지적 혼란을 야기한다. 따라서 코드베이스가 허용하는 유효 상태 공간(valid state space)을 극도로 좁혀야 한다.</p>
+<p>런 탄은 이를 그가 만들고 있는 사내 Electron 앱용 비공개 프레임워크 <strong>&#39;Dune&#39;</strong>(확인 필요)<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a>으로 설명했다. 계기는 Grok Bot 데스크톱 앱의 초기 버전들이 1만 줄 이상의 <strong>&#39;갓 파일(god files)&#39; 8개쯤</strong>(확인 필요)으로 이루어져 있었다는 점이다.</p>
+<p>그는 Dune을 통해 극도로 엄격한 린트(Lint) 규칙과 아키텍처 관례를 강제했다. Dune의 세계에서는 어떤 새로운 기능을 개발하든 <strong>오직 단 한 가지 방법만</strong> 허용된다. 기능마다 전용 디렉터리를 생성해야 하며, 해당 디렉터리 내에 규격화된 파일들을 배치하면 중앙 레지스트리가 이를 자동으로 탐색하여 등록한다. 그래서 에이전트가 갓 파일에 코드를 덧붙이는 대신 새 기능 디렉터리에 코드를 넣게 된다.</p>
+<p>런 탄은 에이전트의 실패를 다루는 원칙을 단호하게 밝힌다. 에이전트가 어떤 지점에서 실수를 저지르면, 프롬프트에 &quot;다음부터는 이러지 마&quot;라고 주의를 주는 것은 무의미하다. 대신 <strong>&quot;어떻게 이 실수를 린트 규칙이나 컴파일러 제약으로 만들어 코드베이스 차원에서 불가능하게 만들 것인가?&quot;</strong>를 고민해야 한다. 진행자는 이를 이렇게 정리했다. 규칙을 에이전트에 과적하지 않고 환경에 두면, 에이전트가 필요한 순간에 그 규칙에 부딪혀 튕겨 나온다.</p>
+<hr>
+<h3 id="해설-포카요케poka-yoke와-프롬프트-과적prompt-bloat의-종말"><a href="#해설-포카요케poka-yoke와-프롬프트-과적prompt-bloat의-종말" class="heading-anchor" aria-hidden="true">#</a> [해설]: 포카요케(Poka-yoke)와 프롬프트 과적(Prompt Bloat)의 종말</h3><p>전통적인 제조업 품질 관리에는 <strong>&#39;포카요케(Poka-yoke)&#39;</strong>라는 철학이 있다. 작업자의 주의력이나 선의에 기대어 실수를 막는 것이 아니라, 부품의 결합 홈을 비대칭으로 파서 애초에 반대 방향으로는 물리적으로 조립 자체가 불가능하게 만드는 설계 기법이다.</p>
+<p>런 탄이 Dune 프레임워크와 린트 규칙으로 구현한 환경 설계는 소프트웨어 공학에 적용된 완벽한 포카요케다. 많은 개발자가 에이전트의 실수를 마주했을 때 시스템 프롬프트(System Prompt)에 수십 줄의 금지 사항을 추가하는 우를 범한다. 이를 <strong>&#39;프롬프트 과적(Prompt Bloat)&#39;</strong>이라 부른다. </p>
+<p>프롬프트가 길어질수록 모델의 컨텍스트 윈도우 내 주의집중력은 희석되며, 모순된 지시사항 사이에서 충돌을 일으킨다. 무엇보다 프롬프트는 &#39;강제력&#39;이 없다. 모델은 언제든 확률적 편차에 의해 프롬프트를 무시하고 지름길을 택할 수 있다.</p>
+<p>반면 환경적 제약은 절대적이다. 린트 규칙, 엄격한 TypeScript 컴파일러, 정적 분석 도구는 타협하지 않는다. 에이전트가 나쁜 패턴의 코드를 작성하면 커밋이나 빌드 단계에서 즉각 에러가 발생한다. 에이전트는 인간의 훈계 없이도 기계적 피드백에 부딪혀 스스로 올바른 단 하나의 구현 패턴으로 수정할 수밖에 없다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">비교 항목</th>
+<th align="left">프롬프트 지시 방식 (Prompt-driven)</th>
+<th align="left">환경 제약 설계 방식 (Environment-driven)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>제약의 성격</strong></td>
+<td align="left">권고적, 확률적 가이드 (Soft Guardrail)</td>
+<td align="left">물리적, 결정론적 원천 차단 (Hard Guardrail)</td>
+</tr>
+<tr>
+<td align="left"><strong>작동 위치</strong></td>
+<td align="left">모델의 컨텍스트 윈도우 (System Prompt)</td>
+<td align="left">코드베이스 인프라 (ESLint, TS Compiler, Dune)</td>
+</tr>
+<tr>
+<td align="left"><strong>컨텍스트 영향</strong></td>
+<td align="left">프롬프트 길이 증가로 토큰 소모 및 주의력 분산</td>
+<td align="left">제로 토큰 소모 (환경이 로컬에서 실행)</td>
+</tr>
+<tr>
+<td align="left"><strong>실패 시 결과</strong></td>
+<td align="left">에이전트가 지침을 무시하고 프로덕션에 버그 유입</td>
+<td align="left">빌드/린트 실패로 컴파일 단계에서 차단 및 자율 수정</td>
+</tr>
+<tr>
+<td align="left"><strong>유지보수성</strong></td>
+<td align="left">세션이 바뀌면 사라지거나 팀원 간 파편화</td>
+<td align="left">Git 리포지토리에 영구 보존되어 전사적 표준화</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="7-대량-배포의-엔진-내부-루프-외부-루프-그리고-코디네이터"><a href="#7-대량-배포의-엔진-내부-루프-외부-루프-그리고-코디네이터" class="heading-anchor" aria-hidden="true">#</a> 7. 대량 배포의 엔진 — 내부 루프, 외부 루프, 그리고 코디네이터</h2><h3 id="원문-주장-이중-루프의-연결과-총괄-에이전트"><a href="#원문-주장-이중-루프의-연결과-총괄-에이전트" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 이중 루프의 연결과 총괄 에이전트</h3><p>한 달에 2,500개(확인 필요)의 PR을 머지한다는 경이적인 규모는 어떻게 물리적으로 가능했을까? 런 탄은 그 <strong>절대적 전제 조건이 바로 앞서 다룬 견고한 환경</strong>이라고 단언한다. 고든 램지가 단 하나의 주방을 완벽한 프로세스와 레시피로 세팅해 두었기에 비로소 2호점, 3호점으로 식당을 확장할 수 있듯이, 환경이 구축되지 않은 상태에서의 확장은 파멸적인 기술 부채만을 양산할 뿐이다. 그는 각각의 대형 프로젝트 세션을 하나의 &#39;식당&#39;으로 간주하고, 자신은 헬리콥터를 타고 그 사이를 오가며 조망한다고 말한다.</p>
+<p>확장의 메커니즘을 완성하기 위해 그는 <strong>내부 루프(Inner Loop)</strong>와 <strong>외부 루프(Outer Loop)</strong>를 유기적으로 연결했다.</p>
+<ul>
+<li><strong>내부 루프:</strong> 에이전트 엔지니어가 특정 시점의 의도 스냅샷을 부여받아 로컬 환경에서 코드를 작성하고 테스트하는 루프다. 문제는 이 스냅샷이 매우 빠르게 낡아버린다는(stale) 점이다.</li>
+<li><strong>외부 루프:</strong> Slack, Linear, X, 이메일 등 실제 비즈니스와 사용자의 맥락이 실시간으로 흘러 다니는 외부 세상의 루프다.</li>
+</ul>
+<p>두 루프가 단절되어 있으면 인간 엔지니어가 Slack을 확인하고, Linear 티켓을 읽어 에이전트에게 전달하는 비효율적인 &#39;맥락 전달자&#39;로 전락한다. 런 탄은 끊임없이 반문했다. <strong>&quot;어디서 내가 병목인가? 왜 에이전트는 이 질문에 답하기 위해 나를 필요로 하는가?&quot;</strong> 그는 회사의 지식 그래프나 거창한 &#39;컴퍼니 브레인&#39; 같은 추상적인 개념에 매몰되지 말고, 실제 데이터 소스를 에이전트에게 직접 연결하라고 조언한다.</p>
+<p>구체적인 파이프라인에서, 외부 루프의 감시자 역할은 Grok Bot이 수행한다. 이 봇은 Slack, Linear, X 등을 실시간으로 모니터링하며 버그 리포트와 기능 요청을 수집하여 Cursor의 클라우드 프로젝트 환경(Cursor Projects)으로 라우팅한다.</p>
+<p>이곳에는 클라우드에 자기 컴퓨터를 가진 <strong>코디네이터 에이전트(Coordinator Agent)</strong>가 상주한다. 이 코디네이터는 주방의 총괄 셰프이자 비서실장과 같다. 코디네이터는 자신이 직접 코드를 짜지 않는다. 30개의 이슈가 한꺼번에 쏟아져 들어오면, 각 이슈의 연관성을 분석하고 최적의 작업 토폴로지(Topology)를 설계하여 하위 워커 에이전트들에게 일을 분배하고 감독한다. 이슈마다 에이전트를 따로 띄우면 작업이 중복되거나 <strong>여러 버그 뒤에 숨겨진 공통의 상위 원인(root cause)</strong>을 놓치기 때문이다. 런 탄은 과거 넷플릭스(Netflix)에서 관리자들이 자주 말하던 원칙, 즉 <strong>&quot;통제가 아닌 맥락을 제공하라(Context, not Control)&quot;</strong>는 원칙이 에이전트 조직 관리에도 완벽히 들어맞는다고 강조했다.</p>
+<p>또한 그가 쏟아낸 수천 개의 PR 중 대다수는 화려한 신기능이 아니었다. 그것은 코드베이스를 건강하게 유지하는 <strong>&#39;가드닝(Gardening, 정원 가꾸기)&#39;</strong> 작업이었다. 예를 들어 React의 금지 패턴을 계속 찾는 루틴 에이전트에게는 바로 고치게 하지 않고 발견한 것을 문서에 덧붙이게 한다. 며칠마다 그가 그 문서를 보며 &quot;이것들은 사실 같은 문제&quot;라는 식으로 패턴을 찾아낸다. 이 버퍼 큐가 존재함으로써 시스템은 나무가 아닌 숲을 보게 된다.</p>
+<hr>
+<h3 id="해설-자율-분산-시스템의-큐잉-이론과-계층적-위임"><a href="#해설-자율-분산-시스템의-큐잉-이론과-계층적-위임" class="heading-anchor" aria-hidden="true">#</a> [해설]: 자율 분산 시스템의 큐잉 이론과 계층적 위임</h3><p>대규모 자율 에이전트 아키텍처는 고전적인 분산 컴퓨팅의 원리를 그대로 따른다. 실시간으로 인입되는 외부 이벤트(Slack 이슈, 버그 리포트)를 격리된 내부 작업 단위로 변환하지 않고 그대로 1:1 에이전트 생성으로 대응시키면, 시스템은 극심한 경합(Race Condition)과 컨텍스트 파편화에 빠진다.</p>
+
+<div class="code-block-wrapper">
+  <div class="code-header">
+    <span class="code-lang">xml</span>
+    <button class="copy-btn" type="button" aria-label="코드 복사">복사</button>
+  </div>
+  <pre><code class="language-xml"><figure class="diagram diagram-scroll diagram-light" style="--diagram-w:720px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 720 895" width="100%" height="auto" style="max-width: 720px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<rect x="0" y="0" width="720" height="895" rx="16" fill="#f1f5f9"/>
+<text x="360" y="44" text-anchor="middle" fill="#0f172a" font-size="22px" font-weight="700">이중 루프(Dual Loop) &amp; 코디네이터 오케스트레이션 아키텍처</text>
+<text x="360" y="76" text-anchor="middle" fill="#64748b" font-size="16px">외부 맥락 수집부터 계층적 위임, 런타임 퍼징 및 자율 머지에 이르는 엔드투엔드</text>
+<text x="360" y="100" text-anchor="middle" fill="#64748b" font-size="16px">파이프라인</text>
+<rect x="20" y="116" width="680" height="246" rx="12" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+<rect x="20" y="116" width="8" height="246" rx="4" fill="#d97706"/>
+<text x="44" y="158" fill="#0f172a" font-size="19px" font-weight="700">1. 외부 루프 (Outer Loop) — 실시간 맥락</text>
+<text x="44" y="184" fill="#0f172a" font-size="19px" font-weight="700">수집</text>
+<text x="44" y="217" fill="#334155" font-size="16px">· Slack 채널 / 멘션</text>
+<text x="44" y="242" fill="#334155" font-size="16px">· Linear 티켓 / 이슈</text>
+<text x="44" y="267" fill="#334155" font-size="16px">· X(트위터) &amp; 고객 이메일</text>
+<text x="44" y="292" fill="#334155" font-size="16px">· Grok Bot 상시 감시</text>
+<text x="44" y="317" fill="#334155" font-size="16px">버퍼 &amp; 큐 (가드닝 문서): React 안티패턴, 성능 회귀</text>
+<text x="44" y="342" fill="#334155" font-size="16px">로그, UI 버그 리포트 → 배치 그룹핑</text>
+<text x="360" y="388" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="398" width="680" height="271" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<rect x="20" y="398" width="8" height="271" rx="4" fill="#7c3aed"/>
+<text x="44" y="440" fill="#0f172a" font-size="19px" font-weight="700">2. 코디네이터 (총괄) — Cursor</text>
+<text x="44" y="466" fill="#0f172a" font-size="19px" font-weight="700">Projects (VM)</text>
+<text x="44" y="499" fill="#334155" font-size="16px">"Context, not Control"</text>
+<text x="44" y="524" fill="#334155" font-size="16px">· 작업 토폴로지 분석</text>
+<text x="44" y="549" fill="#334155" font-size="16px">· 상위 근본 원인 도출</text>
+<text x="44" y="574" fill="#334155" font-size="16px">· 서브에이전트 병렬 위임</text>
+<text x="44" y="599" fill="#334155" font-size="16px">- 워커 1: 리팩터링 실행</text>
+<text x="44" y="624" fill="#334155" font-size="16px">- 워커 2: 회귀 테스트 작성</text>
+<text x="44" y="649" fill="#334155" font-size="16px">- 워커 3: 번들 크기 감사</text>
+<text x="360" y="695" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
+<rect x="20" y="705" width="680" height="170" rx="12" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+<rect x="20" y="705" width="8" height="170" rx="4" fill="#16a34a"/>
+<text x="44" y="747" fill="#0f172a" font-size="19px" font-weight="700">3. 검증 &amp; 자율 머지 — 다크 팩토리 파이프라인</text>
+<text x="44" y="780" fill="#334155" font-size="16px">· Full Autopilot 퍼징</text>
+<text x="44" y="805" fill="#334155" font-size="16px">· 검증 에이전트 다수 투입</text>
+<text x="44" y="830" fill="#334155" font-size="16px">· 자율 PR 병합 (Merge)</text>
+<text x="44" y="855" fill="#334155" font-size="16px">· 사후 표본 감사: 인간 셰프의 주기적 리뷰</text>
+</svg></figure></code></pre>
+</div><p>여기서 버퍼 큐(가드닝 문서)의 존재는 지연된 배치 처리(Delayed Batching)의 강력한 이점을 제공한다. 개별 버그 리포트를 즉각적으로 처리하려 들면, 서로 다른 에이전트들이 동일한 문제를 해결하기 위해 각자 상이한 땜질식 처방을 내놓게 된다. 하지만 이슈들을 며칠간 버퍼에 모아두면, 겉보기에 달라 보이던 10개의 UI 버그가 사실은 특정 상태 관리 라이브러리의 부적절한 라이프사이클 훅 하나에서 비롯된 것임을 파악할 수 있다.</p>
+<p>코디네이터 에이전트는 이 상위 패턴을 조망한 뒤, 하위 에이전트들에게 단 하나의 근본적인 리팩터링 과제를 지시한다. 이것이 바로 개별 나무를 베는 데 급급하지 않고 숲의 생태계를 가꾸는 &#39;가드닝&#39;의 진정한 위력이다.</p>
+<hr>
+<h2 id="8-사후-표본-검사와-다크-팩토리-일방통행-문의-경계"><a href="#8-사후-표본-검사와-다크-팩토리-일방통행-문의-경계" class="heading-anchor" aria-hidden="true">#</a> 8. 사후 표본 검사와 다크 팩토리 — 일방통행 문의 경계</h2><h3 id="원문-주장-사전-차단에서-사후-표본-감사로의-전환"><a href="#원문-주장-사전-차단에서-사후-표본-감사로의-전환" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 사전 차단에서 사후 표본 감사로의 전환</h3><p>대량의 PR(2,000~2,500개, 확인 필요)을 머지하기 위해 런 탄이 감행한 가장 파격적인 패러다임의 역전은 이것이었다. <strong>&quot;어떻게 하면 에이전트가 인간의 리뷰 없이 스스로 코드를 머지할 수 있을까?&quot;</strong>라는 질문에서부터 시스템 설계를 거꾸로 역산(working backwards)한 것이다.</p>
+<p>전통적인 코드 리뷰는 메인 브랜치를 지키기 위해 PR을 사전에 가로막는 <strong>&#39;게이트키핑(Gatekeeping)&#39;</strong> 방식이다. 그러나 모든 PR을 인간이 일일이 열어보고 승인 버튼을 눌러야 한다면, 수천 개의 PR을 배포하는 것은 물리적으로 불가능하다. 런 탄은 음식을 아예 맛보지 않는 것은 아니지만 모든 접시를 맛볼 수는 없다며, <strong>표본 검사(sampling)</strong>로 품질을 보고, 머지된 뒤 아침에 커밋 기록을 보며 리뷰한다고 말한다.</p>
+<p>이것이 가능한 이유는 그가 구축한 사실상의 <strong>&#39;다크 팩토리(Dark Factory)&#39;</strong> 체제 덕분이다. 데스크톱 앱 성능 최적화, 사용자 버그 수정, 네이티브 코드 재작성 실험 등 서로 다른 전문 영역을 담당하는 <strong>10개 이상의 전담 비서실장 에이전트 함대</strong>가 24시간 일한다(개수는 확인 필요).</p>
+<p>이 에이전트들은 <code>pstack</code>의 <strong>&#39;풀 오토파일럿(Full Autopilot)&#39;</strong> 모드를 통해 동작한다. 오토파일럿이 가동되면 PR마다 여러 검증 에이전트(예로 10개를 들었다, 확인 필요)가 동시에 투입되어, 마치 실제 유저가 앱을 마구 두드려보듯 혹독한 <strong>퍼징(Fuzzing)</strong> 테스트를 수행한다. 이 과정에서 회귀 버그나 런타임 크래시가 발견되면 에이전트가 스스로 코드를 고치고, PR이 머지할 수 있는 상태가 되면 코드를 메인 브랜치에 자율 머지한다. </p>
+<p>런 탄은 처음 이를 켠 날은 밤사이 무언가 망가질까 무서웠고 용기가 필요했다고 회상한다. 지금은 잠을 훨씬 잘 잔다고 말한다. 만약 표본 검사 과정에서 여러 에이전트가 공통적으로 잘못된 지름길을 택한 흔적이 발견되면, 그는 해당 에이전트를 꾸짖는 대신 <strong>환경(스킬, 린트 규칙, 타입 시스템)을 수정하여 다시는 그 지름길이 물리적으로 선택되지 않도록 조치</strong>한다. 진행자는 이를 카파시 식 &#39;바이브 코딩&#39;(코드의 존재를 잊는 것)과 구별하며, 여기서는 코드와 환경이 핵심이고 &quot;차단 대신 표본 검사&quot;가 중요하다고 정리했다.</p>
+<p>그러나 이 방식에도 명확한 한계가 존재한다. 되돌리기 쉬운 &#39;양방향 문(Two-way Door)&#39;과 달리, 데이터 손실이나 막대한 금융 사고, 법적 책임을 초래하는 <strong>&#39;일방통행 문(One-way Door)&#39;</strong> 성격의 PR은 어떻게 처리해야 하는가?</p>
+<p>런 탄은 결국 <strong>에이전트에게서 얻을 수 있는 검증의 질</strong>로 돌아온다고 답한다. 프로그램으로 완벽하게 시뮬레이션하고 검증할 수 있는 영역이라면 일방통행 문조차 안전한 양방향 문으로 전환될 수 있다. 프로그램으로 검증하기 매우 어려운 일이라면 그 지점에 이르기 어렵고, 이 질문에 대한 답은 자신도 없으며 업계가 풀어야 할 문제라고 인정한다. 그러면서 그는 프로그래밍과 수학적 형식 증명(Proof)을 하나로 결합한 에이전트 지향 언어의 예로 <strong>Bend</strong>(확인 필요)<a class="footnote-ref" href="#fn-8" id="fnref-8">8</a>를 꼽았다. 예전에는 증명을 Lean이나 TLA+ 같은 별도 언어로 써야 했다는 맥락에서다.</p>
+<hr>
+<h3 id="해설-게이트키퍼에서-감사관으로-신뢰의-공학적-한계선"><a href="#해설-게이트키퍼에서-감사관으로-신뢰의-공학적-한계선" class="heading-anchor" aria-hidden="true">#</a> [해설]: 게이트키퍼에서 감사관으로 — 신뢰의 공학적 한계선</h3><p>사전 차단 리뷰에서 사후 표본 감사로의 전환은 제조업에서 검사원이 모든 제품을 전수 검사하던 방식에서, 통계적 공정 관리(SPC)와 무인화 자동화 설비(Dark Factory)로 전환했던 산업 혁명의 경로를 소프트웨어 공학에 재현한 것이다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">비교 항목</th>
+<th align="left">전통적 사전 차단 리뷰 (Gatekeeping)</th>
+<th align="left">환경 기반 사후 표본 검사 (Sampling Audit)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>머지 권한</strong></td>
+<td align="left">오직 인간 리뷰어의 승인(LGTM)에 종속</td>
+<td align="left">풀 오토파일럿 검증 통과 시 에이전트 자율 머지</td>
+</tr>
+<tr>
+<td align="left"><strong>병목 지점</strong></td>
+<td align="left">인간의 리뷰 속도 (하루 수 건으로 제한)</td>
+<td align="left">에이전트의 연산 및 퍼징 컴퓨팅 파워 (수천 건 확장)</td>
+</tr>
+<tr>
+<td align="left"><strong>안전망의 성격</strong></td>
+<td align="left">인간의 육안 검사에 의존 (피로 시 버그 누락)</td>
+<td align="left">다수의 검증 에이전트 런타임 퍼징 + 엄격한 린트</td>
+</tr>
+<tr>
+<td align="left"><strong>피드백 루프</strong></td>
+<td align="left">PR 단위로 코멘트를 달아 개발자/에이전트 수정</td>
+<td align="left">표본 검사 후 지름길 발견 시 &#39;코드베이스 환경&#39; 개선</td>
+</tr>
+<tr>
+<td align="left"><strong>엔지니어 심리</strong></td>
+<td align="left">배포 때마다 장애 공포, 리뷰 큐 적체로 인한 압박</td>
+<td align="left">시스템화된 검증 인프라에 기반한 신뢰와 심리적 안정</td>
+</tr>
+</tbody></table>
+</div><p>소프트웨어 아키텍처에서 제프 베조스가 설파한 &#39;일방통행 문&#39;과 &#39;양방향 문&#39;의 개념은 자율 에이전트 시스템의 성패를 가르는 절대적 분기점이다. </p>
+<ul>
+<li><strong>양방향 문(Two-way Door):</strong> 언제든 이전 커밋으로 되돌리거나(Revert), 기능 플래그(Feature Flag)로 끌 수 있는 변경이다. UI 개선, 내부 리팩터링, 사내 도구 가드닝이 여기에 속한다. 이곳에서는 에이전트에게 전적인 머지 권한을 부여하고 사후 감사로 속도를 극대화하는 것이 압도적으로 유리하다.</li>
+<li><strong>일방통행 문(One-way Door):</strong> 한 번 배포되면 되돌릴 수 없는 영구적 데이터베이스 스키마 마이그레이션, 금융 원장(Ledger) 처리, 환자 생체 데이터 제어 등이 속한다.</li>
+</ul>
+<p>런 탄의 통찰이 빛나는 지점은, <strong>&quot;검증의 질이 올라갈수록 일방통행 문이 양방향 문으로 변환된다&quot;</strong>는 발견이다. 프로덕션 데이터베이스와 완벽히 격리된 복제 환경(Shadow Environment)에서 에이전트가 수천 번의 트랜잭션을 퍼징하고 데이터 정합성을 검증할 수 있다면, 그 작업은 더 이상 위험한 일방통행 문이 아니게 된다. 그러나 완벽한 시뮬레이션이 불가능한 미개척 영역에서는 인간의 게이트키핑이 여전히 최후의 방어선으로 남아야 한다.</p>
+<hr>
+<h2 id="9-도구의-체화와-진화-대화-기록에서-추출하는-프로세스"><a href="#9-도구의-체화와-진화-대화-기록에서-추출하는-프로세스" class="heading-anchor" aria-hidden="true">#</a> 9. 도구의 체화와 진화 — 대화 기록에서 추출하는 프로세스</h2><h3 id="원문-주장-셰프의-칼과-과거-대화-기록의-마이닝"><a href="#원문-주장-셰프의-칼과-과거-대화-기록의-마이닝" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: 셰프의 칼과 과거 대화 기록의 마이닝</h3><p>스킬에 대한 런 탄의 근본적인 정의는 명쾌하다. <strong>&quot;스킬이란 결국 자연어로 변환된 엔지니어링 프로세스(process turned into words)다.&quot;</strong></p>
+<p>그는 진행자의 스킬들(예: <code>grill me</code>, <code>wayfinder</code>, 확인 필요)과 자신이 만든 실행 중심의 <code>pstack</code> 스킬들이 결코 배타적인 경쟁 관계가 아니며, 상호 보완적으로 결합될 수 있다고 설명했다. 동시에, 마치 일류 셰프가 어디를 가든 <strong>자신만의 전용 칼 가방</strong>을 소중히 챙겨 다니듯, 모든 엔지니어는 자신만의 코드베이스와 업무 방식에 최적화된 고유한 도구 세트를 벼려내야 한다. 에이전트에 대한 진정한 신뢰는 결국 자신이 직접 다듬고 검증한 자기 도구에 대한 신뢰에서 비롯되기 때문이다.</p>
+<p>그렇다면 엔지니어는 자신만의 스킬을 어디서 발굴해야 하는가? 런 탄은 뜻밖의 보물창고를 지목한다. 바로 <strong>&#39;과거의 대화 기록(Transcripts)&#39;</strong>이다. </p>
+<p>개발자가 에이전트와 나눈 지난 대화 로그는 자신이 소프트웨어를 개발하며 무의식적으로 수행한 <strong>&#39;실체화된 프로세스(reified process)&#39;</strong> 그 자체다. 런 탄은 에이전트에게 이전 대화 기록들을 분석하게 하라고 권한다. 자신이 에이전트의 작업에 끼어들어 개입했던 지점, 에이전트의 빗나간 코드를 반복해서 꾸짖고 정정했던 패턴들을 채굴(mining)하는 것이다. 그 개입 지점이야말로 새로운 린트 규칙이나 새로운 전용 스킬로 승화되어야 할 가장 확실한 원재료다.</p>
+<p>실제로 <code>pstack</code>의 핵심 스킬 중 하나인 <strong><code>recall</code></strong> 스킬은 그가 Cursor 가상화 작업을 진행하던 중 탄생했다. 긴 디버깅 세션이 끝난 뒤, 새 채팅을 열 때마다 이전 채팅의 좋은 맥락을 가져오고 싶었던 데서 출발했다. 매번 장문의 프롬프트를 복사해 넣는 대신, 과거 대화에서 핵심 상태만 추출해 새 세션에 주입하는 워크플로를 하나의 스킬로 압축한 것이다.</p>
+<p>마지막으로 런 탄은 모델의 진화에 따른 스킬의 미래를 예견했다. 모델이 더 똑똑해질수록 스킬 문서에서 구체적인 구현 세부사항(예: &quot;이 터미널 명령어를 입력하고 이 플래그를 써라&quot;)은 점차 지워질 것이다. 대신 고차원적인 <strong>워크플로의 단계와 목표(Workflow steps)</strong>만 남게 됨으로써, 스킬의 텍스트 분량은 지금보다 훨씬 더 작고 간결해질 것이다. 엔지니어들은 각자의 모드(예: wayfinder와 <code>potato mode</code>(확인 필요)<a class="footnote-ref" href="#fn-9" id="fnref-9">9</a>를 섞은 나만의 모드)를 다른 사람의 스킬과 자유롭게 레고 블록처럼 조합하며 자신만의 워크플로를 진화시켜 나가게 될 것이다.</p>
+<hr>
+<h3 id="해설-프로세스-자산화process-assetization와-스킬의-수명주기"><a href="#해설-프로세스-자산화process-assetization와-스킬의-수명주기" class="heading-anchor" aria-hidden="true">#</a> [해설]: 프로세스 자산화(Process Assetization)와 스킬의 수명주기</h3><p>소프트웨어 공학에서 가장 값비싼 지식은 문서화되지 않은 채 시니어 엔지니어의 머릿속에만 존재하는 &#39;암묵지(Tacit Knowledge)&#39;다. &quot;이런 구조에서는 상태를 직접 변경하지 말고 불변 객체로 다뤄야 해&quot;, &quot;이 비동기 요청 뒤에는 반드시 클린업 함수를 걸어야 해&quot;와 같은 노하우는 신규 입사자에게 구전으로 전수되거나 장애가 터진 뒤에야 회고록에 기록되곤 했다.</p>
+<p>런 탄이 제시한 대화 기록 마이닝은 이 암묵지를 체계적으로 형식지(Explicit Knowledge)로 전환하는 <strong>&#39;프로세스 자산화(Process Assetization)&#39;</strong>의 극치다. 엔지니어가 에이전트에게 날린 분노의 교정 프롬프트는 사실 코드베이스의 취약점과 엔지니어링 표준이 교차하는 지점을 가리키는 가장 정밀한 지표다. 이를 스킬과 린트 규칙으로 박제하는 순간, 한 엔지니어의 1회성 피로감은 조직 전체의 영구적인 자율 인프라로 승화된다.</p>
+<p>또한 모델 지능 향상에 따른 스킬의 축소론은 소프트웨어 추상화의 일반 원리와 정확히 부합한다. 초기 어셈블리 시절에는 레지스터 하나하나를 직접 지정해야 했지만 C 언어 컴파일러의 등장으로 레지스터 할당이 추상화되었듯, 초기 에이전트 스킬에서 구구절절 지시하던 절차적 명령어들은 모델의 지능 속으로 흡수된다. 미래의 스킬은 절차가 아니라 <strong>&#39;의도의 선언과 불변식(Invariants)의 정의&#39;</strong>만을 담은 극도로 압축된 사양서로 수렴할 것이다.</p>
+<hr>
+<h2 id="맺음말-자율-에이전트-시대-엔지니어의-새로운-지평"><a href="#맺음말-자율-에이전트-시대-엔지니어의-새로운-지평" class="heading-anchor" aria-hidden="true">#</a> 맺음말: 자율 에이전트 시대, 엔지니어의 새로운 지평</h2><p>런 탄이 말한 한 달 2,500개(확인 필요) PR의 성과는 AI 코딩 에이전트를 둘러싼 오늘날의 담론에 근본적인 전환을 요구한다.</p>
+<p>일각에서 유행하는 &#39;바이브 코딩&#39;은 엔지니어링의 규율을 내던지고 모델의 마법에 결과를 맡기는 낭만주의적 환상에 가깝다. 그러나 역설적이게도 코드를 한 줄도 직접 치지 않고 수천 개의 PR을 프로덕션에 쏟아붓기 위해 런 탄이 선택한 길은 그 정반대였다. 그것은 <strong>소프트웨어 공학의 가장 엄격한 원칙들—런타임 관측성, 정적 타입 축소, 불변식 강제, 격리된 가상 환경, 닫힌 루프 제어—을 극한까지 밀어붙인 공학적 리얼리즘의 승리</strong>였다.</p>
+<p>그가 입증한 시스템의 6대 핵심 논거는 다음과 같이 요약된다:</p>
+<ol>
+<li><strong>신뢰는 사다리처럼 계단식으로 쌓이며, 이 신뢰가 다중 에이전트 확장의 유일한 전제 조건이다.</strong> 신뢰 인프라가 없는 확장은 마이크로매니징의 지옥을 낳을 뿐이다.</li>
+<li><strong>신뢰의 1차 지렛대는 런타임 검증(Verification)이다.</strong> 에이전트가 결과를 직접 관측하고 스스로 오류를 교정할 수 있을 때에만 비로소 &#39;언덕 오르기&#39; 루프가 완성된다.</li>
+<li><strong>신뢰의 2차 지렛대는 나쁜 코드를 물리적으로 원천 차단하는 환경(Environment) 설계다.</strong> 결정론적 절차는 CLI 스크립트로 격리하고, 에이전트의 실수는 프롬프트가 아닌 린트와 타입 시스템으로 봉쇄한다.</li>
+<li><strong>내부 루프와 외부 루프를 연결함으로써 인간이 &#39;맥락 전달자&#39; 병목에서 완전히 퇴장한다.</strong> 실시간 이슈는 코디네이터 에이전트에 의해 체계적인 작업 토폴로지로 분배된다.</li>
+<li><strong>리뷰의 패러다임은 사전 차단 게이트키핑에서 사후 표본 감사로 전환된다.</strong> 에이전트의 실수가 발견되었을 때 교정해야 할 대상은 개별 PR이 아니라 코드베이스 환경 그 자체다.</li>
+<li><strong>이 모든 시스템의 물리적 한계선은 검증 가능성에 있다.</strong> 시뮬레이션과 런타임 검증이 불가능한 &#39;일방통행 문&#39; 영역에서는 여전히 인간의 엄중한 책임과 게이트키핑이 요구된다.</li>
+</ol>
+<p>이제 소프트웨어 엔지니어의 정의는 완전히 바뀌었다. 우리는 더 이상 키보드 위에서 영문법을 타이핑하는 숙련공이 아니다. 우리는 에이전트들이 실수를 저지르고 싶어도 저지를 수 없도록 견고한 물리 법칙을 설계하는 <strong>주방의 건축가이자, 시스템의 총괄 셰프</strong>다. 런 탄이 개척한 신뢰 곡선의 궤적은, 다가올 자율 에이전트 문명에서 진정한 엔지니어링 장인정신이 어디로 나아가야 하는지를 명징하게 가리키고 있다.</p>
+<hr>
+<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1"><strong>런 탄(Lauren Tan):</strong> 전 Meta React 팀 엔지니어로, 예전에 Netflix에서도 일했다. 현재 Cursor에서 에이전트 창과 Grok Bot 데스크톱 앱 등을 개발한다. &#39;Potato&#39;는 그의 별명이다(본인 표현 &quot;I&#39;m called potato&quot;). 온라인 핸들 표기는 확인 필요.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<li id="fn-2"><strong>PR 수치(확인 필요):</strong> 런 탄의 발표 제목은 &quot;How I shipped 2,500 PRs last month to production&quot;이며, 대담 중에는 2,000과 2,500이 섞여 나온다. 본문은 발표 제목의 2,500을 따르되 확정 수치로 보지 않는다.<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li>
+<li id="fn-3"><strong>진행자:</strong> 대담 중 &quot;me and Matt&quot;라는 언급과 Total TypeScript 이야기로 보아 Matt Pocock으로 추정되나, 성과 이름은 확인 필요.<a class="backlink" href="#fnref-3" aria-label="본문으로">↩</a></li>
+<li id="fn-4"><strong>pstack:</strong> 런 탄이 쓰는 런 탄의 스킬 묶음. 정식 표기는 확인 필요. 초기 실험은 GitHub의 noodle 저장소(경로 확인 필요)에 공개되어 있다고 한다.<a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
+<li id="fn-5"><strong>&quot;Opus 5.5&quot;:</strong> 런 탄이 &quot;I love Opus 5.5 by the way&quot;라고 말한 모델명. 정확한 명칭은 확인 필요.<a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li>
+<li id="fn-6"><strong>auto research:</strong> 런 탄이 Karpathy가 공개했다고 언급한 것. 구체적 내용은 확인 필요.<a class="backlink" href="#fnref-6" aria-label="본문으로">↩</a></li>
+<li id="fn-7"><strong>Dune:</strong> 런 탄이 만들고 있다는 비공개 사내 프레임워크. 그는 &quot;Electron 앱을 위한 사내 Next.js&quot;라고 설명했다. 이름 표기는 확인 필요.<a class="backlink" href="#fnref-7" aria-label="본문으로">↩</a></li>
+<li id="fn-8"><strong>Bend:</strong> 런 탄이 프로그래밍과 증명을 결합한 언어로 소개한 것. 언어 이름과 특성은 확인 필요.<a class="backlink" href="#fnref-8" aria-label="본문으로">↩</a></li>
+<li id="fn-9"><strong>potato mode:</strong> 런 탄이 스킬 조합의 예로 든 이름. 구체적 정의는 확인 필요.<a class="backlink" href="#fnref-9" aria-label="본문으로">↩</a></li></ol></section>
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-29-로런탄신뢰곡선.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
