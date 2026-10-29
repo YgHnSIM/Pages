@@ -88,41 +88,41 @@ BFS, UCS, A*, 휴리스틱, 언덕 오르기, 담금질 기법, 빔 탐색, 미�
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
 <text x="30" y="42" font-size="20px" font-weight="bold" fill="#0f172a">도식 1: 공통 탐색 루프(Universal Search Loop)와 5대 갈래</text>
-<text x="30" y="68" font-size="14px" fill="#64748b">모든 고전·현대 탐색 알고리즘은 하나의 핵심 루프를 공유하며, 'choose_next'의 자료구조와 평가 기준에 의해 분화된다.</text>
+<text x="30" y="68" font-size="16px" fill="#64748b">모든 고전·현대 탐색 알고리즘은 하나의 핵심 루프를 공유하며, 'choose_next'의 자료구조와 평가 기준에 의해 분화된다.</text>
 <g transform="translate(40, 95)">
 <rect width="360" height="350" rx="10" fill="#f8fafc" stroke="#3b82f6" stroke-width="2"/>
 <rect width="360" height="38" rx="10" fill="#3b82f6"/>
-<text x="180" y="25" font-size="15px" font-weight="bold" fill="#ffffff" text-anchor="middle">공통 탐색 루프 (The One Search Loop)</text>
-<text x="20" y="65" font-family="monospace" font-size="13px" fill="#1e293b" font-weight="bold">frontier = [initial_state]</text>
-<text x="20" y="85" font-family="monospace" font-size="13px" fill="#1e293b" font-weight="bold">came_from = {initial_state: None}</text>
-<text x="20" y="115" font-family="monospace" font-size="13px" fill="#0f172a">while frontier is not empty:</text>
+<text x="180" y="25" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">공통 탐색 루프 (The One Search Loop)</text>
+<text x="20" y="65" font-family="monospace" font-size="16px" fill="#1e293b" font-weight="bold">frontier = [initial_state]</text>
+<text x="20" y="85" font-family="monospace" font-size="16px" fill="#1e293b" font-weight="bold">came_from = {initial_state: None}</text>
+<text x="20" y="115" font-family="monospace" font-size="16px" fill="#0f172a">while frontier is not empty:</text>
 <rect x="35" y="128" width="295" height="26" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
-<text x="42" y="146" font-family="monospace" font-size="13px" fill="#b45309" font-weight="bold">node = choose_next(frontier) ★</text>
-<text x="40" y="178" font-family="monospace" font-size="13px" fill="#0f172a">if is_goal(node):</text>
-<text x="60" y="198" font-family="monospace" font-size="13px" fill="#15803d">return reconstruct_path(came_from)</text>
-<text x="40" y="230" font-family="monospace" font-size="13px" fill="#0f172a">for next_state in neighbors(node):</text>
-<text x="60" y="250" font-family="monospace" font-size="13px" fill="#0f172a">if next_state not in visited:</text>
-<text x="80" y="270" font-family="monospace" font-size="13px" fill="#2563eb">came_from[next_state] = node</text>
-<text x="80" y="290" font-family="monospace" font-size="13px" fill="#2563eb">frontier.add(next_state)</text>
+<text x="42" y="146" font-family="monospace" font-size="16px" fill="#b45309" font-weight="bold">node = choose_next(frontier) ★</text>
+<text x="40" y="178" font-family="monospace" font-size="16px" fill="#0f172a">if is_goal(node):</text>
+<text x="60" y="198" font-family="monospace" font-size="16px" fill="#15803d">return reconstruct_path(came_from)</text>
+<text x="40" y="230" font-family="monospace" font-size="16px" fill="#0f172a">for next_state in neighbors(node):</text>
+<text x="60" y="250" font-family="monospace" font-size="16px" fill="#0f172a">if next_state not in visited:</text>
+<text x="80" y="270" font-family="monospace" font-size="16px" fill="#2563eb">came_from[next_state] = node</text>
+<text x="80" y="290" font-family="monospace" font-size="16px" fill="#2563eb">frontier.add(next_state)</text>
 <rect x="20" y="315" width="320" height="24" rx="4" fill="#e0f2fe"/>
-<text x="180" y="331" font-size="12px" fill="#0369a1" text-anchor="middle" font-weight="bold">★ 단 한 줄의 'choose_next'가 알고리즘을 결정한다</text>
+<text x="180" y="331" font-size="16px" fill="#0369a1" text-anchor="middle" font-weight="bold">★ 단 한 줄의 'choose_next'가 알고리즘을 결정한다</text>
 </g>
 <g transform="translate(430, 95)">
 <rect x="0" y="0" width="490" height="58" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.2"/>
-<text x="15" y="24" font-size="13px" font-weight="bold" fill="#166534">질문 ① 어떤 경로든 일단 찾기</text>
-<text x="15" y="44" font-size="12px" fill="#15803d">BFS (FIFO 큐, 오래된 순) | DFS (LIFO 스택, 최근 순) | 양방향 (두 파면의 충돌)</text>
+<text x="15" y="24" font-size="16px" font-weight="bold" fill="#166534">질문 ① 어떤 경로든 일단 찾기</text>
+<text x="15" y="44" font-size="16px" fill="#15803d">BFS (FIFO 큐, 오래된 순) | DFS (LIFO 스택, 최근 순) | 양방향 (두 파면의 충돌)</text>
 <rect x="0" y="70" width="490" height="58" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.2"/>
-<text x="15" y="94" font-size="13px" font-weight="bold" fill="#1e40af">질문 ② 걸음마다 비용이 다를 때 최저 비용 찾기</text>
-<text x="15" y="114" font-size="12px" fill="#2563eb">UCS / 다익스트라 (우선순위 큐, 누적 비용 g(n) 최소 선택, 완화 갱신)</text>
+<text x="15" y="94" font-size="16px" font-weight="bold" fill="#1e40af">질문 ② 걸음마다 비용이 다를 때 최저 비용 찾기</text>
+<text x="15" y="114" font-size="16px" fill="#2563eb">UCS / 다익스트라 (우선순위 큐, 누적 비용 g(n) 최소 선택, 완화 갱신)</text>
 <rect x="0" y="140" width="490" height="58" rx="8" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.2"/>
-<text x="15" y="164" font-size="13px" font-weight="bold" fill="#6b21a8">질문 ③ 덜 뒤지고 목표로 빠르게 접근하기</text>
-<text x="15" y="184" font-size="12px" fill="#7e22ce">탐욕 최선 우선 (h(n) 최소) | A* 알고리즘 (f(n) = g(n) + h(n) 최소, 허용적 추정)</text>
+<text x="15" y="164" font-size="16px" font-weight="bold" fill="#6b21a8">질문 ③ 덜 뒤지고 목표로 빠르게 접근하기</text>
+<text x="15" y="184" font-size="16px" fill="#7e22ce">탐욕 최선 우선 (h(n) 최소) | A* 알고리즘 (f(n) = g(n) + h(n) 최소, 허용적 추정)</text>
 <rect x="0" y="210" width="490" height="68" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.2"/>
-<text x="15" y="234" font-size="13px" font-weight="bold" fill="#9a3412">질문 ④ 경로 없이 최종 완성 배치만 필요할 때 (국소 탐색)</text>
-<text x="15" y="254" font-size="12px" fill="#c2410c">언덕 오르기 (이웃 중 최선) | 담금질 기법 (볼츠만 확률 수용) | 빔 탐색 (상위 K개) | 유전 (교차·변이)</text>
+<text x="15" y="234" font-size="16px" font-weight="bold" fill="#9a3412">질문 ④ 경로 없이 최종 완성 배치만 필요할 때 (국소 탐색)</text>
+<text x="15" y="254" font-size="16px" fill="#c2410c">언덕 오르기 (이웃 중 최선) | 담금질 기법 (볼츠만 확률 수용) | 빔 탐색 (상위 K개) | 유전 (교차·변이)</text>
 <rect x="0" y="290" width="490" height="58" rx="8" fill="#fdf2f8" stroke="#fbcfe8" stroke-width="1.2"/>
-<text x="15" y="314" font-size="13px" font-weight="bold" fill="#9d174d">질문 ⑤ 나를 무너뜨리려는 상대방이 맞설 때 (적대적 탐색)</text>
-<text x="15" y="334" font-size="12px" fill="#be185d">미니맥스 (최악 가정 백트래킹) | 몬테카를로 트리 탐색 (MCTS: 선택·확장·시뮬레이션·역전파)</text>
+<text x="15" y="314" font-size="16px" font-weight="bold" fill="#9d174d">질문 ⑤ 나를 무너뜨리려는 상대방이 맞설 때 (적대적 탐색)</text>
+<text x="15" y="334" font-size="16px" fill="#be185d">미니맥스 (최악 가정 백트래킹) | 몬테카를로 트리 탐색 (MCTS: 선택·확장·시뮬레이션·역전파)</text>
 </g>
 </svg>
 
@@ -274,46 +274,46 @@ UCS의 선택 규칙은 간결하다. **"프론티어에 들어 있는 상태들
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
 <text x="30" y="38" font-size="18px" font-weight="bold" fill="#0f172a">도식 2: 10×7 격자 미로에서 4대 탐색 알고리즘의 파면(Wavefront) 및 궤적 비교</text>
-<text x="30" y="62" font-size="13px" fill="#64748b">비가 내려 웅덩이(비용 5)가 생긴 환경에서 걸음 수 위주(BFS), 과거 비용 위주(UCS), 미래 추정 위주(Greedy), 통합 균형(A*)의 거동 차이</text>
+<text x="30" y="62" font-size="16px" fill="#64748b">비가 내려 웅덩이(비용 5)가 생긴 환경에서 걸음 수 위주(BFS), 과거 비용 위주(UCS), 미래 추정 위주(Greedy), 통합 균형(A*)의 거동 차이</text>
 <g transform="translate(30, 85)">
 <rect width="430" height="300" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="20" y="30" font-size="14px" font-weight="bold" fill="#dc2626">(A) 실패 사례: BFS와 탐욕 최선 우선 탐색 (비용 18 > 16)</text>
+<text x="20" y="30" font-size="16px" font-weight="bold" fill="#dc2626">(A) 실패 사례: BFS와 탐욕 최선 우선 탐색 (비용 18 > 16)</text>
 <rect x="20" y="50" width="390" height="150" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
 <rect x="140" y="80" width="150" height="30" fill="#334155" rx="3"/>
 <rect x="250" y="110" width="40" height="60" fill="#334155" rx="3"/>
 <circle cx="50" cy="115" r="12" fill="#3b82f6"/>
-<text x="50" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
-<text x="50" y="145" font-size="11px" fill="#1e40af" text-anchor="middle" font-weight="bold">로봇 (3,1)</text>
+<text x="50" y="119" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
+<text x="50" y="145" font-size="16px" fill="#1e40af" text-anchor="middle" font-weight="bold">로봇 (3,1)</text>
 <circle cx="380" cy="115" r="12" fill="#10b981"/>
-<text x="380" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
-<text x="380" y="145" font-size="11px" fill="#065f46" text-anchor="middle" font-weight="bold">충전기 (3,9)</text>
+<text x="380" y="119" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
+<text x="380" y="145" font-size="16px" fill="#065f46" text-anchor="middle" font-weight="bold">충전기 (3,9)</text>
 <rect x="180" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
 <rect x="220" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
-<text x="218" y="71" font-size="11px" font-weight="bold" fill="#1e3a8a" text-anchor="middle">웅덩이(비용5×2)</text>
+<text x="218" y="71" font-size="16px" font-weight="bold" fill="#1e3a8a" text-anchor="middle">웅덩이(비용5×2)</text>
 <path d="M 50 115 L 140 115 L 140 66 L 300 66 L 300 115 L 340 115" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-dasharray="6,4"/>
 <circle cx="340" cy="115" r="6" fill="#ef4444"/>
-<text x="340" y="105" font-size="11px" font-weight="bold" fill="#dc2626" text-anchor="middle">비용 18, 방전</text>
-<text x="20" y="225" font-size="12px" fill="#334155"><tspan font-weight="bold">• BFS:</tspan> 걸음 수(10)만 보아 웅덩이 직진, 비용 18 발생으로 방전 실패</text>
-<text x="20" y="248" font-size="12px" fill="#334155"><tspan font-weight="bold">• Greedy:</tspan> 충전기와 가까워 보이는 상단만 맹목 추종(11칸 탐색), 비용 18 실패</text>
-<text x="20" y="272" font-size="12px" fill="#dc2626" font-weight="bold">공통 원인: 과거의 누적 비용(g)을 무시하거나 미래의 무게를 모름</text>
+<text x="340" y="105" font-size="16px" font-weight="bold" fill="#dc2626" text-anchor="middle">비용 18, 방전</text>
+<text x="20" y="225" font-size="16px" fill="#334155"><tspan font-weight="bold">• BFS:</tspan> 걸음 수(10)만 보아 웅덩이 직진, 비용 18 발생으로 방전 실패</text>
+<text x="20" y="248" font-size="16px" fill="#334155"><tspan font-weight="bold">• Greedy:</tspan> 충전기와 가까워 보이는 상단만 맹목 추종(11칸 탐색), 비용 18 실패</text>
+<text x="20" y="272" font-size="16px" fill="#dc2626" font-weight="bold">공통 원인: 과거의 누적 비용(g)을 무시하거나 미래의 무게를 모름</text>
 </g>
 <g transform="translate(500, 85)">
 <rect width="430" height="300" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="20" y="30" font-size="14px" font-weight="bold" fill="#166534">(B) 최적 성공 사례: UCS와 A* (하단 우회로, 비용 14 &lt; 16)</text>
+<text x="20" y="30" font-size="16px" font-weight="bold" fill="#166534">(B) 최적 성공 사례: UCS와 A* (하단 우회로, 비용 14 &lt; 16)</text>
 <rect x="20" y="50" width="390" height="150" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
 <rect x="140" y="80" width="150" height="30" fill="#334155" rx="3"/>
 <rect x="250" y="110" width="40" height="60" fill="#334155" rx="3"/>
 <circle cx="50" cy="115" r="12" fill="#3b82f6"/>
-<text x="50" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
+<text x="50" y="119" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
 <circle cx="380" cy="115" r="12" fill="#10b981"/>
-<text x="380" y="119" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
+<text x="380" y="119" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
 <rect x="180" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
 <rect x="220" y="55" width="35" height="22" rx="4" fill="#60a5fa" opacity="0.8"/>
 <path d="M 50 115 L 100 115 L 100 180 L 330 180 L 330 115 L 380 115" fill="none" stroke="#16a34a" stroke-width="3.5"/>
-<text x="215" y="172" font-size="12px" font-weight="bold" fill="#15803d" text-anchor="middle">마른 하단 우회로 (14걸음, 비용 14)</text>
-<text x="20" y="225" font-size="12px" fill="#334155"><tspan font-weight="bold">• UCS (다익스트라):</tspan> 웅덩이 회피 성공(비용 14), 그러나 48칸 전수 탐색</text>
-<text x="20" y="248" font-size="12px" fill="#334155"><tspan font-weight="bold">• A* (f = g + h):</tspan> 하단 우회로 완벽 선택(비용 14), 단 32칸만 탐색!</text>
-<text x="20" y="272" font-size="12px" fill="#15803d" font-weight="bold">승리의 비결: 과거 누적 비용(g)과 미래 추정(h)의 완벽한 수학적 조화</text>
+<text x="215" y="172" font-size="16px" font-weight="bold" fill="#15803d" text-anchor="middle">마른 하단 우회로 (14걸음, 비용 14)</text>
+<text x="20" y="225" font-size="16px" fill="#334155"><tspan font-weight="bold">• UCS (다익스트라):</tspan> 웅덩이 회피 성공(비용 14), 그러나 48칸 전수 탐색</text>
+<text x="20" y="248" font-size="16px" fill="#334155"><tspan font-weight="bold">• A* (f = g + h):</tspan> 하단 우회로 완벽 선택(비용 14), 단 32칸만 탐색!</text>
+<text x="20" y="272" font-size="16px" fill="#15803d" font-weight="bold">승리의 비결: 과거 누적 비용(g)과 미래 추정(h)의 완벽한 수학적 조화</text>
 </g>
 </svg>
 
@@ -536,34 +536,34 @@ $$P = \exp\left(-\frac{\Delta E}{T}\right) \approx 0.37^{\frac{\Delta E}{T}}$$
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
 <text x="30" y="38" font-size="18px" font-weight="bold" fill="#0f172a">도식 3: 국소 탐색 지형과 담금질 기법의 볼츠만 확률 탈출 동역학</text>
-<text x="30" y="62" font-size="13px" fill="#64748b">언덕 오르기가 국소 최적해에 갇히는 이유와, 온도가 식어감에 따라 나쁜 수 수용 확률 P가 수렴하는 메커니즘</text>
+<text x="30" y="62" font-size="16px" fill="#64748b">언덕 오르기가 국소 최적해에 갇히는 이유와, 온도가 식어감에 따라 나쁜 수 수용 확률 P가 수렴하는 메커니즘</text>
 <g transform="translate(30, 85)">
 <rect width="450" height="285" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(A) 에너지(공격 쌍 수) 곡면과 두 알고리즘의 궤적</text>
+<text x="20" y="28" font-size="16px" font-weight="bold" fill="#1e293b">(A) 에너지(공격 쌍 수) 곡면과 두 알고리즘의 궤적</text>
 <path d="M 30 180 Q 70 80 120 190 Q 160 250 210 110 Q 250 40 300 230 Q 360 260 410 130" fill="none" stroke="#64748b" stroke-width="2.5"/>
 <circle cx="120" cy="190" r="7" fill="#ef4444"/>
-<text x="120" y="215" font-size="11px" font-weight="bold" fill="#dc2626" text-anchor="middle">국소 최적해 (공격쌍 1개)</text>
+<text x="120" y="215" font-size="16px" font-weight="bold" fill="#dc2626" text-anchor="middle">국소 최적해 (공격쌍 1개)</text>
 <path d="M 70 120 L 115 185" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
-<text x="50" y="110" font-size="11px" fill="#ef4444">언덕 오르기: 여기서 고립</text>
-<text x="210" y="95" font-size="11px" fill="#b45309" text-anchor="middle" font-weight="bold">장벽 (공격쌍 11개까지 치솟음)</text>
+<text x="50" y="110" font-size="16px" fill="#ef4444">언덕 오르기: 여기서 고립</text>
+<text x="210" y="95" font-size="16px" fill="#b45309" text-anchor="middle" font-weight="bold">장벽 (공격쌍 11개까지 치솟음)</text>
 <circle cx="300" cy="230" r="9" fill="#10b981"/>
-<text x="300" y="255" font-size="12px" font-weight="bold" fill="#047857" text-anchor="middle">전역 최적해 (공격쌍 0개, 343단계)</text>
+<text x="300" y="255" font-size="16px" font-weight="bold" fill="#047857" text-anchor="middle">전역 최적해 (공격쌍 0개, 343단계)</text>
 <path d="M 120 190 Q 160 140 210 110 Q 260 80 300 230" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6,4"/>
-<text x="215" y="170" font-size="11px" fill="#b45309" font-weight="bold">담금질: 따뜻할 때 장벽을 넘어 탈출!</text>
+<text x="215" y="170" font-size="16px" fill="#b45309" font-weight="bold">담금질: 따뜻할 때 장벽을 넘어 탈출!</text>
 </g>
 <g transform="translate(500, 85)">
 <rect width="430" height="285" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(B) 온도에 따른 열등한 수 수용 확률 P</text>
+<text x="20" y="28" font-size="16px" font-weight="bold" fill="#1e293b">(B) 온도에 따른 열등한 수 수용 확률 P</text>
 <rect x="25" y="45" width="380" height="42" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
-<text x="215" y="71" font-size="14px" font-weight="bold" fill="#92400e" text-anchor="middle">P = exp(-ΔE / T) ≈ 0.37^(ΔE / T)</text>
+<text x="215" y="71" font-size="16px" font-weight="bold" fill="#92400e" text-anchor="middle">P = exp(-ΔE / T) ≈ 0.37^(ΔE / T)</text>
 <g transform="translate(25, 105)">
 <rect width="380" height="155" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="15" y="26" font-size="13px" font-weight="bold" fill="#0f172a">1,000회 8퀸 벤치마크 대조</text>
+<text x="15" y="26" font-size="16px" font-weight="bold" fill="#0f172a">1,000회 8퀸 벤치마크 대조</text>
 <line x1="15" y1="36" x2="365" y2="36" stroke="#e2e8f0"/>
-<text x="15" y="60" font-size="12px" fill="#475569"><tspan font-weight="bold">• 단순 언덕 오르기:</tspan> 성공률 16.1% (83.9% 고립 실패)</text>
-<text x="15" y="85" font-size="12px" fill="#475569"><tspan font-weight="bold">• 무작위 재시작:</tspan> 성공률 100%, 해당 1,507개 판 평가</text>
-<text x="15" y="110" font-size="12px" fill="#15803d"><tspan font-weight="bold">• 담금질 기법:</tspan> 성공률 99.1%, 해당 1,156개 판 평가 (350개 절감!)</text>
-<text x="15" y="135" font-size="11px" fill="#0284c7" font-weight="bold">핵심: 전체를 엎지 않고 국소적 나쁜 수를 허용하는 '내장된 재시작'</text>
+<text x="15" y="60" font-size="16px" fill="#475569"><tspan font-weight="bold">• 단순 언덕 오르기:</tspan> 성공률 16.1% (83.9% 고립 실패)</text>
+<text x="15" y="85" font-size="16px" fill="#475569"><tspan font-weight="bold">• 무작위 재시작:</tspan> 성공률 100%, 해당 1,507개 판 평가</text>
+<text x="15" y="110" font-size="16px" fill="#15803d"><tspan font-weight="bold">• 담금질 기법:</tspan> 성공률 99.1%, 해당 1,156개 판 평가 (350개 절감!)</text>
+<text x="15" y="135" font-size="16px" fill="#0284c7" font-weight="bold">핵심: 전체를 엎지 않고 국소적 나쁜 수를 허용하는 '내장된 재시작'</text>
 </g>
 </g>
 </svg>
@@ -639,58 +639,58 @@ $$P = \exp\left(-\frac{\Delta E}{T}\right) \approx 0.37^{\frac{\Delta E}{T}}$$
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; margin:24px 0;">
 <text x="30" y="38" font-size="18px" font-weight="bold" fill="#0f172a">도식 4: 적대적 게임 탐색의 진화 — 미니맥스에서 몬테카를로 트리 탐색(MCTS)과 알파고까지</text>
-<text x="30" y="62" font-size="13px" fill="#64748b">완전 탐색 트리의 역전파(Minimax)와, 무작위 롤아웃을 신경망 추정으로 승화시킨 4단계 MCTS 아키텍처</text>
+<text x="30" y="62" font-size="16px" fill="#64748b">완전 탐색 트리의 역전파(Minimax)와, 무작위 롤아웃을 신경망 추정으로 승화시킨 4단계 MCTS 아키텍처</text>
 <g transform="translate(30, 85)">
 <rect width="420" height="325" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(A) 미니맥스(Minimax) 점수 역전파</text>
+<text x="20" y="28" font-size="16px" font-weight="bold" fill="#1e293b">(A) 미니맥스(Minimax) 점수 역전파</text>
 <circle cx="210" cy="70" r="14" fill="#3b82f6"/>
-<text x="210" y="75" font-size="12px" font-weight="bold" fill="#ffffff" text-anchor="middle">+1</text>
-<text x="40" y="75" font-size="12px" fill="#1e40af" font-weight="bold">나 (MAX): 최댓값 선택</text>
+<text x="210" y="75" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">+1</text>
+<text x="40" y="75" font-size="16px" fill="#1e40af" font-weight="bold">나 (MAX): 최댓값 선택</text>
 <line x1="210" y1="84" x2="120" y2="135" stroke="#94a3b8" stroke-width="2"/>
 <line x1="210" y1="84" x2="210" y2="135" stroke="#94a3b8" stroke-width="2"/>
 <line x1="210" y1="84" x2="300" y2="135" stroke="#22c55e" stroke-width="3"/>
 <rect x="106" y="135" width="28" height="24" rx="4" fill="#ef4444"/>
-<text x="120" y="151" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">-1</text>
+<text x="120" y="151" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">-1</text>
 <rect x="196" y="135" width="28" height="24" rx="4" fill="#ef4444"/>
-<text x="210" y="151" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">0</text>
+<text x="210" y="151" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">0</text>
 <rect x="286" y="135" width="28" height="24" rx="4" fill="#ef4444" stroke="#15803d" stroke-width="2"/>
-<text x="300" y="151" font-size="11px" font-weight="bold" fill="#ffffff" text-anchor="middle">+1</text>
-<text x="40" y="151" font-size="12px" fill="#b91c1c" font-weight="bold">상대 (MIN): 최솟값 선택</text>
+<text x="300" y="151" font-size="16px" font-weight="bold" fill="#ffffff" text-anchor="middle">+1</text>
+<text x="40" y="151" font-size="16px" fill="#b91c1c" font-weight="bold">상대 (MIN): 최솟값 선택</text>
 <line x1="300" y1="159" x2="260" y2="210" stroke="#94a3b8" stroke-width="1.5"/>
 <line x1="300" y1="159" x2="340" y2="210" stroke="#94a3b8" stroke-width="1.5"/>
 <circle cx="260" cy="210" r="10" fill="#e2e8f0"/>
-<text x="260" y="214" font-size="10px" fill="#334155" text-anchor="middle">+1</text>
+<text x="260" y="214" font-size="16px" fill="#334155" text-anchor="middle">+1</text>
 <circle cx="340" cy="210" r="10" fill="#e2e8f0"/>
-<text x="340" y="214" font-size="10px" fill="#334155" text-anchor="middle">+1</text>
-<text x="40" y="214" font-size="12px" fill="#64748b">최종 승패: 승(+1) 무(0) 패(-1)</text>
+<text x="340" y="214" font-size="16px" fill="#334155" text-anchor="middle">+1</text>
+<text x="40" y="214" font-size="16px" fill="#64748b">최종 승패: 승(+1) 무(0) 패(-1)</text>
 <rect x="20" y="245" width="380" height="65" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
-<text x="30" y="268" font-size="12px" fill="#334155">• 상대방은 나에게 가장 불리한 수(MIN)를 둔다고 가정</text>
-<text x="30" y="288" font-size="12px" fill="#334155">• 틱택토 549,946개 국면 완벽 탐색 시 필연적 '무승부'</text>
-<text x="30" y="303" font-size="11px" fill="#2563eb" font-weight="bold">• 한계: 체스(10¹²⁰), 바둑(10¹⁷⁰)에서는 계산 폭발로 불가능</text>
+<text x="30" y="268" font-size="16px" fill="#334155">• 상대방은 나에게 가장 불리한 수(MIN)를 둔다고 가정</text>
+<text x="30" y="288" font-size="16px" fill="#334155">• 틱택토 549,946개 국면 완벽 탐색 시 필연적 '무승부'</text>
+<text x="30" y="303" font-size="16px" fill="#2563eb" font-weight="bold">• 한계: 체스(10¹²⁰), 바둑(10¹⁷⁰)에서는 계산 폭발로 불가능</text>
 </g>
 <g transform="translate(480, 85)">
 <rect width="450" height="325" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="20" y="28" font-size="14px" font-weight="bold" fill="#1e293b">(B) MCTS의 4단계 순환 주기와 알파고(AlphaGo)</text>
+<text x="20" y="28" font-size="16px" font-weight="bold" fill="#1e293b">(B) MCTS의 4단계 순환 주기와 알파고(AlphaGo)</text>
 <g transform="translate(20, 45)">
 <rect x="0" y="0" width="195" height="52" rx="6" fill="#eff6ff" stroke="#3b82f6"/>
-<text x="10" y="22" font-size="12px" font-weight="bold" fill="#1e40af">1. 선택 (Selection)</text>
-<text x="10" y="40" font-size="11px" fill="#2563eb">승률 높은 수 + UCB 탐험 보너스</text>
+<text x="10" y="22" font-size="16px" font-weight="bold" fill="#1e40af">1. 선택 (Selection)</text>
+<text x="10" y="40" font-size="16px" fill="#2563eb">승률 높은 수 + UCB 탐험 보너스</text>
 <rect x="215" y="0" width="195" height="52" rx="6" fill="#f0fdf4" stroke="#22c55e"/>
-<text x="225" y="22" font-size="12px" font-weight="bold" fill="#15803d">2. 확장 (Expansion)</text>
-<text x="225" y="40" font-size="11px" fill="#16a34a">미탐색 유효 수 하나를 트리에 등록</text>
+<text x="225" y="22" font-size="16px" font-weight="bold" fill="#15803d">2. 확장 (Expansion)</text>
+<text x="225" y="40" font-size="16px" fill="#16a34a">미탐색 유효 수 하나를 트리에 등록</text>
 <rect x="0" y="65" width="195" height="52" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
-<text x="10" y="87" font-size="12px" font-weight="bold" fill="#b45309">3. 평가 (Simulation/Eval)</text>
-<text x="10" y="105" font-size="11px" fill="#d97706">가치망 추정 + 빠른 롤아웃</text>
+<text x="10" y="87" font-size="16px" font-weight="bold" fill="#b45309">3. 평가 (Simulation/Eval)</text>
+<text x="10" y="105" font-size="16px" fill="#d97706">가치망 추정 + 빠른 롤아웃</text>
 <rect x="215" y="65" width="195" height="52" rx="6" fill="#faf5ff" stroke="#a855f7"/>
-<text x="225" y="87" font-size="12px" font-weight="bold" fill="#6b21a8">4. 역전파 (Backup)</text>
-<text x="225" y="105" font-size="11px" fill="#7e22ce">시뮬레이션 승패를 루트까지 갱신</text>
+<text x="225" y="87" font-size="16px" font-weight="bold" fill="#6b21a8">4. 역전파 (Backup)</text>
+<text x="225" y="105" font-size="16px" fill="#7e22ce">시뮬레이션 승패를 루트까지 갱신</text>
 </g>
 <g transform="translate(20, 180)">
 <rect width="410" height="120" rx="6" fill="#1e293b"/>
-<text x="15" y="26" font-size="13px" font-weight="bold" fill="#38bdf8">알파고(AlphaGo, 2016)의 신경망 결합 아키텍처</text>
-<text x="15" y="52" font-size="12px" fill="#e2e8f0"><tspan fill="#4ade80" font-weight="bold">• 정책망(Policy Network):</tspan> 250개 후보 수 중 유망한 몇 가지만 골라 트리에 제안</text>
-<text x="15" y="74" font-size="12px" fill="#e2e8f0"><tspan fill="#facc15" font-weight="bold">• 가치망(Value Network):</tspan> 끝까지 두지 않고도 현재 판세의 승률을 즉각 추정</text>
-<text x="15" y="98" font-size="12px" fill="#cbd5e1"><tspan font-weight="bold">• 최종 착수:</tspan> 탐색이 끝난 후 '가장 많이 방문한(Most Visited) 수'를 선택</text>
+<text x="15" y="26" font-size="16px" font-weight="bold" fill="#38bdf8">알파고(AlphaGo, 2016)의 신경망 결합 아키텍처</text>
+<text x="15" y="52" font-size="16px" fill="#e2e8f0"><tspan fill="#4ade80" font-weight="bold">• 정책망(Policy Network):</tspan> 250개 후보 수 중 유망한 몇 가지만 골라 트리에 제안</text>
+<text x="15" y="74" font-size="16px" fill="#e2e8f0"><tspan fill="#facc15" font-weight="bold">• 가치망(Value Network):</tspan> 끝까지 두지 않고도 현재 판세의 승률을 즉각 추정</text>
+<text x="15" y="98" font-size="16px" fill="#cbd5e1"><tspan font-weight="bold">• 최종 착수:</tspan> 탐색이 끝난 후 '가장 많이 방문한(Most Visited) 수'를 선택</text>
 </g>
 </g>
 </svg>
