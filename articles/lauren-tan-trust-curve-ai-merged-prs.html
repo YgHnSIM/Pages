@@ -2334,7 +2334,7 @@ $$\text{오차(Error)} = \text{기대 런타임 상태(Specification)} - \text{�
 <h2 id="6-나쁜-코드를-물리적으로-불가능하게-만드는-환경-설계"><a href="#6-나쁜-코드를-물리적으로-불가능하게-만드는-환경-설계" class="heading-anchor" aria-hidden="true">#</a> 6. 나쁜 코드를 물리적으로 불가능하게 만드는 환경 설계</h2><h3 id="원문-주장-dune-프레임워크와-린트-벽의-구축"><a href="#원문-주장-dune-프레임워크와-린트-벽의-구축" class="heading-anchor" aria-hidden="true">#</a> 원문 주장: Dune 프레임워크와 린트 벽의 구축</h3><p>런 탄은 <strong>엔지니어의 새 일은 환경(Environment)에 시간을 쓰는 것</strong>에 가깝다고 말한다.</p>
 <p>에이전트에 대한 신뢰가 낮으면 엔지니어는 마이크로매니징에 매달릴 수밖에 없고, 하루 종일 에이전트를 감시하느라 환경을 개선할 시간과 여유를 완전히 빼앗긴다. 이는 마치 메모장(Notepad)으로만 코딩할 줄 알고 Git이나 최신 IDE의 존재를 모르는 개발자가 무딘 칼을 쥐고 고군분투하는 것과 같다. 이 악순환의 고리를 끊어내려면 환경에 대한 적극적인 투자가 선행되어야 한다.</p>
 <p>그가 제시하는 환경 설계의 핵심 철학은 TypeScript의 <strong>&#39;타입 좁히기(Type Narrowing)&#39;</strong> 개념과 궤를 같이한다. 수많은 경우의 수가 열려 있는 느슨한 코드베이스는 인간뿐만 아니라 에이전트에게도 치명적인 인지적 혼란을 야기한다. 따라서 코드베이스가 허용하는 유효 상태 공간(valid state space)을 극도로 좁혀야 한다.</p>
-<p>런 탄은 이를 그가 만들고 있는 사내 Electron 앱용 비공개 프레임워크 <strong>&#39;Dune&#39;</strong>(확인 필요)<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a>으로 설명했다. 계기는 Grok Bot 데스크톱 앱의 초기 버전들이 1만 줄 이상의 <strong>&#39;갓 파일(god files)&#39; 8개쯤</strong>(확인 필요)으로 이루어져 있었다는 점이다.</p>
+<p>런 탄은 이를 그가 만들고 있는 사내 Electron 앱용 비공개 프레임워크 <strong>&#39;Dune&#39;</strong>(확인 필요)<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a>으로 설명했다. 계기는 Cursor 에이전트 창(agents window)의 초기 버전들이 1만 줄 이상의 <strong>&#39;갓 파일(god files)&#39; 8개쯤</strong>(확인 필요)으로 이루어져 있었다는 점이다.</p>
 <p>그는 Dune을 통해 극도로 엄격한 린트(Lint) 규칙과 아키텍처 관례를 강제했다. Dune의 세계에서는 어떤 새로운 기능을 개발하든 <strong>오직 단 한 가지 방법만</strong> 허용된다. 기능마다 전용 디렉터리를 생성해야 하며, 해당 디렉터리 내에 규격화된 파일들을 배치하면 중앙 레지스트리가 이를 자동으로 탐색하여 등록한다. 그래서 에이전트가 갓 파일에 코드를 덧붙이는 대신 새 기능 디렉터리에 코드를 넣게 된다.</p>
 <p>런 탄은 에이전트의 실패를 다루는 원칙을 단호하게 밝힌다. 에이전트가 어떤 지점에서 실수를 저지르면, 프롬프트에 &quot;다음부터는 이러지 마&quot;라고 주의를 주는 것은 무의미하다. 대신 <strong>&quot;어떻게 이 실수를 린트 규칙이나 컴파일러 제약으로 만들어 코드베이스 차원에서 불가능하게 만들 것인가?&quot;</strong>를 고민해야 한다. 진행자는 이를 이렇게 정리했다. 규칙을 에이전트에 과적하지 않고 환경에 두면, 에이전트가 필요한 순간에 그 규칙에 부딪혀 튕겨 나온다.</p>
 <hr>
@@ -2384,7 +2384,7 @@ $$\text{오차(Error)} = \text{기대 런타임 상태(Specification)} - \text{�
 <li><strong>외부 루프:</strong> Slack, Linear, X, 이메일 등 실제 비즈니스와 사용자의 맥락이 실시간으로 흘러 다니는 외부 세상의 루프다.</li>
 </ul>
 <p>두 루프가 단절되어 있으면 인간 엔지니어가 Slack을 확인하고, Linear 티켓을 읽어 에이전트에게 전달하는 비효율적인 &#39;맥락 전달자&#39;로 전락한다. 런 탄은 끊임없이 반문했다. <strong>&quot;어디서 내가 병목인가? 왜 에이전트는 이 질문에 답하기 위해 나를 필요로 하는가?&quot;</strong> 그는 회사의 지식 그래프나 거창한 &#39;컴퍼니 브레인&#39; 같은 추상적인 개념에 매몰되지 말고, 실제 데이터 소스를 에이전트에게 직접 연결하라고 조언한다.</p>
-<p>구체적인 파이프라인에서, 외부 루프의 감시자 역할은 Grok Bot이 수행한다. 이 봇은 Slack, Linear, X 등을 실시간으로 모니터링하며 버그 리포트와 기능 요청을 수집하여 Cursor의 클라우드 프로젝트 환경(Cursor Projects)으로 라우팅한다.</p>
+<p>구체적인 파이프라인에서, 외부 루프의 감시자 역할은 Cursor 에이전트(확인 필요)가 수행한다. 이 에이전트는 Slack, Linear, X 등을 실시간으로 모니터링하며 버그 리포트와 기능 요청을 수집하여 Cursor의 클라우드 프로젝트 환경(Cursor Projects)으로 라우팅한다.</p>
 <p>이곳에는 클라우드에 자기 컴퓨터를 가진 <strong>코디네이터 에이전트(Coordinator Agent)</strong>가 상주한다. 이 코디네이터는 주방의 총괄 셰프이자 비서실장과 같다. 코디네이터는 자신이 직접 코드를 짜지 않는다. 30개의 이슈가 한꺼번에 쏟아져 들어오면, 각 이슈의 연관성을 분석하고 최적의 작업 토폴로지(Topology)를 설계하여 하위 워커 에이전트들에게 일을 분배하고 감독한다. 이슈마다 에이전트를 따로 띄우면 작업이 중복되거나 <strong>여러 버그 뒤에 숨겨진 공통의 상위 원인(root cause)</strong>을 놓치기 때문이다. 런 탄은 과거 넷플릭스(Netflix)에서 관리자들이 자주 말하던 원칙, 즉 <strong>&quot;통제가 아닌 맥락을 제공하라(Context, not Control)&quot;</strong>는 원칙이 에이전트 조직 관리에도 완벽히 들어맞는다고 강조했다.</p>
 <p>또한 그가 쏟아낸 수천 개의 PR 중 대다수는 화려한 신기능이 아니었다. 그것은 코드베이스를 건강하게 유지하는 <strong>&#39;가드닝(Gardening, 정원 가꾸기)&#39;</strong> 작업이었다. 예를 들어 React의 금지 패턴을 계속 찾는 루틴 에이전트에게는 바로 고치게 하지 않고 발견한 것을 문서에 덧붙이게 한다. 며칠마다 그가 그 문서를 보며 &quot;이것들은 사실 같은 문제&quot;라는 식으로 패턴을 찾아낸다. 이 버퍼 큐가 존재함으로써 시스템은 나무가 아닌 숲을 보게 된다.</p>
 <hr>
@@ -2407,7 +2407,7 @@ $$\text{오차(Error)} = \text{기대 런타임 상태(Specification)} - \text{�
 <text x="44" y="217" fill="#334155" font-size="16px">· Slack 채널 / 멘션</text>
 <text x="44" y="242" fill="#334155" font-size="16px">· Linear 티켓 / 이슈</text>
 <text x="44" y="267" fill="#334155" font-size="16px">· X(트위터) &amp; 고객 이메일</text>
-<text x="44" y="292" fill="#334155" font-size="16px">· Grok Bot 상시 감시</text>
+<text x="44" y="292" fill="#334155" font-size="16px">· Cursor 에이전트 상시 감시</text>
 <text x="44" y="317" fill="#334155" font-size="16px">버퍼 &amp; 큐 (가드닝 문서): React 안티패턴, 성능 회귀</text>
 <text x="44" y="342" fill="#334155" font-size="16px">로그, UI 버그 리포트 → 배치 그룹핑</text>
 <text x="360" y="388" text-anchor="middle" fill="#64748b" font-size="20px">▼</text>
@@ -2508,7 +2508,7 @@ $$\text{오차(Error)} = \text{기대 런타임 상태(Specification)} - \text{�
 </ol>
 <p>이제 소프트웨어 엔지니어의 정의는 완전히 바뀌었다. 우리는 더 이상 키보드 위에서 영문법을 타이핑하는 숙련공이 아니다. 우리는 에이전트들이 실수를 저지르고 싶어도 저지를 수 없도록 견고한 물리 법칙을 설계하는 <strong>주방의 건축가이자, 시스템의 총괄 셰프</strong>다. 런 탄이 개척한 신뢰 곡선의 궤적은, 다가올 자율 에이전트 문명에서 진정한 엔지니어링 장인정신이 어디로 나아가야 하는지를 명징하게 가리키고 있다.</p>
 <hr>
-<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1"><strong>런 탄(Lauren Tan):</strong> 전 Meta React 팀 엔지니어로, 예전에 Netflix에서도 일했다. 현재 Cursor에서 에이전트 창과 Grok Bot 데스크톱 앱 등을 개발한다. &#39;Potato&#39;는 그의 별명이다(본인 표현 &quot;I&#39;m called potato&quot;). 온라인 핸들 표기는 확인 필요.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1"><strong>런 탄(Lauren Tan):</strong> 전 Meta React 팀 엔지니어로, 예전에 Netflix에서도 일했다. 현재 Cursor에서 Cursor 에이전트 창(agents window) 등을 개발한다. &#39;Potato&#39;는 그의 별명이다(본인 표현 &quot;I&#39;m called potato&quot;). 온라인 핸들 표기는 확인 필요.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
 <li id="fn-2"><strong>PR 수치(확인 필요):</strong> 런 탄의 발표 제목은 &quot;How I shipped 2,500 PRs last month to production&quot;이며, 대담 중에는 2,000과 2,500이 섞여 나온다. 본문은 발표 제목의 2,500을 따르되 확정 수치로 보지 않는다.<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li>
 <li id="fn-3"><strong>진행자:</strong> 대담 중 &quot;me and Matt&quot;라는 언급과 Total TypeScript 이야기로 보아 Matt Pocock으로 추정되나, 성과 이름은 확인 필요.<a class="backlink" href="#fnref-3" aria-label="본문으로">↩</a></li>
 <li id="fn-4"><strong>pstack:</strong> 런 탄이 쓰는 런 탄의 스킬 묶음. 정식 표기는 확인 필요. 초기 실험은 GitHub의 noodle 저장소(경로 확인 필요)에 공개되어 있다고 한다.<a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
