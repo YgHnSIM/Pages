@@ -1,0 +1,3459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>모두가 자기 데이터베이스를 갖는 시대: 에이전트가 원하는 것을 만든다</title>
+  <meta name="description" content="오픈소스 Postgres 백엔드 Supabase의 공동창업자이자 CEO인 폴 코플스톤(Paul Copplestone)이 Y Combinator 인터뷰에서 밝힌 인공지능 시대 데이터 인프라의 변화. 진행자가 말한 '신규 활동의 약 70%가 에이전트'라는 흐름 속에서, 대시보드에서 API를 거쳐 '코드 우선(Code-First)'으로 진화한 제품 전략, 비엔지니어 '빌더'의 부상, 모든 개인이 자신의 삶을 저장하는 개인 데이터베이스 패러다임, 수십억 개 DB를 지원하기 위한 아키텍처, 그리고 에이전트를 위한 제품 설계와 자기개선 루프를 해설합니다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">모두가 자기 데이터베이스를 갖는 시대: 에이전트가 원하는 것을 만든다</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#1-에이전트가-원하는-것을-만든다-수요-주체의-대전환과-성장-지표" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 에이전트가 원하는 것을 만든다: 수요 주체의 대전환과 성장 지표</span></a></li><li class="depth-2"><a href="#2-대시보드에서-api-코드-우선으로-supabase의-세-시대와-오픈소스의-힘" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 대시보드에서 API, 코드 우선으로: Supabase의 세 시대와 오픈소스의 힘</span></a></li><li class="depth-2"><a href="#3-39빌더39의-부상-억압된-아이디어의-해방과-도메인-전문성" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. &#39;빌더&#39;의 부상: 억압된 아이디어의 해방과 도메인 전문성</span></a></li><li class="depth-2"><a href="#4-모든-사람의-데이터베이스-개인-소프트웨어와-데이터-주권" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 모든 사람의 데이터베이스: 개인 소프트웨어와 데이터 주권</span></a></li><li class="depth-2"><a href="#5-수십억-개-db의-아키텍처-prototype-to-petabytes와-39첫날39의-전략" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 수십억 개 DB의 아키텍처: Prototype to Petabytes와 &#39;첫날&#39;의 전략</span></a></li><li class="depth-2"><a href="#6-에이전트를-위한-제품-설계-에러-메시지-평가-체계-사내-도입" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 에이전트를 위한 제품 설계: 에러 메시지, 평가 체계, 사내 도입</span></a></li><li class="depth-2"><a href="#7-개인-에이전트-gbrain-그리고-재귀적-자기개선rsi" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 개인 에이전트, Gbrain, 그리고 재귀적 자기개선(RSI)</span></a></li><li class="depth-2"><a href="#8-코딩과-창업의-미래-린디-효과와-적응의-속도" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 코딩과 창업의 미래: 린디 효과와 적응의 속도</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-31</span>
+          <span class="meta-badge">⏱️ 약 84분</span>
+          
+        </div>
+        <h1 class="article-title">모두가 자기 데이터베이스를 갖는 시대: 에이전트가 원하는 것을 만든다</h1>
+        <p class="article-subtitle">Why Everyone Is About To Have Their Own Database — Paul Copplestone (Supabase)</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#컴퓨터과학</span>
+          
+          <span class="tag-pill">#에이전트</span>
+          
+          <span class="tag-pill">#인터뷰</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-31-수파베이스개인DB.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="1-에이전트가-원하는-것을-만든다-수요-주체의-대전환과-성장-지표"><a href="#1-에이전트가-원하는-것을-만든다-수요-주체의-대전환과-성장-지표" class="heading-anchor" aria-hidden="true">#</a> 1. 에이전트가 원하는 것을 만든다: 수요 주체의 대전환과 성장 지표</h2><p>실리콘밸리의 대표적 액셀러레이터인 Y Combinator(YC)에 입주하는 스타트업 창업자들은 첫날 상징적인 티셔츠를 받는다. 그 티셔츠의 가슴에는 오랫동안 YC의 철학을 대표해 온 격언이 적혀 있다. &quot;사람들이 원하는 것을 만들어라(Make something people want).&quot; 그러나 인공지능 모델이 소프트웨어를 직접 기획하고 코드를 작성하는 시대가 열리면서 이 오랜 명제는 제품 설계의 최전선에서 근본적인 수정을 요구받고 있다.</p>
+<p>인터뷰의 진행자는 이제 제품을 만드는 모든 이들이 <strong>&quot;에이전트가 원하는 것을 만들어라(Make something agents want)&quot;</strong>라는 새로운 현실을 직시하고 있다고 지적한다. 그리고 오픈소스 관계형 데이터베이스 인프라 기업인 Supabase는 바로 이 패러다임 전환을 가장 극명하게 증명하는 대표적 사례로 부상했다. 진행자에 따르면 Claude Code나 Codex 같은 최신 AI 코딩 도구 내부에서 Supabase는 사실상 기본(default) 데이터베이스 계층으로 채택되었으며, <strong>플랫폼에서 일어나는 신규 활동의 약 70%가 인간 사용자가 아닌 AI 에이전트로부터 발생하고 있다.</strong><a class="footnote-ref" href="#fn-1" id="fnref-1">1</a></p>
+<p>Supabase의 공동창업자이자 CEO인 폴 코플스톤(Paul Copplestone)은 &quot;정말 놀랍다(wild)&quot;고 맞장구치며, 올해 특히 에이전트 쪽으로 큰 변곡점이 왔다고 말한다. 그가 밝힌 Supabase의 지표는 다음과 같다.</p>
+<ul>
+<li><strong>누적 가입자 수:</strong> 1년 전 약 300만 명 수준이었던 전체 가입자는 최근 <strong>1,300만 명</strong>을 돌파했다.<a class="footnote-ref" href="#fn-2" id="fnref-2">2</a></li>
+<li><strong>연간 매출 성장률:</strong> 올해 매출은 <strong>4배(4x)</strong> 성장할 것이라고 말했다.</li>
+<li><strong>신규 데이터베이스 생성 속도:</strong> 진행자가 &quot;주당 약 100만 개&quot;라고 묻자 Paul이 그렇다고 답했다.</li>
+<li><strong>관리 중인 총 데이터베이스 수:</strong> 1년 전 800만 개 수준이었던 관리 데이터베이스(Databases under management) 규모는 현재 <strong>5,000만 개에 근접</strong>하고 있다.</li>
+</ul>
+<p>이러한 폭발적인 수치 확장의 배후에는 수요 주체의 구조적 전환이 자리 잡고 있다. 코플스톤은 이 거대한 성장을 이끄는 두 가지 핵심 동력을 짚는다. 첫째는 기존 소프트웨어 엔지니어들이 에이전트로 만들고 있다는 점이다(원문 표현 &quot;abandoned software engineers&quot;가 정확히 무슨 말인지는 확인 필요). 둘째는 더 본질적인 변화로서, 소프트웨어 엔지니어링 배경이 없던 &#39;비엔지니어 빌더(Builder)&#39;들이 대거 들어와 Supabase 위에서 무언가를 만들기 시작했다는 점이다.</p>
+<p>[해설: 개발자 도구의 전통적 인터페이스 변천과 에이전트 사용자층]
+전통적으로 개발자 도구(Developer Tools)는 인간 개발자의 인지적 편의성과 시각적 조작성을 극대화하는 방향으로 발전해 왔다. 복잡한 SQL 문법 대신 마우스 클릭으로 테이블을 만들고 권한을 제어할 수 있는 GUI(그래픽 사용자 인터페이스) 웹 콘솔이나 관리 대시보드가 대표적이다. 그러나 LLM 기반의 코딩 에이전트가 개발의 주체로 등장하면서 제품 인터페이스의 우선순위는 완전히 역전되었다. 에이전트는 웹 브라우저의 버튼을 누르는 것보다 정형화된 CLI 명령어, API 호출, 텍스트 기반 설정 파일을 읽고 쓰는 것을 압도적으로 잘 수행한다. 결과적으로 인간을 겨냥했던 편의성 기능보다 기계가 파싱하고 자율 조작하기 쉬운 명시적 프로토콜이 플랫폼의 경쟁력을 결정하는 시대가 도래한 것이다.</p>
+<div class="svg-container" style="margin: 2rem 0; width: 100%; text-align: center;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 960 400" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Card -->
+  <rect width="100%" height="100%" fill="#0f172a" rx="16" stroke="#334155" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="480" y="42" fill="#f8fafc" font-size="22" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    Supabase 핵심 성장 지표: 1년 전 대비 폭발적 변곡점
+  </text>
+  <text x="480" y="72" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    인간 개발자 중심에서 에이전트·빌더 시대로의 전환이 만들어낸 지표 격차 (인터뷰 중 발언)
+  </text>
+
+  <!-- Metric Card 1: Users -->
+  <g transform="translate(50, 105)">
+    <rect width="260" height="250" fill="#1e293b" rx="12" stroke="#38bdf8" stroke-width="2"/>
+    <text x="130" y="32" fill="#38bdf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      누적 가입자 수 (Signups)
+    </text>
+    <rect x="25" y="160" width="80" height="60" fill="#475569" rx="6"/>
+    <text x="65" y="150" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">1년 전</text>
+    <text x="65" y="195" fill="#f8fafc" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">300만</text>
+
+    <rect x="155" y="70" width="80" height="150" fill="#0284c7" rx="6"/>
+    <text x="195" y="60" fill="#38bdf8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">현재</text>
+    <text x="195" y="145" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">1,300만</text>
+
+    <text x="130" y="240" fill="#34d399" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      약 4.3배 급증
+    </text>
+  </g>
+
+  <!-- Metric Card 2: Managed DBs -->
+  <g transform="translate(350, 105)">
+    <rect width="260" height="250" fill="#1e293b" rx="12" stroke="#818cf8" stroke-width="2"/>
+    <text x="130" y="32" fill="#818cf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      관리 중인 DB 수 (Databases)
+    </text>
+    <rect x="25" y="180" width="80" height="40" fill="#475569" rx="6"/>
+    <text x="65" y="170" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">1년 전</text>
+    <text x="65" y="205" fill="#f8fafc" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">800만</text>
+
+    <rect x="155" y="70" width="80" height="150" fill="#4f46e5" rx="6"/>
+    <text x="195" y="60" fill="#818cf8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">현재</text>
+    <text x="195" y="145" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">5,000만</text>
+
+    <text x="130" y="240" fill="#34d399" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      약 6.2배 급증
+    </text>
+  </g>
+
+  <!-- Metric Card 3: New Activity & Velocity -->
+  <g transform="translate(650, 105)">
+    <rect width="260" height="250" fill="#1e293b" rx="12" stroke="#34d399" stroke-width="2"/>
+    <text x="130" y="32" fill="#34d399" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      주간 생성 & 활동 비중
+    </text>
+    <text x="25" y="80" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">주당 신규 DB 생성:</text>
+    <text x="25" y="112" fill="#38bdf8" font-size="20" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">약 100만 개/주</text>
+
+    <text x="25" y="150" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">연간 매출 성장:</text>
+    <text x="25" y="182" fill="#34d399" font-size="20" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">4배 성장 (4x)</text>
+
+    <text x="25" y="220" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">신규 활동 에이전트 비중:</text>
+    <text x="25" y="252" fill="#f59e0b" font-size="20" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">약 70%</text>
+  </g>
+</svg></figure>
+</div>
+
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">지표 항목</th>
+<th align="left">1년 전 (2025년경)</th>
+<th align="left">2026년 현재</th>
+<th align="left">변동 및 성장 배수</th>
+<th align="left">비고 및 발언 주체</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>누적 가입자 수</strong></td>
+<td align="left">약 300만 명</td>
+<td align="left">1,300만 명</td>
+<td align="left">약 4.3배 증가</td>
+<td align="left">Paul 발언</td>
+</tr>
+<tr>
+<td align="left"><strong>관리 중인 데이터베이스 수</strong></td>
+<td align="left">800만 개</td>
+<td align="left">약 5,000만 개 근접</td>
+<td align="left">약 6.2배 증가</td>
+<td align="left">Paul 발언</td>
+</tr>
+<tr>
+<td align="left"><strong>주당 신규 데이터베이스 생성</strong></td>
+<td align="left">언급 없음</td>
+<td align="left">약 100만 개 / 주</td>
+<td align="left">폭발적 신규 유입</td>
+<td align="left">진행자 확인 및 Paul 동의</td>
+</tr>
+<tr>
+<td align="left"><strong>연간 매출 성장률 (YoY)</strong></td>
+<td align="left">언급 없음</td>
+<td align="left">전년 대비 4배 (4x)</td>
+<td align="left">400% 성장</td>
+<td align="left">Paul 발언</td>
+</tr>
+<tr>
+<td align="left"><strong>신규 활동 중 에이전트 비중</strong></td>
+<td align="left">언급 없음</td>
+<td align="left">약 70%</td>
+<td align="left">에이전트가 주류화</td>
+<td align="left">진행자 발언</td>
+</tr>
+<tr>
+<td align="left"><strong>사내 엔지니어의 AI 코딩 비중</strong><a class="footnote-ref" href="#fn-3" id="fnref-3">3</a></td>
+<td align="left">10%</td>
+<td align="left">60% (6개월 만에 도달)</td>
+<td align="left">6배 증가</td>
+<td align="left">진행자가 언급한 사내 설문</td>
+</tr>
+<tr>
+<td align="left"><strong>ChatGPT 주간 활성 사용자(WAU)</strong></td>
+<td align="left">언급 없음</td>
+<td align="left">12억 명</td>
+<td align="left">잠재적 DB 생성 풀</td>
+<td align="left">Paul의 인용 발언<a class="footnote-ref" href="#fn-4" id="fnref-4">4</a></td>
+</tr>
+<tr>
+<td align="left"><strong>AWS 매출 중 스타트업 기여분</strong></td>
+<td align="left">언급 없음</td>
+<td align="left">약 40%</td>
+<td align="left">첫날 획득의 장기 가치</td>
+<td align="left">Paul 발언 (화자 스스로 팩트체크 단서, 확인 필요)</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="2-대시보드에서-api-코드-우선으로-supabase의-세-시대와-오픈소스의-힘"><a href="#2-대시보드에서-api-코드-우선으로-supabase의-세-시대와-오픈소스의-힘" class="heading-anchor" aria-hidden="true">#</a> 2. 대시보드에서 API, 코드 우선으로: Supabase의 세 시대와 오픈소스의 힘</h2><p>Supabase가 오늘날 에이전트들의 기본 데이터베이스로 안착한 것은 하룻밤 사이에 이루어진 우연이 아니다. 코플스톤은 회사의 역사를 세 개의 뚜렷한 장(Chapter)으로 회고한다. 그것은 <strong>대시보드 회사(Dashboard Company) → API 회사(API Company) → 코드 우선 회사(Code-First Company)</strong>로 이어지는 진화의 여정이었다.</p>
+<p>첫 번째 장이었던 대시보드 시대(2020년경)는 &quot;개발자조차 관계형 데이터베이스를 직접 다루는 것을 대단히 어려워한다&quot;는 관찰에서 출발했다. 당시 코플스톤은 노코드 스프레드시트 도구인 Airtable의 직관적인 사용자 경험을 높이 평가하고 있었다. 그는 강력하고 신뢰성 높은 PostgreSQL 데이터베이스 위에 Airtable과 같은 유려한 웹 UI 대시보드를 얹는다면 개발자들의 생산성이 획기적으로 개선될 것이라 판단했다. 진행자에 따르면 이 대시보드 제품은 YC 배치 프로그램 참가 기간 중 단 100일 만에 기획되어 구축되었다(확인 필요).</p>
+<p>두 번째 장인 API 회사로의 전환은 2021년경 한 고객의 요청에서 시작되었다.<a class="footnote-ref" href="#fn-5" id="fnref-5">5</a> Supabase와 연동하던 이 고객은 데이터베이스를 많이 띄워야 하니 그 일을 할 API가 필요하다고 했다. Supabase는 이 피드백을 수용하여 데이터베이스 라이프사이클 전체를 코드로 제어할 수 있는 API를 구축했다. 당시에는 단순한 기능 확장에 불과해 보였던 이 선제적 조치는, 2024년 볼트(Bolt)나 러버블(Lovable)과 같은 AI 기반 프론트엔드·풀스택 생성 도구들이 시장에 쏟아져 나올 때 Supabase를 이들의 기본 백엔드로 즉시 결합할 수 있게 만든 결정적 수가 되었다.</p>
+<p>그리고 2026년, Supabase는 세 번째 장인 &#39;코드 우선(Code-First)&#39; 시대로 완전히 진입했다. 코플스톤은 올해 &quot;아무도 대시보드에 오지 않는다&quot;는 것을 보았다. 그는 에이전트가 원하는 방식은 코드 우선이며, 대부분 CLI를 쓰고 싶어 한다고 말한다.</p>
+<p>이에 따라 코플스톤은 전사 개발팀에 <strong>&quot;코드 우선(Code-First), Git 네이티브(Git-Native)&quot;</strong>를 요구하는 제품 메모를 보냈다. 대시보드에 있는 것은 사실상 코드(Infrastructure as Code)와 보조를 맞춰(in lock step) 동작해야 하고, 이를 위해 CLI 등을 샌드박스 안에서 코드로 동작하도록 재설계했다.</p>
+<p>또 하나는 LLM 안에서 기본 선택지(default)로 뽑히는 것이다. 코플스톤은 Supabase가 데이터베이스의 기본 선택지가 되기 시작한 타이밍의 수혜를 크게 봤다고 말한다.</p>
+<p>진행자가 &quot;오픈소스라는 점이 에이전트들에게 얼마나 큰 영향을 미쳤는가?&quot;라고 묻자, 코플스톤은 &quot;반사실(counterfactual)을 증명할 수는 없지만, 결정적(critical)이었다고 생각한다&quot;고 답했다. Supabase는 자사 도구만이 아니라 Postgres 생태계의 기존 도구를 지원하고 유지보수에 참여하며 여러 커뮤니티에 걸쳐 퍼졌다<a class="footnote-ref" href="#fn-6" id="fnref-6">6</a>. 코플스톤은 에이전트가 오픈소스를 선호하는 이유에 대해 다음과 같이 추측했다.</p>
+<blockquote>
+<p>에이전트는 무언가 잘못되면 소스를 직접 볼 수 있기 때문에 오픈소스를 좋아하는 것 같다.</p>
+</blockquote>
+<p>진행자 한 명은 에이전트가 강력하다고 느끼고 데이터를 좋아하며, 벽에 부딪혔는데 무슨 일인지 모르고 고칠 수도 없을 때가 가장 답답하다고 덧붙였다. 코플스톤은 보안이 중요해지면서 기업들이 소스 코드를 검사해 안전한지 확인하려 할 것이고, 소스가 닫혀 있으면 공급사로 채택하기를 꺼릴 것이라고 내다봤다.</p>
+<p>코플스톤은 Supabase의 성장이 과거 파스(Parse)와 파이어베이스(Firebase)가 닦아놓은 유산 위에 서 있다고 인정한다<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a>. 2014년에는 데이터베이스로 RDS를 쓰지 않는 것이 터무니없는 일이었다. 그러나 Parse와 Firebase가 길을 닦았고, 이후 Atlas(MongoDB) 같은 데이터베이스 기업들이 거대 클라우드 3사(Hyperscalers) 외부에서도 독자적이고 거대한 데이터베이스 비즈니스가 지속될 수 있음을 증명했다. 10여 년 전의 변곡점이 NoSQL의 대두와 모바일 파도였다면, 코플스톤은 지금 Supabase가 그런 파도의 한복판에 있다고 말한다.</p>
+<p>[해설: BaaS(Backend-as-a-Service)의 개념과 진화, CLI와 IaC(Infrastructure as Code)의 원리]</p>
+<ul>
+<li><strong>BaaS(Backend-as-a-Service):</strong> 개발자가 백엔드 서버를 직접 구축하거나 데이터베이스 인프라, 사용자 인증, 파일 스토리지를 관리할 필요 없이, 클라우드가 제공하는 API와 SDK를 통해 백엔드 기능을 즉시 조립할 수 있게 해주는 서비스 형태다. 1세대 모바일 붐 시절 Parse와 Firebase가 앱 개발의 진입 장벽을 낮추며 큰 인기를 끌었고, Supabase는 이를 현대적인 관계형 데이터베이스(PostgreSQL) 기반의 오픈소스 구조로 재해석했다.</li>
+<li><strong>CLI(Command Line Interface)와 IaC(Infrastructure as Code):</strong> CLI는 텍스트 터미널에서 명령어를 입력해 시스템을 제어하는 인터페이스이며, IaC는 서버, 데이터베이스, 네트워크 등 인프라 구성을 물리적 클릭이 아닌 선언적 텍스트 코드(설정 파일)로 정의·배포·버전 관리하는 기법이다. 대시보드 GUI는 인간의 눈에는 직관적이지만 코딩 에이전트에게는 웹 스크래핑이나 브라우저 조작이라는 불필요한 연산 오버헤드를 유발한다. 반면 CLI와 IaC는 에이전트가 잘 다루는 텍스트 명령과 Git 이력으로 인프라를 다룰 수 있게 해 준다.</li>
+</ul>
+<div class="svg-container" style="margin: 2rem 0; width: 100%; text-align: center;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 960 400" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Card -->
+  <rect width="100%" height="100%" fill="#0f172a" rx="16" stroke="#334155" stroke-width="2"/>
+  
+  <!-- Title -->
+  <text x="480" y="45" fill="#f8fafc" font-size="22" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    Supabase 제품 진화의 세 시대 (Three Eras of Supabase)
+  </text>
+  <text x="480" y="75" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    인터페이스의 중심이 인간 개발자 웹 콘솔에서 기계 에이전트용 코드로 이동한 궤적
+  </text>
+
+  <!-- Era 1: Dashboard Company -->
+  <g transform="translate(40, 110)">
+    <rect width="260" height="240" fill="#1e293b" rx="12" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="260" height="40" fill="#0284c7" rx="12" style="clip-path: inset(0 0 200px 0);"/>
+    <text x="130" y="26" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      1세대: 대시보드 (2020)
+    </text>
+    <text x="20" y="70" fill="#38bdf8" font-size="16" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">주 사용자: 인간 개발자</text>
+    <text x="20" y="98" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• Airtable 스타일 웹 GUI</text>
+    <text x="20" y="126" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• Postgres 조작 장벽 제거</text>
+    <text x="20" y="154" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• YC 100일 만에 구축</text>
+    <text x="20" y="182" fill="#94a3b8" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 직관적 테이블 뷰 제공</text>
+    
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <g transform="translate(305, 220)">
+    <path d="M 5 0 L 35 0 M 25 -8 L 35 0 L 25 8" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Era 2: API Company -->
+  <g transform="translate(350, 110)">
+    <rect width="260" height="240" fill="#1e293b" rx="12" stroke="#818cf8" stroke-width="2"/>
+    <rect width="260" height="40" fill="#4f46e5" rx="12" style="clip-path: inset(0 0 200px 0);"/>
+    <text x="130" y="26" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      2세대: API 회사 (2021~)
+    </text>
+    <text x="20" y="70" fill="#818cf8" font-size="16" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">주 사용자: 플랫폼·자동화 고객</text>
+    <text x="20" y="98" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 고객 요청으로 시작</text>
+    <text x="20" y="126" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 프로그래밍 방식 DB 생성</text>
+    <text x="20" y="154" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• DB를 대량으로 띄우기</text>
+    <text x="20" y="182" fill="#94a3b8" font-size="16" font-family="system-ui, -apple-system, sans-serif">• Bolt · Lovable 백엔드 적시타</text>
+    
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <g transform="translate(615, 220)">
+    <path d="M 5 0 L 35 0 M 25 -8 L 35 0 L 25 8" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Era 3: Code-First Company -->
+  <g transform="translate(660, 110)">
+    <rect width="260" height="240" fill="#1e293b" rx="12" stroke="#34d399" stroke-width="2"/>
+    <rect width="260" height="40" fill="#059669" rx="12" style="clip-path: inset(0 0 200px 0);"/>
+    <text x="130" y="26" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      3세대: 코드 우선 (2026~)
+    </text>
+    <text x="20" y="70" fill="#34d399" font-size="16" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">주 사용자: AI 에이전트 & 빌더</text>
+    <text x="20" y="98" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• CLI & Git 네이티브 설계</text>
+    <text x="20" y="126" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 코드로서의 인프라(IaC) 동기화</text>
+    <text x="20" y="154" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 샌드박스 내부 실행 최적화</text>
+    <text x="20" y="182" fill="#94a3b8" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 대시보드와 코드가 보조 맞춤</text>
+    <text x="20" y="215" fill="#34d399" font-size="16" font-family="system-ui, -apple-system, sans-serif">계기: 대시보드 방문 감소</text>
+  </g>
+</svg></figure>
+</div>
+
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">비교 항목</th>
+<th align="left">1세대: 대시보드 회사 (2020)</th>
+<th align="left">2세대: API 회사 (2021경)</th>
+<th align="left">3세대: 코드 우선 회사 (2026)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>핵심 철학 및 발상</strong></td>
+<td align="left">&quot;Postgres 위에 Airtable 같은 웹 GUI를 얹자&quot;</td>
+<td align="left">&quot;대량의 데이터베이스를 프로그래밍 방식으로 띄우자&quot;</td>
+<td align="left">&quot;아무도 대시보드에 오지 않는다; Git과 CLI로 통일하자&quot;</td>
+</tr>
+<tr>
+<td align="left"><strong>핵심 인터페이스</strong></td>
+<td align="left">웹 대시보드 (Airtable 같은 UI)</td>
+<td align="left">DB를 띄우는 API</td>
+<td align="left">CLI, git, Infrastructure as Code</td>
+</tr>
+<tr>
+<td align="left"><strong>타깃 주 사용자</strong></td>
+<td align="left">소프트웨어 개발자</td>
+<td align="left">DB를 대량으로 띄우는 플랫폼 고객</td>
+<td align="left">코딩 에이전트, 비엔지니어 빌더</td>
+</tr>
+<tr>
+<td align="left"><strong>실행 및 조작 환경</strong></td>
+<td align="left">웹 브라우저</td>
+<td align="left">언급 없음</td>
+<td align="left">샌드박스 안의 CLI</td>
+</tr>
+<tr>
+<td align="left"><strong>대표적 생태계 연동</strong></td>
+<td align="left">언급 없음</td>
+<td align="left">Bolt, Lovable 등 (2024)</td>
+<td align="left">Claude Code, Codex 등</td>
+</tr>
+<tr>
+<td align="left"><strong>전환의 결정적 계기</strong></td>
+<td align="left">YC 기간 100일 만에 제품 런칭 (확인 필요)</td>
+<td align="left">대규모 DB 자동 프로비저닝 고객 피드백</td>
+<td align="left">에이전트의 대시보드 미방문 및 CLI 선호 확인</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="3-39빌더39의-부상-억압된-아이디어의-해방과-도메인-전문성"><a href="#3-39빌더39의-부상-억압된-아이디어의-해방과-도메인-전문성" class="heading-anchor" aria-hidden="true">#</a> 3. &#39;빌더&#39;의 부상: 억압된 아이디어의 해방과 도메인 전문성</h2><p>2026년 Supabase가 관찰하는 가장 큰 사용자층 변화는 &#39;전통적 개발자&#39;의 경계를 넘어선 <strong>&#39;빌더(Builder)&#39;의 대두</strong>다. 빌더란 컴퓨터공학 학위나 전문적인 소프트웨어 엔지니어링 실무 훈련을 받지 않았음에도, AI 코딩 도구를 활용해 실제로 작동하는 완전한 제품을 스스로 만들어내는 사람들을 가리킨다.</p>
+<p>통상적인 SaaS 및 제품 주도 성장(PLG) 비즈니스 모델에서는 마케팅 유입이나 가입자 수(Top of Funnel)가 단기간에 비정상적으로 급증하면, 유입된 사용자의 평균 숙련도가 낮아지면서 활성화율(Activation Rate)과 유료 결제 전환율(Conversion Rate)은 급격히 하락하는 것이 일반적 법칙이다. 그러나 코플스톤에 따르면 올해 Supabase에서는 &quot;좀 미친(a bit insane)&quot; 일이 일어나고 있다. 상단 가입자 수가 수직 상승하고 있음에도 불구하고 <strong>활성화율과 전환율을 포함한 모든 핵심 퍼널 지표가 동시에 우상향(up and to the right)</strong>하고 있다는 점이다.</p>
+<p>코플스톤이 꼽는 원인은 <strong>모델이 만드는 일을 아주 잘하게 되었다는 것</strong>이다. 그래서 전통적으로 소프트웨어 엔지니어링 배경이 없던 사람들도 와서 만들 수 있게 되었다.</p>
+<p>빌더들은 과거 수년간 머릿속에 수많은 아이디어를 품고 있으면서도 이를 실행에 옮기지 못했던 이들이다. 소프트웨어 엔지니어를 설득해 함께 만들게 하는 일이 어려웠기 때문이다. 그러나 이제 빌더들은 그 누구도 설득할 필요 없이, Claude Code나 유사 도구를 열어젖히는 즉시 억눌려 있던 아이디어를 제품으로 쏟아내고 있다. 전체 사용자 풀에서 여전히 전통적 소프트웨어 엔지니어가 상당한 비중을 차지하고 있지만, 빌더 세그먼트의 성장률은 꽤 크다. 초기 투자자들은 PLG 모델이 일정 매출 규모에 도달하면 성장의 천장에 부딪힐 것이라 경고했으나, 코플스톤은 &quot;지금까지는 천장이 없어 보이고, 어디서 멈출지 모르겠다&quot;고 말한다.</p>
+<p>인터뷰에서 진행자는 이를 입증하는 생생한 사례를 공유했다. 최근 10억 달러 이상에 회사를 엑싯(Exit)한 한 핀테크 창업자의 이야기다. 그는 대학에서 수학을 전공해 약간의 루비(Ruby) 스크립트를 다룰 줄 아는 &#39;제품 인접형(Product-Adjacent)&#39; 인물이었으나, 제품을 실제로 구축하려면 언제나 전담 소프트웨어 엔지니어의 손을 빌려야만 했다. 그러나 최근 그는 코딩 에이전트를 활용해 자신만을 위한 고도화된 개인 재무 관리 소프트웨어를 단독으로 구축해냈다. 은행 시스템과 직접 연동하는 통합 인터페이스를 스크래치부터 직접 작성하고, 대차대조표와 복잡한 지출 내역을 정밀하게 추적하는 시스템이었다. 진행자는 이것이 2년 전만 해도 만들어지지 않았을 종류의 소프트웨어라고 평가했다.</p>
+<p>도메인 전문가는 자신의 틈새 영역에서 어떤 문제가 아직 해결되지 않았는지를 가장 날카롭게 파악하고 있는 이상적인 빌더다. 전문 소프트웨어 개발자들은 개발자 중심적인 아이디어에 매몰되기 쉽지만, 각 산업 현장의 실무자들은 시장이 진정으로 필요로 하는 고통점(Pain Point)을 정확히 알고 있다.</p>
+<p>YC가 보는 창업자 상도 이 흐름에 맞춰 바뀌고 있다. 진행자에 따르면 2022년부터 2025년 사이 YC는 &quot;무슨 일이 있어도 기술 공동창업자(Technical Co-founder)가 필요하다&quot;는 생각을 한층 강화했다. 그러나 지난 1년간의 변화를 겪으며 관점이 근본적으로 수정되었다. 이제 <strong>훨씬 더 어려운 일은 &#39;무엇을 만들지 아는 것(Knowing what to build)&#39;</strong>이며, <strong>&#39;만드는 능력(Ability to build)&#39;은 누구나 온디맨드로 꺼내 쓸 수 있는 기본 자원</strong>이 되었다는 통찰이다.</p>
+<p>코플스톤은 Supabase 컨퍼런스가 끝난 뒤 만난 브라질 출신 남성을 소개했다. 그 자신이 택시 기사인 그는 휴대폰으로 지역 시장을 위한 일종의 &#39;미니 우버&#39; 택시 앱 전체를 만들었다고 했다. 나이는 50세쯤으로 보였다고 한다(확인 필요). 코플스톤은 그가 10대 같은 에너지를 가지고 있었다고 회고했다. 그는 일의 미래에 대한 불확실성이 큰 가운데서도 빌더 범주에는 미래에 대한 설렘이 있으며, 이전에 블루칼라 노동자였던 사람들이 이 기술과 기회를 발견하고 있다고 말한다.</p>
+<p>[해설: PLG(제품 주도 성장)의 구조와 성장 천장 역설]</p>
+<ul>
+<li><strong>PLG(Product-Led Growth):</strong> 영업 사원의 세일즈나 대규모 마케팅 대신, 사용자가 무료(Freemium)로 제품을 직접 사용해 보며 느끼는 탁월한 제품 경험 자체가 바이럴 확산과 유료 전환을 견인하는 소프트웨어 사업 모델이다. Slack, Zoom, Figma, Supabase가 대표적 성공 사례로 꼽힌다.</li>
+<li><strong>성장 천장(Growth Ceiling) 가설:</strong> 전통적 벤처캐피털 업계에서는 PLG 모델이 주로 개인 개발자나 소규모 팀에 의존하기 때문에, 연간 반복 매출(ARR)이 수천만 달러 수준에 도달하면 셀프서브 유입이 고갈되어 반드시 엔터프라이즈 영업 조직(Sales-Led)으로 전환해야만 성장을 지속할 수 있다는 &#39;PLG 천장론&#39;이 정설로 통했다. 그러나 코딩 능력이 없던 사람들이 잠재적 &#39;빌더&#39;로 편입되면 PLG의 전체 시장 규모(TAM) 자체가 커져 기존의 성장 한계론이 맞지 않게 될 수 있다.</li>
+</ul>
+<hr>
+<h2 id="4-모든-사람의-데이터베이스-개인-소프트웨어와-데이터-주권"><a href="#4-모든-사람의-데이터베이스-개인-소프트웨어와-데이터-주권" class="heading-anchor" aria-hidden="true">#</a> 4. 모든 사람의 데이터베이스: 개인 소프트웨어와 데이터 주권</h2><p>빌더의 등장은 필연적으로 &#39;소프트웨어를 누구를 위해 만드는가&#39;라는 질문을 변화시킨다. 과거에는 다수의 사용자를 모아 사업화를 전제해야만 소프트웨어를 개발할 경제적 타당성이 성립했다. 그러나 이제는 <strong>&#39;단 한 사람(N=1)&#39;만을 위한 맞춤형 개인 소프트웨어</strong>가 현실화되고 있다.</p>
+<p>인터뷰의 진행자(하자 태거[Harj Taggar]로 추정, 확인 필요)는 자신이 최근 직접 구축해 일상에서 사용하고 있는 개인 소프트웨어인 &#39;컨트롤 타워(Control Tower)&#39;의 경험담을 구체적으로 풀어놓았다. 그는 약 6개월 전 오픈소스 에이전트 도구인 OpenClaw에 깊이 매료되었을 때, &quot;UI는 없어지고 모든 것이 OpenClaw와의 채팅이 될 것&quot;이라고 말했고, 오랫동안 데이터베이스 없이 모든 것을 마크다운에 두려고 했던 과거를 털어놓았다.</p>
+<p>그러나 그는 <strong>데이터베이스가 유용해지고 UI가 필요해지는 지점이 온다</strong>는 것을 알게 되었고, 최근 몇 주 동안 그것을 만들어 왔다고 말한다. [해설] 채팅만으로 충분하다는 믿음이 구조화된 저장소와 시각적 UI가 필요하다는 현실과 만나는 장면이다.</p>
+<p>진행자가 구축한 컨트롤 타워는 개인의 삶 전체를 관통하는 여러 영역을 한곳에 모았다.</p>
+<ol>
+<li><strong>수신함 분류(Inbox Triaging):</strong> 모든 수신 이메일을 에이전트가 사전 분석하여 중요도를 판단하고 처리함으로써 인간이 수신함을 직접 뒤질 필요를 없앤 UI.</li>
+<li><strong>개인 재무 및 지출 추적(Finances &amp; Spending):</strong> 지출을 추적하는 재무 섹션.</li>
+<li><strong>건강 관리(Health &amp; Fitness):</strong> 체중과 운동 기록을 추적하는 섹션.</li>
+</ol>
+<p>진행자는 이 &#39;나만을 위한 앱&#39;의 재무 섹션이 Mint나 Monarch 같은 서비스와 적어도 기능이 대등하고, 어떤 면에서는 더 낫다고 생각한다고 말한다. 상용 서비스는 불특정 다수를 만족시켜야 하므로 일반적인 카테고리 분류에 그치지만, 개인 맞춤형 앱은 <strong>&#39;나만의 맥락(Personal Context)&#39;</strong>을 완벽하게 반영한다. 예컨대 어떤 모호한 금융 거래가 발생했을 때, 에이전트는 거래에 적힌 이름을 Gbrain에서 찾아 그 사람이 누구인지 알아내고 올바르게 분류한다. 여러 스타트업이 사업으로 하던 일을, 다른 누구의 의견도 필요 없이 자기 자신만을 위해 만든 것이다.</p>
+<p>코플스톤은 이와 관련하여 재무와 건강이 사람들이 자기 데이터를 갖고 싶어 하는 대표적인 두 영역이라고 말한다. 모든 기기를 하나의 데이터베이스로 동기화하는 것은 &quot;마법 같은 기술&quot;이고, 그러면 프롬프트로 여러 데이터에 걸친 상관관계를 만들게 할 수 있다.</p>
+<p>진행자는 이에 덧붙여 맥락 결합의 가치를 다음과 같은 건강 관리 사례로 묘사했다.</p>
+<blockquote>
+<p>체중이 최근 늘었지만, 캘린더에 접근할 수 있는 에이전트가 &quot;여행 중이었으니 괜찮다, 다음 주에 다시 궤도로 돌아가면 된다&quot;고 말해 주는 식이다. 그는 이런 맥락이 정말 가치 있다고 말한다.</p>
+</blockquote>
+<p>더 나아가 진행자는 개인 에이전트를 적극적으로 활용할수록 일종의 &#39;데이터 고립 불안(Paranoia)&#39;을 느끼게 되었다고 털어놓았다. 개인의 생활 루틴, 습관, 인맥 관리(CRM) 데이터가 특정 상용 AI 에이전트 플랫폼 내부에 종속되어 갇히게 될 경우(Boxed-in), 나중에 더 뛰어난 에이전트가 등장했을 때 갈아타기가 불가능해지기 때문이다. 따라서 그는 에이전트 내부에서 데이터를 체계적으로 추출하여, 완전히 독립된 외부 데이터베이스로 이전하고 있다.</p>
+<p>여기서 도출되는 핵심 명제는 다음과 같다. <strong>&quot;데이터를 특정 에이전트 안에 가두지 말라. 데이터베이스가 영구적인 기록 저장소(Store of Record)이자 가치의 본체이며, 애플리케이션과 에이전트는 그 위에 얹어 언제든 갈아 끼울 수 있는 교체 가능한 상부 껍질에 불과하다.&quot;</strong> 사용자가 자신의 데이터베이스를 직접 소유하고 통제할 수 있다면, 그 위에 어떤 최신 에이전트 모델이든 자유롭게 연결해 활용할 수 있다.</p>
+<p>데이터베이스의 역사를 돌이켜보면 이것은 완벽한 전도다. 과거의 세상은 소수의 거대 엔터프라이즈 기업들이 막대한 비용을 들여 운영하는 극소수의 거대 데이터베이스로 이루어져 있었다. Supabase 창업 초기 &quot;모든 사람이 자신만의 데이터베이스를 갖게 하겠다&quot;는 비전은 당시에는 왜 그렇게 많은 사람이 DB를 원할지 잘 납득되지 않았다. 코드를 직접 짤 줄 모르는 일반인에게 데이터베이스는 아무런 쓸모가 없는 무의미한 저장소였기 때문이다.</p>
+<p>진행자는 자신의 앱에 있는 파일 업로드 섹션도 소개했다. 어떤 파일이든 이메일로 보내거나 UI에 던져 두면, 에이전트가 그것이 무엇이고 삶과 어떻게 관련되며 무엇을 해야 하는지 판단한다. 이 모두가 Supabase에 저장되어, 결국 삶에 관한 모든 데이터가 한곳에 모인다. 그는 1년 전이라면 개인 데이터베이스를 원할 생각을 못 했겠지만 지금은 그것이 가장 가치 있다고 말한다. 이어 한 참석자는 S3 호환 Supabase 파일 저장소에 자기 자료를 모두 두고 있으며 그것이 Gbrain의 기본값이라고 덧붙였다(화자 확인 필요).</p>
+<p>진행자가 &quot;모든 인류가 자신의 삶 전체(건강, 재무, 인간관계)를 담은 Supabase 데이터베이스를 갖게 되는 것이 미래인가?&quot;라고 묻자, 코플스톤은 &quot;진심으로 그렇게 되기를 바란다&quot;고 답했다. 그는 AI에 접근할 수 있는 세상의 모든 사람이 궁극적으로 어떤 형태로든 빌더가 될 것이며, 앱이나 UI를 수정하기 위해 더 이상 타인에게 매달릴 필요가 없어질 것이라고 내다본다. 코플스톤은 Supabase를 <strong>&#39;인덱스 컴퍼니(index company)&#39;</strong>라고 부른다(원문 표기, 의미 확인 필요). 창업 초기 YC에 입주했을 때 YC 배치 내 모든 스타트업을 고객으로 확보하려 했던 이유는, 새로운 비즈니스가 탄생하는 바로 그 &#39;첫날(Day One)&#39;에 그 자리에 존재하기 위해서였다. 회사의 사명은 변하지 않았으며, 다만 그 대상을 일반 개인 빌더로까지 넓히는 &#39;조리개(Aperture)&#39;가 극적으로 개방되었을 뿐이다.</p>
+<p>이것은 데이터베이스 업계에서 과거에 상상조차 할 수 없었던 <strong>프로슈머(Prosumer) 시장과 소비자 직판(D2C) 모델</strong>의 태동을 의미한다. 과거 데이터베이스 기업이 개인 소비자를 직접 상대한다는 것은 일종의 &#39;문법 오류(Syntax Error)&#39;처럼 취급되었다. 진행자는 개인의 데이터베이스가 스타트업처럼 커지지는 않더라도 평생 쓰일 수 있다고 짚었고, 코플스톤은 삶이 커지며 정보가 쌓이는 것이 &quot;우리 자신의 성장의 인덱스&quot;이며, 이 프로슈머 시장이 좋은 성장 벡터라고 답했다.</p>
+<p>[해설: 스위칭 비용(Switching Costs)과 데이터 주권(Data Sovereignty)]</p>
+<ul>
+<li><strong>스위칭 비용(Switching Costs):</strong> 고객이 현재 사용 중인 제품이나 벤더를 버리고 경쟁사 제품으로 교체할 때 발생하는 모든 금전적, 시간적, 기술적, 심리적 비용을 의미한다. 인공지능 에이전트 시장에서 특정 폐쇄형 플랫폼(예: 특정 빅테크의 전용 비서)에 자신의 메모, 일정, 대화 기록이 귀속되면 극심한 스위칭 비용이 발생해 플랫폼의 인질이 된다.</li>
+<li><strong>데이터 주권(Data Sovereignty)과 탈결합 아키텍처:</strong> 데이터 주권이란 개인이 자신의 데이터가 어디에 저장되고 어떻게 활용되는지를 스스로 통제할 수 있는 권리를 뜻한다. 개인 데이터베이스 모델은 저장소(State/Data)와 실행 엔진(Compute/Agent)을 철저히 분리(Decoupling)한다. 영구적인 상태는 개인이 소유한 데이터베이스에 두고, 상부의 에이전트는 필요에 따라 교체함으로써 벤더 락인을 줄일 수 있다.</li>
+</ul>
+<div class="svg-container" style="margin: 2rem 0; width: 100%; text-align: center;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 960 480" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Card -->
+  <rect width="100%" height="100%" fill="#0f172a" rx="16" stroke="#334155" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="480" y="42" fill="#f8fafc" font-size="22" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    개인 데이터베이스 중심 아키텍처 (Personal Store of Record)
+  </text>
+  <text x="480" y="72" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    데이터는 단일 DB에 영속 소유하고, 상부 에이전트와 UI는 유연하게 교체하는 탈결합 모델
+  </text>
+
+  <!-- Top Ingestion Sources -->
+  <g transform="translate(60, 105)">
+    <rect width="150" height="70" fill="#1e293b" rx="10" stroke="#60a5fa" stroke-width="1.5"/>
+    <text x="75" y="32" fill="#93c5fd" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">개인 재무 · 지출</text>
+    <text x="75" y="54" fill="#cbd5e1" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">계좌 · 대차대조표</text>
+  </g>
+  <g transform="translate(230, 105)">
+    <rect width="150" height="70" fill="#1e293b" rx="10" stroke="#34d399" stroke-width="1.5"/>
+    <text x="75" y="32" fill="#6ee7b7" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">신체 건강 · 운동</text>
+    <text x="75" y="54" fill="#cbd5e1" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">체중 · 운동 · 기기</text>
+  </g>
+  <g transform="translate(405, 105)">
+    <rect width="150" height="70" fill="#1e293b" rx="10" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="75" y="32" fill="#fcd34d" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">캘린더 · 이동</text>
+    <text x="75" y="54" fill="#cbd5e1" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">출장 · 일정 맥락</text>
+  </g>
+  <g transform="translate(580, 105)">
+    <rect width="150" height="70" fill="#1e293b" rx="10" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="75" y="32" fill="#c4b5fd" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">개인 CRM · 소통</text>
+    <text x="75" y="54" fill="#cbd5e1" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Gbrain 지인망</text>
+  </g>
+  <g transform="translate(750, 105)">
+    <rect width="150" height="70" fill="#1e293b" rx="10" stroke="#ec4899" stroke-width="1.5"/>
+    <text x="75" y="32" fill="#f472b6" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">비정형 파일들</text>
+    <text x="75" y="54" fill="#cbd5e1" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">S3 호환 스토리지</text>
+  </g>
+
+  <!-- Central Store of Record -->
+  <g transform="translate(140, 225)">
+    <rect width="680" height="105" fill="#1e293b" rx="14" stroke="#38bdf8" stroke-width="2.5"/>
+    <text x="340" y="38" fill="#38bdf8" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      개인 Supabase 데이터베이스 (영구 기록 저장소 · Store of Record)
+    </text>
+    <text x="340" y="68" fill="#e2e8f0" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      Postgres RDBMS + pgvector(임베딩) + SQL 기반 그래프 스키마 + S3 파일 스토리지
+    </text>
+    <text x="340" y="92" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      데이터를 한 에이전트 안에 가두지 않는다 — 내 DB 위에 어떤 에이전트든 붙인다
+    </text>
+  </g>
+
+  <!-- Ingestion Arrows -->
+  <path d="M 135 175 L 250 225" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 305 175 L 350 225" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 480 175 L 480 225" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 655 175 L 610 225" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 825 175 L 710 225" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Bottom: Swappable Agents & UI -->
+  <g transform="translate(140, 375)">
+    <rect width="680" height="75" fill="#0f172a" rx="12" stroke="#475569" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="340" y="30" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      교체 가능한 상부 에이전트 & 맞춤형 UI 레이어 (Disposable Agents & UI)
+    </text>
+    <text x="340" y="56" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      개인 컨트롤 타워 UI · Claude Code · OpenClaw · dots 음성 에이전트 · 미니 우버 앱 등
+    </text>
+  </g>
+
+  <!-- Connection to Agents -->
+  <path d="M 480 330 L 480 375" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="475,370 480,378 485,370" fill="#38bdf8"/>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="5-수십억-개-db의-아키텍처-prototype-to-petabytes와-39첫날39의-전략"><a href="#5-수십억-개-db의-아키텍처-prototype-to-petabytes와-39첫날39의-전략" class="heading-anchor" aria-hidden="true">#</a> 5. 수십억 개 DB의 아키텍처: Prototype to Petabytes와 &#39;첫날&#39;의 전략</h2><p>개인 데이터베이스와 빌더의 폭증은 인프라 설계자에게 전례 없는 거대한 기술적 도전을 제기한다. 코플스톤은 다음과 같은 직관적인 산수(Arithmetic)를 제시한다.</p>
+<blockquote>
+<p>&quot;현재 ChatGPT의 주간 활성 사용자(WAU)가 12억 명에 달한다고 하더군요. 만약 이들 모두가 매달 AI로 단 하나의 사이드 프로젝트나 개인 앱을 시작한다고 가정해 보십시오. 그것만으로도 <strong>매달 12억 개(1.2 billion/month)의 신규 데이터베이스</strong>가 생성되어야 한다는 계산이 나옵니다.&quot;</p>
+</blockquote>
+<p>코플스톤은 데이터베이스 영역에서 이런 규모는 한 번도 필요했던 적이 없다고 말한다. [해설] 전통적인 클라우드 아키텍처처럼 데이터베이스 하나마다 독립된 가상 머신(VM)과 전용 메모리를 할당하는 방식으로는 클라우드 비용과 인프라 자원을 도저히 감당할 수 없다. 코플스톤은 &quot;AWS와 더 유리하게 가격 협상을 할 수 있다면 좋겠지만, 현재는 전 세계 모든 이가 컴퓨트 자원을 갈망하는 시기&quot;라며 농담 섞인 현실을 지적했다.</p>
+<p>해결책은 모든 작업 부하에 값비싼 &quot;페라리(Ferrari)&quot;급 고성능 RDBMS 클러스터를 배정하지 않는 것이다. 대다수의 초기 프로토타입이나 가벼운 개인 프로젝트에는 무거운 전용 서버가 필요하지 않다.</p>
+<p>이를 해결하기 위해 Supabase가 꺼내 든 전략적 카드가 바로 최근 단행한 <strong>투르소(Turso)의 인수</strong>다.<a class="footnote-ref" href="#fn-8" id="fnref-8">8</a> 코플스톤에 따르면 이 회사의 아키텍처는 Postgres와 호환되고 SQLite와도 호환된다. 그는 SQLite를 &quot;경이로운 데이터베이스&quot;라고 평가한다. Supabase는 이를 바탕으로 시작 단계 워크로드를 위한 티어 <strong>&#39;Supabase Spark&#39;</strong><a class="footnote-ref" href="#fn-9" id="fnref-9">9</a>를 제공할 것이라고 말했다. 같은 경험으로 시작해 페타바이트까지 확장할 수 있게 하겠다는 것이다.</p>
+<p>이로써 완성된 Supabase의 전체 비전이 바로 <strong>&quot;프로토타입에서 페타바이트까지(prototype to petabytes)&quot;</strong>라는 태그라인이다.</p>
+<ul>
+<li><strong>스펙트럼의 한쪽 끝:</strong> 프로토타이핑과 SQLite 유형 워크로드까지 작게 내려가는 Turso 계열(Spark).</li>
+<li><strong>스펙트럼의 반대쪽 끝:</strong> 페타바이트까지 확장하는 <strong>&#39;Multigres&#39;</strong>.<a class="footnote-ref" href="#fn-10" id="fnref-10">10</a> 코플스톤은 이 성장 속도로 두 끝을 동시에 하는 것이 AI가 있어도 매우 어렵다고 말한다.</li>
+</ul>
+<p>진행자는 전통적인 데이터베이스 소프트웨어 기업의 성장 공식과 비교하며 흥미로운 질문을 던졌다. 역사적으로 오라클(Oracle)을 비롯한 모든 데이터베이스 기업은 초기 스타트업 단계에 머물지 않고 최대한 빨리 큰돈이 되는 엔터프라이즈(Enterprise) 시장으로 직행하는 것을 정석으로 삼았다. 반면 Supabase는 엔터프라이즈를 지향하면서도 정반대 방향인 초경량 SQLite 영역으로 깊숙이 파고들고 있다는 점이다.</p>
+<p>진행자는 헤로쿠(Heroku)의 전례를 언급했다. Heroku는 최고의 개발자 경험으로 시작했지만, 앱이 커지고 성능이 필요해질 때 고객을 붙잡는 간극을 잘 메우지 못했다는 것이다(진행자의 견해). 진행자는 &quot;0에서 10 단계의 초기 시장이 지금처럼 폭발적인 속도로 팽창한다면 굳이 엔터프라이즈 확장에 집착하지 않아도 거대한 사업이 되지 않겠는가?&quot;라고 물었다.</p>
+<p>이에 대한 코플스톤의 대답은 단호했다. <strong>&quot;우리는 다 원한다(We want it all).&quot;</strong> 그는 Postgres를 대중화한 Heroku에 공을 돌리면서도, 당시 Postgres는 아직 성숙하지 않았고 확장에 한계가 있었기에 Supabase는 Postgres를 무한히 확장할 수 있게 하는 도구로 감쌌다고 말한다.</p>
+<p>여기서 Supabase가 벤치마킹하는 궁극의 롤모델은 바로 <strong>AWS(Amazon Web Services)와 Stripe</strong>다. 코플스톤은 본인이 들은 통계라며 스스로 &quot;틀릴 수 있으니 반드시 팩트체크해 달라&quot;고 단서를 달았지만, <strong>&quot;AWS 전체 매출의 약 40%가 AWS 위에서 맨 처음 시작해 거대하게 성장한 스타트업들로부터 나온다&quot;</strong>는 점을 강조했다(확인 필요).</p>
+<p>한번 특정 데이터베이스를 선택해 애플리케이션의 핵심 로직과 스키마를 결합하고 나면, 데이터베이스 제공자를 타사로 이전(Migration)하는 것은 기술적으로 &quot;거의 불가능(near impossible)&quot;에 가까운 막대한 위험과 비용을 수반한다. 따라서 데이터베이스 비즈니스의 승패는 <strong>&quot;세상의 모든 프로젝트가 시작되는 바로 그 첫날(Day One)에 그 자리에 서서, 고객이 절대 떠나고 싶지 않도록 완벽한 경험을 제공하는 것&quot;</strong>에 달려 있다. Stripe가 전 세계에서 가장 빠르게 성장하는 스타트업들의 첫 결제 인프라를 장악해 한 세대를 풍미하는 거대 기업이 되었듯, Supabase 역시 &#39;첫날의 표준&#39;이 됨으로써 세대적 기업으로 도약하겠다는 포부다.</p>
+<p>그러나 코플스톤은 현재 가장 큰 도전 과제로 <strong>&quot;그 &#39;첫날(Day One)&#39;의 모습 자체가 눈부신 속도로 변화하고 있다는 사실&quot;</strong>을 꼽는다. 과거 Supabase에게 첫날이란 &#39;YC 배치에 갓 들어온 기술 스타트업&#39;을 의미했다. 이제는 &quot;모두가 빌더&quot;인 상황에서 그들이 무엇을, 어떤 방식으로 쓰고 데이터베이스를 어떻게 고를지가 어려운 질문이 되었다.</p>
+<p>[해설: Postgres와 SQLite의 아키텍처적 차이와 하이브리드 확장]</p>
+<ul>
+<li><strong>PostgreSQL:</strong> 강력한 동시성 제어(MVCC), 복잡한 외래 키, 다양한 인덱싱 기법, 확장 기능(Extension)을 지원하는 전통적인 클라이언트-서버 구조의 엔터프라이즈 RDBMS다. 고성능 멀티스레드 환경과 대규모 트랜잭션 처리에 최적화되어 있으나, 인스턴스 하나를 기동하는 데 상대적으로 무거운 메모리와 백그라운드 프로세스가 요구된다.</li>
+<li><strong>SQLite:</strong> 별도의 독립 서버 프로세스 없이 애플리케이션의 메모리나 단일 디스크 파일에 직접 내장(Embedded)되어 동작하는 초경량 관계형 데이터베이스다. 설치가 필요 없고 자원 소모가 거의 제로에 가까워 전 세계에서 가장 널리 배포된 소프트웨어 중 하나다.</li>
+<li><strong>하이브리드 전략의 의의:</strong> Supabase가 SQLite 호환 아키텍처를 들인 것은 많은 작은 데이터베이스를 가볍게 유지하려는 의도로 읽힌다. 코플스톤은 같은 경험으로 시작해 페타바이트까지 확장할 수 있게 하겠다고 말했지만, 구체적인 이전 방식은 인터뷰에서 설명되지 않았다.</li>
+</ul>
+<div class="svg-container" style="margin: 2rem 0; width: 100%; text-align: center;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 960 360" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Card -->
+  <rect width="100%" height="100%" fill="#0f172a" rx="16" stroke="#334155" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="480" y="42" fill="#f8fafc" font-size="22" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    Prototype to Petabytes: 양극단을 아우르는 확장 스펙트럼
+  </text>
+  <text x="480" y="72" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    월 12억 개 신규 DB 수요에 대응하는 경량 입문(Spark)과 초거대 엔터프라이즈(Multigres)의 결합
+  </text>
+
+  <!-- Spectrum Bar -->
+  <g transform="translate(60, 110)">
+    <defs>
+      <linearGradient id="spectrumGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#38bdf8"/>
+        <stop offset="50%" stop-color="#6366f1"/>
+        <stop offset="100%" stop-color="#ec4899"/>
+      </linearGradient>
+    </defs>
+    <rect width="840" height="24" fill="url(#spectrumGrad)" rx="12"/>
+  </g>
+
+  <!-- Left: Spark / Turso -->
+  <g transform="translate(60, 155)">
+    <rect width="250" height="170" fill="#1e293b" rx="12" stroke="#38bdf8" stroke-width="2"/>
+    <text x="125" y="32" fill="#38bdf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      초경량 프로토타입 티어
+    </text>
+    <text x="125" y="58" fill="#e2e8f0" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      Supabase Spark
+    </text>
+    <text x="20" y="90" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 인수 기술 Turso 기반</text>
+    <text x="20" y="116" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• SQLite · Postgres 호환</text>
+    <text x="20" y="142" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 시작 단계 워크로드</text>
+  </g>
+
+  <!-- Center: Core Postgres -->
+  <g transform="translate(355, 155)">
+    <rect width="250" height="170" fill="#1e293b" rx="12" stroke="#6366f1" stroke-width="2"/>
+    <text x="125" y="32" fill="#818cf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      표준 프로덕션 코어
+    </text>
+    <text x="125" y="58" fill="#e2e8f0" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      Hosted PostgreSQL
+    </text>
+    <text x="20" y="90" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 표준 오픈소스 엔진</text>
+    <text x="20" y="116" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 오토스케일링</text>
+    <text x="20" y="142" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 관리 DB 약 5,000만 개</text>
+  </g>
+
+  <!-- Right: Multigres -->
+  <g transform="translate(650, 155)">
+    <rect width="250" height="170" fill="#1e293b" rx="12" stroke="#ec4899" stroke-width="2"/>
+    <text x="125" y="32" fill="#f472b6" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      초대용량 엔터프라이즈
+    </text>
+    <text x="125" y="58" fill="#e2e8f0" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      Multigres
+    </text>
+    <text x="20" y="90" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 페타바이트(PB)급 확장</text>
+    <text x="20" y="116" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 스케일업 쪽 끝</text>
+    <text x="20" y="142" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 커지는 사업을 수용</text>
+  </g>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="6-에이전트를-위한-제품-설계-에러-메시지-평가-체계-사내-도입"><a href="#6-에이전트를-위한-제품-설계-에러-메시지-평가-체계-사내-도입" class="heading-anchor" aria-hidden="true">#</a> 6. 에이전트를 위한 제품 설계: 에러 메시지, 평가 체계, 사내 도입</h2><p>기계 에이전트가 주된 사용자로 부상했다면, 제품을 설계하고 엔지니어링하는 방식 또한 전면적으로 개조되어야 한다. 코플스톤은 에이전트를 사로잡고 유지하는 과정에는 <strong>명확한 2단계(Two Stages)</strong>가 존재한다고 설명한다.</p>
+<ol>
+<li><strong>1단계: 모델에 의해 기본값(Default)으로 선택되기.</strong><br>프론티어 LLM이 사용자의 요구를 해석해 아키텍처를 설계할 때, 수많은 데이터베이스 옵션 중 Supabase를 우선적으로 호출하도록 모델 가중치와 생태계 내에서 인지도를 확보하는 단계다.</li>
+<li><strong>2단계: 막혔을 때 다른 서비스로 이탈하지 않게 만들기.</strong><br>아무리 똑똑한 에이전트라 할지라도 복잡한 시스템을 구축하다 보면 반드시 오류나 예외 상황에 봉착하게 된다. 이때 에이전트가 문제 해결에 실패해 다른 경쟁 도구로 전환해 버리지 않도록, 플랫폼 스스로 에이전트에게 자가 치유(Self-remedy)의 수단을 제공하는 단계다.</li>
+</ol>
+<p>이 2단계를 관통하는 변화가 바로 <strong>에러 메시지의 재설계</strong>다. 전통적인 소프트웨어 엔지니어링에서 서버 에러 메시지는 대단히 불친절했다. 기껏해야 <code>500 Internal Server Error</code>나 알 수 없는 스택 트레이스 한 줄만을 뱉어냈고, 인간 개발자는 그 에러 코드를 복사해 구글이나 스택오버플로우에서 검색하는 수고를 감수해야 했다.</p>
+<p>그러나 이제는 에이전트가 스스로 고치기를 바란다. 그래서 Supabase는 에러 메시지를 깊이 파고들었다. <strong>에러 메시지 안에서 이 에러를 어떻게 고칠지, 또는 어떤 문서를 읽어야 하는지를 말 그대로 알려 주는 것이다.</strong> 코플스톤은 이것이 뻔한 일 같지만 전날 밤 개발 도구 모임에서 보니 그렇게 당연시되지 않아 놀랐다고 말한다.</p>
+<p>코플스톤은 구체적인 사용 사례(Use Case)를 하나씩 선정하여, 에이전트가 오류 메시지만 보고도 즉각적으로 자가 복구(Self-healing)하여 단 한 번에(One-shot) 작업을 완수할 수 있을 때까지 에러 피드백 루프를 반복 개선하고 있다고 밝혔다. [해설] 에러 메시지는 에이전트에게 주는 문서이자 프롬프트라고 볼 수 있다. 코플스톤은 모델이 이제 많은 것을 스스로 알아낼 만큼 똑똑하지만, 예전에 사람과 개발자를 위해 만든 많은 것을 에이전트용으로 다시 설계해야 한다고 말한다.</p>
+<p>이러한 제품 최적화를 지탱하기 위해 Supabase의 엔지니어링 리소스는 코드를 직접 짜는 일에서 <strong>평가 체계(Evals)를 구축하고 테스트하는 일</strong>로 대거 이동했다. Supabase는 시장에 출시되는 모든 주요 파운데이션 모델들을 대상으로 자사 플랫폼 위에서 애플리케이션을 얼마나 잘 구축하는지를 보여 주는 eval 웹사이트와 사내 전용 eval 스위트를 구축해 운영하고 있다. 더 나아가 PostgreSQL 엔진 자체를 어떤 모델이 가장 능숙하게 제어하는지를 벤치마킹하고, 그 평가 결과를 바탕으로 모델이 PostgreSQL을 다룰 때 장착할 수 있는 최적의 &#39;스킬(Skills)&#39;을 개발해 배포하고 있다.</p>
+<p>이와 같은 변화는 Supabase 사내 엔지니어링 조직의 AI 도입 속도에서도 고스란히 드러난다. 진행자가 언급한 Supabase의 최근 사내 설문 조사에 따르면, <strong>자기 코드의 80%를 AI 코딩 에이전트로 생성하는 엔지니어의 비율이 불과 6개월 만에 10%에서 60%로 수직 상승했다.</strong></p>
+<p>주목할 점은 Supabase 사내에 그 어떤 인위적인 &#39;AI 사용 정책(AI Policy)&#39;도 존재하지 않는다는 사실이다. 코플스톤은 개발자들에게 특정 도구를 강요하거나 제한하지 않고, 그들이 원하는 모든 최신 AI 도구를 자유롭게 실험할 수 있도록 전폭 지원했다. 사내 엔지니어들이 도입을 폭발적으로 늘린 계기는 회사의 지시가 아니라, 모델이 훨씬 더 좋은 작업을 훨씬 더 많이 할 수 있다고 엔지니어들 스스로 확신하게 되었기 때문이라고 그는 말한다. 사내에서 만드는 것들도 &#39;바이브 코딩(Vibe Coding)&#39; 수준이 아니라 꽤 강도 높은 작업이라고 한다. 또 AI 코딩으로 옮겨 가면서 늘어난 테스트의 양과 새로 도입한 테스트 도구가 결과물이 좋다는 것을 확인하는 데 유용하다고 덧붙였다.</p>
+<p>코딩 에이전트의 활용이 일상화되면서, 소프트웨어 개발의 핵심 병목은 &#39;코드 작성&#39;에서 <strong>&#39;테스트의 양과 품질 검증 도구&#39;</strong>로 급속히 이동했다. 진행자는 YC 배치 내에서도 CI/CD 파이프라인과 코드 리뷰를 고속화하는 스타트업들—예컨대 Blacksmith, Depot, Ubicloud 같은 초고속 CI 인프라나 Greptile 같은 AI 코드 리뷰 도구—이 크게 성장하고 있다고 언급했다.<a class="footnote-ref" href="#fn-11" id="fnref-11">11</a> (Ubicloud의 YC 출신 여부는 확인 필요) [해설] AI가 코드를 빠르게 쏟아낼수록 그 코드를 검증하는 자동화 테스트의 가치가 커진다. 코플스톤은 모델이 좋아진 데다 나비에-스토크스(Navier-Stokes) 관련 성과 같은 일들이 &quot;새 지평을 열 수 있다&quot;고 시장을 설득했다고 말했다.<a class="footnote-ref" href="#fn-12" id="fnref-12">12</a></p>
+<p>[해설: AI 평가(Eval) 체계의 원리와 메트릭]</p>
+<ul>
+<li><strong>인공지능 평가(Evaluation, Eval):</strong> 거대언어모델(LLM)과 에이전트 시스템이 주어진 작업(코드 생성, SQL 질의, 데이터베이스 마이그레이션 등)을 얼마나 정확하고 안전하게 수행하는지 정량적 지표로 측정하는 체계화된 벤치마크 테스트셋이다.</li>
+<li><strong>주요 측정 메트릭:</strong> 단순히 문법적 정답 여부를 넘어, 실행 성공률(Pass@k), 에러 발생 시 자가 복구율(Self-Correction Rate), 작업 완료까지 소요된 토큰 비용(Cost Efficiency), 레이턴시(Latency), 그리고 생성된 코드의 보안 취약점 유무 등을 종합 평가한다. Supabase가 자사 제품을 대상으로 모델별 eval을 상시 가동하는 것은, 모델마다 어디서 막히는지 찾아 스킬과 에러 메시지를 개선하는 데 쓰일 수 있다.</li>
+</ul>
+<div class="svg-container" style="margin: 2rem 0; width: 100%; text-align: center;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 960 380" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Card -->
+  <rect width="100%" height="100%" fill="#0f172a" rx="16" stroke="#334155" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="480" y="45" fill="#f8fafc" font-size="22" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    에이전트 획득과 잔류의 2단계 루프 (Two-Stage Agent Retention)
+  </text>
+  <text x="480" y="75" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    선택(Default Selection)에서 자가 복구(Self-Healing Error)로 이어지는 에이전트 락인
+  </text>
+
+  <!-- Step 1: Default Selection -->
+  <g transform="translate(50, 110)">
+    <rect width="250" height="210" fill="#1e293b" rx="12" stroke="#38bdf8" stroke-width="2"/>
+    <circle cx="125" cy="45" r="22" fill="#0284c7"/>
+    <text x="125" y="52" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">1</text>
+    <text x="125" y="95" fill="#38bdf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      모델의 기본값 채택
+    </text>
+    <text x="20" y="130" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• LLM 가중치 내 선호 획득</text>
+    <text x="20" y="158" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• Claude Code · Codex 기본값</text>
+    <text x="20" y="186" fill="#94a3b8" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 오픈소스 코드 개방성 수혜</text>
+  </g>
+
+  <!-- Middle: Inevitable Hurdle -->
+  <g transform="translate(355, 130)">
+    <rect width="250" height="170" fill="#2d151d" rx="12" stroke="#f43f5e" stroke-width="2"/>
+    <text x="125" y="40" fill="#fb7185" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      필연적 오류 발생
+    </text>
+    <text x="20" y="75" fill="#fecdd3" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 복잡한 스키마 · 마이그레이션</text>
+    <text x="20" y="103" fill="#fecdd3" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 기존: "500 Error"로 중단</text>
+    <text x="20" y="135" fill="#f43f5e" font-size="16" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">위험: 타사 DB로 즉시 이탈</text>
+  </g>
+
+  <!-- Step 2: Self-Healing & Retention -->
+  <g transform="translate(660, 110)">
+    <rect width="250" height="210" fill="#1e293b" rx="12" stroke="#34d399" stroke-width="2"/>
+    <circle cx="125" cy="45" r="22" fill="#059669"/>
+    <text x="125" y="52" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">2</text>
+    <text x="125" y="95" fill="#34d399" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      자가 복구 에러 메시지
+    </text>
+    <text x="20" y="130" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 에러 내 해결법 · 문서 첨부</text>
+    <text x="20" y="158" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 에이전트 자율 오류 수정</text>
+    <text x="20" y="186" fill="#34d399" font-size="16" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">• 원샷(One-Shot) 성공 및 잔류</text>
+  </g>
+
+  <!-- Connector Arrows -->
+  <path d="M 300 215 L 355 215" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 605 215 L 660 215" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="7-개인-에이전트-gbrain-그리고-재귀적-자기개선rsi"><a href="#7-개인-에이전트-gbrain-그리고-재귀적-자기개선rsi" class="heading-anchor" aria-hidden="true">#</a> 7. 개인 에이전트, Gbrain, 그리고 재귀적 자기개선(RSI)</h2><p>코플스톤이 개인 에이전트 인프라에 깊이 몰입하게 된 계기는 지극히 개인적인 일상에서 비롯되었다. 그의 비서(EA)가 일주일 동안 자리를 비운 사이 그는 개인 에이전트가 정확히 무엇을 할 수 있는지 알게 되었고, 그 뒤로 개인 에이전트를 위해 만드는 일에 &quot;집착&quot;하게 되었다고 말한다.</p>
+<p>코플스톤은 회사 구성원들에게 &quot;우리는 코드 우선(Code-First) 회사로 전환해야 한다&quot;고 선언했던 진의를 이렇게 털어놓았다.</p>
+<blockquote>
+<p>&quot;우리는 사람 개발자가 코드 우선 환경에서 일할 수 있도록 돕는 것처럼 말하지만, 실은 <strong>인간이 아닌 에이전트를 위해</strong> 그렇게 하고 있는 것입니다. 그 사람들은 머지않아 실제로 직접 상호작용하지 않게 될 테니까요.&quot;</p>
+</blockquote>
+<p>현재 코플스톤이 제품을 개발하고 자체 시험(Dogfooding)하는 방식은 매우 독특하다. 그는 &#39;dots&#39;라는 음성 대화 에이전트와 하루 종일 전화 통화를 하듯 대화를 나누며 시스템 수정을 지시한다(제품명 확인 필요). 그리고 그가 세운 엄격한 도그푸딩의 철칙은 다음과 같다.</p>
+<blockquote>
+<p><strong>코드를 보지 않고, 아키텍처도 확인하지 않는다.</strong> 예외는 실제로 제대로 만들고 있는지 점검하고 싶을 때뿐이다.</p>
+</blockquote>
+<p>단지 에이전트가 지시한 대로 정상적인 결과물을 출력하고 있는지를 확인할 뿐, 소프트웨어 엔지니어로서의 지식이나 힌트(예: GitHub 저장소 경로 등)를 일절 제공하지 않고 순수하게 일반 사용자의 시각에서 대화만으로 문제를 해결하려 시도한다. 1년 뒤 일반인 사용자가 Supabase를 마주했을 때 겪게 될 사용자 경험을, 창업자 자신이 오늘날 미리 극한으로 겪어보는 것이다.</p>
+<p>진행자는 이에 호응하며 흥미로운 상상을 덧붙였다.
+&quot;얼마 전 Supabase Select 컨퍼런스에 참석했을 때 문득 이런 생각이 들었습니다.<a class="footnote-ref" href="#fn-13" id="fnref-13">13</a> 내가 Supabase 위에서 앱을 만드는 사람이라면, 굳이 내가 컨퍼런스에 참석해 신기능 발표를 들을 필요가 있을까? <strong>차라리 내 개인 에이전트를 Supabase Select에 대신 보내 신기능 세션을 듣게 하고, 내 코드베이스에 알아서 통합하도록 시키는 것이 낫지 않을까?</strong>&quot;
+이에 코플스톤과 진행자들은 &quot;오직 에이전트들만 입장할 수 있는 전용 가상 컨퍼런스&quot;, &quot;청중석에 앉아 있는 에이전트에게 마크다운 문서를 에어드롭(Airdrop)해 주는 행사&quot;, 그리고 그 컨퍼런스의 이름을 &quot;아티팩토리(Artifactory)&quot;라고 부르자는 유쾌한 농담을 주고받았다.</p>
+<p>인터뷰의 후반부에서 Garry Tan은 자신이 직접 구축한 인공지능 지식 엔진인 <strong>&#39;Gbrain&#39;의 내부 아키텍처와 운영 경험</strong>을 심도 있게 공개했다.</p>
+<p>과거 Garry Tan은 &#39;Garry&#39;s List&#39;라는 에이전트 기반 뉴스룸 시스템을 전통적인 Ruby on Rails 프레임워크 위에서 개발한 적이 있었다. 당시 그는 LLM API 호출을 극도로 값비싸고 위험한 작업으로 취급했다. 그의 표현을 빌리면 에이전트를 가혹하게 통제하는 <strong>&quot;에이전트용 폭스콘(Foxconn) 공장&quot;</strong>처럼 아키텍처를 설계했던 것이다.</p>
+<p>그러나 OpenClaw를 접하면서 그의 인공지능 멘탈 모델은 180도 전환되었다. 인공지능은 시스템을 망가뜨리려 드는 위험한 존재가 아니라 지극히 똑똑하고 협력적인 파트너이므로, 충분한 데이터와 자율적 권한을 전폭적으로 위임하는 것이 훨씬 더 우수한 결과를 낳는다는 깨달음이었다.</p>
+<p>여기서 가장 중요한 공학적 병목으로 부상한 것이 바로 <strong>&#39;작업 기억(Working Memory)&#39;과 &#39;검색(Retrieval)&#39;의 한계</strong>였다. 최신 프론티어 모델들이 지원하는 100만 토큰(1M tokens)의 컨텍스트 윈도우는 대단히 거대한 작업 기억이다. 인간이 일상적으로 머릿속에 유지할 수 있는 단기 기억의 용량이 기껏해야 매지컬 넘버인 7±2개에 불과한 반면, 100만 토큰은 대략 《해리 포터》 3권 분량에 맞먹는 방대한 양이다.</p>
+<p>그러나 Garry Tan은 이것조차 에이전트에게는 조금 제한적이라고 말한다. 어느 순간에든 <strong>올바른 해리 포터 세 권을 컨텍스트에 두는 것</strong>이 진짜 어려운 일이고, 결국 이것은 검색(Retrieval)의 문제다.</p>
+<p>Garry Tan은 자신이 나눈 모든 소통에 관한 마크다운 파일을 약 50만 개 가지고 있으며, 그 순수 용량만 30~40GB 규모에 이른다(확인 필요). 에이전트가 특정 순간에 필요로 하는 정보는 고작 1~2페이지에 불과한데, 이 거대한 코퍼스 속에서 어떻게 초고속으로 정확한 맥락을 건져 올릴 것인가?</p>
+<p>이 문제를 해결하기 위해 탄생한 것이 바로 Gbrain이다. Gbrain의 아키텍처는 <strong>RAG(검색 증강 생성) 벡터 검색과 SQL 기반 동적 그래프 데이터베이스(Graph DB)의 하이브리드 결합</strong>으로 구성되어 있다. 비정형 데이터에서 구조를 만들어 내는 방식이다. 대화 중 한 진행자는 이를 동적 스키마라며 예전 팔란티어(Palantir)를 떠올리게 한다고 했다(화자 확인 필요).</p>
+<p>그가 호스팅 인프라로 Supabase를 선택한 이유는 단순했다. 수십~수백 기가바이트 규모의 임베딩 벡터와 관계형 데이터를 지연 없이 빠르게 처리할 수 있고, 무엇보다 오토스케일링(Autoscaling)이 정말 잘 동작하는 호스팅 PostgreSQL 솔루션이었기 때문이다. 최근에는 브라우저 조작 도구를 통해 OpenClaw 에이전트가 Supabase 관리 콘솔에 직접 접속하여 스스로 데이터베이스 스키마와 API를 자율 관리하는 수준에 도달했다.</p>
+<p>Garry Tan은 이 구조를 설계할 때 Claude Code에서 Exa를 써서(최근이라면 AlphaSignal 등을 활용할 수도 있었을 것이라 언급, 확인 필요), RAG, 그래프 DB, 텍스트 검색에 관한 최신 AI 연구 논문들을 전수 수집해 요약하도록 지시하고 그 요약 결과를 바탕으로 최적의 구조를 도출해 냈다.</p>
+<p>여기서 대화 참석자 한 명(코플스톤으로 보이나 화자 확인 필요)은 최근 &#39;데이터베이스의 미래&#39;를 주제로 한 저녁 모임에서 들은 아이디어를 소개했다.</p>
+<blockquote>
+<p>데이터베이스는 본질적으로 데이터 검색 메커니즘이다. 어떤 데이터셋을 여러 번 검색하는데 10초가 걸린다면, <strong>에이전트를 루프에 돌려 1초 안에 돌려주는 새 인덱스나 최적의 인덱스를 찾게 하면 된다.</strong>
+Garry Tan은 정말 똑똑한 코드 생성이 가능해지는 순간 동적 검색(Dynamic Retrieval)은 분명히 일어날 것이라고 공감했다.</p>
+</blockquote>
+<p>[해설: RAG, pgvector, 그리고 SQL 기반 그래프 데이터베이스의 기술적 원리]</p>
+<ul>
+<li><strong>RAG(Retrieval-Augmented Generation, 검색 증강 생성):</strong> LLM의 고정된 사전 학습 가중치에만 의존하지 않고, 외부 데이터베이스에서 질문과 관련된 최신 문서를 실시간 검색하여 모델의 입력 프롬프트 컨텍스트에 주입해 정확한 답변을 생성하는 기법이다.</li>
+<li><strong>pgvector:</strong> PostgreSQL 데이터베이스 내부에서 고차원 임베딩 벡터 간의 거리(L2 거리, 코사인 유사도, 내적 등)를 초고속으로 계산해 주는 오픈소스 확장 기능이다. 별도의 전용 벡터 DB를 분리해 도입하지 않고도 기존 관계형 데이터베이스 안에서 트랜잭션 무결성과 벡터 검색을 단일 쿼리로 통합할 수 있게 해준다.</li>
+<li><strong>SQL 기반 그래프 데이터베이스:</strong> 데이터 간의 연결망(예: 인물-조직-프로젝트 관계)을 정형화된 관계형 테이블에 저장하면서도, 표준 SQL의 재귀적 공통 테이블 표현식(Recursive CTE)과 조인 연산을 활용해 복잡한 네트워크 경로를 효율적으로 탐색하는 기법이다. 비정형 텍스트에서 추출된 동적 스키마를 유연하게 표현할 수 있다.</li>
+</ul>
+<p>그리고 Garry Tan은 자신이 이미 Gbrain에 적용해 매일 가동하고 있는 <strong>자율적 자기개선 루프(Autonomous Improvement Loop)</strong>를 구체적으로 공개했다.</p>
+<ol>
+<li><strong>운영 트레이스 추출:</strong> 실제 프로덕션 환경에서 OpenClaw가 동작하며 남긴 모든 쿼리 및 검색 트레이스(Trace)를 실시간 수집한다.</li>
+<li><strong>gbrain-evals 평가셋 구축:</strong> 수집된 트레이스로부터 검색 효율성, 토큰 비용, 레이턴시 등을 정량화한 40개의 독립적인 평가 범주(Categories)를 <code>gbrain-evals</code> 저장소에 구축한다.<a class="footnote-ref" href="#fn-14" id="fnref-14">14</a></li>
+<li><strong>에이전트 자율 리서치 루프:</strong> 에이전트에게 자동 연구(Auto Research) 루프를 부여하여 내부 eval 점수를 개선하는 시도를 계속하게 한다.<ul>
+<li><strong>평가 지표가 향상되면:</strong> 해당 변경 사항을 <code>master</code> 브랜치에 기본값(Default)으로 즉각 자동 커밋 및 배포한다.</li>
+<li><strong>실패하거나 점수가 떨어지면:</strong> 왜 실패했는지 분석한 가설과 이유를 마크다운 파일로 정밀하게 작성하여 실패 지식 베이스에 아카이빙한다.</li>
+</ul>
+</li>
+<li><strong>Captains 체제 운영:</strong> Cappy(Grokbots와 유사한 개념)의 &#39;Captains&#39; 시스템을 활용하여, 상시 가동되는 두 개의 핵심 에이전트를 둔다(확인 필요). 하나는 끊임없이 새로운 평가 범주를 발굴해 데이터셋을 확장하고, 다른 하나는 모든 범주를 돌며 매일 점수를 개선할 방법을 찾는다.</li>
+</ol>
+<p>Garry Tan은 이것이 특정 검색 도메인에 국한된 <strong>&quot;매우 원시적인 형태의 재귀적 자기개선(Recursive Self-Improvement, RSI)&quot;</strong>이라고 규정했다. 추상화 수준을 한 단계만 높이면, 사용자의 목적과 트레이스 데이터셋만 바뀔 뿐 세상의 모든 정보 검색 시스템에 보편적으로 적용 가능한 메커니즘이다.</p>
+<p>진행자가 &quot;미래의 일반 빌더들도 이런 정교한 eval 프레임워크를 직접 알아야 하는가?&quot;라고 묻자, Garry Tan은 &quot;아마도 아닐 것&quot;이라며, 지금 자신들이 하고 있는 실험은 훗날 모든 빌더가 손쉽게 꺼내 쓸 수 있도록 기반이 되는 &#39;원시 프리미티브(Primitives)&#39;를 발명해 나가는 개척 과정이라고 설명했다.</p>
+<p>[해설: RSI(재귀적 자기개선, Recursive Self-Improvement)의 개념과 자율 소프트웨어 공학]</p>
+<ul>
+<li><strong>RSI(Recursive Self-Improvement):</strong> 인공지능 시스템이 외부 인간 개발자의 개입 없이, 자신의 성능을 정량 평가(Eval)하고 자신의 소스 코드와 알고리즘을 스스로 수정·배포하여 지속적으로 성능을 향상시켜 나가는 자율 진화 루프를 의미한다.</li>
+<li><strong>실무적 의의:</strong> Garry Tan의 Gbrain 실험은 RSI가 먼 미래의 범용인공지능(AGI) 담론에만 머물지 않고, 특정 용도의 실무 소프트웨어에서도 작은 형태로 작동할 수 있음을 보여 주는 사례다.</li>
+</ul>
+<div class="svg-container" style="margin: 2rem 0; width: 100%; text-align: center;">
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:960px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 960 420" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Card -->
+  <rect width="100%" height="100%" fill="#0f172a" rx="16" stroke="#334155" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="480" y="42" fill="#f8fafc" font-size="22" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    Gbrain 재귀적 자기개선(RSI) 루프
+  </text>
+  <text x="480" y="72" fill="#94a3b8" font-size="16" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    운영 로그에서 eval 데이터셋을 추출하고 에이전트가 코드를 스스로 개선하는 자율 진화 체계
+  </text>
+
+  <!-- Step 1: Production Traces -->
+  <g transform="translate(40, 105)">
+    <rect width="240" height="120" fill="#1e293b" rx="12" stroke="#38bdf8" stroke-width="2"/>
+    <text x="120" y="32" fill="#38bdf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      1. 운영 트레이스 수집
+    </text>
+    <text x="15" y="65" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 실제 사용자 상호작용 로그</text>
+    <text x="15" y="93" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 검색 지연 · 실패 쿼리 기록</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 280 165 L 340 165" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Step 2: gbrain-evals Dataset -->
+  <g transform="translate(340, 105)">
+    <rect width="280" height="120" fill="#1e293b" rx="12" stroke="#818cf8" stroke-width="2"/>
+    <text x="140" y="32" fill="#818cf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      2. gbrain-evals 데이터셋
+    </text>
+    <text x="15" y="65" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 40개 범주 (지연·비용·정확도)</text>
+    <text x="15" y="93" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• Captains: 신규 범주 상시 생성</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <path d="M 620 165 L 680 165" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Step 3: Auto Research Loop -->
+  <g transform="translate(680, 105)">
+    <rect width="240" height="120" fill="#1e293b" rx="12" stroke="#f59e0b" stroke-width="2"/>
+    <text x="120" y="32" fill="#f59e0b" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      3. 에이전트 자율 리서치
+    </text>
+    <text x="15" y="65" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 인덱스 · 프롬프트 변형 시도</text>
+    <text x="15" y="93" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 일일 벤치마크 점수 최적화</text>
+  </g>
+
+  <!-- Branch Decision Below -->
+  <path d="M 800 225 L 800 270" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Success Path -->
+  <g transform="translate(480, 275)">
+    <rect width="440" height="110" fill="#064e3b" rx="12" stroke="#34d399" stroke-width="2"/>
+    <text x="220" y="32" fill="#34d399" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      평가 지표 개선 시: Master 브랜치 즉시 반영
+    </text>
+    <text x="20" y="65" fill="#e2e8f0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 기본값으로 자동 배포 및 프로덕션 활성화</text>
+    <text x="20" y="92" fill="#a7f3d0" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 인간 개입 없는 지속적 자가 진화 (RSI 메커니즘)</text>
+  </g>
+
+  <!-- Failure Path -->
+  <g transform="translate(40, 275)">
+    <rect width="410" height="110" fill="#4c0519" rx="12" stroke="#f43f5e" stroke-width="2"/>
+    <text x="205" y="32" fill="#fb7185" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+      지표 미개선/실패 시: 사유 마크다운 기록
+    </text>
+    <text x="20" y="65" fill="#fecdd3" font-size="16" font-family="system-ui, -apple-system, sans-serif">• 실패 원인 및 가설 분석 리포트 자동 작성</text>
+    <text x="20" y="92" fill="#cbd5e1" font-size="16" font-family="system-ui, -apple-system, sans-serif">• gbrain-evals 저장소에 지식으로 아카이빙</text>
+  </g>
+
+  <!-- Connecting to branches -->
+  <path d="M 800 270 L 700 275" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 800 270 L 245 270 L 245 275" fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
+</svg></figure>
+</div>
+
+<hr>
+<h2 id="8-코딩과-창업의-미래-린디-효과와-적응의-속도"><a href="#8-코딩과-창업의-미래-린디-효과와-적응의-속도" class="heading-anchor" aria-hidden="true">#</a> 8. 코딩과 창업의 미래: 린디 효과와 적응의 속도</h2><p>인터뷰은 자연스럽게 소프트웨어 엔지니어링의 미래와 스타트업 생태계의 판도 변화로 이어진다.</p>
+<p>진행자는 Claude Code의 핵심 설계자인 보리스 체르니(Boris Cherny)<a class="footnote-ref" href="#fn-15" id="fnref-15">15</a>가 YC 인터뷰에서 밝힌 코딩의 미래 비전을 환기했다. 보리스 체르니의 관점에서 궁극의 코딩이란 인간이 복잡한 eval 프레임워크나 내부 파이프라인을 전혀 알 필요 없이, 마치 <strong>친구와 대화를 나누듯 Claude와 편안하게 이야기를 주고받는 것만으로 Claude가 머릿속의 구상을 만드는 법을 알아서 찾아내는 상태</strong>다.</p>
+<p>코플스톤은 자신이 최근 겪은 일화를 통해 이 미래가 이미 현실로 성큼 다가왔음을 실감했다고 전했다. 그는 도메인을 수집하는데, Open USD라는 파일 포맷이 있어서 <code>openusd.dev</code>라는 도메인을 갖고 있었다. 그런데 Stripe와 Visa 등이 &#39;Open USD&#39;를 발표하자 이 도메인을 이제 써야겠다고 생각했다.<a class="footnote-ref" href="#fn-16" id="fnref-16">16</a></p>
+<p>시간이 없던 그는 dots와 대화하며 생태계를 담은 개발자 사이트를 만들었다. 컴퓨터에서 대화하다가, 하루를 마무리하며 잠자리에 들 무렵 휴대폰으로 통화를 이어 갔다.</p>
+<blockquote>
+<p>&quot;생태계 문서와 사용 사례가 링크되는 정보 아키텍처(IA)가 마음에 들지 않는데, 개선안을 제안해 줄래?&quot;
+에이전트가 몇 가지 구조를 제시하자 그는 &quot;좋아, 그대로 구현해 줘&quot;라고 답했다. 불과 20초 뒤 에이전트는 작업을 완료했다고 응답했고, 새로고침하자 글이 잘 쓰여 있었고, 모든 것이 서로 연결되어 있었으며, SEO 관련 작업도 되어 있었다. 전통적으로 했어야 할 일들을 하지 않고 대화만으로 해낸 것이다.</p>
+</blockquote>
+<p>코플스톤은 이 경험이 &quot;미래의 한 자락을 엿본 순간&quot;이었다고 회고했다. 엔지니어링 지식을 배제하고 내년의 일반 사용자가 겪을 방식을 미리 도그푸딩해 봄으로써, 1년 뒤 Supabase가 어떤 경험을 줄지 미리 확인하려는 것이다. 진행자는 그가 무엇을 만들지 알기 때문에 가능한 일이라고 짚었고, 코플스톤은 엔지니어링 배경이 있어 프롬프트를 아는 만큼 일부러 아무 말도 하지 않으려 한다고 답했다.</p>
+<p>이어 한 진행자(Garry Tan으로 추정, 확인 필요)는 Boris의 말처럼 모델 가중치에 들어가면 자동으로 할 수 있지만 그 전에는 약간의 마크다운이 필요하다고 말하고, 사회가 매우 이상한 순간에 들어서고 있다고 진단했다. 그는 지금을 <strong>&#39;멈출 수 없는 힘(Unstoppable Force)&#39;이 &#39;움직이지 않는 물체(Immovable Object)&#39;를 만난 상황</strong>이라고 표현했다.</p>
+<p>파운데이션 모델의 역량은 포물선을 그리며 수직 상승하고 있고, 그는 RSI가 정말 와 있는 것 같고, AI 연구의 20%에서 80%로 가는 순간이 Claude Code나 Codex 같은 루프 안에서 일어나고 있다고 말한다. 이것이 바로 멈출 수 없는 힘이다. 반면 인간 사회에서 <strong>&#39;세상에 무엇을 만들어야 할지, 어떤 문제를 해결해야 할지 아는 사람들의 수&#39;는 예나 지금이나 거의 일정한 상수로 고정</strong>되어 있다. 이것이 움직이지 않는 물체다. [해설] 모델의 능력이 커져도 무엇을 만들지 아는 사람이 없으면 그 능력이 사회에 닿지 못한다. 이것이 기회이자 병목이다. 코플스톤은 여기에 사람들이 그것에 설레야 한다는 점을 더하며, 많은 사람이 불안해하지만 자신은 많은 사람에게 펼쳐질 미래가 진심으로 기대된다고 말한다.</p>
+<p>창업의 경제학도 바뀌고 있다. 진행자(Garry Tan으로 추정, 확인 필요)는 전통적인 버티컬 SaaS(Vertical SaaS) 창업자들이 겪고 있는 투자 혹한기를 언급했다. 9~12개월 전까지만 해도 연간 반복 매출(ARR) 500만~1,000만 달러면 시리즈 A가 사실상 보장되었지만, 지금은 버티컬 SaaS에 투자자들의 관심이 적다는 것이다(확인 필요).</p>
+<p>그런데 바로 이 시기에 <strong>10~15명으로 1,000만~1,500만 달러, 때로는 2,500만~5,000만 달러 ARR</strong>에 도달할 수 있게 되었고, 그 시점이면 매우 수익성이 높다(확인 필요). 그는 오피스아워에서 시리즈 A를 못 받아 낙담한 창업자들에게 &quot;돈이 필요 없으니 돌아보면 축복일 것&quot;이라고 말한다고 한다. 예전에는 연 매출 3,000만 달러에 이르려면 많은 사람을 고용해야 해서 1억 달러쯤 조달해야 했지만 이제는 그럴 필요가 없다는 것이다.</p>
+<p>코플스톤은 다음과 같은 구체적인 수익 모델을 제시했다.</p>
+<blockquote>
+<p>15명이 1인당 200만 달러 ARR에 마진 50%라면 모두가 연 100만 달러를 버는 셈이고, 많은 사람에게 놀라운 결과다(확인 필요).</p>
+</blockquote>
+<p>과거 스타트업 생태계에서는 거대 벤처캐피털로부터 대규모 펀딩을 유치하는 것이 일종의 &#39;명예로운 배지(Badge)&#39;로 취급되었다. 코플스톤도 처음 투자를 받았을 때 대단한 일을 해낸 느낌이었다고 회고하면서, 이제는 <strong>투자를 받지 않는 것이 오히려 대단한 성취</strong>처럼 느껴져 그런 회사들이 조금 부럽다고 말한다.</p>
+<p>인터뷰의 마지막에서 코플스톤은 급변하는 인공지능 시대에 스타트업을 이끌어가는 창업자들을 위해 세 가지 깊이 있는 조언을 남겼다.</p>
+<p>첫째는 <strong>&#39;린디 효과(Lindy Effect)&#39;에 기반한 범주 선택</strong>이다.</p>
+<blockquote>
+<p>데이터베이스는 50년 동안 있었고 앞으로 50년도 있을 것이라고 생각한다. AI가 어디에 이르든 데이터베이스는 있을 것이라고 꽤 확신한다. 인생 전체를 걸 거라면 투자할 가치가 있다고 느끼는 내구성 있는(durable) 범주를 골라야 한다.</p>
+</blockquote>
+<p>둘째는 <strong>&#39;모든 답을 가지려 하지 말고 가장 빨리 적응하는 능력&#39;</strong>이다.
+Supabase는 모든 답을 가지려 하지 않고 늘 가장 빨리 적응하려 한다. 코플스톤이 아끼던 여러 개발자 도구들이 개발자 중심으로 시작했다가 점점 기업화되며 정체되고 개발자들의 사랑을 잃어버리는 것을 목격했다. 반면 Stripe 같은 회사에는 새로운 만드는 방식에 집중하는 데 마음을 쓰는 창업자 같은 사람이 있다고 그는 말한다. 코플스톤은 팀 전체가 급변하는 기술 파도에 맞춰 언제든 방향을 틀 수 있도록 조직 내부에 <strong>&#39;여유 역량(Capacity)&#39;</strong>을 의도적으로 남겨두어야 한다고 조언한다.</p>
+<p>셋째는 <strong>&#39;철저한 도그푸딩(Dogfooding)과 파트너십&#39;</strong>이다.
+진행자는 초기 바이브 코딩 변곡점과 &#39;Opus 4.8&#39;<a class="footnote-ref" href="#fn-17" id="fnref-17">17</a> 변곡점을 거론하며 다음 변곡점에 어떻게 대비할지 물었다. 코플스톤은 가장 중요한 것으로, 도그푸딩을 꼽는다. 자기 도구에서 직접 막혀 보는 것보다 좋은 피드백은 없다. 또 생태계 핵심 파트너들과 협력하고, 그들이 아이디어를 가져올 때 시도해 볼 여유 역량을 팀에 남겨 둔다. 많은 베팅은 실패하지만, 성공한 것은 파트너와 함께 큰 파도를 타게 해 준다.</p>
+<p>[해설: 린디 효과(Lindy Effect)의 철학적 배경과 기술 투자 전략]</p>
+<ul>
+<li><strong>린디 효과(Lindy Effect):</strong> 기술, 아이디어, 서적과 같이 소멸하지 않는 비소멸성 자산의 미래 기대 수명이 현재까지 생존해 온 시간에 비례한다는 통계적·철학적 개념이다. 나심 탈레브(Nassim Taleb)의 저작을 통해 널리 대중화되었다. 예컨대 50년을 생존해 온 관계형 데이터베이스(RDBMS) 기술은 앞으로도 최소 50년 이상 지배적 위치를 유지할 가능성이 높으며, 반짝 등장한 최신 유행 프레임워크는 수년 내에 사라질 위험이 크다.</li>
+<li><strong>AI 시대의 내구성 있는 범주:</strong> LLM의 등장으로 수많은 상부 애플리케이션 래퍼(Wrapper)와 UI 도구들이 하룻밤 사이에 무용지물이 되는 파괴적 혁신 속에서도, 연산의 결과와 상태를 저장하는 데이터베이스, 네트워크 프로토콜, 컴파일러 같은 인프라 기반 계층은 린디 효과에 의해 가장 긴 생명력과 경제적 해자를 유지한다.</li>
+</ul>
+<hr>
+<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1">YC 공식 X 계정의 이 인터뷰 소개 게시물에도 Supabase 신규 활동의 약 70%가 에이전트에서 나온다는 내용이 실렸다. <a href="https://x.com/ycombinator/status/2116176659795825035">https://x.com/ycombinator/status/2116176659795825035</a> (2026-10-31 확인)<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<li id="fn-2">성장 지표(가입자 1,300만 명, 매출 4배, 주당 약 100만 개 DB, 관리 DB 약 5,000만 개)는 인터뷰에서 Paul Copplestone과 진행자가 말한 수치다. 회사 바깥의 독립 출처로는 확인되지 않았다.<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li>
+<li id="fn-3">사내 엔지니어 중 자기 코드의 80%를 AI 코딩 에이전트에 위임하는 엔지니어의 비중 변화를 뜻함.<a class="backlink" href="#fnref-3" aria-label="본문으로">↩</a></li>
+<li id="fn-4">OpenAI는 2026년 9월 말 DevDay 무렵 ChatGPT 주간 활성 사용자가 12억 명이라고 밝혔다. The Verge, <a href="https://www.theverge.com/ai-artificial-intelligence/1002265/chatgpt-now-has-1-2-billion-weekly-users-openai-says">https://www.theverge.com/ai-artificial-intelligence/1002265/chatgpt-now-has-1-2-billion-weekly-users-openai-says</a><a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
+<li id="fn-5">Supabase의 관리 API는 2021년 무렵 나왔고, Bolt·Lovable과의 연동은 2024년에 보도되었다. Felicis, <a href="https://www.felicis.com/blog/supabase-paul-copplestone-ant-wilson">https://www.felicis.com/blog/supabase-paul-copplestone-ant-wilson</a><a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li>
+<li id="fn-6">이 도구는 Supabase가 사용하고 유지보수를 지원하는 PostgREST(Postgres 스키마에서 REST API를 자동 생성하는 오픈소스 도구)로 보인다. <a href="https://supabase.com/features/auto-generated-rest-api">https://supabase.com/features/auto-generated-rest-api</a><a class="backlink" href="#fnref-6" aria-label="본문으로">↩</a></li>
+<li id="fn-7">Parse는 2013년 Facebook(현 Meta)에, Firebase는 2014년 Google에 인수되었다. <a href="https://en.wikipedia.org/wiki/Parse,_Inc">https://en.wikipedia.org/wiki/Parse,_Inc</a>. ; <a href="https://techcrunch.com/2014/10/21/google-acquires-firebase-to-help-developers-build-better-realtime-apps/">https://techcrunch.com/2014/10/21/google-acquires-firebase-to-help-developers-build-better-realtime-apps/</a><a class="backlink" href="#fnref-7" aria-label="본문으로">↩</a></li>
+<li id="fn-8">Supabase는 2026년 10월 2일 Supabase Select에서 Turso 인수를 발표했다. <a href="https://supabase.com/blog/supabase-is-acquiring-turso">https://supabase.com/blog/supabase-is-acquiring-turso</a><a class="backlink" href="#fnref-8" aria-label="본문으로">↩</a></li>
+<li id="fn-9">Supabase Spark는 Turso 기술을 바탕으로 한 경량 인스턴스 티어로 발표되었다.<a class="backlink" href="#fnref-9" aria-label="본문으로">↩</a></li>
+<li id="fn-10">Multigres는 Vitess에서 영감을 받은 Supabase의 오픈소스 Postgres 클러스터링·고가용성 계층이며, 비공개 알파 단계다. <a href="https://supabase.com/docs/guides/database/multigres">https://supabase.com/docs/guides/database/multigres</a><a class="backlink" href="#fnref-10" aria-label="본문으로">↩</a></li>
+<li id="fn-11">Blacksmith, Greptile, Depot은 YC 투자 기업이다. Ubicloud는 같은 CI·인프라 영역에서 함께 거론되는 오픈소스 클라우드다. <a href="https://www.ycombinator.com/companies/greptile">https://www.ycombinator.com/companies/greptile</a> ; <a href="https://x.com/ycombinator/status/2112894047140622423">https://x.com/ycombinator/status/2112894047140622423</a><a class="backlink" href="#fnref-11" aria-label="본문으로">↩</a></li>
+<li id="fn-12">원문에는 &quot;Navier Stokes와 관련된 일들&quot;이라고만 언급된다. 이것이 가리키는 것으로 보이는 일은 다음과 같다. 2026년 9월 OpenAI는 자사 AI 시스템이 외력이 있는 3차원 나비에-스토크스 방정식에서 유한 시간 특이점이 생긴다는 증명을 Lean으로 형식화했다고 발표했다. 외력이 없는 밀레니엄 상금 문제는 여전히 열려 있고, 검증도 계속되고 있다. <a href="https://openai.com/index/navier-stokes-solution/">https://openai.com/index/navier-stokes-solution/</a><a class="backlink" href="#fnref-12" aria-label="본문으로">↩</a></li>
+<li id="fn-13">Supabase Select 2026은 2026년 10월 2일 무렵 샌프란시스코에서 열렸다. <a href="https://select.supabase.com">https://select.supabase.com</a><a class="backlink" href="#fnref-13" aria-label="본문으로">↩</a></li>
+<li id="fn-14">GitHub에 garrytan/gbrain-evals 공개 저장소가 있다. <a href="https://github.com/garrytan/gbrain-evals">https://github.com/garrytan/gbrain-evals</a><a class="backlink" href="#fnref-14" aria-label="본문으로">↩</a></li>
+<li id="fn-15">Boris Cherny는 Claude Code를 만든 인물로, YC 인터뷰 &quot;Inside Claude Code With Its Creator Boris Cherny&quot;에 출연했다. <a href="https://www.ycombinator.com/library/carousel/Lightcone%20Podcast">https://www.ycombinator.com/library/carousel/Lightcone%20Podcast</a><a class="backlink" href="#fnref-15" aria-label="본문으로">↩</a></li>
+<li id="fn-16">Stripe, Visa, Mastercard와 파트너들은 공동 달러 스테이블코인 Open USD를 발표했다. <a href="https://joinopenstandard.com/blog/introducing-open-usd/">https://joinopenstandard.com/blog/introducing-open-usd/</a><a class="backlink" href="#fnref-16" aria-label="본문으로">↩</a></li>
+<li id="fn-17">Anthropic은 2026년 5월 28일 Claude Opus 4.8을 출시했다. <a href="https://www.anthropic.com/news/claude-opus-4-8">https://www.anthropic.com/news/claude-opus-4-8</a><a class="backlink" href="#fnref-17" aria-label="본문으로">↩</a></li></ol></section>
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-31-수파베이스개인DB.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
