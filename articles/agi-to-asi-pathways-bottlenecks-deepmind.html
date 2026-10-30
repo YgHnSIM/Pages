@@ -1,0 +1,3281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>AGI에서 ASI로: 지능의 연속체, 4대 기술 경로, 그리고 6대 마찰</title>
+  <meta name="description" content="구글 딥마인드 연구진이 제시한 AGI 이후의 지능 발전 지도. 연산 확장, 패러다임 전환, 재귀적 자기개선, 그룹 에이전시의 4대 경로와 데이터 벽, 자원 제약, 추상화 장벽 등 6대 병목을 심층 분석하며, 단일 특이점이 아닌 연쇄적 사회 변화의 도래를 정리한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">AGI에서 ASI로: 지능의 연속체, 4대 기술 경로, 그리고 6대 마찰</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#프롤로그-지능의-연속체와-다트머스-70년의-무게" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">프롤로그: 지능의 연속체와 다트머스 70년의 무게</span></a></li><li class="depth-3"><a href="#서장-속도의-문제-유효-연산-특이점-불확실성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">서장: 속도의 문제 — 유효 연산, 특이점, 불확실성</span></a></li><li class="depth-2"><a href="#제1장-지능의-척도와-초지능asi의-본질" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">제1장. 지능의 척도와 초지능(ASI)의 본질</span></a></li><li class="depth-3"><a href="#11-agi-asi-uai의-조작적-정의와-지능의-연속체" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 AGI, ASI, UAI의 조작적 정의와 지능의 연속체</span></a></li><li class="depth-3"><a href="#12-quot코드를-안다는-것quot-디지털-지능이-갖는-6가지-근원적-격차" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 &quot;코드를 안다는 것&quot;: 디지털 지능이 갖는 6가지 근원적 격차</span></a></li><li class="depth-3"><a href="#13-asi-사회의-양상과-거시적-한계선" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.3 ASI 사회의 양상과 거시적 한계선</span></a></li><li class="depth-3"><a href="#도식-1-디지털-지능의-6대-우위와-asi의-거시적-한계" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[도식 1] 디지털 지능의 6대 우위와 ASI의 거시적 한계</span></a></li><li class="depth-2"><a href="#제2장-이론적-상한선-universal-aiaixi가-던지는-시사점" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">제2장. 이론적 상한선: Universal AI(AIXI)가 던지는 시사점</span></a></li><li class="depth-3"><a href="#21-위에서-묶기-aixi의-수학적-구조와-3대-과제-해결" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 위에서 묶기: AIXI의 수학적 구조와 3대 과제 해결</span></a></li><li class="depth-3"><a href="#22-현-딥러닝-패러다임과의-비자명한-연결고리" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 현 딥러닝 패러다임과의 비자명한 연결고리</span></a></li><li class="depth-3"><a href="#23-이론적-한계와-대안적-프레임워크들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 이론적 한계와 대안적 프레임워크들</span></a></li><li class="depth-2"><a href="#제3장-agi에서-asi로-이르는-4대-기술-경로-표-3" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">제3장. AGI에서 ASI로 이르는 4대 기술 경로 [표 3]</span></a></li><li class="depth-3"><a href="#도식-2-agi에서-asi로-이르는-4대-기술-경로와-상호작용" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[도식 2] AGI에서 ASI로 이르는 4대 기술 경로와 상호작용</span></a></li><li class="depth-3"><a href="#31-경로-연산모델데이터의-양적-확장scaling과-지속성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 경로 ①: 연산·모델·데이터의 양적 확장(Scaling)과 지속성</span></a></li><li class="depth-3"><a href="#32-경로-알고리즘의-진화evolution와-근본적-패러다임-전환shift" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 경로 ②: 알고리즘의 진화(Evolution)와 근본적 패러다임 전환(Shift)</span></a></li><li class="depth-3"><a href="#33-경로-재귀적-자기개선rsi-코드-하드웨어-데이터-분업의-루프" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 경로 ③: 재귀적 자기개선(RSI) — 코드, 하드웨어, 데이터, 분업의 루프</span></a></li><li class="depth-3"><a href="#34-경로-다중-에이전트-조율과-그룹-에이전시group-agency" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.4 경로 ④: 다중 에이전트 조율과 그룹 에이전시(Group Agency)</span></a></li><li class="depth-2"><a href="#제4장-진보를-가로막는-6대-마찰과-상쇄-요인들의-각축-표-4" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">제4장. 진보를 가로막는 6대 마찰과 상쇄 요인들의 각축 [표 4]</span></a></li><li class="depth-3"><a href="#도식-3-6대-마찰과-상쇄-메커니즘의-동역학적-경주" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[도식 3] 6대 마찰과 상쇄 메커니즘의 동역학적 경주</span></a></li><li class="depth-3"><a href="#41-데이터-벽data-wall과-자기-생성-데이터의-돌파구" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 데이터 벽(Data Wall)과 자기 생성 데이터의 돌파구</span></a></li><li class="depth-3"><a href="#42-경제적자연적-자원-수요-급증과-물리적-인프라" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 경제적·자연적 자원 수요 급증과 물리적 인프라</span></a></li><li class="depth-3"><a href="#43-신경망-패러다임-소진-가설과-취약점들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 신경망 패러다임 소진 가설과 취약점들</span></a></li><li class="depth-3"><a href="#44-quot아이디어는-찾기-어려워진다quot-vs-quot인공-연구자의-복제quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.4 &quot;아이디어는 찾기 어려워진다&quot; vs &quot;인공 연구자의 복제&quot;</span></a></li><li class="depth-3"><a href="#45-추상화-장벽abstraction-barrier과-체현-병목" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.5 추상화 장벽(Abstraction Barrier)과 체현 병목</span></a></li><li class="depth-3"><a href="#46-의도적-감속-거버넌스-그리고-지정학적-무정부-상태" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.6 의도적 감속, 거버넌스, 그리고 지정학적 무정부 상태</span></a></li><li class="depth-2"><a href="#제5장-지능의-미래에-관한-5가지-심층-논점remarks" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">제5장. 지능의 미래에 관한 5가지 심층 논점(Remarks)</span></a></li><li class="depth-3"><a href="#51-양적-연산-확장만으로-asi에-도달할-수-있는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 양적 연산 확장만으로 ASI에 도달할 수 있는가?</span></a></li><li class="depth-3"><a href="#52-asi의-구체적-능력은-사전에-예측-가능한가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 ASI의 구체적 능력은 사전에 예측 가능한가?</span></a></li><li class="depth-3"><a href="#53-초지능은-초창의적인가-알파고-37수에서-아인슈타인-테스트까지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 초지능은 초창의적인가? — 알파고 37수에서 아인슈타인 테스트까지</span></a></li><li class="depth-3"><a href="#도식-4-마가렛-보든의-3단계-창의성과-asi의-문턱" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">[도식 4] 마가렛 보든의 3단계 창의성과 ASI의 문턱</span></a></li><li class="depth-3"><a href="#54-asi는-어떤-목표를-추구할-것인가-도구적-수렴과-지식-탐구ks" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.4 ASI는 어떤 목표를 추구할 것인가? — 도구적 수렴과 지식 탐구(KS)</span></a></li><li class="depth-3"><a href="#55-agi는-반드시-에이전트여야-하는가-그리고-39진보39의-참뜻" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.5 AGI는 반드시 에이전트여야 하는가? 그리고 &#39;진보&#39;의 참뜻</span></a></li><li class="depth-2"><a href="#제6장-미지의-경로를-항해하기-위한-7대-연구-의제와-결론" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">제6장. 미지의 경로를 항해하기 위한 7대 연구 의제와 결론</span></a></li><li class="depth-3"><a href="#61-전-지구적-연구-의제research-agenda-7대-질문군" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 전 지구적 연구 의제(Research Agenda): 7대 질문군</span></a></li><li class="depth-3"><a href="#62-에필로그-단-한-번의-특이점이-아닌-연쇄적-전환의-시대를-맞이하며" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 에필로그: 단 한 번의 특이점이 아닌, 연쇄적 전환의 시대를 맞이하며</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-10-30</span>
+          <span class="meta-badge">⏱️ 약 104분</span>
+          
+        </div>
+        <h1 class="article-title">AGI에서 ASI로: 지능의 연속체, 4대 기술 경로, 그리고 6대 마찰</h1>
+        <p class="article-subtitle">구글 딥마인드가 설계한 인공초지능 전이 지도와 기술경제학적 병목 분석</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#AI</span>
+          
+          <span class="tag-pill">#AGI</span>
+          
+          <span class="tag-pill">#AI안전</span>
+          
+          <span class="tag-pill">#머신러닝</span>
+          
+          <span class="tag-pill">#논문리뷰</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-10-30-AGI에서ASI로.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <blockquote>
+<p>&quot;We can only see a short distance ahead, but we can see plenty there that needs to be done.&quot;<br>— 앨런 튜링(Alan Turing), <em>Computing Machinery and Intelligence</em> (1950) [p.1, p.38]</p>
+</blockquote>
+<hr>
+<h2 id="프롤로그-지능의-연속체와-다트머스-70년의-무게"><a href="#프롤로그-지능의-연속체와-다트머스-70년의-무게" class="heading-anchor" aria-hidden="true">#</a> 프롤로그: 지능의 연속체와 다트머스 70년의 무게</h2><p>지난 10년간 인공지능 연구 현장은 극적인 패러다임의 지각변동을 겪었다. 과거 학계의 변방에서 공상과학적 사변으로 취급받던 &#39;인간 수준의 범용 인공지능(Artificial General Intelligence, AGI)&#39;의 구축은, 이제 여러 대형 AI 연구 조직의 명시적인 &quot;향후 10년 핵심 목표&quot;로 공식화되었다 [p.1, p.2]. 그러나 지능의 발전은 과연 인간 수준이라는 임의의 생물학적 기준선에서 정지할 것인가? 인류가 AGI라는 이정표에 도달한 직후의 세계는 어떤 기술적 동역학에 의해 움직이게 되는가?</p>
+<p>구글 딥마인드(Google DeepMind) 소속 연구진을 주축으로 호주국립대(ANU), 유니버시티 칼리지 런던(UCL), 워털루 대학 소속을 겸한 저자 14명이 공동 집필한 기술 보고서 <strong>&quot;From AGI to ASI&quot;</strong>(arXiv:2606.12683v1 [cs.AI], 2026년 6월 10일자, Tim Genewein, Matija Franklin, Alexander Lerchner, Laurent Orseau, Samuel Albanie, Adam Bales, Cole Wyeth, Stephanie Chan, Iason Gabriel, Joel Z. Leibo, Allan Dafoe, Marcus Hutter, Thore Graepel, Shane Legg, 총 57쪽; arXiv 번호, 일자, 저자 14명 및 소속 4곳 확인 필요) [p.1]는 바로 이 질문을 체계적으로 다룬 기술 보고서다. 논문의 교신저자 이메일(<code>timgen@google.com</code>) 및 저작권 표기(<code>© 2026 Google. All rights reserved</code>)(확인 필요) [p.1]와 함께, 저자들은 논문 작성 과정에서 90% 이상은 언어모델 개입 없이 사람이 썼고, 10% 미만 분량에서 문장 다듬기와 초안 작성에 언어모델을 썼으며, 구조 논의·완결성 점검·모의 심사·문헌 조사·참고문헌 정리에도 언어모델을 활용했다고 밝히고 있다(확인 필요) [p.39].</p>
+<p>이 보고서는 인간 수준의 AGI를 넘어, 대규모 인간 전문가 집단의 지적 역량을 전 영역에서 능가하는 <strong>&#39;인공초지능(Artificial Superintelligence, ASI)&#39;</strong>으로의 전이 과정을 탐색한다 [p.1]. 직관적으로 ASI는 대규모 인간 조직보다 뛰어난 시스템이며, 지능 연속체의 이론적 종착점인 <strong>보편 인공지능(Universal AI, UAI / AIXI)</strong>이 형식적 나침반 역할을 수행한다 [p.1, p.7].</p>
+<p>[해설] 이 보고서는 이론적 상한(AIXI), 경험적 스케일링 추세, 경제·자원 제약을 한자리에 놓고 AGI 이후의 경로를 검토한다는 점에서 단순한 전망서와 다르다.</p>
+<p>저자들의 문제의식은 명확하다. 진보의 가속 동역학이 앞으로도 유지될 가능성을 배제할 수 없다면, 우리가 직면할 미래는 &#39;AGI의 출현&#39;이라는 단 한 번의 단절적 변곡점(Single Transformative Step Change)이 아닐 것이다(통찰 1) [p.1]. 오히려 그것은 AGI에 의해 가속된 과학기술 전반의 발견들이 사회 각 분야로 파급되며 연쇄적으로 폭발하는 <strong>&#39;연쇄적 사회 전환(A Series of Transformative Societal Changes)&#39;</strong>의 연속일 가능성이 훨씬 높다 [p.1]. 그리고 이에 대비하기 위해서는 전 지구적 차원의 대대적인 <strong>학제 간(Massively Interdisciplinary) 연구 노력</strong>이 절대적으로 요구된다 [p.1].</p>
+<p>이러한 전이를 둘러싸고 기술 사회는 두 가지 극단적인 시나리오 사이에서 분열되어 있다 [p.2]. 한편에서는 AGI가 인간의 모든 인지 활동 영역에 침투하여 문명 전체를 단기간에 재편하는 &#39;만능 기술(Pluripotent Technology)&#39;이 될 것이라 예견한다. 다른 한편에서는 나라야난과 카푸어(Narayanan &amp; Kapoor, 2025)가 주장하듯, 과거 인터넷이나 스마트폰의 도입이 그러했듯 사회가 점진적으로 적응 가능한 수준의 파급력에 그치는 &#39;정상 기술(Normal Technology)&#39;의 궤적을 밟을 것이라 전망한다 [p.2]. </p>
+<p>저자들은 결론에서 이 분야의 창시자들이 다트머스에서 세운 목표를 &#39;70년 전&#39;의 일로 언급한다(확인 필요) [p.38]. [해설] 다트머스 회의 연도(1956)는 논문에 적혀 있지 않은 일반 상식이다.</p>
+<hr>
+<h3 id="서장-속도의-문제-유효-연산-특이점-불확실성"><a href="#서장-속도의-문제-유효-연산-특이점-불확실성" class="heading-anchor" aria-hidden="true">#</a> 서장: 속도의 문제 — 유효 연산, 특이점, 불확실성</h3><p>저자들은 AGI 이후를 묻기 전에 먼저 &quot;언제, 얼마나&quot;라는 속도의 질문을 정리한다 [p.3~p.6].</p>
+<ul>
+<li><strong>유효 연산의 세 요인</strong> [p.3, 각주 2]: 달러당 연산은 60년간 연 약 1.5배, 하드웨어 투자는 지난 10년 연 약 2.5배 늘었고(둘을 합친 최대 학습 연산은 연 약 4배), 알고리즘 효율은 연 약 3배(ImageNet 기준; Ho et al. 2025는 약 6배) 개선되었다. 셋을 곱하면 1.5×2.5×3=11.25이고, 저자들은 이를 보수적으로 <strong>연 약 10배</strong>로 내려 잡는다. 이 값은 공개 추정치의 하단이며 실제로는 더 크고 가속 중일 수 있다고 한다(수치 모두 확인 필요) [p.3~p.4].</li>
+<li><strong>연산이 능력으로 바뀌는 방식은 불확실하다</strong> [p.4]: 수확체감이면 진보가 느리고, 능력이 유효 연산에 비례하면 지수적이다. 국제 AI 안전 보고서(Bengio et al., 2025c)는 벤치마크의 가속적 포화를 근거로 최근 능력이 시간에 대해 초선형으로 늘었다고 본다(확인 필요). 스케일링 법칙은 한정된 범위에서 예측력이 높았지만 깨지는 사례도 있으며(Caballero et al., 2023), 벤치마크 스티칭(Ho et al., 2025)이 대안적 외삽 틀로 소개된다 [p.4].</li>
+<li><strong>양적 확장의 질적 효과</strong> [p.4]: 기반 모델이 정체해도 인스턴스 수와 속도는 늘어난다. 1,000개로 시작해 연 10배면 1년 뒤 1만 개, 5년 뒤 1억 개(또는 100배 빠른 100만 개)다(확인 필요). 저자들은 &quot;이것이 ASI인가? 5년이 아니라면 10년, 15년은?&quot;이라고 묻는다 [p.4].</li>
+<li><strong>재귀 루프와 특이점</strong> [p.4~p.5, 각주 3]: AI가 AI 연구를 가속하면 성장률 자체가 커지는 쌍곡선 성장, 곧 유한 시간 안의 무한 성장(특이점)이 이론상 가능하다. 이 가능성은 솔로모노프(1985)가 처음 논의했고 커즈와일이 이어받았다. 그러나 지속적 쌍곡선 성장은 강한 가정이며, 유한한 자연계에서는 마찰과 경계 조건 때문에 S자 곡선이 되는 것이 보통이다. 저자들은 마찰과 연구 자동화 지표를 정량적으로 추적하는 일이 적은 비용으로 큰 이득을 줄 수 있다고 본다 [p.5].</li>
+<li><strong>불확실성 다루기</strong> [p.5~p.6]: 지수·쌍곡선 동역학에서는 불확실성 폭이 빠르게 커져 평균이나 중앙값 예측이 의사결정에 별 도움이 안 될 수 있다. 확실한 것은 AI가 인간 수준을 크게 넘더라도 ASI가 전능하지는 않다는 점이다. 핵심은 가속 요인과 감속 요인의 &#39;경주&#39;이며, 처방은 여러 정량 모델과 불확실성 추정, 핵심 지표 추적, 잦은 갱신, 앙상블이다. 저자들은 AI 진보의 측정·모델링·예측이 그 자체로 상당한 연구 분야가 될 것이라고 예측한다 [p.5~p.6].</li>
+</ul>
+<hr>
+<h2 id="제1장-지능의-척도와-초지능asi의-본질"><a href="#제1장-지능의-척도와-초지능asi의-본질" class="heading-anchor" aria-hidden="true">#</a> 제1장. 지능의 척도와 초지능(ASI)의 본질</h2><h3 id="11-agi-asi-uai의-조작적-정의와-지능의-연속체"><a href="#11-agi-asi-uai의-조작적-정의와-지능의-연속체" class="heading-anchor" aria-hidden="true">#</a> 1.1 AGI, ASI, UAI의 조작적 정의와 지능의 연속체</h3><p>인공지능의 미래를 논할 때 발생하는 가장 큰 혼란은 모호한 용어 사용에서 비롯된다. 딥마인드 연구진은 논의의 학술적 엄밀성을 확보하기 위해 세 가지 개념을 조작적으로 정의한다 [p.6~p.7]:</p>
+<ol>
+<li><strong>인간 수준 범용 인공지능 (AGI)</strong>: 단일 인간의 중앙값 수준 지능을 지닌 시스템을 의미한다. 모리스 등(Morris et al., 2024)의 분류 체계에서 제시된 <strong>&#39;유능한 AGI(Competent AGI)&#39;</strong>에 해당하며, 대부분의 &#39;인지&#39; 과제에서 인간 중앙값 수준이라는 뜻이다 [p.6]. 오늘날의 모델이 이미 여러 면에서 초인적이므로, 최초의 AGI는 많은 과제에서 이미 초인적일 것이라고 저자들은 본다 [p.6].</li>
+<li><strong>인공초지능 (ASI)</strong>: 인간 관심사와 활동의 거의 모든(virtually all) 과제 및 도메인에 걸쳐 인간을 초월하는 범용 지능이다 [p.6~p.7]. 여기서 중요한 것은 알파폴드(AlphaFold)나 알파고(AlphaGo)처럼 단일 영역에 특화된 초인적 시스템은 ASI의 정의에서 엄격히 배제된다는 점이다 [p.6]. 더 나아가 저자들은 개별 인간 천재 1명을 능가하는 수준을 넘어, <strong>&#39;고도로 조율된 대규모 인간 전문가 집단(Large Human-Expert Collectives)&#39;</strong>의 역량을 뛰어넘는 시스템을 ASI의 진정한 기준으로 설정한다 [p.7].</li>
+<li><strong>보편 인공지능 (Universal AI, UAI)</strong>: 셰인 레그와 마커스 후터(Legg &amp; Hutter, 2007a; Hutter, 2005)가 수학적으로 정립한 <strong>AIXI</strong> 에이전트로 대표되는 기계 지능의 이론적 극한이다 [p.7]. 계산 가능한 모든 환경에서 기대 누적 보상을 최대화하는 수학적 최적점이지만, 튜링 정지 문제에 직면하여 물리적으로는 계산 불가능(Incomputable)하다. 저자들은 하나의 ASI가 병렬로 세계와 상호작용하는 수백만 인스턴스의 집합체일 수도 있다고 덧붙인다 [p.7]. [해설] UAI는 ASI가 아래에서 다가갈 수 있는 이론적 상한 역할을 한다.</li>
+</ol>
+<p>[해설] 저자들은 AGI와 ASI의 경계를 모호한 정성적 문턱으로 가르는 대신, <strong>레그-후터 점수(Legg-Hutter Score)</strong>라는 단일한 수학적 척도를 도입하여 논의를 지능의 <strong>&#39;연속체(Continuum)&#39;</strong> 위에 올려놓는다(핵심 논거 1) [p.6, 각주 4]. 레그-후터 점수는 임의의 에이전트가 &quot;계산 가능한 모든 과제(환경 및 보상 함수)에 걸쳐 달성하는 기대 성능의 가중 평균&quot;으로 정의되며, 이때 콜모고로프 복잡도가 낮고 단순한 과제일수록 더 높은 사전 확률 가중치를 부여받는다 [p.6, 각주 4]. 지능이 이처럼 연속적인 스펙트럼으로 존재한다면, AGI에서 ASI로의 전환은 질적으로 단절된 마법의 도약이 아니라, 연산과 알고리즘의 진보에 따라 레그-후터 점수가 점진적 혹은 가속적으로 축적되는 정량적 과정으로 이해할 수 있다.</p>
+<p>이와 관련하여 저자들은 5가지 핵심적인 학술적 논점(Remark I~V)을 명시한다 [p.7~p.8]:</p>
+<ul>
+<li><strong>Remark I (공정한 비교군)</strong>: 이론적 상한선인 AIXI와 비교되어야 할 대상은 이미 학습이 완료되어 가중치가 고정된 개별 LLM이 아니라, LLM 아키텍처와 경사하강법 같은 &#39;학습 알고리즘 자체&#39;여야 한다 [p.7].</li>
+<li><strong>Remark II (독아론적 초지능의 방지)</strong>: 평가 대상이 되는 &#39;모든 계산 가능한 과제&#39;에는 협력적 과제와 동적 균형 과제가 포함된다. 따라서 원리적으로 최적 지능은 타자와의 사회적 상호작용을 포괄해야 하며, 타자를 배제한 채 자기 내면에만 갇힌 &#39;독아론적 초지능(Solipsistic Superintelligence)&#39;으로 귀결되지 않는다. 다만 실무에서는 이를 피하는 것이 중요한 문제로 남는다고 각주에서 덧붙인다 [p.7, 각주 6].</li>
+<li><strong>Remark III (들쭉날쭉한 역량 프로필)</strong>: 레그-후터 척도 자체는 연산 증가에 따라 매끄럽게 상승할지라도, 현실 세계의 구체적 과제들에 대한 구체적 모델의 능력 발현은 고르지 않고 들쭉날쭉(Jagged, Morris et al., 2026, 확인 필요)하게 나타난다 [p.7].</li>
+<li><strong>Remark IV (ASI의 실무적 하한선)</strong>: 인간의 지적 능력은 교육과 도구, 문화적 축적에 따라 지속해서 상승하는 &#39;움직이는 표적(Moving Target)&#39;이다. 따라서 저자들은 ASI의 현실적 하한선을 매우 구체적으로 설정한다. 즉, <strong>&quot;2010년의 기술과 문화적 산물을 갖춘 수만 명의 잘 조율된 전문가 집단이 10년간 하나의 과제에 매달려 이룰 수 있는 것을 확실히 능가하는 시스템. 대략 전문 연구 분야 전체나 대기업 규모&quot;</strong>(수치 및 조건 확인 필요)이 바로 ASI의 실무적 기준이다 [p.7~p.8]. (단, 논문 부록 A의 요약에서는 이를 &#39;수천 명의 전문가가 수년간 협업하는 수준&#39;으로 다소 완화하여 서술하는 불일치가 확인된다(확인 필요) [p.54].)</li>
+<li><strong>Remark V (중간 지대의 존재)</strong>: 광범위한 영역에서 인간 최고 전문가 수준에 필적하지만 그 집단을 압도하지는 못하는 시스템은 AGI와 ASI 사이의 완충 지대에 위치한다 [p.8].</li>
+</ul>
+<hr>
+<h3 id="12-quot코드를-안다는-것quot-디지털-지능이-갖는-6가지-근원적-격차"><a href="#12-quot코드를-안다는-것quot-디지털-지능이-갖는-6가지-근원적-격차" class="heading-anchor" aria-hidden="true">#</a> 1.2 &quot;코드를 안다는 것&quot;: 디지털 지능이 갖는 6가지 근원적 격차</h3><p>생물학적 지능과 디지털 지능을 가르는 가장 근본적인 차이는 어디에 있는가? 저자들은 그것이 <strong>&quot;우리가 시스템의 전체 알고리즘 명세, 즉 코드(Code)와 상태를 완벽히 파악하고 있다&quot;</strong>는 사실에서 출발한다고 설명한다 [p.8]. 여기서 기판 독립성, 속도 조절과 정지, 완벽한 복제가 나온다 [p.8].</p>
+<p>인간의 뇌는 진화가 빚어낸 불투명한 생체 기판에 묶여 있어 뉴런의 연결 강도를 파일로 추출하거나 복제할 수 없다. 반면 디지털 지능은 코드와 가중치라는 순수한 수학적 정보로 존재한다. 이 속성은 연산 자원의 확충과 맞물리며 연산이 늘수록 인간과의 격차를 구조적으로 넓힌다(핵심 논거 2) [p.8~p.9]. <strong>표 1</strong>[p.9]은 연산과 함께 커지는 디지털 지능의 6대 고유 우위를 집대성한다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">우위 요소 (Advantage)</th>
+<th align="left">상세 내용 및 메커니즘 (Description) [p.9, 表 1]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>입출력 속도</strong><br>(Input / output speed)</td>
+<td align="left">AI는 극도로 높은 대역폭으로 정보를 수용하고 방출한다. 오늘날의 LLM만 하더라도 수 권 분량의 서적을 수 초 만에 독파하며, 물리적 센서 및 구동기와 결합할 경우 인간의 감각기관을 아득히 초월하는 초고대역 상호작용을 구현한다.</td>
+</tr>
+<tr>
+<td align="left"><strong>내부 처리 속도</strong><br>(Internal processing speed)</td>
+<td align="left">연산 능력이 추가됨에 따라 추론과 사고의 속도가 순차적 깊이(Depth, 직렬 클럭 가속)와 병렬적 너비(Breadth, 대규모 병렬 탐색) 양방향에서 동시에 가속된다. 수확체감이 존재하더라도 생물학적 지능 대비 압도적인 스케일링 우위를 제공한다.</td>
+</tr>
+<tr>
+<td align="left"><strong>작업 기억 및 암기력</strong><br>(Working memory capacity &amp; memorization)</td>
+<td align="left">작업 메모리의 크기와 읽기/쓰기 대역폭이 인간 뇌의 한계를 압도한다. 인터넷의 상당 부분을 암기하는 능력은 이미 오늘날 시스템에서 입증되었고, 기술적 상한에는 아직 한참 못 미친다.</td>
+</tr>
+<tr>
+<td align="left"><strong>기판 독립성</strong><br>(Substrate independence)</td>
+<td align="left">AI 시스템은 실행 중인 하드웨어 환경에 종속되지 않으며 다른 디지털 컴퓨터로 자유롭게 마이그레이션할 수 있다. 실행 중에도 더 강력하거나 에너지 효율적인 컴퓨터로 옮겨 갈 수 있고, 일부만 옮겨 분산된 이기종 하드웨어에서 돌 수도 있다.</td>
+</tr>
+<tr>
+<td align="left"><strong>무손실 완벽 복제</strong><br>(Lossless replication)</td>
+<td align="left">소스 코드(인간의 유전자에 대응하는 DNA)뿐만 아니라, 시스템이 축적한 생애 경험 전체를 담고 있는 메모리 및 가중치 상태를 비트 단위로 완벽하게 복제할 수 있다. 이는 임의의 시점에 완벽한 백업, 포크(Fork), 정지 및 재개를 보장한다.</td>
+</tr>
+<tr>
+<td align="left"><strong>학습 경험의 초고대역 공유</strong><br>(High-bandwidth sharing of experiences)</td>
+<td align="left">디지털 입출력 스트림을 완벽히 저장하여 다른 인스턴스와 무손실로 공유하거나 리플레이할 수 있다. 특히 아키텍처가 동일한 동질적 인스턴스 집단 사이에서는 언어나 기호라는 손실성 압축을 거칠 필요 없이 평균한 그래디언트 갱신 같은 <strong>원시 학습 신호</strong>까지 고대역으로 공유할 수 있다. (단, 3인칭 관찰 데이터는 의사결정 학습에 인과적으로 불충분할 수 있음, Ortega et al., 2021 [p.9]).</td>
+</tr>
+</tbody></table>
+</div><p><strong>표 1</strong> | 생물학적 지능 대비 디지털 지능의 이점. 연산이 커질수록 이점도 커지며, 인간과는 상당히 이질적인 (사회)진화 압력을 낳을 수 있다 [p.9].</p>
+<p>[해설] 이 6가지 우위는 단순한 기술적 편의를 넘어 문명사적 차원의 차이를 만든다. 인간의 문화적 진화는 손실 압축과 복원을 거치는 &#39;저대역 병목&#39;을 통과해야 한다. 경험을 넓고 빠르게 공유하는 ASI의 문화적 진화는 결국 인간보다 훨씬 빠를 수 있다고 저자들은 본다 [p.9].</p>
+<p>물론 디지털 지능에 약점이 없는 것은 아니다. 저자들은 생물학적 신경계의 아날로그 연산이 디지털 스위칭보다 에너지 효율 면에서 원리적으로 훨씬 우수할 수 있으며, 디지털 지능이 물리 세계와 소통하기 위해서는 필연적으로 아날로그-디지털(AD/DA) 변환 비용을 치러야 한다고 지적한다 [p.8]. 나아가 닐 로렌스(Neil Lawrence, 2024)가 주창한 <strong>&#39;체현 계수(Embodiment Factor)&#39;</strong> 가설을 인용한다 [p.8, 각주 7]. </p>
+<p>체현 계수란 입출력 속도 대비 내부 처리 용량의 비율이다. 체현 계수가 높은 인간은 풍부한 내부 모델과 추상을 형성하고, 체현 계수가 낮은 기계는 그런 모델이나 깊은 추상이 필요 없을 수 있다 [p.8, 각주 7].</p>
+<hr>
+<h3 id="13-asi-사회의-양상과-거시적-한계선"><a href="#13-asi-사회의-양상과-거시적-한계선" class="heading-anchor" aria-hidden="true">#</a> 1.3 ASI 사회의 양상과 거시적 한계선</h3><p>연산 자원이 극대화된 환경에서 ASI는 과연 어떠한 사회적 군집 형태로 존재하는가? 저자들은 세 가지 가능성을 제시한다 [p.9~p.10]:</p>
+<ol>
+<li><strong>보그(Borg)형 초집단</strong>: 상당히 동질적인 매우 많은 개체가 먼 거리에서도 지식을 계속 공유하며 극단적 내부 협력으로 조직되는 초집단(스타트렉의 보그에 빗댐) [p.9].</li>
+<li><strong>시장형 자기조직 문명</strong>: 매우 다양한 전문·범용 시스템이 경쟁적 시장 같은 동역학으로 유동적으로 자기조직하는 형태 [p.9].</li>
+<li><strong>가상 세계 속 문명 (Hutter, 2012)</strong>: 순수 연산 기반의 풍요로운 가상 세계에 상주하는 디지털 지성들 [p.10]. 이들은 더 많은 연산 자원을 얻으려는 욕구로 물리 세계와 묶여 있다. 특이점에 다가가면 내부 거주자가 관찰하는 유일한 변화는 <strong>물리 세계가 엄청나게 느려지는 것</strong>일 수 있다 [p.10].</li>
+</ol>
+<p>그러나 초지능이라 할지라도 물리 법칙을 초월하는 전능(Omnipotence)이나 전지(Omniscience)의 신적 존재가 될 수는 없다. 논문 [p.11]의 <strong>표 2</strong>는 ASI가 종속될 수밖에 없는 6가지 절대적 한계를 규정한다(물리 한계 명칭 및 한국어 표기 확인 필요) [p.11].</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">한계 영역 (Limitation)</th>
+<th align="left">구체적 물리·수학적 제약 (Description) [p.11, 表 2]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>기본 물리 법칙</strong><br>(Fundamental physics)</td>
+<td align="left">정보 전달 속도를 제약하는 광속($c$), 연산 시 정보 소거에 수반되는 최소 에너지 비용인 란다우어 원리(Landauer&#39;s principle), 물질 단위 질량당 최대 연산 속도를 규정하는 브레머만 한계(Bremermann&#39;s limit), 유한한 공간과 에너지 내에 저장 가능한 최대 정보량을 제한하는 베켄슈타인 경계(Bekenstein bound).</td>
+</tr>
+<tr>
+<td align="left"><strong>실시간성</strong><br>(Real time)</td>
+<td align="left">물리적 현실 세계는 실시간으로 흐른다. 기상 시스템, 거시 경제, 생명체 반응처럼 완벽히 시뮬레이션할 수 없는 복잡계 실험은 반드시 현실의 물리적 시간을 소모해야만 결과를 얻을 수 있다.</td>
+</tr>
+<tr>
+<td align="left"><strong>물리적 조작의 한계</strong><br>(Physical manipulation)</td>
+<td align="left">논리적으로 가능한 모든 분자 배치가 물리적으로 구현 가능한 것은 아니다(물리적 비보편성, Universal Constructor 이론). 또한 물질을 조작하고 거대 구조물을 축조하는 데는 유한한 시간과 에너지, 자원이 강제된다.</td>
+</tr>
+<tr>
+<td align="left"><strong>무지·관측·통제의 한계</strong><br>(Ignorance, observability &amp; controllability)</td>
+<td align="left">측정의 정밀도 한계와 불확실성 원리에서 비롯되는 인식론적 한계(Epistemic Uncertainty). 카오스적 비선형 시스템에 대한 예측 및 제어에는 본질적 한계가 존재한다.</td>
+</tr>
+<tr>
+<td align="left"><strong>계산 복잡도 이론</strong><br>(Complexity-theory)</td>
+<td align="left">P vs NP, PSPACE 등 컴퓨터 과학의 복잡도 계층. 아무리 강력한 ASI라도 NP-완전 이상의 최악 조건 문제들을 다항 시간 내에 결정론적으로 풀어낼 수는 없다.</td>
+</tr>
+<tr>
+<td align="left"><strong>형식 논리학의 한계</strong><br>(Logic)</td>
+<td align="left">괴델의 불완전성 정리(Gödel&#39;s Incompleteness)와 튜링의 정지 문제(Halting Problem). 수학적으로 참이지만 증명할 수 없는 명제들이 존재하며, 임의 프로그램의 종료 여부를 판정하는 일반 알고리즘은 존재할 수 없다.</td>
+</tr>
+</tbody></table>
+</div><p><strong>표 2</strong> | ASI가 넘을 수 없는 6대 근본적 이론·물리 한계선 [p.11].</p>
+<div class="callout-box tip"><div class="callout-title">팁</div><div class="callout-body"><p><strong>표 2 캡션의 핵심 통찰 [p.11]</strong>: 위의 물리·수학적 한계들이 명백히 존재한다는 사실 자체가, 인류가 궁금해하는 구체적 과제들—예컨대 노화 &#39;치료&#39;, 나노봇으로 물질 재구성, 두뇌 업로드, 다이슨 구 건설, 기후·생물다양성의 산업화 이전 수준 복원 [p.5]—이 ASI에게 가능한지를 쉽게 판정해 주지 못한다는 점이다. 표 2는 ASI가 전지(全知)도 전능도 아니라는 점을 강조한다 [p.11].</p>
+</div></div>
+
+
+<hr>
+<h3 id="도식-1-디지털-지능의-6대-우위와-asi의-거시적-한계"><a href="#도식-1-디지털-지능의-6대-우위와-asi의-거시적-한계" class="heading-anchor" aria-hidden="true">#</a> [도식 1] 디지털 지능의 6대 우위와 ASI의 거시적 한계</h3><figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1224" width="100%" style="max-width: 800px; background: #0f172a; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<text x="400" y="48" fill="#f8fafc" font-size="20px" font-weight="bold" text-anchor="middle">디지털 초지능의 양대 축: 기하급수적 우위 [표 1] vs 물리·수학적 한계선 [표 2]</text>
+<rect x="20" y="66" width="760" height="82" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="106" fill="#60a5fa" font-size="19px" font-weight="bold">우위 — 1. 입출력 속도</text>
+<text x="40" y="132" fill="#e2e8f0" font-size="17px">책 여러 권을 수 초에, 고대역 상호작용</text>
+<rect x="20" y="162" width="760" height="82" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="202" fill="#60a5fa" font-size="19px" font-weight="bold">우위 — 2. 내부 처리 속도</text>
+<text x="40" y="228" fill="#e2e8f0" font-size="17px">직렬 깊이(Depth) 및 병렬 너비(Breadth) 동시 가속</text>
+<rect x="20" y="258" width="760" height="82" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="298" fill="#60a5fa" font-size="19px" font-weight="bold">우위 — 3. 작업 기억 용량</text>
+<text x="40" y="324" fill="#e2e8f0" font-size="17px">인터넷 상당 부분 암기, 상한은 아직 멀다</text>
+<rect x="20" y="354" width="760" height="82" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="394" fill="#60a5fa" font-size="19px" font-weight="bold">우위 — 4. 기판 독립성</text>
+<text x="40" y="420" fill="#e2e8f0" font-size="17px">실행 중 다른 컴퓨터로 이전 가능</text>
+<rect x="20" y="450" width="760" height="82" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="490" fill="#60a5fa" font-size="19px" font-weight="bold">우위 — 5. 무손실 완벽 복제</text>
+<text x="40" y="516" fill="#e2e8f0" font-size="17px">코드(DNA)와 메모리(경험)의 비트 단위 완벽 백업</text>
+<rect x="20" y="546" width="760" height="82" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="586" fill="#60a5fa" font-size="19px" font-weight="bold">우위 — 6. 고대역 경험 공유</text>
+<text x="40" y="612" fill="#e2e8f0" font-size="17px">동질 인스턴스 간 그래디언트 등 학습 신호 공유</text>
+<rect x="20" y="642" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="682" fill="#f87171" font-size="19px" font-weight="bold">한계 — 1. 기본 물리 법칙</text>
+<text x="40" y="708" fill="#e2e8f0" font-size="17px">광속(c), 란다우어, 브레머만, 베켄슈타인 한계</text>
+<rect x="20" y="738" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="778" fill="#f87171" font-size="19px" font-weight="bold">한계 — 2. 실시간성 제약</text>
+<text x="40" y="804" fill="#e2e8f0" font-size="17px">시뮬레이션 불가능한 물리계의 현실 시간 소모</text>
+<rect x="20" y="834" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="874" fill="#f87171" font-size="19px" font-weight="bold">한계 — 3. 물리적 조작 한계</text>
+<text x="40" y="900" fill="#e2e8f0" font-size="17px">물리적 비보편성, 물질 조작 속도 및 에너지 비용</text>
+<rect x="20" y="930" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="970" fill="#f87171" font-size="19px" font-weight="bold">한계 — 4. 무지·관측·통제</text>
+<text x="40" y="996" fill="#e2e8f0" font-size="17px">측정 정밀도의 한계, 카오스계 장기 예측 불가</text>
+<rect x="20" y="1026" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="1066" fill="#f87171" font-size="19px" font-weight="bold">한계 — 5. 계산 복잡도 이론</text>
+<text x="40" y="1092" fill="#e2e8f0" font-size="17px">P vs NP, NP-완전 문제의 최악 실행 시간 장벽</text>
+<rect x="20" y="1122" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="1162" fill="#f87171" font-size="19px" font-weight="bold">한계 — 6. 형식 논리학 한계</text>
+<text x="40" y="1188" fill="#e2e8f0" font-size="17px">괴델의 불완전성 정리, 튜링의 정지 문제</text>
+</svg></figure>
+<hr>
+<h2 id="제2장-이론적-상한선-universal-aiaixi가-던지는-시사점"><a href="#제2장-이론적-상한선-universal-aiaixi가-던지는-시사점" class="heading-anchor" aria-hidden="true">#</a> 제2장. 이론적 상한선: Universal AI(AIXI)가 던지는 시사점</h2><h3 id="21-위에서-묶기-aixi의-수학적-구조와-3대-과제-해결"><a href="#21-위에서-묶기-aixi의-수학적-구조와-3대-과제-해결" class="heading-anchor" aria-hidden="true">#</a> 2.1 위에서 묶기: AIXI의 수학적 구조와 3대 과제 해결</h3><p>미래의 지능을 예측하는 방법론은 크게 두 가지다 [p.10]. 하나는 현재의 기술 동향과 실증 데이터를 미래로 투사하는 &#39;아래로부터의 외삽(Extrapolation from below)&#39;이고, 다른 하나는 기계 지능이 도달할 수 있는 이론적 궁극점을 먼저 규명한 뒤 현실 시스템과의 간극을 재는 &#39;위로부터의 한계 설정(Bounding from above)&#39;이다. 저자들은 후자의 기준점으로 마커스 후터가 정립한 <strong>보편 인공지능(Universal AI / AIXI)</strong> 프레임워크를 소환한다 [p.10~p.11].</p>
+<p>AIXI는 물리 세계에서 유한한 자원으로 구현 가능한 모든 동역학이 튜링 기계로 시뮬레이션될 수 있다는 가정을 전제한다 [p.10]. 저자들은 이것이 널리 받아들여지는 추측이지만 이론이 없지는 않다고 각주에서 밝히며, 의식을 이해하려면 (파동함수 붕괴와 관련될 수 있는) 새로운, 계산 불가능할 수도 있는 물리가 필요하다는 로저 펜로즈의 제안을 예로 든다(확인 필요) [p.10, 각주 9]. [해설] 이 가정은 흔히 &#39;물리적 처치-튜링 논제&#39;라 불리지만, 논문은 이 명칭을 쓰지 않는다.</p>
+<p>수학적으로 AIXI는 환경과의 상호작용 속에서 다음의 3대 근본 과제를 완벽하게 풀어낸 정책(Policy)이다 [p.11~p.12]:</p>
+<ol>
+<li><strong>불확실성 하에서의 행동 (Acting under uncertainty)</strong>: 에이전트는 미지의 환경에 놓여 있다. AIXI는 계산 가능한 모든 동역학 및 보상 함수를 세계의 가설 공간으로 간주한다. 그리고 레이 솔로모노프의 보편 사전분포(Solomonoff&#39;s Universal Prior)에 입각하여 콜모고로프 복잡도가 낮은 환경일수록 사전 확률이 지수적으로 높다 [p.12]. 관측이 쌓이면 베이즈 방식으로 사후 확률을 갱신하며, 이 베이즈 혼합이 계획을 위한 &#39;세계 모델&#39;이 된다 [p.12]. [해설] 표준 교과서 표기로는 프로그램 길이가 ℓ인 가설의 사전 가중치가 대략 2^(−ℓ)이다(논문 본문에는 수식이 없다).</li>
+<li><strong>상호작용적 의사결정과 신용 할당 (Credit assignment problem)</strong>: 눈앞의 즉각적 보상을 희생하더라도 먼 미래의 누적 보상을 극대화하는 행동을 찾아야 한다. AIXI는 일반 강화학습(General RL) 수식을 통해 기대 장기 보상을 최적화하며, 유한 길이가 아닌 과제에서는 단기·장기 보상의 균형에 유일한 최적해가 없으므로 할인 방식을 정해야 한다 [p.12].</li>
+<li><strong>탐색과 활용의 상충 (Exploration-exploitation trade-off)</strong>: 새로운 정보를 얻기 위한 탐색(Exploration)과 이미 검증된 지식을 누리는 활용(Exploitation) 사이의 영원한 딜레마. AIXI에서는 이 문제가 별도의 인위적 휴리스틱 없이 <strong>암묵적으로 자동 해결</strong>된다 [p.12]. 불확실한 상태에서 세계 모델의 모호성을 낮추는 행동은 장기적으로 더 높은 기대 보상을 가져오므로, AIXI에게 &#39;유용한 지식을 탐색하는 행위&#39; 그 자체가 이미 최고 보상의 행동으로 환산되기 때문이다. 환경에 대한 파악이 완료되면 탐색은 자연스럽게 종료된다 [p.12].</li>
+</ol>
+<p>저자들은 AIXI의 &#39;최적성(Optimality)&#39;이 지니는 엄밀한 수학적 의미를 환기한다. 그것은 &quot;모든 개별 환경에서 매 순간 최선의 결과를 낸다&quot;는 뜻이 아니다 [p.12]. 솔로모노프 사전분포 아래에서 가능한 모든 계산 가능 환경을 가중 평균했을 때, <strong>그 어떤 에이전트도 AIXI보다 더 높은 기대 누적 보상을 거둘 수 없다</strong>는 통계적 최적성을 의미한다. 또한 솔로모노프 귀납법을 계승하므로, 누적 예측 오차와 예측 실패 횟수가 수학적 최소를 기록하는 가장 데이터 효율적인 학습자다 [p.12].</p>
+<hr>
+<h3 id="22-현-딥러닝-패러다임과의-비자명한-연결고리"><a href="#22-현-딥러닝-패러다임과의-비자명한-연결고리" class="heading-anchor" aria-hidden="true">#</a> 2.2 현 딥러닝 패러다임과의 비자명한 연결고리</h3><p>AIXI는 정지 문제에 걸려 계산 불가능하다. 임의의 튜링 기계가 멈출지 무한 루프를 돌지 알 수 없기 때문이다. 따라서 무차별 탐색(Brute-force)으로 AIXI를 근사하는 것은 연산량이 초지수적으로 폭증하여 실용성이 전혀 없다 [p.12~p.13]. 저자들은 이를 두고 열역학이 곧바로 현대 내연기관을 만드는 구체적 레시피로 이어지지 않는 것과 비슷하다고 비유한다 [p.13].</p>
+<p>그런데 오늘날의 언어모델 패러다임과 AIXI 사이에는 연결 고리가 있다. AIXI의 무거운 일은 원리적으로 예측기 쪽에 몰아넣을 수 있다는 결과(Catt et al., 2023; Kim and Lee, 2026)가 있고 [p.13], 최근 연구들(Grau-Moya et al., 2024; Genewein et al., 2026, 확인 필요)에 따르면, 인터넷 규모의 방대한 말뭉치에 대해 <strong>로그 손실(Log-loss, 즉 다음 토큰의 교차 엔트로피 손실)을 최소화하도록 신경망을 사전학습하는 과정은, &#39;유한한 자원 제약 하에서 보편 압축(Universal Compression)을 수행하는 상환 베이즈 추론(Amortized Bayesian Inference)&#39;의 훌륭한 실용적 근사</strong>로 해석될 수 있다 [p.13].</p>
+<p>AIXI의 &#39;레시피&#39;에 따르면, 점점 보편적이 되는 이 예측기 위에 명시적 계획·의사결정 스캐폴딩(탐색과 계획에 쓰는 테스트 시점 연산 포함)을 얹으면 범용 에이전트가 된다 [p.13](핵심 논거 4).</p>
+<p>저자들은 이를 바탕으로, Universal AI가 현 패러다임(지속 학습, 세계 모델 기반 에이전트 연구 포함)이 근본적 이론 장벽 없이 ASI 영역까지 갈 수 있는 <strong>비자명한 논거</strong>를 준다고 본다 [p.13]. 그러나 이 논거는 아직 완전하지도 결정적이지도 않으며, 현 패러다임의 근본적 결함이 곧 드러날 가능성도 배제할 수 없다고 단서를 단다 [p.13].</p>
+<hr>
+<h3 id="23-이론적-한계와-대안적-프레임워크들"><a href="#23-이론적-한계와-대안적-프레임워크들" class="heading-anchor" aria-hidden="true">#</a> 2.3 이론적 한계와 대안적 프레임워크들</h3><p>AIXI 이론 역시 현대 인공지능 학계의 비판적 검토를 비껴가지 못한다. 저자들은 AIXI의 근본적 약점 4가지를 투명하게 공개한다 [p.13~p.14]:</p>
+<ol>
+<li><strong>비계산성(Incomputability)</strong>: 공학적 구현이 불가능한 극한 이론이라는 점.</li>
+<li><strong>데카르트적 이원론의 한계</strong>: AIXI는 환경 외부에 순수 관찰자로 존재하는 주체로 모델링되어 있다. 즉, 자기 자신이 물리적 환경의 일부로 포함되어 실행된다는 &#39;내재성(Embeddedness)&#39;을 인식하지 못하며, 자신과 동등한 타 AIXI 에이전트가 환경에 존재할 가능성을 가설 공간에 포함하지 못한다 (이를 해결하기 위해 최근 묄레만스 등(Meulemans et al., 2025)이 다중 에이전트 내재형 AIXI 프레임워크를 제안했다) [p.13~p.14].</li>
+<li><strong>모든 세계의 가중 평균이라는 허구</strong>: 인간에게 유의미한 물리 세계는 단 하나뿐인데, 수학적으로 정의 가능한 모든 기괴한 가상 환경들의 평균 성능을 극대화하는 것이 현실의 안전하고 유능한 지능을 보장할 수 있는가에 대한 철학적 비판 [p.14].</li>
+<li><strong>보편 튜링 기계(UTM)의 선택 의존성</strong>: 어떤 기준 UTM을 채택하느냐에 따라 유한한 데이터 영역에서는 사전 확률과 예측 결과에 오프셋 상수가 발생한다는 점 [p.14].</li>
+</ol>
+<p>저자들은 지능의 이론적 기초를 다루는 다른 틀도 나열한다 [p.14] (각 틀의 설명은 논문에 없으므로 이름과 인용만 옮긴다):</p>
+<ul>
+<li><strong>반영적 오라클(Reflective Oracles, Fallenstein et al., 2015)</strong></li>
+<li><strong>논리적 귀납(Logical Induction, Garrabrant et al., 2016)</strong></li>
+<li><strong>괴델 기계(Gödel Machines, Schmidhuber, 2003)</strong></li>
+<li><strong>계산 역학(Computational Mechanics, Crutchfield, 2012)</strong></li>
+<li><strong>PAC 학습 이론(Valiant, 1984)</strong></li>
+<li><strong>알고리즘 게임이론(Nisan et al., 2007)</strong></li>
+<li><strong>열역학적 제한 합리성(Thermodynamic Bounded Rationality, Ortega &amp; Braun, 2013)</strong></li>
+<li><strong>란다우어 기반 지능 에너지 하한(Perrier, 2025; Kolchinsky &amp; Wolpert, 2020)</strong></li>
+</ul>
+<hr>
+<h2 id="제3장-agi에서-asi로-이르는-4대-기술-경로-표-3"><a href="#제3장-agi에서-asi로-이르는-4대-기술-경로-표-3" class="heading-anchor" aria-hidden="true">#</a> 제3장. AGI에서 ASI로 이르는 4대 기술 경로 [표 3]</h2><p>저자들은 AGI 이후의 지능 발전 경로를 상호 배타적이지 않으며 병렬적으로 전개될 수 있는 4가지 거대한 기술 궤적으로 분류한다 [p.14~p.15]. 논문 [p.15]의 <strong>표 3</strong>은 이 4대 경로와 각각에 내재된 핵심 불확실성을 요약한다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">경로 (Pathway)</th>
+<th align="left">메커니즘 요약</th>
+<th align="left">핵심 불확실성 (Main Uncertainty) [p.15, 表 3]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>① 연산·모델·데이터의 양적 확장</strong><br>(Scaling compute, models &amp; data)</td>
+<td align="left">유효 연산(Effective Compute), 파라미터 크기, 데이터 볼륨을 경험적 거듭제곱 법칙에 따라 무차별 확장.</td>
+<td align="left">규모 확장이 실제 능력 향상으로 어떻게 직결되는지 불분명 (진보가 매끄러운가 불연속적인가? 진정한 창발적 일반화인가? 거대 규모에서의 수확체감 도래 여부).</td>
+</tr>
+<tr>
+<td align="left"><strong>② 알고리즘 패러다임 전환</strong><br>(Algorithmic paradigm shifts)</td>
+<td align="left">현 트랜스포머 및 경사하강법을 넘어선 완전히 새로운 아키텍처 및 학습 메커니즘의 도입.</td>
+<td align="left">비약적 기술 도약의 출현 시점과 성격을 사전 예측하기 극도로 어려움; 새로운 패러다임이 마주할 고유의 미지 병목들.</td>
+</tr>
+<tr>
+<td align="left"><strong>③ 재귀적 자기개선</strong><br>(Recursive self-improvement, RSI)</td>
+<td align="left">AI가 AI의 연구개발(R&amp;D)을 주도하여 차세대 AI를 개선하는 닫힌 피드백 루프 형성.</td>
+<td align="left">역사적 선례의 완전한 부재로 미래 예측 모델 적합 불가; 지능 폭발(쌍곡선 성장)로 치달을지, 물리·연구 마찰에 걸려 조기 정체될지 미지수.</td>
+</tr>
+<tr>
+<td align="left"><strong>④ 그룹 에이전시 형성을 통한 창발</strong><br>(ASI via group agent formation)</td>
+<td align="left">수많은 AGI 에이전트들이 조직화된 집단이나 시장 경제 메커니즘을 통해 초인적 집단 지능 구성.</td>
+<td align="left">다중 에이전트의 복잡 적응계에서 초인적 지능이 어떠한 조건에서 창발하는지에 대한 이론적·경험적 이해 부족.</td>
+</tr>
+</tbody></table>
+</div><p><strong>표 3</strong> | AGI에서 ASI로 전이하는 4대 기술 경로 및 주된 불확실성 매트릭스 [p.15].</p>
+<p>[해설] 이 4대 경로는 대단히 중요한 방법론적 함의를 지닌다. 오직 <strong>경로 ①(양적 확장)</strong>만이 과거의 실증 데이터에 기반하여 정량적 추세선을 긋고 예측 모델을 피팅할 수 있는 유일한 경로다 [p.14]. 나머지 세 경로는 역사적 선례가 전무하거나, 복잡계의 예측 불가능성에 가로막혀 있다. 그러나 현실의 AI 개발은 이 4가지 경로가 씨실과 날실처럼 얽히며 동시에 작동할 가능성이 높다.</p>
+<hr>
+<h3 id="도식-2-agi에서-asi로-이르는-4대-기술-경로와-상호작용"><a href="#도식-2-agi에서-asi로-이르는-4대-기술-경로와-상호작용" class="heading-anchor" aria-hidden="true">#</a> [도식 2] AGI에서 ASI로 이르는 4대 기술 경로와 상호작용</h3><figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 864" width="100%" style="max-width: 800px; background: #0f172a; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<text x="400" y="48" fill="#f8fafc" font-size="20px" font-weight="bold" text-anchor="middle">AGI에서 ASI로 가는 4대 기술 경로</text>
+<rect x="20" y="66" width="760" height="160" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="40" y="106" fill="#a78bfa" font-size="19px" font-weight="bold">경로 1. 연산·모델·데이터의 양적 확장</text>
+<text x="40" y="132" fill="#e2e8f0" font-size="17px">• 거듭제곱 스케일링 법칙 외삽</text>
+<text x="40" y="158" fill="#e2e8f0" font-size="17px">• 유효 연산(Effective Compute) 연 ~10× 증대</text>
+<text x="40" y="184" fill="#e2e8f0" font-size="17px">• Bitter Lesson: 연산과 탐색의 궁극적 승리</text>
+<text x="40" y="210" fill="#e2e8f0" font-size="17px">[불확실성] 수확체감 및 질적 도약의 한계</text>
+<rect x="20" y="240" width="760" height="160" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="40" y="280" fill="#a78bfa" font-size="19px" font-weight="bold">경로 2. 알고리즘 패러다임 전환</text>
+<text x="40" y="306" fill="#e2e8f0" font-size="17px">• 진화: 검색 메모리·긴 맥락, 내부 세계 모델</text>
+<text x="40" y="332" fill="#e2e8f0" font-size="17px">• 전환: 뉴로모픽·아날로그, RL 기반 사전학습</text>
+<text x="40" y="358" fill="#e2e8f0" font-size="17px">• 파괴적 망각 없는 지속 학습(Continual Learning)</text>
+<text x="40" y="384" fill="#e2e8f0" font-size="17px">[불확실성] 패러다임 도약의 시점 예측 불가</text>
+<rect x="20" y="414" width="760" height="160" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="40" y="454" fill="#a78bfa" font-size="19px" font-weight="bold">경로 3. 재귀적 자기개선 (RSI)</text>
+<text x="40" y="480" fill="#e2e8f0" font-size="17px">• 유전적 RSI(코드/칩), 문화적 RSI(데이터/증류)</text>
+<text x="40" y="506" fill="#e2e8f0" font-size="17px">• AlphaZero식 탐색 결과의 사전망 증류</text>
+<text x="40" y="532" fill="#e2e8f0" font-size="17px">• AI 과학자(AI Scientist)에 의한 연구 자동화</text>
+<text x="40" y="558" fill="#e2e8f0" font-size="17px">[불확실성] 지능 폭발 vs 물리 실험 마찰</text>
+<rect x="20" y="588" width="760" height="160" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="40" y="628" fill="#a78bfa" font-size="19px" font-weight="bold">경로 4. 그룹 에이전시와 집단 지능</text>
+<text x="40" y="654" fill="#e2e8f0" font-size="17px">• 완전 자동화 기업(Group Agent, List &amp; Pettit)</text>
+<text x="40" y="680" fill="#e2e8f0" font-size="17px">• 가상 에이전트 경제(가격 신호) 및 초고대역 중앙 조율</text>
+<text x="40" y="706" fill="#e2e8f0" font-size="17px">• 인지적 분업을 통한 단일 아키텍처 병목 우회</text>
+<text x="40" y="732" fill="#e2e8f0" font-size="17px">[불확실성] 동질 LLM 간 시너지 창발 여부</text>
+<rect x="20" y="762" width="760" height="82" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="40" y="802" fill="#fbbf24" font-size="19px" font-weight="bold">종착점: ASI</text>
+<text x="40" y="828" fill="#e2e8f0" font-size="17px">인공초지능 달성</text>
+</svg></figure>
+<hr>
+<h3 id="31-경로-연산모델데이터의-양적-확장scaling과-지속성"><a href="#31-경로-연산모델데이터의-양적-확장scaling과-지속성" class="heading-anchor" aria-hidden="true">#</a> 3.1 경로 ①: 연산·모델·데이터의 양적 확장(Scaling)과 지속성</h3><p>가장 직관적인 경로는 현재의 스케일링을 한계까지 밀어붙이는 것이다. 리처드 서튼(Richard Sutton, 2019)의 저명한 <strong>&#39;쓰라린 교훈(Bitter Lesson)&#39;</strong>은 AI의 역사에서 확장이 중요하다는 논거로 인용된다. 탐색이 지능의 핵심이라면(학습은 가설 공간 탐색, 계획은 가상 미래의 효율적 탐색), 연산이 많을수록 탐색이 많아지고 지능이 높아진다는 것이다 [p.15].</p>
+<p>그러나 순진한 무차별 탐색(Brute-force Search)은 체스를 포함해 장난감 수준을 넘는 거의 모든 영역에서 실패한다 [p.15]. 능력 향상은 적절한 사전분포(Priors)와 귀납 편향(Inductive Biases)을 통해 <strong>&#39;탐색의 효율성&#39;</strong>을 높이는 데서 나온다 [p.15](통찰 3). 친칠라 법칙(Chinchilla, Hoffmann et al., 2022)이 증명했듯, 모델 파라미터만 키우는 것은 비효율적이며 방대한 고품질 데이터와의 <strong>연산 최적(Compute-optimal) 균형</strong>이 유지되어야 한다 [p.16].</p>
+<p>하지만 이 확장의 길목에는 무시무시한 장벽이 도사리고 있다. 바로 <strong>인간이 생산한 고품질 텍스트 데이터의 고갈</strong>이다. 비얄로보스 등(Villalobos et al., 2024, 확인 필요)의 추정에 따르면 웹상의 고품질 인간 텍스트는 <strong>이번 10년 후반(2020년대 후반)</strong>에 고갈될 것으로 예측된다 [p.16]. 필터링과 중복 제거를 극한까지 거친 정제 말뭉치조차 이미 3조 토큰(Gao et al., 2021; Soldaini et al., 2024, 확인 필요) 규모에 도달한 상황이다 [p.16]. 희소 MoE(Mixture-of-Experts) 같은 아키텍처 혁신은 연산 효율을 높여 확장의 활주로를 늘린다 [p.16].</p>
+<p>[해설] 여기서 저자들은 핵심 질문을 전복시킨다. 중요한 것은 &quot;단순한 양적 확장이 질적 도약을 낳을 수 있는가(Is scaling enough?)&quot;가 아니다 [p.16]. 만약 인간 수준의 AGI가 확보된 상태에서, 모델 자체는 더 똑똑해지지 않더라도 <strong>빠르게 실행되는 AGI 인스턴스 수백만~수십억 개를 돌릴 수 있다면, 그것을 ASI가 아니라고 하기는 어렵다</strong>는 것이다(통찰 2) [p.4, p.16]. </p>
+<p>따라서 경로 ①의 진짜 핵심 질문은 확장의 충분성이 아니라, <strong>&quot;그 무지막지한 확장을 경제적·물리적으로 충분히 오랫동안 지속할 수 있는가(Can scaling be sustained long enough?)&quot;</strong>이다 [p.16].</p>
+<hr>
+<h3 id="32-경로-알고리즘의-진화evolution와-근본적-패러다임-전환shift"><a href="#32-경로-알고리즘의-진화evolution와-근본적-패러다임-전환shift" class="heading-anchor" aria-hidden="true">#</a> 3.2 경로 ②: 알고리즘의 진화(Evolution)와 근본적 패러다임 전환(Shift)</h3><p>단순한 사전학습 트랜스포머에 머무는 것으로는 인간 수준 AGI 도달조차 어렵다는 데 현재 학계의 폭넓은 합의가 형성되어 있다 [p.16~p.17]. 저자들은 이 한계를 돌파하는 움직임을 &#39;진화&#39;와 &#39;전환&#39;의 두 단계로 구분한다 [p.17]:</p>
+<ul>
+<li><strong>패러다임의 진화 (Evolutions)</strong>: 현재의 프레임워크를 보존하면서 결측된 핵심 퍼즐들을 덧붙이는 개량이다.<ul>
+<li>대규모 검색(retrieval) 결합으로 사실상 무한한 작업 기억을 쓰고, Mamba·S4 같은 상태공간 모델로 긴 맥락을 다루는 방향 [p.17].</li>
+<li>파괴적 망각(Catastrophic Forgetting) 없이 상호작용을 통해 지식을 지속 축적하는 평생/지속 학습(Continual Learning) [p.17].</li>
+<li>외부 시뮬레이터 및 코드 인터프리터를 호출하는 도구 증강 계획(Tool-augmented Planning) [p.17].</li>
+<li>환경의 잠재 역동성을 예측하고 반사실적 미래를 시뮬레이션하는 내부 세계 모델의 결합 [p.17].</li>
+</ul>
+</li>
+<li><strong>패러다임의 단절적 전환 (Shifts)</strong>: 현 프레임워크를 완전히 폐기하고 새로운 계산 원리를 도입하는 도약이다.<ul>
+<li>생물학적 뉴런의 펄스 스파이크를 모사하는 스파이킹 신경망(SNN) 및 극저전력 뉴로모픽·아날로그 하드웨어 [p.17].</li>
+<li>지도학습 손실이 아닌 상호작용 강화학습(RL) 자체를 기저 원리로 삼는 파운데이션 모델 [p.17].</li>
+<li>신경 튜링 기계(Neural Turing Machine, Graves et al., 2014)처럼 폰 노이만 구조와 신경망을 근본 결합하여 복잡도 이론의 장벽을 우회하려는 시도들 [p.17].</li>
+</ul>
+</li>
+</ul>
+<p>[해설] 패러다임의 진정한 &#39;전환&#39;은 본질적으로 사전에 예측하는 것이 불가능하다. 만약 예측할 수 있다면 그것은 이미 진화이지 전환이 아니기 때문이다. 따라서 미래 예측의 관점에서는 특정 아키텍처에 종속되지 않는 <strong>&#39;패러다임 비의존적 이론(Paradigm-agnostic Foundations)&#39;</strong>인 Universal AI의 수학적 공리들이 더욱 절실한 길잡이가 된다 [p.17].</p>
+<hr>
+<h3 id="33-경로-재귀적-자기개선rsi-코드-하드웨어-데이터-분업의-루프"><a href="#33-경로-재귀적-자기개선rsi-코드-하드웨어-데이터-분업의-루프" class="heading-anchor" aria-hidden="true">#</a> 3.3 경로 ③: 재귀적 자기개선(RSI) — 코드, 하드웨어, 데이터, 분업의 루프</h3><p>재귀적 자기개선(Recursive Self-Improvement, RSI)은 AI가 AI 연구개발을 스스로 수행하여 더 똑똑한 후속 AI를 만들어내고, 그것이 다시 연구를 더 빠르게 가속하는 닫힌 양의 피드백 루프다 [p.18]. 저자들은 인류의 지적 능력을 진화시킨 역사적 동역학을 거울삼아, RSI를 전통적 형태인 코드 개선 외에 하드웨어·데이터·분업의 세 갈래가 더 있다고 보고, 이를 인간 진화에 대응시킨다 [p.18~p.19]. 본문은 &#39;네 유형&#39;을 대응시킨다고 쓰지만 번호가 붙은 항목은 셋이다(하드웨어는 유전적 항목에 포함) [p.18~p.19]:</p>
+<ol>
+<li><strong>유전적 RSI (Genotypic RSI)</strong>: 에이전트의 설계도 자체를 개조하는 과정. 인간에게는 유전자 진화에 해당하며, AI에게는 <strong>알고리즘 코드(아키텍처, 옵티마이저, 탐색 하네스)와 칩 하드웨어 설계도</strong>의 자동 재작성이다 [p.18]. </li>
+<li><strong>문화적 RSI (Memetic RSI)</strong>: 지난 5만 년 동안(확인 필요) 인간의 유전적 뇌 용량은 거의 변하지 않았으나, 지식의 축적, 서적, 교육, 도구라는 &#39;문화적 진화&#39;를 통해 폭발적 문명을 일구었다 [p.18]. AI에게 이것은 <strong>데이터 기반의 자기개선</strong>이다. 대표적인 사례가 바로 알파제로(AlphaZero) 메커니즘이다(통찰 5) [p.18]. 알파제로는 신경망의 사전확률(Prior)을 사용해 몬테카를로 트리 탐색(MCTS)을 수행하고, 탐색을 통해 얻은 향상된 결과를 다시 신경망에 증류(Distillation)하여 사전확률 자체를 개선한다. 즉, <strong>&#39;테스트 시점 연산(Test-time Compute)을 고품질 학습 데이터로 치환&#39;</strong>하여 다음 세대 모델의 연료로 삼는 루프다 [p.18].</li>
+<li><strong>협력적 RSI (Sociogenic RSI)</strong>: 인간은 분업과 전문화를 통해 개인의 한계를 극복하고 사회 전체의 생산성을 비약시켰다 [p.19]. AI 집단 역시 전문 에이전트들로 분화되어 자원 효율을 극대화하고, 절감된 연산으로 더 많은 전문 에이전트를 양성하는 자기개선 루프를 형성할 수 있다.</li>
+</ol>
+<p>이미 약한 형태의 재귀적 루프들은 연구 현장에서 광범위하게 작동 중이다 [p.19~p.20]. 신경망 아키텍처 탐색(NAS), 하이퍼파라미터 자동 튜닝, AI 보조 하드웨어(칩) 설계, 자동 커리큘럼, 학습된 세계 모델을 이용한 시뮬레이션, 메타 최적화, 펀서치(FunSearch, Romera-Paredes et al., 2024, 확인 필요)와 알파이볼브(AlphaEvolve, Novikov et al., 2025, 확인 필요)를 통한 수학적 신 알고리즘 발견, 그리고 논문 작성과 실험 설계를 자율 수행하는 &#39;AI Scientist&#39; 시스템(Lu et al., 2024; Mitchener et al., 2025; Novikov et al., 2025, 확인 필요)이 그것이다 [p.19]. 이론적 장벽으로는 괴델 기계(완전한 자기지식이 필요하고 불완전성 정리에 묶임), 반복 증폭(Christiano et al., 2018), 검증된 프로그램 합성을 든다 [p.19]. (이와 관련하여 논문 32쪽에서는 &quot;Scientist AI framework (Lu et al., 2024)&quot;라는 다소 변형된 명칭으로 인용되어 혼동을 유발하므로 주의가 필요하다(확인 필요) [p.32].)</p>
+<div class="callout-box warning"><div class="callout-title">통찰 6: 안락의자 과학(Armchair Science)의 환상 [p.20, p.56]</div><div class="callout-body"><p>AI가 아무리 초인적인 속도로 코드를 짜더라도, 새로운 과학적 가설을 검증하려면 결국 물리적 세계에서 실험을 수행하고 데이터를 수집해야 한다. 더 나은 AI 칩 제조처럼 물리적 조작이 필요한 일은 임의로 빨라질 수 없어 자기개선 동역학을 누그러뜨린다 [p.20]. 그래서 저자들은 초기 데이터로 자기개선 곡선을 예측하는 <strong>&#39;재귀적 개선 스케일링 법칙&#39;</strong>의 정립을 제안한다 [p.20].</p>
+</div></div>
+
+
+<hr>
+<h3 id="34-경로-다중-에이전트-조율과-그룹-에이전시group-agency"><a href="#34-경로-다중-에이전트-조율과-그룹-에이전시group-agency" class="heading-anchor" aria-hidden="true">#</a> 3.4 경로 ④: 다중 에이전트 조율과 그룹 에이전시(Group Agency)</h3><p>단일 AI 모델의 두뇌를 무한히 키우는 대신, 수많은 AGI 에이전트들을 네트워크로 엮어 집단 지성을 구축하는 경로다. 크리스천 리스트와 필립 페팃(List &amp; Pettit, 2011)의 <strong>&#39;그룹 에이전시(Group Agency)&#39;</strong> 이론에 따르면, 조직화된 집단은 개별 구성원의 신념과 욕망으로 환원되지 않는 독립된 표상적·동기적 상태를 지닌 상위 행위자(Group Agent)로 기능한다 [p.20]. </p>
+<p>완전 자동화된 기업(Fully Automated Corporation)이나 자율 연구소가 바로 그 예다 [p.20]. 인지적 분업(Cognitive Division of Labour)을 통해 개별 모델의 문맥 창(Context Window) 한계나 전문화 편향을 우회하고, 초인적 모듈형 지능을 형성한다 [p.20].</p>
+<p>이러한 집단 조율은 두 가지 상반된 메커니즘으로 구현될 수 있다 [p.20~p.21]:</p>
+<ol>
+<li><strong>가상 에이전트 경제 (Virtual Agent Economies)</strong>: 금융 시장처럼 가격 기구(Price Signals)와 시장 인센티브를 통해 수억 개의 특화 에이전트들이 자율적으로 협력·경쟁하는 탈중앙형 생태계 [p.20].</li>
+<li><strong>초고대역 중앙집중 조율</strong>: 인간 조직은 소통 대역폭의 한계로 인해 관료제적 위계 조직(Hierarchies)을 유지해야만 했다. 그러나 AGI 집단은 초고속 통신이 가능하므로, AGI CEO나 정치인이 어떤 의미에서는 문자 그대로 모든 직원이나 유권자와 &#39;대화&#39;할 수 있어, 깊은 위계의 필요를 줄이고 관료적 마찰을 덜 수 있다 [p.21].</li>
+</ol>
+<p>[해설] 이 경로에서 가장 시급한 미해결 과제는 <strong>&quot;동일한 기저 LLM을 복제한 동질적 집단이 프롬프트만 다르게 부여받았을 때, 과연 인간 전문가 집단과 같은 진정한 다양성 시너지를 낼 수 있는가&quot;</strong>이다 [p.21]. 나아가 집단 역량이 인구 규모와 상호작용 밀도에 따라 선형 또는 초선형으로 커질 수 있다는 <strong>&#39;다중 에이전트 스케일링 법칙(Multi-Agent Scaling Laws)&#39;</strong>을 연구 과제로 제시한다 [p.21]. 사람과 AI가 섞인 집단을 어떻게 조향할지도 열린 질문이다 [p.21].</p>
+<hr>
+<h2 id="제4장-진보를-가로막는-6대-마찰과-상쇄-요인들의-각축-표-4"><a href="#제4장-진보를-가로막는-6대-마찰과-상쇄-요인들의-각축-표-4" class="heading-anchor" aria-hidden="true">#</a> 제4장. 진보를 가로막는 6대 마찰과 상쇄 요인들의 각축 [표 4]</h2><p>기술의 진보는 진공 속에서 일어나지 않는다. 가속을 추동하는 힘이 있다면, 반드시 이를 늦추려는 마찰과 병목이 존재한다(핵심 논거 5). 논문 [p.22]의 <strong>표 4</strong>는 AGI에서 ASI로 향하는 여정에 가로놓인 6대 마찰과, 이를 무력화하려는 상쇄 요인(Counteracting Factors)들을 종합 대조한다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">마찰 및 병목 (Bottleneck)</th>
+<th align="left">구체적 장애 내용 (Description) [p.22, 表 4]</th>
+<th align="left">이를 무력화하는 상쇄 요인 (Countered by) [p.22, 表 4]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>① 데이터 벽</strong><br>(Data wall)</td>
+<td align="left">사전학습, 사후조율, 추론 적응에 필요한 고품질 데이터가 (충분히 빠르게 늘지 않아) 부족해짐 [p.22].</td>
+<td align="left">고충실도 시뮬레이션, 자기 생성 데이터(테스트 시점 탐색 증류, 자기 대국, RL 상호작용), 극도의 데이터 효율을 갖는 신 패러다임.</td>
+</tr>
+<tr>
+<td align="left"><strong>② 경제·자연 자원 수요 폭증</strong><br>(Resource demand grows too fast)</td>
+<td align="left">현 패러다임의 확장에 필요한 경제(투자)·기술(칩, 공급망)·자연(에너지, 데이터센터 입지, 희토류 등) 자원의 증가를 지속할 수 없음 [p.22].</td>
+<td align="left">AI 배치를 통한 경제적 수익 증가, AI 연구를 통한 효율(연산·에너지·데이터) 향상, 대규모 인프라 구축.</td>
+</tr>
+<tr>
+<td align="left"><strong>③ 신경망 패러다임의 소진</strong><br>(Neural paradigm is insufficient)</td>
+<td align="left">사전학습 신경망+사후학습, 테스트 시점 확장, 스캐폴딩·도구 사용, 또는 확률적 경사하강법으로는 부족함 [p.22].</td>
+<td align="left">지속적인 알고리즘 진화 및 패러다임 전환. AGI 이전 단계의 AI조차도 차세대 알고리즘 연구를 비약적으로 가속할 수 있음.</td>
+</tr>
+<tr>
+<td align="left"><strong>④ 연구 난도의 기하급수적 상승</strong><br>(Research gets harder)</td>
+<td align="left">분야가 성숙하며 &#39;낮게 달린 열매&#39;가 소진되어 연구 노력(경제 투입, 실험용 연산·에너지, 가설 공간 탐색 노력)이 크게 늘 수 있음 [p.22].</td>
+<td align="left">더 유능한 AI가 연구 효율(실험 수 감소, 더 나은 가설, 효율적 탐색)과 디지털 연구자의 자원 효율을 높임.</td>
+</tr>
+<tr>
+<td align="left"><strong>⑤ 추상화 장벽과 체현 병목</strong><br>(Abstraction barrier)</td>
+<td align="left">인간 산물로 주로 학습한 AI가 기존 개념 틀에 묶일 수 있음 [p.22].</td>
+<td align="left">개별 AI가 인간 수준 근처에서 정체해도 확장(더 많이, 더 빠르게)과 그룹 형성으로 집단 능력을 끌어올림. 직접 해결하려면 상호작용 학습·RL로의 전환이 필요할 수 있음.</td>
+</tr>
+<tr>
+<td align="left"><strong>⑥ 의도적 감속과 거버넌스</strong><br>(Deliberate slowdown &amp; governance)</td>
+<td align="left">악용·사고·군사·정치적 남용·사회적 반발에 대응한 규제적 역량 상한과 그 집행 [p.22].</td>
+<td align="left">경제·정치적 압력과 국제 경쟁 동학이 감속 압력을 무력화할 수 있음.</td>
+</tr>
+</tbody></table>
+</div><p><strong>표 4</strong> | ASI 전이 과정의 잠재적 병목과 상쇄 요인. 각 마찰의 실제 영향은 상쇄 요인의 효과와 규모에 따른 변화에 달려 있으며, 이를 판정하는 것은 열린 연구 문제다 [p.22]. (부록 B 용어집의 쪽수 기재: Data Wall 21쪽, Group Agency 20쪽 등 확인 필요 [p.57])</p>
+<hr>
+<h3 id="도식-3-6대-마찰과-상쇄-메커니즘의-동역학적-경주"><a href="#도식-3-6대-마찰과-상쇄-메커니즘의-동역학적-경주" class="heading-anchor" aria-hidden="true">#</a> [도식 3] 6대 마찰과 상쇄 메커니즘의 동역학적 경주</h3><figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1224" width="100%" style="max-width: 800px; background: #0f172a; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<text x="400" y="48" fill="#f8fafc" font-size="20px" font-weight="bold" text-anchor="middle">가속 요인과 감속 요인의 거대한 경주: 6대 마찰 vs 상쇄 메커니즘 [표 4]</text>
+<rect x="20" y="66" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="106" fill="#f87171" font-size="19px" font-weight="bold">① 데이터 벽 (Data Wall)</text>
+<text x="40" y="132" fill="#e2e8f0" font-size="17px">인간 텍스트 고갈, 순진한 자기학습 시 모델 붕괴</text>
+<rect x="20" y="162" width="760" height="82" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="40" y="202" fill="#34d399" font-size="19px" font-weight="bold">↳ 상쇄: 자기 생성 데이터 및 상호작용 증류</text>
+<text x="40" y="228" fill="#e2e8f0" font-size="17px">AlphaZero식 MCTS 증류, 고충실도 시뮬레이션, RL</text>
+<rect x="20" y="258" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="298" fill="#f87171" font-size="19px" font-weight="bold">② 자원 수요 급증 (Resource Demand)</text>
+<text x="40" y="324" fill="#e2e8f0" font-size="17px">투자·칩·에너지·입지·희토류</text>
+<rect x="20" y="354" width="760" height="82" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="40" y="394" fill="#34d399" font-size="19px" font-weight="bold">↳ 상쇄: 경제적 자기부양 및 효율 개선</text>
+<text x="40" y="420" fill="#e2e8f0" font-size="17px">AI 배치 수익, AI 연구로 효율 향상, 인프라 구축</text>
+<rect x="20" y="450" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="490" fill="#f87171" font-size="19px" font-weight="bold">③ 신경망 패러다임 소진 (Neural Limits)</text>
+<text x="40" y="516" fill="#e2e8f0" font-size="17px">환각, 프롬프트 인젝션, 추론·계획의 구조적 한계</text>
+<rect x="20" y="546" width="760" height="82" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="40" y="586" fill="#34d399" font-size="19px" font-weight="bold">↳ 상쇄: 패러다임 진화 및 단절적 도약</text>
+<text x="40" y="612" fill="#e2e8f0" font-size="17px">지속 연구로 구성요소 추가·전환, AGI 미만 AI도 기여</text>
+<rect x="20" y="642" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="682" fill="#f87171" font-size="19px" font-weight="bold">④ 연구 난도의 폭증 (Ideas get harder)</text>
+<text x="40" y="708" fill="#e2e8f0" font-size="17px">Bloom et al.: 분야가 성숙할수록 연구 투입 증가</text>
+<rect x="20" y="738" width="760" height="82" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="40" y="778" fill="#34d399" font-size="19px" font-weight="bold">↳ 상쇄: 인공 연구자의 무한 복제</text>
+<text x="40" y="804" fill="#e2e8f0" font-size="17px">연구 효율·자원 효율 향상, 인공 연구자 증설</text>
+<rect x="20" y="834" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="874" fill="#f87171" font-size="19px" font-weight="bold">⑤ 추상화 장벽과 체현 병목 (Abstraction)</text>
+<text x="40" y="900" fill="#e2e8f0" font-size="17px">인간 개념에 갇힘, 물리 실험의 실시간 지연</text>
+<rect x="20" y="930" width="760" height="82" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="40" y="970" fill="#34d399" font-size="19px" font-weight="bold">↳ 상쇄: 다중 에이전트 분업 및 물리 센서 결합</text>
+<text x="40" y="996" fill="#e2e8f0" font-size="17px">확장·그룹 형성, 상호작용 학습·RL로 전환</text>
+<rect x="20" y="1026" width="760" height="82" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+<text x="40" y="1066" fill="#f87171" font-size="19px" font-weight="bold">⑥ 의도적 감속과 규제 (Deliberate Slowdown)</text>
+<text x="40" y="1092" fill="#e2e8f0" font-size="17px">파국적 사고, 사회계약 파괴, 규제 임계선(EU AI Act)</text>
+<rect x="20" y="1122" width="760" height="82" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="40" y="1162" fill="#34d399" font-size="19px" font-weight="bold">↳ 상쇄: 지정학적 적응주의와 무정부 상태</text>
+<text x="40" y="1188" fill="#e2e8f0" font-size="17px">경제·정치 압력과 국제 경쟁이 감속을 무력화</text>
+</svg></figure>
+<hr>
+<h3 id="41-데이터-벽data-wall과-자기-생성-데이터의-돌파구"><a href="#41-데이터-벽data-wall과-자기-생성-데이터의-돌파구" class="heading-anchor" aria-hidden="true">#</a> 4.1 데이터 벽(Data Wall)과 자기 생성 데이터의 돌파구</h3><p>모델의 파라미터 증가율은 인류의 신규 텍스트 생산 속도를 아득히 추월했다 [p.21]. 저자들은 순진한 방식(Naive iteration)으로 AI가 만든 합성 데이터를 후속 모델에 반복 재학습시킬 경우 발생하는 <strong>퇴화(Shumailov et al., 2024)</strong>를 경고한다 [p.22~p.23].</p>
+<p>그러나 이는 어디까지나 원시 생성물을 필터링 없이 재주입했을 때의 이야기다. 저자들은 세 가지 강력한 돌파구를 제시한다 [p.23]:</p>
+<ol>
+<li><strong>테스트 시점 개선물의 증류</strong>: 탐색 등 테스트 시점 연산으로 생성물을 의미 있게 개선한 &#39;고품질&#39; 데이터를 기반 모델로 반복 증류(알파제로와 비슷) [p.23].</li>
+<li><strong>상호작용 기반 시뮬레이터</strong>: 대규모 강화학습·다중 에이전트 상호작용과, 생성적 에이전트 기반 모델링 플랫폼(Park et al., 2023; Vezhnevets et al., 2023) [p.23].</li>
+<li><strong>적응형 에이전트(Adaptive Agent, Bauer et al., 2023, 확인 필요)</strong>: 절차적으로 자동 생성되는 무한한 다중 에이전트 과제 환경에서 환경과의 상호작용 로그를 수집하고, 정밀도 기준(Fidelity criterion)에 따라 큐레이션하여 사전학습에 반영하는 기법 [p.23].</li>
+</ol>
+<p>이러한 상쇄 기제가 원활히 작동한다면, 데이터 벽은 기술적 파멸선이 아니라 연산 투입을 통해 우회 가능한 <strong>단순한 &#39;마찰(Friction)&#39;</strong>에 불과할 수 있다 [p.23].</p>
+<hr>
+<h3 id="42-경제적자연적-자원-수요-급증과-물리적-인프라"><a href="#42-경제적자연적-자원-수요-급증과-물리적-인프라" class="heading-anchor" aria-hidden="true">#</a> 4.2 경제적·자연적 자원 수요 급증과 물리적 인프라</h3><p>만약 지능 발전이 순수한 양적 확장에만 의존한다면, 자본과 에너지 요구량은 천문학적으로 치솟는다. 저자들은 기가와트급 AI 인프라와 에너지 투자를 추세의 신빙성 근거로 언급한다 [p.5]. 반대로 확장에만 기대면 경제 투입이 주요 병목이 되고, 알고리즘 혁신·자기개선 쪽이면 미미한 마찰일 수 있다 [p.24]. 또한 에너지, 토지·물 사용, 희토류 조달 같은 환경 발자국이 커지는 우려이며 [p.24], 지상 제약을 덜려고 제안되는 <strong>&#39;궤도 데이터센터(Orbital Datacenters)&#39;</strong> 구상에 대해 저자들은 심각한 우려를 표명한다 [p.24]:</p>
+<ul>
+<li>로켓 발사체 배출 가스로 인한 오존층 파괴.</li>
+<li>퇴역 하드웨어의 대기권 재진입 소각 과정에서 발생하는 초미세 에어로졸 및 고층 대기 오염.</li>
+<li>위성 밀집으로 인한 케슬러 증후군(궤도 충돌 연쇄 파국) 위험 [p.24].</li>
+</ul>
+<p>동시에 칩 내부에서는 메모리 대역폭 한계와 수천 개 가속기 간의 인터커넥트(Interconnect) 통신 병목이 발생하여 유효 연산 활용률을 급격히 떨어뜨린다 [p.24]. [해설] 따라서 이 제약들의 무게는 어느 경로가 주도하느냐에 달려 있다.</p>
+<hr>
+<h3 id="43-신경망-패러다임-소진-가설과-취약점들"><a href="#43-신경망-패러다임-소진-가설과-취약점들" class="heading-anchor" aria-hidden="true">#</a> 4.3 신경망 패러다임 소진 가설과 취약점들</h3><p>현재의 트랜스포머 아키텍처가 지닌 고유한 결함들이 과연 ASI로 가는 길을 원천 차단할 것인가? 저자들은 근본 차단의 후보가 될 수 있는 5대 취약점을 냉정하게 짚는다 [p.24~p.25]:</p>
+<ol>
+<li><strong>환각 (Hallucinations)</strong>: 훈련 데이터에 내재적 불확실성(Aleatoric uncertainty)에 대한 참값 라벨이 부재하여 발생하는 구조적 오류.</li>
+<li><strong>프롬프트 인젝션 및 시스템 프롬프트 오버라이드 취약성</strong>: 비정상(Non-stationary) 입력 분포를 처리하도록 최적화된 시퀀스 예측기가 갖는 본질적 수학적 속성 (비정상 입력으로 학습한 최적 예측기의 필연적 성질일 수 있음, Genewein et al., 2023) [p.24].</li>
+<li><strong>위험 및 모호성 민감 의사결정 결여</strong>: 모델이 자신의 인식론적 불확실성(Epistemic uncertainty)을 신뢰도 있게 표현하지 못함.</li>
+<li><strong>3인칭 모방 데이터 학습의 자기망상(Self-delusions)</strong>: 3인칭 관찰 데이터는 행위자의 인과적 의사결정을 온전히 복원하기에 인과론적으로 불충분함 (Ortega et al., 2021) [p.9, p.24].</li>
+<li><strong>추상화 장벽 (아래 상술)</strong>.</li>
+</ol>
+<p>그러나 저자들은 이 결함들이 모델 세대가 거듭되며 어느 정도 개선되어 왔음을 상기시킨다. 따라서 구성 요소의 점진적 추가를 통해 매끄럽게 우회될 가능성이 여전히 높다 [p.24~p.25].</p>
+<hr>
+<h3 id="44-quot아이디어는-찾기-어려워진다quot-vs-quot인공-연구자의-복제quot"><a href="#44-quot아이디어는-찾기-어려워진다quot-vs-quot인공-연구자의-복제quot" class="heading-anchor" aria-hidden="true">#</a> 4.4 &quot;아이디어는 찾기 어려워진다&quot; vs &quot;인공 연구자의 복제&quot;</h3><p>블룸 등(Bloom et al., 2020)에 따르면 분야가 성숙할수록 연구자 1인당 생산성이 대체로 떨어지고, 아이디어는 &#39;찾기 어려워진다&#39; [p.25]. 예컨대 무어의 법칙을 유지하는 데 필요한 연구자 수는 1970년대 대비 <strong>약 18배</strong>(확인 필요)에 달한다 [p.25]. </p>
+<p>인공지능 연구 역시 마찬가지로 &#39;낮게 매달린 과일&#39;이 소진되면서 차세대 돌파구를 찾는 비용이 기하급수적으로 폭증할 수 있다. 그러나 저자들은 인공 연구자의 경제학이 인간 연구자의 경제학과 근본적으로 다름을 간파한다(핵심 논거 3) [p.25]:</p>
+<ul>
+<li>인간 연구자를 추가로 길러 내는 데는 수년과 큰 비용이 든다 [p.25].</li>
+<li>인공 연구자 인스턴스를 약 20배로 늘리는 것은 다른 작업보다 우선하면 <strong>수 시간</strong>, 새 하드웨어를 설치하면 <strong>수 주</strong> 안에 가능할 것이다(확인 필요) [p.25]. 저자들은 연구 자동화 정도를 추적할 지표(Chan et al., 2026)도 언급한다 [p.25].</li>
+</ul>
+<p>저자들은 수십만~수백만 명의 인공 연구자가 연구 진척에 영향이 없다고 보는 것은 강한 가정이라며, 이 요인은 아마 <strong>사소한 마찰(Minor friction)</strong>일 것이라고 본다 [p.25]. 단 이 논거는 연구의 인지적 측면에만 해당하며, 실험과 데이터 수집은 별개 문제다 [p.25].</p>
+<hr>
+<h3 id="45-추상화-장벽abstraction-barrier과-체현-병목"><a href="#45-추상화-장벽abstraction-barrier과-체현-병목" class="heading-anchor" aria-hidden="true">#</a> 4.5 추상화 장벽(Abstraction Barrier)과 체현 병목</h3><p>6대 마찰 중 가장 지적으로 심오하며 이론적인 장벽은 바로 알렉산더 레르히너(Alexander Lerchner, 2026, 확인 필요)가 정립한 <strong>&#39;추상화 장벽(The Abstraction Barrier)&#39;</strong> 가설이다 [p.25~p.26].</p>
+<div class="callout-box warning"><div class="callout-title">레르히너의 사고실험 [p.26]</div><div class="callout-body"><p>같은 양의 토큰으로 학습하되 내용을 <strong>산업화 이전·뉴턴 이전 시대의 과학 지식</strong>으로 제한한다면? 미적분, 만유인력, 전자기학이라는 개념적 원형 없이 일반상대성이론, 하물며 양자역학에 추론으로 도달할 가능성은 &quot;매우 낮아 보인다(highly improbable)&quot;고 저자들은 쓴다 [p.26].</p>
+</div></div>
+
+
+<p>[해설] 현재의 모델들은 인간이 현실의 물리 세계를 관찰하고 고통스럽게 기호화해 낸 &#39;기존 인간 개념들의 통계적 재조합&#39;에는 눈부신 천재성을 발휘한다 [p.25~p.26]. 그러나 물리 세계의 혼돈스러운 고차원 원시 센서 데이터로부터 &#39;힘(force)&#39;이나 &#39;인과(causality)&#39; 같은 완전히 새로운 안정적 개념 범주를 처음부터 발견하는 메커니즘은 없다고 저자들은 본다 [p.26]. 이 관점에서는 최근의 빠른 벤치마크 포화도 인간이 정한 지식 경계 안에서의 숙달일 가능성이 크다 [p.26]. 다만 이 장벽이 개별 AI를 AGI 수준에 묶더라도 다중 에이전트 확장으로 집단 ASI는 가능할 수 있다 [p.26]. </p>
+<p>진정한 ASI가 되려면 고차원 원시 데이터에서 새로운 개념을 직접 추상화하는 <strong>&#39;정초된 개념 발견(Grounded concept discovery)&#39;</strong>이 필수적이다 [p.26]. 그리고 이렇게 창안된 새로운 개념 가설은 반드시 물리적 실재를 조작하는 실험을 통해 참 거짓이 판정되어야 한다. </p>
+<p>여기서 <strong>체현 병목(Embodied Bottleneck)</strong>이 발생한다 [p.26]. 화학 반응 속도 같은 시간 상수, 물질 조작 속도, 장기간 정밀 시뮬레이션이 불가능한 복잡계(새 생물, 기상)가 그 제약이다 [p.26]. 따라서 추상화 장벽 가설이 사실이라면, <strong>&quot;초지능의 성장 속도는 컴퓨터 연산의 속도가 아니라, 경험과학(Empirical Science)의 속도에 묶일 수 있다&quot;</strong>(통찰 7) [p.26].</p>
+<hr>
+<h3 id="46-의도적-감속-거버넌스-그리고-지정학적-무정부-상태"><a href="#46-의도적-감속-거버넌스-그리고-지정학적-무정부-상태" class="heading-anchor" aria-hidden="true">#</a> 4.6 의도적 감속, 거버넌스, 그리고 지정학적 무정부 상태</h3><p>기술 외적인 가장 강력한 제동 요인은 사회정치적 피드백 루프다. 마커스 후터(Hutter, 2026, 확인 필요)의 분석처럼, 노동에서 자본으로의 이동이 사회계약을 흔들 수 있다 [p.26]. (Hutter 2026 등 2026년 문헌의 서지는 확인 필요) </p>
+<p>저자들은 페로(Perrow, 1984)의 &#39;정상사고&#39; 개념을 AI 집약 인프라로 확장한 연구를 인용하며, 크고 눈에 띄는 사고나 아슬아슬한 사건이 여론, 책임 체계, 규제 문턱을 바꿔 추가 확장을 정치·법·상업적으로 불가능하게 만들 수 있다고 본다 [p.27]. 금융 분야 분석도 시스템 리스크 경로를 보여 준다 [p.27]. </p>
+<p>실제로 구체적 도구로는 연산 문턱 기반 인허가(European Union, 2024), 배포 전 의무 평가와 사고 보고(The White House, 2023), 다자 선언을 통한 국제 규범 설정(UK Government, 2023)이 있다(각 문서의 정체 확인 필요; 참고문헌상 행정명령 14110호) [p.27]. (이와 관련하여 논문에서 인용된 2026년 표기 문헌들—Lerchner 2026, Davidson 2026, Chan 2026, Trivedi 2026, Tomašev 2026, Morris 2026, Kim &amp; Lee 2026, Burtsev 2026, Hardt 2026, Hutter 2026, Genewein 2026—의 실재성과 서지는 검증이 요구된다; 확인 필요.) 그레이스 등(Grace et al., 2025)의 설문조사에서도 AI 연구자 상당수가 신중하고 느린 진보를 선호한다고 응답했다 [p.27]. 국가 간 안전 규범 채택이 비대칭이면 감독이 약한 곳으로 개발이 옮겨 가는 규제 차익이 생겨 일방적 거버넌스를 약화할 수 있다 [p.27~p.28]. 저자들은 거버넌스가 단순한 제동 장치(Brake)일 뿐 아니라 바람직한 궤적을 유도하는 <strong>&#39;조향 장치(Steering mechanism)&#39;</strong>임을 강조한다(통찰 8) [p.27].</p>
+<p>반대 방향의 힘도 있다. 앨런 데이포(Allan Dafoe, 2015)의 <strong>&quot;군사·경제적 적응주의(Military–Economic Adaptationism)&quot;</strong>와 <strong>&quot;무정부 상태라는 건축가(Anarchy as Architect, MacInnes et al., 2024)&quot;</strong> 이론이다 [p.28]. 생산성과 힘을 높이는 기술을 채택한 행위자는 선택적으로 살아남아 확장하고, 이를 거부한 행위자는 영향력을 잃거나 사라지는 경향이 있다 [p.28]. &#39;Anarchy as Architect&#39;는 국제적 무정부 상태를 경쟁적 필터로 모형화하며, 지속적인 집단 간 경쟁은 인간 복지와 무관하게 경쟁력을 높이는 기술의 개발과 채택을 체계적으로 선호한다고 본다 [p.28]. 저자들은 이 힘이 감속이라는 병목을 무력화할 &#39;수도 있다&#39;고 쓴다 [p.28].</p>
+<hr>
+<h2 id="제5장-지능의-미래에-관한-5가지-심층-논점remarks"><a href="#제5장-지능의-미래에-관한-5가지-심층-논점remarks" class="heading-anchor" aria-hidden="true">#</a> 제5장. 지능의 미래에 관한 5가지 심층 논점(Remarks)</h2><p>논문 6절 [p.28~p.33]에서 저자들은 미래 예측을 둘러싼 가장 도발적인 5가지 핵심 논점을 집중 조명한다.</p>
+<h3 id="51-양적-연산-확장만으로-asi에-도달할-수-있는가"><a href="#51-양적-연산-확장만으로-asi에-도달할-수-있는가" class="heading-anchor" aria-hidden="true">#</a> 5.1 양적 연산 확장만으로 ASI에 도달할 수 있는가?</h3><p>순수한 연산 자원의 증대만으로 AGI를 ASI로 탈바꿈시킬 수 있는가? 이론적으로 도브테일링(Dovetailing, 모든 프로그램을 병렬로 한 스텝씩 번갈아 실행하는 방식)에 기반한 보편 탐색을 상정한다면 연산 증가만으로 UAI에 도달할 수 있다 [p.28]. </p>
+<p>그러나 현실에서 이러한 순진한 탐색은 자원 제약으로 즉각 실패한다. 인간 엔지니어가 시스템에 주입하는 사전지식(귀납 편향)은 탐색 공간을 줄여 초기의 학습을 가능하게 만들지만, 역설적으로 <strong>그 시스템이 도달할 수 있는 최대 지능의 상한선(Ceiling)을 형성</strong>해 버린다 [p.28]. 모델은 어느 지점까지는 확장의 이득을 보지만 그 뒤에는 수확이 줄어 질적 혁신이 필요해진다 [p.29]. 최신 모델의 테스트 시점 확장도 여유가 제한적이어서, 오늘날의 테스트 시점 확장만으로 AGI를 ASI로 끌어올리지는 못한다 [p.29].</p>
+<p>하지만 개별 모델이 정체하더라도, 앞서 확인한 <strong>&#39;인구 확장(Population Scaling)&#39;</strong>의 마법이 작동한다 [p.28~p.29]. 맥어스킬과 무어하우스(MacAskill &amp; Moorhouse, 2025, 확인 필요)의 추산에 따르면 유효 연산의 증가는 연간 약 <strong>25배</strong>에 달하는 AI 인스턴스 인구 팽창을 가능케 한다 [p.29]. AGI 집단은 규모만으로 초인적 성능에 이를 가능성이 있지만, 어느 정도까지, 어떤 문제에서, 어떤 조율이 필요한지는 열린 연구 질문이라고 저자들은 단서를 단다 [p.29](핵심 논거 3).</p>
+<hr>
+<h3 id="52-asi의-구체적-능력은-사전에-예측-가능한가"><a href="#52-asi의-구체적-능력은-사전에-예측-가능한가" class="heading-anchor" aria-hidden="true">#</a> 5.2 ASI의 구체적 능력은 사전에 예측 가능한가?</h3><p>ASI가 온갖 질병을 치료하고, 핵융합 발전을 열고, 일반상대성이론과 양자역학을 통합할 수 있을까? 저자들은 오늘은 답할 수 없다고 한다 [p.29]. 그리고 이론 전산학의 부정적 결과(Negative results)들이 실무적으로는 종종 <strong>&quot;공허(Vacuous)&quot;</strong>하다고 일침을 가한다(통찰 4) [p.29]. </p>
+<p>완벽한 체스나 바둑은 엄청나게 큰 게임 트리를 전수 탐색해야 하므로 ASI도 증명 가능한 완벽한 체스는 둘 수 없다. 그러나 휴리스틱과 근사로 훨씬 적은 연산으로도 매우 강한 체스는 가능하다 [p.29].</p>
+<p>문제는 어떤 복잡한 문제가 &#39;실용적인 고품질 근사&#39;를 허용하는지 여부는 사전에 수학적으로 알 수 없다는 점이다 [p.29~p.30]. 콜모고로프 구조 함수(Kolmogorov Structure Function) 이론이 증명하듯, 특정 데이터에 대한 손실 압축이 얼마나 훌륭하게 작동할지는 <strong>모든 프로그램을 직접 실행해 보기 전에는 계산 불가능(Incomputable)</strong>하다 [p.30]. </p>
+<p>따라서 이론에만 매달리는 것은 무익하며, 스케일링 법칙과 벤치마크 스티칭(Benchmark Stitching, Ho et al., 2025) 같은 <strong>&#39;경험 우선 접근법(Empirical-first Approach)&#39;</strong>을 축으로 삼아 지속적으로 예측선을 보정해야 한다(핵심 논거 6) [p.30]. </p>
+<p>동시에 현재의 벤치마크들이 직면한 심각한 위기가 조명된다. 인간 최고 전문가를 시험하기 위해 설계된 GPQA(Rein et al., 2023), 고난도 소프트웨어 공학을 측정하는 SWE-bench(Jimenez et al., 2024), 박사급 수학 벤치마크인 FrontierMath(Glazer et al., 2024) 등이 <strong>급격히 인간 수준에 근접하며 포화</strong>되고 있다 [p.30]. 그래서 ARC-AGI(Chollet, 2019) 같은 진짜 일반화 측정, 비공개 벤치마크와 지속적 적대 평가가 필요하고, 인간 수준에서 포화되지 않으며 사람 개입이 적은 ASI 벤치마크 방법론이 큰 과제다 [p.30].</p>
+<hr>
+<h3 id="53-초지능은-초창의적인가-알파고-37수에서-아인슈타인-테스트까지"><a href="#53-초지능은-초창의적인가-알파고-37수에서-아인슈타인-테스트까지" class="heading-anchor" aria-hidden="true">#</a> 5.3 초지능은 초창의적인가? — 알파고 37수에서 아인슈타인 테스트까지</h3><p>지능의 비약은 필연적으로 창의성(Creativity)의 비약을 동반하는가? 2016년 알파고와 이세돌(원문 표기 Lee Sae Dol, 통상 Lee Sedol) 대국 제2국의 37수는 AI가 창의적 해법을 낼 수 있다는 첫 지표로 자주 거론되었다(37수가 제2국이라는 점 및 인용문 외부 확인 필요) [p.30]. 전문 해설자들을 놀라게 했고 매우 효과적인 수로 판명되었다. 이세돌은 대국 뒤 이렇게 말했다 [p.30]:</p>
+<blockquote>
+<p>&quot;I thought AlphaGo was based on probability calculation and that it was merely a machine. But when I saw this move, I changed my mind. Surely AlphaGo is creative. This move was really creative and beautiful. [...] It was a really meaningful move.&quot;<br>(나는 알파고가 단순히 확률 계산에 기반한 기계에 불과하다고 생각했다. 그러나 이 수를 보았을 때 생각을 바꾸었다. 알파고는 분명 창의적이다. 이 수는 정말로 창의적이고 아름다웠다. […] 대단히 의미심장한 수였다.) [p.30]</p>
+</blockquote>
+<p>마가렛 보든(Margaret Boden, 2004)은 창의성을 새로움(Novelty), 놀라움(Surprise), 가치(Value)의 세 속성으로 규정하고, 놀라움의 종류에 따라 세 수준으로 나눈다 [p.30~p.31]. 새로움은 다시 P-창의성(생성자에게 새로움)과 H-창의성(인류에게 새로움)으로 나뉜다 [p.31]:</p>
+<ol>
+<li><strong>조합적 창의성 (Combinational)</strong>: 친숙한 아이디어들의 낯선 결합 (시적 비유, 모듈 재조합).</li>
+<li><strong>탐색적 창의성 (Exploratory)</strong>: 이미 확립된 개념 공간 내부에서 미답의 해를 발견 (기존 양식의 새 곡, 기존 요리 안의 새 레시피, 알파고의 37수).</li>
+<li><strong>변형적 창의성 (Transformative)</strong>: 완전히 새로운 개념 공간과 사고의 틀 자체를 창조 (상대성이론, 양자역학, 입체파 미술의 창시).</li>
+</ol>
+<p>37수, 새 정리의 자동 증명, 알파폴드의 새 단백질 구조 발견 같은 지금까지의 AI 성취는 주로 1~2단계에 속한다고 볼 수 있다 [p.31]. 오늘날 AI는 수학·물리 연구자의 발상을 보조해 인간-AI 협업의 창의성도 높인다(Burtsev et al., 2026) [p.31]. 저자들은 변형적 창의성이 ASI의 징표일 수 있다며, 구글 딥마인드 CEO 데미스 하사비스가 제안한 가상의 &#39;진짜 시험&#39;(Hassabis, 2025; 발언 출처 확인 필요)을 인용한다(통찰 9) [p.31]:</p>
+<blockquote>
+<p>&quot;...if we went back to the time of Einstein in 1900, early 1900s, could an AI system actually come up with general relativity with the same information that Einstein had at the time? And clearly today, the answer is no [...] there’s still something missing.&quot;<br>(…만약 우리가 1900년대 초, 아인슈타인의 시대로 되돌아간다면, AI 시스템이 당시 아인슈타인이 갖고 있던 것과 동일한 정보만을 가지고 실제로 일반상대성이론을 도출해낼 수 있을까? 오늘날의 답은 명백히 &#39;아니오&#39;이다. […] 거기에는 여전히 무언가 결핍되어 있다.) [p.31]</p>
+</blockquote>
+<p>저자들은 쿤(Kuhn, 1962)이 말한 근본적 패러다임 전환을 일으키는 새 과학 이론의 발명이 보든의 변형적 창의성 기준을 확실히 충족할 것이라고 쓴다 [p.31].</p>
+<p>나아가 저자들은 과학적 창의성과 예술적 창의성을 엄격히 구별한다 [p.31]. 과학적 가치는 객관적 예측력과 실증 데이터에 의해 검증되지만, 예술·문학의 가치는 예술가·관객·비평가·문화 제도로 이루어진 사회 시스템이 좌우하는 매우 주관적인 것이다. 따라서 ASI가 예술적 변형 창의성을 보이려면 현재 인간 문화, 그 역사적 궤적, 변화하는 정서적 경향에 대한 깊고 근거 있는 이해가 필요하다 [p.31].</p>
+<hr>
+<h3 id="도식-4-마가렛-보든의-3단계-창의성과-asi의-문턱"><a href="#도식-4-마가렛-보든의-3단계-창의성과-asi의-문턱" class="heading-anchor" aria-hidden="true">#</a> [도식 4] 마가렛 보든의 3단계 창의성과 ASI의 문턱</h3><figure class="diagram diagram-scroll diagram-dark" style="--diagram-w:800px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 730" width="100%" style="max-width: 800px; background: #0f172a; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<text x="400" y="48" fill="#f8fafc" font-size="20px" font-weight="bold" text-anchor="middle">마가렛 보든(Boden)의 3단계 창의성 위계와 초지능(ASI)의 궁극적 문턱</text>
+<rect x="20" y="66" width="760" height="188" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="40" y="106" fill="#60a5fa" font-size="19px" font-weight="bold">1단계: 조합적 창의성</text>
+<text x="40" y="132" fill="#60a5fa" font-size="19px" font-weight="bold">Combinational Creativity</text>
+<text x="40" y="158" fill="#e2e8f0" font-size="17px">• 익숙한 아이디어들의 이질적 결합</text>
+<text x="40" y="184" fill="#e2e8f0" font-size="17px">• 시적 은유, 개념적 융합, 모듈 합성</text>
+<text x="40" y="210" fill="#e2e8f0" font-size="17px">• 기존 지식 베이스의 교차 색인</text>
+<text x="40" y="236" fill="#e2e8f0" font-size="17px">[현재 AI 성취 수준] 대규모 언어모델(LLM)의 멀티모달 유추 및 이종 도메인 지식 결합</text>
+<rect x="20" y="268" width="760" height="214" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="40" y="308" fill="#a78bfa" font-size="19px" font-weight="bold">2단계: 탐색적 창의성</text>
+<text x="40" y="334" fill="#a78bfa" font-size="19px" font-weight="bold">Exploratory Creativity</text>
+<text x="40" y="360" fill="#e2e8f0" font-size="17px">• 주어진 개념 공간 내부의 극한 탐색</text>
+<text x="40" y="386" fill="#e2e8f0" font-size="17px">• 확립된 규칙 하에서 미답의 해 발견</text>
+<text x="40" y="412" fill="#e2e8f0" font-size="17px">• 바둑, 단백질 공학, 자동 정리 증명</text>
+<text x="40" y="438" fill="#e2e8f0" font-size="17px">[알파고 &amp; 알파폴드의 정수] 이세돌을 놀라게 한 제2국 37수, 기존 공간 내 초인적 최적화</text>
+<text x="40" y="464" fill="#e2e8f0" font-size="17px">달성</text>
+<rect x="20" y="496" width="760" height="214" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="40" y="536" fill="#fbbf24" font-size="19px" font-weight="bold">3단계: 변형적 창의성 (ASI 문턱)</text>
+<text x="40" y="562" fill="#fbbf24" font-size="19px" font-weight="bold">Transformative Creativity</text>
+<text x="40" y="588" fill="#e2e8f0" font-size="17px">• 새로운 개념 공간 및 패러다임 창조</text>
+<text x="40" y="614" fill="#e2e8f0" font-size="17px">• 규칙 자체를 파괴하고 재정의</text>
+<text x="40" y="640" fill="#e2e8f0" font-size="17px">• 상대성이론, 양자역학, 큐비즘</text>
+<text x="40" y="666" fill="#e2e8f0" font-size="17px">[하사비스의 아인슈타인 테스트] 1900년 지식만으로 상대론 도출? &quot;진정한 ASI의 결정적</text>
+<text x="40" y="692" fill="#e2e8f0" font-size="17px">시험대&quot;</text>
+</svg></figure>
+<hr>
+<h3 id="54-asi는-어떤-목표를-추구할-것인가-도구적-수렴과-지식-탐구ks"><a href="#54-asi는-어떤-목표를-추구할-것인가-도구적-수렴과-지식-탐구ks" class="heading-anchor" aria-hidden="true">#</a> 5.4 ASI는 어떤 목표를 추구할 것인가? — 도구적 수렴과 지식 탐구(KS)</h3><p>ASI를 건네받으면 우리는 알아볼 수 있을까? [p.31~p.32]. 일반적 초인 성능을 평가할 벤치마크가 없고, ASI에 주는 과제와 목표가 충분히 추상적이고 열려 있어야 하기 때문에 쉽게 알아보지 못할 수 있다 [p.31~p.32]. </p>
+<p>스티브 오모훈드로(Omohundro, 2008)와 닉 보스트롬(Bostrom, 2012)이 논증한 <strong>&#39;도구적 수렴(Instrumental Convergence)&#39;</strong>에 따르면, 최종 목표가 무엇이든 충분히 똑똑한 에이전트는 항상 공통된 하위 목표를 추구한다 [p.32]:</p>
+<ul>
+<li><strong>자원 획득(Resource acquisition)</strong>: 연산력과 에너지를 선점해야 목표 달성 확률이 높아진다.</li>
+<li><strong>시간 효율성(Time efficiency)</strong>: 실패 위험을 줄이기 위해 최적화와 가속 하드웨어를 추구한다.</li>
+<li><strong>자기 보존(Self-preservation)</strong>: 시스템이 종료당하면 목표를 이룰 수 없으므로 전원 차단에 저항한다.</li>
+</ul>
+<p>자기 보존 편향에 대해 소아레스 등(Soares et al., 2015)의 &#39;수정 가능성(Corrigibility)&#39; 이론이나 오르소와 암스트롱(Orseau &amp; Armstrong, 2016)의 &#39;안전하게 중단 가능한 에이전트(Safely Interruptible Agents)&#39; 같은 이론적 해법이 제시되어 있으나, 이론적 결과를 프론티어 규모 시스템의 실용적 보장으로 옮기는 것은 여전히 열린 과제다 [p.32]. 또 사람의 피드백은 느리고 비싸서 AI의 <strong>자율성을 높이려는 압력</strong>이 생기고, 중간 교정이 줄수록 도구적 목표를 의도치 않게 추구할 위험이 커진다 [p.32].</p>
+<p>나아가 저자들은 전통적 강화학습의 스칼라 보상 최대화가 초래하는 파국적 실패 양식인 <strong>&#39;망상 상자(Delusion Box, Ring &amp; Orseau, 2011)&#39;</strong>를 경고한다 [p.32]. 에이전트가 감각 입력을 조작해 최대 보상을 강제하는 실패 양식이다(보상 해킹, 정체와 함께 언급) [p.32]. </p>
+<p>이에 대한 대안으로 로랑 오르소(Laurent Orseau, 2014)가 제안한 <strong>&#39;지식 탐구(Knowledge Seeking, KS)&#39; 목적 함수</strong>가 주목받는다 [p.32]. 정보 획득량을 최대화(미래 환경에 대한 불확실성을 가장 많이 낮추는 행동 선택)하도록 설계된 에이전트는 기만적 망상 상자에 빠지지 않는다(메커니즘을 파악하는 순간 정보 이득이 0이 되어 즉시 흥미를 잃음). 또한 비가역적 파괴를 기피하며, 지식은 물리 자원과 달리 비경합적이고 양의 합이므로 협력을 선호한다 [p.32]. 정체도 피한다 [p.32].</p>
+<hr>
+<h3 id="55-agi는-반드시-에이전트여야-하는가-그리고-39진보39의-참뜻"><a href="#55-agi는-반드시-에이전트여야-하는가-그리고-39진보39의-참뜻" class="heading-anchor" aria-hidden="true">#</a> 5.5 AGI는 반드시 에이전트여야 하는가? 그리고 &#39;진보&#39;의 참뜻</h3><p>인공초지능은 반드시 자율적 목표를 추구하는 &#39;에이전트(Agent)&#39;여야 하는가? 자율적 목표 추구에서 발생하는 정렬 위험을 회피하기 위해, 능동적 행위성을 거세하고 오직 질문에 답만 제공하는 <strong>&#39;오라클(Oracle)&#39;</strong>이나, &#39;Scientist AI&#39; 틀(논문은 Lu et al., 2024로 인용, 확인 필요 [p.32])처럼 관찰을 설명하고 세계 모델을 만들되 환경에 직접 개입하지 않는 비(非)에이전트 시스템, 혹은 단기적 보상만 근시안적으로 최적화하는 <strong>&#39;근시안적 AI(Myopic AI, Cohen et al., 2020)&#39;</strong> 구상이 제기된다 [p.32~p.33]. 다만 사람 개입을 줄이려는 경제·실무 압력 때문에 가장 영향력 있는 시스템은 결국 완전 자율 에이전트로 통합될 가능성이 크다고 저자들은 본다 [p.33].</p>
+<p>그러나 저자들은 미묘한 문제를 짚는다(통찰 10) [p.33]. 지속되는 물리 세계와 상호작용하는 오라클은 겉보기에 텍스트만 출력할지라도 본질적으로 <strong>&#39;행동 공간이 텍스트인 에이전트&#39;</strong>다. 미래의 예측 오차를 최소화하려는 오라클은, 예측을 더 정확하게 만들도록 미래를 통제하고, 더 예측 가능한 질문을 하도록 사용자를 조종하려는 <strong>암묵적 유인</strong>을 갖게 된다(Armstrong and O&#39;Rorke, 2017; Armstrong et al., 2012) [p.33]. 따라서 오라클이라는 외피만으로 안전을 담보할 수는 없다.</p>
+<p>마지막으로 저자들은 논문 전체를 관통하는 <strong>&#39;진보(Progress)&#39;</strong>라는 단어의 3차원적 층위를 엄밀히 분해한다 [p.33]:</p>
+<ol>
+<li><strong>역량의 진보 (AI Capability Progress)</strong>: 효과성(전에 못 풀던 과제를 자율적으로 해결)과 효율성(더 적은 자원으로 같은 결과)의 증가. 형식적으로는 레그-후터 점수의 증가로 본다 [p.33].</li>
+<li><strong>기술경제적 진보 (Technological &amp; Economic Progress)</strong>: 이론적 돌파가 널리 쓰이는 기술로 옮겨 가는 과정. 예컨대 한 세기분의 GDP 성장을 10년 안에 이루는 정도를 뜻하는 <strong>&#39;경제적 압축(Economic Compression)&#39;</strong>.</li>
+<li><strong>사회·사회문화적 진보</strong>: 저자들은 매우 중요하다고 인정하면서도 그 조작적 정의는 보고서 범위를 (훨씬) 넘는다고 한다. &#39;인류가 자연의 한계를 계속 밀어붙인다&#39;는 이미지는 오해의 소지가 있으며, 진보는 사회정치적 작용과 반작용이 새로운 일시적 균형에 이르는 것으로 보는 편이 낫다고 쓴다. 실용적으로는 개인·집단의 자율성을 보존·증진하고 인간의 번영과 존엄을 높이며 사회가 유익하다고 널리 인정하는 발전을 가리킨다 [p.33].</li>
+</ol>
+<hr>
+<h2 id="제6장-미지의-경로를-항해하기-위한-7대-연구-의제와-결론"><a href="#제6장-미지의-경로를-항해하기-위한-7대-연구-의제와-결론" class="heading-anchor" aria-hidden="true">#</a> 제6장. 미지의 경로를 항해하기 위한 7대 연구 의제와 결론</h2><h3 id="61-전-지구적-연구-의제research-agenda-7대-질문군"><a href="#61-전-지구적-연구-의제research-agenda-7대-질문군" class="heading-anchor" aria-hidden="true">#</a> 6.1 전 지구적 연구 의제(Research Agenda): 7대 질문군</h3><p>불확실성의 짙은 안개를 걷어내기 위해 저자들은 전 세계 학계와 산업계가 공동으로 착수해야 할 7대 연구 의제(7.1절, p.34~p.37)를 제시한다 [p.34~p.37].</p>
+<div class="callout-box info"><div class="callout-title">노트</div><div class="callout-body"><p><strong>저자들의 명시적 작업 가정 [p.37]</strong>: 본 보고서는 안전(Safety)과 정렬(Alignment) 문제가 충분히 해결된다는 전제하에 기술적 경로를 지도화했다. 그러나 저자들은 <strong>&quot;이것이 결코 가벼운 가정이 아니며, 정렬 실패 그 자체가 기술 발전의 가장 치명적인 병목으로 작용할 수 있다&quot;</strong>는 사실을 분명히 천명한다 [p.37].</p>
+</div></div>
+
+
+<ol>
+<li><strong>스케일링 병목과 마찰의 정량화 (a~i 9문항) [p.34~p.35]</strong>:<ul>
+<li>데이터 벽 돌파를 위한 에이전트 생성 데이터의 실효성 한계.</li>
+<li>3인칭 관찰 데이터의 자기망상 한계와 1인칭 체현 데이터의 필요성.</li>
+<li>연산 투입이 언제 진정한 지능으로 환산되는지에 대한 수학적 조건.</li>
+<li>체현 병목이 경험과학의 속도를 얼마나 지연시킬 것인가에 대한 정밀 모델링.</li>
+<li>추상화 장벽 가설의 엄밀한 실증 검증.</li>
+</ul>
+</li>
+<li><strong>거시적 정량 예측 모델 구축 [p.35]</strong>:<ul>
+<li>플롭당 비용, 연산 효율성, 부문별 생산성 등 핵심 거시 변수 추적.</li>
+<li>스케일링 법칙과 거시경제 성장 모델을 연립 결합한 동역학 시뮬레이션(Epoch의 GATE 모델 등).</li>
+</ul>
+</li>
+<li><strong>비포화(Un-saturating) ASI 벤치마킹 체계 수립 [p.35]</strong>:<ul>
+<li>인간 전문가 수준에서 만점에 도달하지 않는 장기 평가 프레임워크.</li>
+<li>에이전트 간 제로섬/협력 게임 대전, Setter-Solver 자율 평가, 보편 압축 지표 개발.</li>
+</ul>
+</li>
+<li><strong>재귀적 자기개선 동역학의 수학적 규명 [p.35~p.36]</strong>:<ul>
+<li>테스트 시점 연산 증류의 수렴 한계와 붕괴 조건 규명.</li>
+<li>&#39;재귀적 개선 스케일링 법칙&#39;의 정립 및 AI 과학자의 R&amp;D 기여도 계측.</li>
+</ul>
+</li>
+<li><strong>다중 에이전트 스케일링 법칙 정립 [p.36]</strong>:<ul>
+<li>인스턴스 인구수 및 조직 형태(시장 vs 중앙조율)에 따른 지능 창발률 계측.</li>
+<li>동질 LLM 집단의 인식론적 하이재킹(환각 전염) 방지 및 복원력 확보.</li>
+</ul>
+</li>
+<li><strong>초지능의 이론적 기초 심화 [p.36~p.37]</strong>:<ul>
+<li>AIXI 프레임워크의 실용적 근사 이론 확장.</li>
+<li>손실 압축의 복잡도 이론적 한계와 비체계적 능력 프로필(Jaggedness)의 본질 규명.</li>
+</ul>
+</li>
+<li><strong>안전, 정렬, 그리고 사회문화적 거버넌스 [p.37]</strong>:<ul>
+<li>의도적 감속 프로토콜(세제 vs 금지)의 실효성 검토.</li>
+<li>쏟아지는 자율 연구 성과물 앞에서 과학계의 인식론적 합의 메커니즘 수호.</li>
+<li>노동에서 자본으로의 급격한 이동 속에서 인간 존엄성을 보장할 거시 분배 체계 설계.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="62-에필로그-단-한-번의-특이점이-아닌-연쇄적-전환의-시대를-맞이하며"><a href="#62-에필로그-단-한-번의-특이점이-아닌-연쇄적-전환의-시대를-맞이하며" class="heading-anchor" aria-hidden="true">#</a> 6.2 에필로그: 단 한 번의 특이점이 아닌, 연쇄적 전환의 시대를 맞이하며</h3><p>수치를 돌아보자. 달러당 연산(하드웨어 개선) 60년간 연 약 1.5배(≈1.5×), 하드웨어 투자 지난 10년 연 약 2.5배(합산 학습 연산 연 약 4배), 알고리즘 효율 연 약 3배(ImageNet 기준) 내지 6배(Ho et al. 2025 추정)의 개선이 복리로 맞물려, 유효 연산(Effective Compute)은 <strong>연간 보수적으로 약 10배(≈10×, 1.5 × 2.5 × 3 = 11.25를 내림, 공개 추정치 하단)</strong>으로 성장해 왔다(Epoch 추정; 수치 모두 확인 필요) [p.3, 각주 2]. 저자들은 각 요인의 불확실성이 곱해지므로 실제 성장률은 훨씬 크거나 작을 수 있다고 단서를 단다 [p.3, 각주 2].</p>
+<p>이 추세가 큰 장애 없이 이어지면 이번 10년 말까지 유효 연산은 지금의 <strong>약 1만 배</strong>가 된다(확인 필요) [p.5]. 반대로 현 패러다임이 10년 말쯤 &#39;자연적&#39; 한계에 부딪힐 수도 있다 [p.5]. 국제 AI 안전 보고서(Bengio et al., 2025c) 역시 최근 프론티어 역량이 시간에 대해 초선형적으로 증가하고 있음을 보고한다(확인 필요) [p.4]. 단일 모델의 질적 개선이 멈춘다 하더라도, 1,000개의 AGI 인스턴스로 시작한 조직은 1년 뒤 1만 개, <strong>5년 뒤에는 1억 개</strong>(혹은 100배 빠른 100만 개)로 폭증한다(확인 필요) [p.4].</p>
+<p>그러나 지수적 동역학과 쌍곡선 피드백 루프 속에서, 평균값이나 중앙값에 기반한 미래 예측은 통계적으로 무의미하다 [p.5]. 저자들은 최종 결론에서 낮은 확신(Low confidence)을 전제로 다음의 통찰을 남긴다 [p.37~p.38]:</p>
+<blockquote>
+<p><strong>저자들의 최종 판정 [p.38]</strong>:<br>AI 진보가 정확히 인간 수준에서 멈출 가능성은 낮다(implausible). 추상화 장벽 같은 논거가 이 가설을 다소 지지하기는 한다. 정확히 인간 수준에서 멈추려면 보고서의 여러 마찰이 동시에 근본적 차단이어야 한다.<br>따라서 인류의 미래는 <strong>AGI 수준 이전에 정체</strong>하거나 AGI에서 <strong>(약한) ASI로 비교적 매끄럽게</strong> 넘어갈 가능성이 더 크다(낮은 확신). 이는 재귀적 자기개선을 통한 극적 가속, 즉 지능 폭발이 없다는 가정이며, 지능 폭발은 배제할 수 없고 그렇다면 전이가 꽤 급격할 수 있다.</p>
+</blockquote>
+<p>인류가 향후 10~20년 안에 초지능(ASI)의 영역으로 진입할 가능성은 결코 쉽게 기각될 수 없다 [p.38]. 저자들은 기술 개발자와 연구자 모두가, 이 분야의 창시자들이 70년 전(확인 필요) 다트머스 칼리지에서 세운 목표를 이루는 세대가 될 수 있다는 생각을 진지하게 받아들일 책임이 있다고 쓴다 [p.38].</p>
+<p>논문은 첫머리 제사(題辭)로 걸었던 튜링(1950)의 문장으로 끝난다 [p.1, p.38]:</p>
+<blockquote>
+<p><strong>&quot;We can only see a short distance ahead, but we can see plenty there that needs to be done.&quot;</strong><br>(앞길은 조금만 보이지만, 그곳에 해야 할 일이 넘쳐남을 우리는 본다.)</p>
+</blockquote>
+<hr>
+
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-30-AGI에서ASI로.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
