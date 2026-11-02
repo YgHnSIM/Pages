@@ -1,0 +1,3090 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>감정은 읽히는 것이 아니라 만들어진다 — 리사 펠드먼 배럿의 예측하는 뇌, 요약하는 피질, 그리고 몸 예산</title>
+  <meta name="description" content="노스이스턴대 심리학자 리사 펠드먼 배럿이 앤드루 휴버먼과 나눈 인터뷰를 해설한다. 얼굴 움직임은 표정이 아니라 해석의 대상이라는 점, 천 편이 넘는 논문을 검토한 합의 논문이 보편 표정의 증거를 찾지 못한 이유와 그것이 법정에서 갖는 무게, 감정을 명사가 아닌 '변이가 큰 사례들의 범주'로 보는 관점, 감각 표면만 아는 뇌가 과거를 재조합해 미래를 추측하는 방식, 피질의 압축 기울기와 '요약의 요약', 운동 계획이 먼저이고 경험은 그 사본에서 나온다는 예측 처리, 감정 입자도와 다른 문화의 감정 단어, 정동(affect)과 몸 예산(알로스타시스), 우울을 대사의 문제로 보는 시각과 '감정 독감', 그리고 관계·신뢰·친절이 몸 예산의 저축이 되는 이유를 다룬다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">감정은 읽히는 것이 아니라 만들어진다 — 리사 펠드먼 배럿의 예측하는 뇌, 요약하는 피질, 그리고 몸 예산</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#들어가며-quot무엇을-느끼는가quot라는-질문-자체가-틀렸다면" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">들어가며: &quot;무엇을 느끼는가&quot;라는 질문 자체가 틀렸다면</span></a></li><li class="depth-2"><a href="#1-얼굴-움직임은-39표현39이-아니다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 얼굴 움직임은 &#39;표현&#39;이 아니다</span></a></li><li class="depth-3"><a href="#11-감정의-구성-요소는-감정에만-있지-않다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 감정의 구성 요소는 감정에만 있지 않다</span></a></li><li class="depth-3"><a href="#12-움직임과-표정은-다르다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 움직임과 표정은 다르다</span></a></li><li class="depth-3"><a href="#13-뇌는-얼굴만-보지-않는다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.3 뇌는 얼굴만 보지 않는다</span></a></li><li class="depth-2"><a href="#2-천-편의-논문-다섯-명의-과학자-보편-표정은-없다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 천 편의 논문, 다섯 명의 과학자: 보편 표정은 없다</span></a></li><li class="depth-3"><a href="#21-다윈의-유산과-실험실의-실패" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 다윈의 유산과 실험실의 실패</span></a></li><li class="depth-3"><a href="#22-합의-논문은-어떻게-만들어졌나" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 합의 논문은 어떻게 만들어졌나</span></a></li><li class="depth-3"><a href="#23-35라는-숫자의-두-얼굴" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 35%라는 숫자의 두 얼굴</span></a></li><li class="depth-3"><a href="#24-비서구-문화로-가면-quot모든-내기가-무효quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.4 비서구 문화로 가면 &quot;모든 내기가 무효&quot;</span></a></li><li class="depth-3"><a href="#25-아기와-얼굴-39유전자만으로는-아니다39" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.5 아기와 얼굴: &#39;유전자만으로는 아니다&#39;</span></a></li><li class="depth-3"><a href="#26-왜-이것이-quot정말-심각한quot-문제인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.6 왜 이것이 &quot;정말 심각한&quot; 문제인가</span></a></li><li class="depth-2"><a href="#3-상자-속의-추측-기계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 상자 속의 추측 기계</span></a></li><li class="depth-3"><a href="#31-민속-범주에서-출발하지-말-것" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 민속 범주에서 출발하지 말 것</span></a></li><li class="depth-3"><a href="#32-뇌가-아는-것은-몸뿐이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 뇌가 아는 것은 몸뿐이다</span></a></li><li class="depth-3"><a href="#33-기억은-재현이고-범주는-그-재현의-묶음이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 기억은 재현이고, 범주는 그 재현의 묶음이다</span></a></li><li class="depth-3"><a href="#34-신호와-잡음-우리는-서로를-큐잉한다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.4 신호와 잡음: 우리는 서로를 큐잉한다</span></a></li><li class="depth-2"><a href="#4-요약의-요약-피질의-압축-기울기와-단어" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 요약의 요약: 피질의 압축 기울기와 단어</span></a></li><li class="depth-3"><a href="#41-냅킨처럼-펼친-피질" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 냅킨처럼 펼친 피질</span></a></li><li class="depth-3"><a href="#42-다중감각-요약으로서의-39분노39" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 다중감각 요약으로서의 &#39;분노&#39;</span></a></li><li class="depth-3"><a href="#43-quot피자quot라는-두-음절" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 &quot;피자&quot;라는 두 음절</span></a></li><li class="depth-3"><a href="#44-생후-3개월-아기의-39블링39" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.4 생후 3개월 아기의 &#39;블링&#39;</span></a></li><li class="depth-2"><a href="#5-행동이-먼저-경험은-나중" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 행동이 먼저, 경험은 나중</span></a></li><li class="depth-3"><a href="#51-압축은-손실이-있고-추측은-구체화다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 압축은 손실이 있고, 추측은 구체화다</span></a></li><li class="depth-3"><a href="#52-첫-번째-계획은-심장과-폐의-것이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 첫 번째 계획은 심장과 폐의 것이다</span></a></li><li class="depth-3"><a href="#53-원심성-사본-같은-신호가-두-곳으로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 원심성 사본: 같은 신호가 두 곳으로</span></a></li><li class="depth-3"><a href="#54-예측이-맞으면-신호는-거기서-끝난다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.4 예측이 맞으면 신호는 거기서 끝난다</span></a></li><li class="depth-3"><a href="#55-그러면-몸과-감정은-양방향인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.5 그러면 몸과 감정은 양방향인가</span></a></li><li class="depth-2"><a href="#6-감정-입자도와-다른-문화의-단어들" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 감정 입자도와 다른 문화의 단어들</span></a></li><li class="depth-3"><a href="#61-언어-하나로는-부족하다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 언어 하나로는 부족하다</span></a></li><li class="depth-3"><a href="#62-인터뷰에-나온-단어들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 인터뷰에 나온 단어들</span></a></li><li class="depth-3"><a href="#63-quot감정-입자도quot는-사물이-아니라-과정이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 &quot;감정 입자도&quot;는 사물이 아니라 과정이다</span></a></li><li class="depth-3"><a href="#64-감정을-만들고-나서-이름-붙이는-것이-아니다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.4 감정을 만들고 나서 이름 붙이는 것이 아니다</span></a></li><li class="depth-3"><a href="#65-이모지화-그리고-복잡성의-수축과-팽창" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.5 이모지화, 그리고 복잡성의 수축과 팽창</span></a></li><li class="depth-2"><a href="#7-정동affect과-몸-예산" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 정동(affect)과 몸 예산</span></a></li><li class="depth-3"><a href="#71-느낌과-감정은-같은-것이-아니다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 느낌과 감정은 같은 것이 아니다</span></a></li><li class="depth-3"><a href="#72-몸-증상을-감정으로-39격상39해야만-할까" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 몸 증상을 감정으로 &#39;격상&#39;해야만 할까</span></a></li><li class="depth-3"><a href="#73-quot몸은-기억한다quot가-아니라-quot뇌가-점수를-기록하고-몸은-점수판이다quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 &quot;몸은 기억한다&quot;가 아니라 &quot;뇌가 점수를 기록하고, 몸은 점수판이다&quot;</span></a></li><li class="depth-3"><a href="#74-불편함을-일부러-느끼기-허리-수술의-사례" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.4 불편함을 일부러 느끼기: 허리 수술의 사례</span></a></li><li class="depth-3"><a href="#75-불확실성의-각성-뉴질랜드에서의-결정" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.5 불확실성의 각성: 뉴질랜드에서의 결정</span></a></li><li class="depth-3"><a href="#76-quot나비들을-대형으로-날게-하라quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.6 &quot;나비들을 대형으로 날게 하라&quot;</span></a></li><li class="depth-3"><a href="#77-주의로-차원을-바꾸기-컵을-빛의-조각으로" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.7 주의로 차원을 바꾸기: 컵을 빛의 조각으로</span></a></li><li class="depth-3"><a href="#78-몸-예산-알로스타시스의-은유" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.8 몸 예산: 알로스타시스의 은유</span></a></li><li class="depth-2"><a href="#8-우울-약물-그리고-39감정-독감39" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 우울, 약물, 그리고 &#39;감정 독감&#39;</span></a></li><li class="depth-3"><a href="#81-우울은-파산한-몸-예산이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 우울은 파산한 몸 예산이다</span></a></li><li class="depth-3"><a href="#82-스톡홀름의-아침과-39감정-독감39" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 스톡홀름의 아침과 &#39;감정 독감&#39;</span></a></li><li class="depth-3"><a href="#83-알코올약물-그리고-ssri에-대한-신중한-견해" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.3 알코올·약물, 그리고 SSRI에 대한 신중한 견해</span></a></li><li class="depth-2"><a href="#9-우리는-서로의-신경계를-돌본다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 우리는 서로의 신경계를 돌본다</span></a></li><li class="depth-3"><a href="#91-최고의-것도-최악의-것도-다른-사람" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.1 최고의 것도 최악의 것도 다른 사람</span></a></li><li class="depth-3"><a href="#92-동기화-리더와-페이서가-번갈아" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.2 동기화: 리더와 페이서가 번갈아</span></a></li><li class="depth-3"><a href="#93-직장에서의-신뢰" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.3 직장에서의 신뢰</span></a></li><li class="depth-3"><a href="#94-친절이라는-저평가된-저축" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">9.4 친절이라는 저평가된 저축</span></a></li><li class="depth-2"><a href="#10-실천-이-지식으로-무엇을-할-수-있나" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">10. 실천: 이 지식으로 무엇을 할 수 있나</span></a></li><li class="depth-3"><a href="#101-기초-세-가지배럿와-다섯-가지휴버먼" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.1 기초 세 가지(배럿)와 다섯 가지(휴버먼)</span></a></li><li class="depth-3"><a href="#102-정동을-먼저-점검하기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.2 정동을 먼저 점검하기</span></a></li><li class="depth-3"><a href="#103-범주를-늘리고-다시-짓기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.3 범주를 늘리고 다시 짓기</span></a></li><li class="depth-3"><a href="#104-주의로-차원을-조절하기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.4 주의로 차원을 조절하기</span></a></li><li class="depth-3"><a href="#105-불편함과-함께-머물기도-기술이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.5 불편함과 함께 머물기도 기술이다</span></a></li><li class="depth-3"><a href="#106-다른-사람의-얼굴을-39읽지39-말고-묻기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.6 다른 사람의 얼굴을 &#39;읽지&#39; 말고 묻기</span></a></li><li class="depth-3"><a href="#107-저축이-되는-사람-되기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">10.7 저축이 되는 사람 되기</span></a></li><li class="depth-2"><a href="#맺으며-감정은-신경계가-세계와-맺는-거래의-이야기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">맺으며: 감정은 신경계가 세계와 맺는 거래의 이야기</span></a></li><li class="depth-3"><a href="#각주" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">각주</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-11-03</span>
+          <span class="meta-badge">⏱️ 약 73분</span>
+          
+        </div>
+        <h1 class="article-title">감정은 읽히는 것이 아니라 만들어진다 — 리사 펠드먼 배럿의 예측하는 뇌, 요약하는 피질, 그리고 몸 예산</h1>
+        <p class="article-subtitle">심화 해설: 보편 표정의 신화, 범주를 짓는 뇌, 감정 입자도, 정동과 알로스타시스, '감정 독감', 서로의 신경계를 돌보는 사람들</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#신경과학</span>
+          
+          <span class="tag-pill">#인지심리학</span>
+          
+          <span class="tag-pill">#사회과학</span>
+          
+          <span class="tag-pill">#생물학</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-11-03-배럿감정구성.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <blockquote>
+<p>이 글은 인터뷰의 주장을 정확히 전하고, 이해를 돕는 배경과 연결을 덧붙인 해설입니다. 수치와 연구 결과는 인터뷰에서 직접 언급된 것만 실었습니다. 필자가 덧붙인 해석은 <strong>해설</strong>로 표시했고, 철자·연도처럼 외부 확인이 필요했던 항목은 별도로 확인해 반영했고, 확인되지 않은 부분은 그렇다고 밝혀 두었습니다. 의학적 조언이 아닙니다.</p>
+</blockquote>
+<h2 id="들어가며-quot무엇을-느끼는가quot라는-질문-자체가-틀렸다면"><a href="#들어가며-quot무엇을-느끼는가quot라는-질문-자체가-틀렸다면" class="heading-anchor" aria-hidden="true">#</a> 들어가며: &quot;무엇을 느끼는가&quot;라는 질문 자체가 틀렸다면</h2><p>우리는 감정을 두고 이렇게 생각하는 데 익숙하다. 안쪽 어딘가에 &#39;분노&#39;나 &#39;슬픔&#39;이라는 상태가 있고, 그것이 얼굴에 드러나며, 우리는 말로 그것에 이름을 붙인다. 그러니 좋은 질문은 &quot;내가 지금 느끼는 감정을 언어가 충분히 담아낼 수 있는가?&quot;쯤일 것이다.</p>
+<p>리사 펠드먼 배럿(Lisa Feldman Barrett)은 노스이스턴대학교 석좌교수(심리학)이며, 하버드 의대와 매사추세츠 종합병원에도 직함을 두고 있고, 그곳의 법·뇌·행동 센터(Center for Law, Brain and Behavior) 최고과학책임자다. 『감정은 어떻게 만들어지는가(How Emotions Are Made)』와 『이토록 뜻밖의 뇌과학(Seven and a Half Lessons About the Brain)』의 저자이기도 하다. 그는 인터뷰 내내 진행자 앤드루 휴버먼의 질문을 여러 번 &quot;잘못 놓인 질문(ill-posed)&quot;이라고 되받는다. 무례해서가 아니다. 질문에 깔린 가정, 곧 &quot;뇌 안에 감정 체계가 있고, 거기서 감정이라는 상태가 생기며, 우리는 그것을 식별해 이름 붙인다&quot;는 가정 자체가 뇌가 실제로 하는 일과 맞지 않는다는 것이다.</p>
+<p>이 글은 그 가정을 하나씩 걷어 내는 순서로 짰다.</p>
+<ol>
+<li>얼굴 움직임은 감정의 &#39;표현&#39;인가 (1장)</li>
+<li>감정은 하나의 사물인가, 범주인가 (2장)</li>
+<li>뇌는 세계를 어떻게 아는가: 상자 속의 추측 기계 (3장)</li>
+<li>요약의 요약: 피질의 압축 기울기와 단어 (4장)</li>
+<li>행동이 먼저, 경험은 나중: 예측과 원심성 사본 (5장)</li>
+<li>감정 입자도와 다른 문화의 단어들 (6장)</li>
+<li>정동(affect)과 몸 예산 (7장)</li>
+<li>우울, 약물, 그리고 &#39;감정 독감&#39; (8장)</li>
+<li>서로의 신경계를 돌보는 존재 (9장)</li>
+<li>실천: 무엇을 할 수 있나 (10장)</li>
+</ol>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 540" width="420" style="max-width:100%;height:auto" role="img" aria-label="고전적 감정관과 구성된 감정 이론 비교">
+  <rect width="420" height="540" fill="#fff"/>
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#666"/></marker></defs>
+  <text x="210" y="30" font-size="18px" text-anchor="middle" font-weight="bold" fill="#333">고전적 관점 (자극 → 반응)</text>
+  <rect x="40" y="45" width="340" height="40" rx="8" fill="#f3e5e5" stroke="#b55"/>
+  <text x="210" y="71" font-size="16px" text-anchor="middle" fill="#333">자극이 들어온다</text>
+  <rect x="40" y="103" width="340" height="40" rx="8" fill="#f3e5e5" stroke="#b55"/>
+  <text x="210" y="129" font-size="16px" text-anchor="middle" fill="#333">감정 회로가 '촉발'된다</text>
+  <line x1="210" y1="85" x2="210" y2="101" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="40" y="161" width="340" height="40" rx="8" fill="#f3e5e5" stroke="#b55"/>
+  <text x="210" y="187" font-size="16px" text-anchor="middle" fill="#333">고유한 표정·생리 패턴</text>
+  <line x1="210" y1="143" x2="210" y2="159" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="40" y="219" width="340" height="40" rx="8" fill="#f3e5e5" stroke="#b55"/>
+  <text x="210" y="245" font-size="16px" text-anchor="middle" fill="#333">나중에 이름을 붙인다</text>
+  <line x1="210" y1="201" x2="210" y2="217" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+  <text x="210" y="300" font-size="18px" text-anchor="middle" font-weight="bold" fill="#333">배럿의 관점 (예측 → 확인)</text>
+  <rect x="40" y="315" width="340" height="40" rx="8" fill="#e3eef8" stroke="#36a"/>
+  <text x="210" y="341" font-size="16px" text-anchor="middle" fill="#333">과거 경험으로 범주를 구성</text>
+  <rect x="40" y="373" width="340" height="40" rx="8" fill="#e3eef8" stroke="#36a"/>
+  <text x="210" y="399" font-size="16px" text-anchor="middle" fill="#333">내장·골격 운동 계획을 먼저 세움</text>
+  <line x1="210" y1="355" x2="210" y2="371" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="40" y="431" width="340" height="40" rx="8" fill="#e3eef8" stroke="#36a"/>
+  <text x="210" y="457" font-size="16px" text-anchor="middle" fill="#333">사본이 감각 예측이 됨 → 경험</text>
+  <line x1="210" y1="413" x2="210" y2="429" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="40" y="489" width="340" height="40" rx="8" fill="#e3eef8" stroke="#36a"/>
+  <text x="210" y="515" font-size="16px" text-anchor="middle" fill="#333">감각 신호는 확인 또는 오차(학습)</text>
+  <line x1="210" y1="471" x2="210" y2="487" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+</svg><figcaption>고전적 감정관과 구성된 감정 이론 비교</figcaption></figure>
+<h2 id="1-얼굴-움직임은-39표현39이-아니다"><a href="#1-얼굴-움직임은-39표현39이-아니다" class="heading-anchor" aria-hidden="true">#</a> 1. 얼굴 움직임은 &#39;표현&#39;이 아니다</h2><h3 id="11-감정의-구성-요소는-감정에만-있지-않다"><a href="#11-감정의-구성-요소는-감정에만-있지-않다" class="heading-anchor" aria-hidden="true">#</a> 1.1 감정의 구성 요소는 감정에만 있지 않다</h3><p>과학자들은 지난 150년 동안 감정이 무엇인지 합의하지 못했다. 배럿이 보기에 까다로운 점은 감정의 &#39;기본 구성 요소&#39;로 꼽히는 것들이 하나같이 감정에만 있는 것이 아니라는 데 있다.</p>
+<p>한 학파는 감정을 &#39;조율된 반응&#39;으로 정의한다. 뇌의 변화, 몸의 생리적 변화, 그리고 그에 따른 얼굴 표정이나 운동이 함께 일어나는 상태라는 것이다. 그런데 이것은 사실상 삶의 모든 순간에 해당한다. 얼굴은 늘 움직인다. 움직이지 않으면 아바타처럼 보일 것이다. 움직임은 그것을 떠받치는 생리 변화(포도당, 산소 공급)와 늘 조율되고, 그 조율은 늘 뇌가 한다. 따라서 &quot;조율된 특징의 묶음&quot;만으로는 감정을 다른 경험과 구별할 수 없다.</p>
+<p>오랫동안 내려온 주장은 그 대신 <strong>진단 패턴</strong>이 있다는 것이었다. 공포가 촉발되면 심박이 오르고, 도망치거나 얼어붙으려 하며, &#39;공포의 보편 표정&#39;(눈을 크게 뜨고 헉 하고 숨을 들이켜는 얼굴)을 짓는다는 식이다. 그러면 그 신호 하나만 보여도 그 사람이 분노나 슬픔이 아니라 공포 상태라고 &#39;진단&#39;할 수 있다. 그러나 경험적 증거는 이를 뒷받침하지 않는다. 그래서 오랫동안 수수께끼가 남았다. 우리는 분명 화나고, 슬프고, 감사하고, 경외를 느끼는데, 과학자들은 각 상태에 고유하게 대응하는 신체 표지 묶음을 찾지 못했다.</p>
+<p>배럿이 드는 예가 흥미롭다. 포식자 앞에서 동물이 잠들어 버리는 반응도 있지만, 그것은 서구의 공포 고정관념에 없으므로 과학자들이 찾지도 않았다. 또 서구 과학자들이 공포의 표정이라 여긴 바로 그 &#39;눈 크게 뜨고 숨 들이켜는 얼굴&#39;이 멜라네시아 문화에서는 상대를 공격하겠다고 위협하는 표시, 말하자면 &#39;전쟁의 얼굴&#39;이다.</p>
+<blockquote>
+<p><strong>해설:</strong> 여기서 핵심은 &quot;감정이 없다&quot;가 아니라 &quot;감정마다 고유한 지문(fingerprint)이 있다는 가정이 틀렸다&quot;는 것이다. 이 구분을 놓치면 배럿의 이론을 감정 부정론으로 오해하기 쉽다.</p>
+</blockquote>
+<h3 id="12-움직임과-표정은-다르다"><a href="#12-움직임과-표정은-다르다" class="heading-anchor" aria-hidden="true">#</a> 1.2 움직임과 표정은 다르다</h3><p>휴버먼이 &quot;웃으면 슬픔이 덜해진다&quot;처럼 표정이 감정을 거꾸로 바꿀 수 있느냐고 묻자, 배럿은 질문의 전제부터 짚는다. 그 질문은 &#39;감정 체계&#39;와 &#39;표정 체계&#39;가 따로 있다고 가정한다. 얼굴 근육을 움직이는 회로는 분명히 있다. 그러나 <strong>움직임은 표정이 아니다.</strong> 표정(expression)은 움직임의 의미에 대한 <em>해석</em>이다. 얼굴 움직임은 의미가 있지만, 그 의미가 늘 내부 상태의 표현인 것은 아니며, 오히려 그런 경우가 드물 수도 있다.</p>
+<p>배럿은 이것이 과학계의 고질적 문제라고 본다. 연구자들은 결과를 의사·교사·대중에게 의미 있게 전하려고 해석의 언어를 쓰다가, 어느새 자신이 해석하고 있다는 사실을 잊고 관찰 자체를 해석의 이름으로 부른다. &#39;표정&#39;이라는 말이 바로 그렇다.</p>
+<h3 id="13-뇌는-얼굴만-보지-않는다"><a href="#13-뇌는-얼굴만-보지-않는다" class="heading-anchor" aria-hidden="true">#</a> 1.3 뇌는 얼굴만 보지 않는다</h3><p>길에서 우는 사람을 볼 때, 우리는 얼굴에 주의를 둔다고 느끼지만 뇌는 소리, 냄새, 자기 몸 안의 상태까지 포함한 <strong>신호 전체의 앙상블</strong> 속에서 의미를 만든다. 아기 울음이 피곤할 때와 배고플 때 음향적으로 구별되지 않는다는 연구가 있다. 맥락 없이 우는 영상을 보여 주면 서구인은 &quot;슬프구나&quot;라고 판단하지만, 화면을 넓히면 이라크에서 돌아온 아빠를 맞는 어린 소녀일 수도 있다. 배럿의 정식화는 이렇다. <em>우리는 얼굴에서 감정을 읽지 않는다. 다른 신호들의 앙상블, 곧 맥락 속에서 얼굴 움직임의 감정적 의미를 추론한다.</em></p>
+<p>얼굴에서 뇌로 가는 되먹임은 있다. 하지만 그것은 모든 근육에 있는 되먹임과 다를 바 없다. 뇌는 운동 명령을 보내고 몸의 감각 표면은 신호를 돌려보내는 대화를 늘 이어 간다. 뇌는 어떤 신호 패턴이 반복된다는 것을 배웠고, 그래서 웃는 근육 움직임이 큰 앙상블의 일부로 일어나면 다음에 올 것을 확률적으로 예측한다. 이것을 원인이라 부르고 싶다면 그럴 수 있지만, &quot;감정이 촉발되어 얼굴을 움직이고, 그러니 얼굴을 그 모양으로 만들면 감정 체계가 바뀐다&quot;는 단순한 기계론은 아니다. <strong>뇌 안에 감정 체계라는 것은 없기 때문이다.</strong></p>
+<p>휴버먼은 여기에 2000년대 초 유행한 &#39;파워 포즈&#39; 연구(몸을 크게 펴면 힘이 느껴지고 호르몬도 바뀐다는 주장)를 겹쳐 놓는다. 그는 미소 하나로 행복해진다는 말을 믿은 적이 없고, 코르티솔을 &#39;나쁜 것&#39;으로 보는 것도 단순화라고 덧붙인다. 노드 하나(구부정한 자세)를 잡아당겨 전체(우울)를 바꾼다는 식의 이야기가 맞지 않는다는 데 두 사람은 동의한다.</p>
+<h2 id="2-천-편의-논문-다섯-명의-과학자-보편-표정은-없다"><a href="#2-천-편의-논문-다섯-명의-과학자-보편-표정은-없다" class="heading-anchor" aria-hidden="true">#</a> 2. 천 편의 논문, 다섯 명의 과학자: 보편 표정은 없다</h2><h3 id="21-다윈의-유산과-실험실의-실패"><a href="#21-다윈의-유산과-실험실의-실패" class="heading-anchor" aria-hidden="true">#</a> 2.1 다윈의 유산과 실험실의 실패</h3><p>배럿도 학부와 대학원에서 심리학·생리학·인류학을 공부하며 다윈의 견해, 곧 특정 감정 상태에 대응하는 고유한 얼굴 표정이 있다는 주장을 옳다고 받아들였다. 그런데 실험실에서 그것을 쓰려 하자 모든 것이 무너졌다. 학생이나 지역 주민에게 몸과 분리된 &#39;공포 표정&#39; 사진을 보여 주면 대부분 그것이 무엇인지 몰랐고, 자극으로서 기대대로 작동하지 않았다. 심리학 초창기부터 이 문제에 대한 논쟁은 늘 있었다. 배럿은 다윈이 감정 자체에 관심이 있었던 것이 아니라, 매우 서구적인 감정관을 진화에 관한 주장의 재료로 썼다고 말하며, 150년 전 특정한 목적으로 쓰인 글을 현대 교과서처럼 대하는 것이 문제라고 지적한다. 그의 평가는 가혹하다. 보편 표정론은 &quot;과학적 사실로 모셔진 서구의 고정관념&quot;이라는 것이다.</p>
+<h3 id="22-합의-논문은-어떻게-만들어졌나"><a href="#22-합의-논문은-어떻게-만들어졌나" class="heading-anchor" aria-hidden="true">#</a> 2.2 합의 논문은 어떻게 만들어졌나</h3><p>배럿에 따르면 심리학계에는 표정의 보편성을 두고 50년 가까이 &quot;정말 험악한&quot; 논쟁이 이어졌다. 그래서 심리과학협회(Association for Psychological Science)가 배럿을 포함한 원로 과학자들에게 문헌이 실제로 무엇을 보여 주는지 정리하는 합의 백서를 맡겼다. 배럿은 그 시점을 &quot;2016년이었던 것 같다&quot;고 기억한다. 이 협회에는 널리 퍼졌지만 논쟁적인 믿음을 골라, 처음에는 서로 의견이 다른 전문가 패널이 함께 데이터에 대한 합의를 찾도록 하는 저널이 있다. 결과 논문은 Barrett, Adolphs, Marsella, Martinez &amp; Pollak (2019), &quot;Emotional Expressions Reconsidered: Challenges to Inferring Emotion From Human Facial Movements,&quot; <em>Psychological Science in the Public Interest</em>, 20(1), 1–68이다. 2016년 연구 지원을 받아 진행돼 2019년에 발표됐으므로 배럿의 기억은 대체로 맞지만, &#39;2016년 위촉&#39;을 명시한 공식 기록은 확인되지 않았다.</p>
+<p>과정 자체가 교훈적이다.</p>
+<ul>
+<li>몇몇 원로 과학자는 참여를 거절했다. 배럿은 연구비를 잃을까 두려워서라는 쉬운 설명이 있지만, 실제로는 그보다 복잡하다고 본다.</li>
+<li>결국 서로 다른 분야의 원로 다섯 명이 모였고, 전 세계에 흩어져 있어 코로나 이전부터 2년 반 동안 줌으로 만났으며, 천 편이 넘는 논문을 읽었다.</li>
+<li>다섯 중 배럿만이 &quot;얼굴 움직임은 의미가 있지만 특정 표정과 특정 감정의 일대일 대응은 없고, 문화뿐 아니라 같은 사람 안에서도 상황마다 달라진다&quot;는 가설로 출발했다. 나머지 네 사람(배럿의 표현으로 &quot;the guys&quot;)은 정도와 이유는 달라도 보편성을 어느 정도 믿었다.</li>
+<li>처음부터 &quot;누가 옳은지는 중요하지 않다. 데이터에 대한 합의만이 중요하다&quot;고 정했고, 합의하지 못하면 무엇이 결정적 실험인지라도 짚기로 했다. 논문을 하나로 쓸지 따로 쓸지 같은 비상 계획도 세웠다.</li>
+<li>무엇보다 적대적으로 하지 않기로 했다. 누군가는 틀렸다고 인정해야 할 것이었고, 실제로는 &quot;모두가 무언가에 대해 틀렸다.&quot; 배럿은 과학자가 공개적으로 틀렸음을 인정하는 것은 어렵고 용감한 일이며 서로 북돋워야 한다고 강조한다.</li>
+</ul>
+<p>결론: 다섯 명 모두 합리적으로, <strong>감정의 얼굴 표정이 보편적이라는 증거는 없다</strong>는 데 합의했다. 대신 분명한 증거가 있는 것은, 사람들이 얼굴을 움직이는 방식이 <strong>매우 변이가 크다</strong>는 사실이다.</p>
+<h3 id="23-35라는-숫자의-두-얼굴"><a href="#23-35라는-숫자의-두-얼굴" class="heading-anchor" aria-hidden="true">#</a> 2.3 35%라는 숫자의 두 얼굴</h3><p>배럿이 드는 수치는 메타분석 결과다. 서구에서조차 사람들은 화가 났을 때 <strong>약 35%의 경우에만</strong> 찡그린다(scowl). 우연보다는 높으니 좋은 학술지에 실릴 만하다. 그러나 뒤집으면 65%는 찡그림이 아닌 다른 의미 있는 방식으로 얼굴을 움직인다는 뜻이다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>관점</th>
+<th>질문</th>
+<th>인터뷰에서 말한 결과</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>신뢰도(reliability)</td>
+<td>화났을 때 얼마나 자주 찡그리나</td>
+<td>약 35%</td>
+<td>찡그림만 보면 분노 사례의 절반 이상을 놓친다</td>
+</tr>
+<tr>
+<td>특이도(specificity)</td>
+<td>찡그린 얼굴이 얼마나 자주 분노인가</td>
+<td>찡그림의 절반가량은 분노와 무관</td>
+<td>집중, 속이 불편함 등 다른 이유가 많다</td>
+</tr>
+</tbody></table>
+</div><p>배럿 자신도 화났을 때 조용히 앉아 &quot;적의 몰락을 궁리&quot;하기도 하고, 웃기도, 울기도 한다. 연구된 모든 감정 범주에서 같은 양상이 나왔다.</p>
+<blockquote>
+<p><strong>해설:</strong> 진단 검사에 비유하면 이해가 쉽다. 민감도도 특이도도 &#39;우연보다는 낫지만&#39; 낮은 검사로 개인을 판정하면 오판이 대량으로 나온다. 집단 평균에서 통계적으로 유의한 것과 한 사람의 마음을 읽을 수 있는 것은 전혀 다른 문제다.</p>
+</blockquote>
+<h3 id="24-비서구-문화로-가면-quot모든-내기가-무효quot"><a href="#24-비서구-문화로-가면-quot모든-내기가-무효quot" class="heading-anchor" aria-hidden="true">#</a> 2.4 비서구 문화로 가면 &quot;모든 내기가 무효&quot;</h3><p>중국, 일본, 한국 같은 동아시아 문화도 서구의 관행과 규범에 접근할 수 있다. 그래서 배럿 팀은 서구 문화와의 접촉이 훨씬 적은 원격 문화, 예컨대 탄자니아의 수렵채집민 하드자(Hadza)를 연구했다. 결과는 이렇다. 대부분의 경우 그들은 얼굴 움직임을 감정과 관련된 것으로 이해하거나 경험하지조차 않았다.</p>
+<h3 id="25-아기와-얼굴-39유전자만으로는-아니다39"><a href="#25-아기와-얼굴-39유전자만으로는-아니다39" class="heading-anchor" aria-hidden="true">#</a> 2.5 아기와 얼굴: &#39;유전자만으로는 아니다&#39;</h3><p>휴버먼은 두 눈과 그 아래 선이 있으면 얼굴로 인식하는 뇌 회로가 꽤 하드와이어드되어 있지 않느냐고 묻는다. 배럿의 답은 정교하다. 맞지만, 태어날 때 있는 것은 그 <em>배치에 대한 선호</em>이며, 그것이 꼭 얼굴일 필요는 없다. 이후 아기는 얼굴에 노출되며 빠르게 배운다. 생후 첫 석 달은 &quot;얼굴이란 무엇인가에 대한 거대하고 끊임없는 튜토리얼&quot;이다.</p>
+<p>배럿은 『유전자만이 아니다(Not by Genes Alone)』라는 책을 언급하며 <strong>문화적 유전</strong>을 강조한다. 우리는 양육을 필요로 하는 본성, 초기 학습을 필요로 하는 유전자를 가졌다. 유전자는 설계도가 아니며, 영아의 뇌는 세계로부터 배선 지시를 기대하고 그것으로 자신을 세계에 배선한다. 임신 3삼분기에 태아 학습의 증거도 있다. 더구나 아기에게 웃어 주는 사람들은 바로 아기의 신경계를 유지해 주는 사람들(먹이고 재우는 사람들)이어서 처음부터 보상 학습이 작동한다. 웃음이 행복의 단서가 된 것은 배웠기 때문이며, 이 학습은 정통 진화 이론의 원래 형태가 아니라 &#39;확장된 진화적 종합(extended evolutionary synthesis)&#39;의 일부라고 배럿은 말한다.</p>
+<h3 id="26-왜-이것이-quot정말-심각한quot-문제인가"><a href="#26-왜-이것이-quot정말-심각한quot-문제인가" class="heading-anchor" aria-hidden="true">#</a> 2.6 왜 이것이 &quot;정말 심각한&quot; 문제인가</h3><p>배럿은 이 논의가 학술적 말다툼이 아니라고 강조한다. 우리 문화는 얼굴로 타인의 마음 상태를 읽을 수 있다고 너무 굳게 믿어서 그것을 법 체계에 새겨 넣었고, 배심원이 피고의 얼굴에서 뉘우침(또는 그 결여)을 읽을 수 있다고 믿는 바람에 목숨을 잃는 사람이 있다. 배럿은 지난해 이노센스 프로젝트가 개입한 사건을 든다. 사형수 감방에 있던 한 여성을 그곳에 보낸 것이 그녀의 얼굴과 몸가짐에서 감정을 읽을 수 있다는 경찰관의 주장이었고, 재심을 위한 사형 집행 정지가 이루어졌다. 배럿은 그녀의 유무죄를 말하는 것이 아니라, 과학적으로는 증거가 될 수 없는 것이 그녀를 사형수로 만들었다는 점을 말한다. 평소 &#39;사실&#39;이나 &#39;진실&#39;이라는 말을 꺼리는 그도 이 경우만큼은 그 말을 쓸 수 있다고 느낀다.</p>
+<p>그렇다고 모든 것이 무작위라는 뜻은 아니다. 배럿의 남편은 30년(인터뷰 당일이 만난 지 정확히 30년이라고 한다)을 함께하며 그녀의 움직임에서 꽤 괜찮은 추측을 한다. 뇌는 패턴 학습자다. 다만 <em>보편적인 템플릿</em>은 없다.</p>
+<blockquote>
+<p><strong>해설:</strong> 결론을 두 문장으로 줄이면 이렇다. ① 개인에게는 &#39;말&#39;(tell)이 있고, 오래 본 사람은 그것을 배운다. ② 그러나 낯선 이의 얼굴에서 범용 사전으로 마음을 읽을 수는 없다. 법정·면접·보안 검색처럼 낯선 이를 판정하는 자리에서 ②를 잊을 때 비용이 생긴다.</p>
+</blockquote>
+<h2 id="3-상자-속의-추측-기계"><a href="#3-상자-속의-추측-기계" class="heading-anchor" aria-hidden="true">#</a> 3. 상자 속의 추측 기계</h2><h3 id="31-민속-범주에서-출발하지-말-것"><a href="#31-민속-범주에서-출발하지-말-것" class="heading-anchor" aria-hidden="true">#</a> 3.1 민속 범주에서 출발하지 말 것</h3><p>배럿은 적어도 100년 동안 심리학자와 신경과학자들이 &#39;화가 난다&#39;, &#39;결정한다&#39;, &#39;기억한다&#39; 같은 민속 범주, 곧 상식적 경험에서 출발해 그 물리적 기반을 뇌에서 찾아 왔다고 말한다. 그러나 세계의 모든 사람이 그 범주를 쓰거나 그런 경험을 하는 것은 아니다. 그래서 그는 반대로 <strong>신경계에서 출발한다.</strong> 신경계가 어떻게 진화하고 발달했으며 어떻게 구조화되어 있는지를 먼저 배우고, 해부학적 연결에서 가설을 얻는다. 그의 가장 좋은 가설 몇몇은 &quot;저기에 직접 연결이 있네, 뭔가 의미가 있겠다&quot;는 관찰에서 나왔다.</p>
+<p>이름 붙이기의 함정은 생물학적 신호에도 적용된다.</p>
+<ul>
+<li><strong>세로토닌</strong>은 &#39;행복 물질&#39;이 아니다. 대사 조절자로 진화했고, 뇌가 끝에 보상이 있을지 확신하지 못할 때도 동물이 자원을 쓸 수 있게 해 준다. 에너지 수지와 관련되니 쾌감과 관련이 있을 수는 있다.</li>
+<li><strong>코르티솔</strong>은 &#39;스트레스 호르몬&#39;이 아니다. 뇌가 큰 대사 지출이 필요하다고 믿을 때 더 분비되는 호르몬이다. 배럿에 따르면 스트레스란 바로 그런 믿음이다.</li>
+</ul>
+<p>휴버먼은 해부학자 테드 존스의 농담을 소개한다. &quot;약물이란 동물이나 사람에게 주사하면 과학 논문이 나오는 물질이다.&quot; 거의 모든 교란은 논문으로 쓸 만한 &#39;효과&#39;를 내지만, 그것이 실제 삶의 감정과 닮았다는 보장은 없다.</p>
+<h3 id="32-뇌가-아는-것은-몸뿐이다"><a href="#32-뇌가-아는-것은-몸뿐이다" class="heading-anchor" aria-hidden="true">#</a> 3.2 뇌가 아는 것은 몸뿐이다</h3><p>배럿의 첫 번째 큰 요점: 뇌는 세계를 직접 모델링하지 않는다. 뇌가 아는 것은 몸의 <strong>감각 표면</strong>에서 오는 신호뿐이다. 뇌는 망막을, 달팽이관을, 피부의 감각 표면을 모델링하며, 세계에 대해 아는 모든 것은 몸을 통해 안다.</p>
+<p>두 번째 요점: 뇌는 두개골이라는 <strong>어둡고 조용한 상자</strong>에 갇혀 있다. 감각 신호는 어떤 변화의 <em>결과</em>일 뿐이고, 뇌는 그 원인을 모른다. 그래서 살아남으려면 원인을 추측해야 한다. 철학에서 말하는 <strong>역문제(inverse problem)</strong>다. 뇌는 끊임없는 역문제를 풀어야 하는 &quot;추측 기계&quot;다.</p>
+<p>큰 &#39;쾅&#39; 소리를 생각해 보자. 차 문이 닫힌 소리일까, 천둥일까, 차의 역화일까, 총성일까? 뇌는 모른다. 그리고 그 추측은 지적 추측이 아니라 <strong>운동 계획</strong>이다. 뛰어야 하나, 창문을 닫아야 하나, 우산을 챙겨야 하나, 배기가스 때문에 숨을 참아야 하나. 그 운동을 떠받치려고 몸 안의 상태를 바꾸는 계획이다.</p>
+<h3 id="33-기억은-재현이고-범주는-그-재현의-묶음이다"><a href="#33-기억은-재현이고-범주는-그-재현의-묶음이다" class="heading-anchor" aria-hidden="true">#</a> 3.3 기억은 재현이고, 범주는 그 재현의 묶음이다</h3><p>그 계획은 과거 경험에서 온다. 증거가 시사하는 바에 따르면 뇌는 현재와 어떤 식으로든 비슷한 과거 경험의 조각들, 곧 신호의 앙상블을 <strong>재구현</strong>한다. 우리는 그것을 기억한다고 느끼지 않지만, 사실상 기억이다. 심리학에서 서로 비슷한 것들의 묶음을 <strong>범주</strong>라고 하므로, 뇌는 가능한 미래·결과·운동 계획의 범주를 계속 구성하는 &quot;연속적 범주 구성자&quot;다.</p>
+<p>휴버먼은 이를 도서관에 비유한다. 첫 소리에는 무한한 책장이 열려 있다가, 두 번째 소리의 간격과 크기, 맥락이 더해지며 한 동(wing)으로, 한 책장으로, 마침내 &quot;지붕이 무너진다&quot;는 한 권으로 좁혀진다. 배럿은 이 비유가 두 가지를 짚는다고 말한다.</p>
+<ol>
+<li><strong>불확실성 감소가 핵심이다.</strong> 불확실성은 매우 비싸다. 우리는 재미로 새로움을 찾기도 하지만, 깨어 있는 모든 순간이 아무것도 좁혀지지 않는 상태라면 무섭고, 아무것도 계획할 수 없으며, 대사적으로 지속 불가능하다. 예측을 잘 하지 못하도록 배선된 뇌는 실제로 엄청난 불확실성을 감당하고 있다.</li>
+<li><strong>모든 것이 시간에 따라 변한다.</strong> 바깥에서 오는 신호도, 뇌 내부의 신호도 계속 변하므로 &#39;유사성&#39; 판단은 스냅숏이 아니라 동역학적으로 일어난다. 대부분은 두 번째 소리를 기다리지도, 의식적으로 따지지도 않는다. 뇌가 선택 기제와 세계의 신호를 통해 알아서 좁힌다.</li>
+</ol>
+<h3 id="34-신호와-잡음-우리는-서로를-큐잉한다"><a href="#34-신호와-잡음-우리는-서로를-큐잉한다" class="heading-anchor" aria-hidden="true">#</a> 3.4 신호와 잡음: 우리는 서로를 큐잉한다</h3><p>휴버먼은 영화 〈라이언 일병 구하기〉에서 신병들은 총성마다 움찔하지만 노련한 병사는 총알이 스쳐도 꼿꼿이 움직이는 장면을 떠올린다. 용기나 둔감화로만 볼 것이 아니라, 곁의 것이 위협이긴 해도 <em>반응할 가치가 있는 위협은 아니라는</em> 의식적·무의식적 지식이 있는 것이라고. 배럿은 동의하며 이렇게 일반화한다. 모든 뇌는 끊임없이 신호와 잡음을 가른다. &quot;이걸 신경 써야 하나?&quot;</p>
+<p>그리고 사람은 서로를 <strong>시선으로 큐잉</strong>한다. 낯선 동네 카페에서 사이렌이 지나갈 때 상대가 돌아보면 나도 돌아보고, 상대가 무시하면 나도 무시한다. 아기와 아이에게 &quot;이건 신호, 이건 잡음, 이건 걱정할 것, 이건 무시해도 될 것&quot;을 가르치는 방식이 바로 이것이다.</p>
+<h2 id="4-요약의-요약-피질의-압축-기울기와-단어"><a href="#4-요약의-요약-피질의-압축-기울기와-단어" class="heading-anchor" aria-hidden="true">#</a> 4. 요약의 요약: 피질의 압축 기울기와 단어</h2><h3 id="41-냅킨처럼-펼친-피질"><a href="#41-냅킨처럼-펼친-피질" class="heading-anchor" aria-hidden="true">#</a> 4.1 냅킨처럼 펼친 피질</h3><p>뇌는 컴퓨터가 아니라 공학적 의미의 <strong>신호 처리기</strong>다. 배럿은 대뇌피질을 피질하 구조에서 떼어 내 냅킨처럼 펼쳐 놓는 상상을 권한다. 그러면 뉴런의 구조에 <strong>압축 기울기(compression gradient)</strong>가 보인다.</p>
+<ul>
+<li>1차 감각 영역(망막위상 지도가 있는 1차 시각피질, 음위상 지도가 있는 1차 청각피질)에는 선·모서리·음 같은 매우 저수준의 특징을 표상하는 작은 피라미드 뉴런이 아주 많다. 고차원 배열이다.</li>
+<li>이들은 더 큰 뉴런으로, 다시 더 큰 뉴런으로 수렴한다.</li>
+<li>뇌의 앞쪽 정중선에 이르면 뉴런 수는 훨씬 적지만 크고 연결이 훨씬 많다. <strong>차원 축소</strong>가 일어난 것이다.</li>
+</ul>
+<p>휴버먼은 이를 MP3 압축에 비유하고, 배럿은 선·모서리 → 둥근 모양 → 얼굴로 가는 흐름을 &quot;<strong>요약의 요약의 요약</strong>&quot;이라고 부른다. 휴버먼은 이것이 신경계를 이해하는 &quot;엄청난 가치의 문장&quot;이라고 반긴다. 배럿은 이것이 뇌의 여러 압축 기울기 가운데 하나일 뿐이며(그가 떠올릴 수 있는 것만 적어도 넷이 더 있다), 모두 같은 방식으로 작동한다고 덧붙인다.</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 320" width="420" style="max-width:100%;height:auto" role="img" aria-label="피질의 압축 기울기">
+  <rect width="420" height="320" fill="#fff"/>
+  <defs><marker id="b1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#b55"/></marker></defs>
+  <text x="210" y="28" font-size="18px" text-anchor="middle" font-weight="bold" fill="#333">압축(요약) ←→ 해제(구체화)</text>
+  <text x="60" y="60" font-size="16px" text-anchor="middle" fill="#333">고차원·세밀</text>
+  <g fill="#7aa7d9"><circle cx="48" cy="85" r="6"/><circle cx="48" cy="109" r="6"/><circle cx="48" cy="133" r="6"/><circle cx="48" cy="157" r="6"/><circle cx="48" cy="181" r="6"/><circle cx="48" cy="205" r="6"/><circle cx="70" cy="97" r="6"/><circle cx="70" cy="121" r="6"/><circle cx="70" cy="145" r="6"/><circle cx="70" cy="169" r="6"/><circle cx="70" cy="193" r="6"/></g>
+  <g fill="#5a8cc4"><circle cx="160" cy="105" r="12"/><circle cx="160" cy="145" r="12"/><circle cx="160" cy="185" r="12"/></g>
+  <g fill="#3a6aa4"><circle cx="260" cy="125" r="18"/><circle cx="260" cy="175" r="18"/></g>
+  <g fill="#1f4a80"><circle cx="360" cy="150" r="28"/></g>
+  <text x="360" y="100" font-size="16px" text-anchor="middle" fill="#333">다중감각 요약</text>
+  <text x="360" y="82" font-size="16px" text-anchor="middle" fill="#333">저차원</text>
+  <text x="60" y="240" font-size="16px" text-anchor="middle" fill="#333">선·모서리·음</text>
+  <text x="160" y="240" font-size="16px" text-anchor="middle" fill="#333">모양</text>
+  <text x="260" y="240" font-size="16px" text-anchor="middle" fill="#333">얼굴·대상</text>
+  <text x="360" y="240" font-size="16px" text-anchor="middle" fill="#333">위협·보상</text>
+  <text x="360" y="260" font-size="16px" text-anchor="middle" fill="#333">·'분노'</text>
+  <text x="210" y="290" font-size="16px" text-anchor="middle" fill="#b55">손실 압축: 세부는 버려진다</text>
+  <line x1="30" y1="305" x2="390" y2="305" stroke="#b55" stroke-width="2" marker-end="url(#b1)"/>
+</svg><figcaption>피질의 압축 기울기</figcaption></figure>
+<h3 id="42-다중감각-요약으로서의-39분노39"><a href="#42-다중감각-요약으로서의-39분노39" class="heading-anchor" aria-hidden="true">#</a> 4.2 다중감각 요약으로서의 &#39;분노&#39;</h3><p>그렇다면 앞쪽 정중선의 특징은 무엇인가? 보이는 것·들리는 것·냄새 맡는 것을 아우르는 <strong>다중감각 요약</strong>이며, 저차원이고 성기다. 위협, 보상, 쾌 같은 것들이다. &#39;추상적&#39;이라는 말은 감각·운동적 의미가 없다는 뜻이 아니라, 많은 서로 다른 패턴을 뇌가 <em>등가로 취급한다</em>는 뜻이다.</p>
+<p>&#39;분노&#39;라는 단어는 어디에 표상될까? 그것도 이런 다중감각 추상이다. &#39;anger&#39;는 소리 몇 개(음소)에 불과하지만, 평생 배운 수천 개의 사례, 감각·운동 특징이 서로 매우 다른 사례들에 대응한다. 몸 안에서 일어나는 일도, 얼굴 움직임도, 남이 화낼 때 하는 행동도 상황마다 다르다. 그래서 단어 하나가 수많은 사례의 요약이 된다.</p>
+<h3 id="43-quot피자quot라는-두-음절"><a href="#43-quot피자quot라는-두-음절" class="heading-anchor" aria-hidden="true">#</a> 4.3 &quot;피자&quot;라는 두 음절</h3><p>배럿의 비유: &quot;어젯밤 피자 먹었어.&quot; 두 음절이 둥글고 납작하고, 소스와 모차렐라·파르메산 치즈, 버섯과 올리브가 있었다는 등 대략 50가지 감각·운동 특징을 대신한다. 매우 효율적이다. 물론 상대는 시카고식 딥디시를 떠올릴 수 있으니 되물을 것이다(토론토 출신인 배럿은 얇은 피자가 &quot;유일한 진짜 피자&quot;라고 농담한다). 요점은 <strong>단어는 세밀한 특징들을 대신하는 저차원 특징이며, 우리는 그렇게 소통하고, 아는 단어의 범위만큼 제약된다</strong>는 것이다.</p>
+<h3 id="44-생후-3개월-아기의-39블링39"><a href="#44-생후-3개월-아기의-39블링39" class="heading-anchor" aria-hidden="true">#</a> 4.4 생후 3개월 아기의 &#39;블링&#39;</h3><p>말을 못 하고 언어를 이해하지 못하는 3~4개월 아기도 단어를 써서 추상 범주를 배운다. 실험에서 &quot;이건 블링이야&quot;라며 물건을 내려놓으면 삑 소리가 난다. 모양도 촉감도 냄새도 다른 물건을 &quot;이것도 블링이야&quot;라고 하면, 아기는 그것도 삑 소리를 낼 거라 기대한다. 배럿은 인터뷰 중 펜, 머그컵, 자기 손목시계로 이를 시연했다. 지각적으로 전혀 다른 대상을, 공유된 <em>기능</em>(삑 소리)과 단어 하나로 한 범주에 묶는 것이다.</p>
+<blockquote>
+<p><strong>해설:</strong> 이 대목이 감정 이론의 핵심 고리다. 서로 다른 몸 상태·표정·상황이 &#39;분노&#39;라는 단어로 묶일 수 있는 이유는, 감각적 유사성이 아니라 기능·목표의 유사성으로 범주를 만드는 능력이 아주 일찍부터 있기 때문이다. 단어는 범주를 <em>만드는</em> 도구다.</p>
+</blockquote>
+<h2 id="5-행동이-먼저-경험은-나중"><a href="#5-행동이-먼저-경험은-나중" class="heading-anchor" aria-hidden="true">#</a> 5. 행동이 먼저, 경험은 나중</h2><h3 id="51-압축은-손실이-있고-추측은-구체화다"><a href="#51-압축은-손실이-있고-추측은-구체화다" class="heading-anchor" aria-hidden="true">#</a> 5.1 압축은 손실이 있고, 추측은 구체화다</h3><p>압축은 공학 용어로 <strong>손실(lossy)</strong> 압축이다. 선과 모서리에서 얼굴로 가면, 얼굴을 표상하는 뉴런은 버려진 세부에 접근할 수 없다. 그런데 뇌가 추측을 할 때는 이 압축된 저차원 요약(분노, 위협)에서 <em>출발</em>한다. 그리고 시냅스마다 다음 수준의 세부를 추측하며 일반에서 구체로, 곧 특정한 감각·운동 패턴으로 내려간다. 이 일은 피질 시트를 따라서도, 피질 → 중뇌 → 뇌간 → 척수로 이어지는 신경축을 따라서도 일어난다. &#39;달려&#39;라는 표상에서 근방추와 관절 각도라는 실제 움직임으로 가야 하기 때문이다. 이것이 <strong>구체화(particularizing)</strong>이며, 분노가 일반 특징이라면 &#39;어떤 분노 사례인가&#39;를 뇌가 추측하는 과정이다.</p>
+<p>휴버먼은 셰링턴의 말 &quot;최종 공통 경로는 움직임이다&quot;를 인용하고, 신경계가 결국 다가갈지·물러날지·가만히 있을지(yum, yuck, meh)를 정한다는 한 신경과학자의 정식화를 꺼낸다. 배럿은 그것이 압축된 저차원 특징일 뿐이고 뇌가 정할 것은 그것만이 아니라고 반박한다. 그 근거가 인상적이다. <em>정말 기분이 나쁠 때를 떠올려 보라. 무엇을 하는가? 무엇을 해야 할지 모른다.</em> 저차원 요약(나쁘다)은 세부로 풀려야만 행동 계획이 된다.</p>
+<h3 id="52-첫-번째-계획은-심장과-폐의-것이다"><a href="#52-첫-번째-계획은-심장과-폐의-것이다" class="heading-anchor" aria-hidden="true">#</a> 5.2 첫 번째 계획은 심장과 폐의 것이다</h3><p>배럿이 말하는 &#39;행동&#39;은 팔다리를 움직이는 골격 운동만이 아니다. 가장 먼저 세워지는 계획은 심장을 빨리 뛰게 할지 느리게 할지, 혈압을 올릴지, 혈관을 수축할지 확장할지, 호흡을 깊게 할지 얕게 할지 같은 <strong>내장 운동(visceromotor)</strong> 계획이다. 수 밀리초 뒤에 골격 운동 계획이 따른다. 그리고 <em>세계에 대한 우리의 경험은 이 운동 계획들에서 나온다.</em> 감정 상태가 먼저 있고 거기에 이름표를 붙이는 것이 아니다. 이름표(단어)는 과거에서 현재로 일반화하는 데 쓸모 있는 특징 묶음일 뿐이다.</p>
+<h3 id="53-원심성-사본-같은-신호가-두-곳으로"><a href="#53-원심성-사본-같은-신호가-두-곳으로" class="heading-anchor" aria-hidden="true">#</a> 5.3 원심성 사본: 같은 신호가 두 곳으로</h3><p>해부학이 말하는 바는 이렇다. 운동 신호를 뇌간과 척수로 내려보내는 축삭에는 곁가지가 있고, 그 곁가지가 <strong>같은 신호의 사본(원심성 사본, efference copy)</strong>을 감각 영역으로 보낸다. 사본은 &quot;지난번 이 맥락에서 이렇게 움직였을 때 다음에 본 것, 느낀 것, 냄새 맡은 것은 이랬다&quot;는 감각 예측으로 쓰인다.</p>
+<p>따라서 순서가 뒤집힌다. 우리는 &quot;보고 → 느끼고 → 행동한다&quot;고 경험하지만, 실제로는 <strong>뇌가 행동을 먼저 준비하고, 경험은 그 행동 준비에서 나온다.</strong> 자극을 받아 처리·평가한 뒤 반응한다는, 신경과학과 심리학이 오래 써 온 모델은 맞지 않는다.</p>
+<h3 id="54-예측이-맞으면-신호는-거기서-끝난다"><a href="#54-예측이-맞으면-신호는-거기서-끝난다" class="heading-anchor" aria-hidden="true">#</a> 5.4 예측이 맞으면 신호는 거기서 끝난다</h3><p>배럿이 &quot;가장 놀라운 점&quot;이라 부르는 대목. 감각 영역의 뉴런은 준비된 운동에 따라 이미 발화 양상이 바뀌어 있다. 실제 감각 신호가 도착했을 때 예측과 맞으면 신호는 발화를 <em>확인</em>하는 데서 끝나고 뇌 안쪽으로 더 퍼지지 않는다. 예측하지 못한 것, 곧 <strong>예측 오차</strong>만이 전파되고 압축된다. 우리는 그것을 &quot;학습&quot;이라고 부른다. 정리하면 경험은 뇌가 구성하고, 감각 표면의 신호는 그것을 확인하거나 수정하는 역할을 한다. 배럿은 자기 웹사이트에 없는 소리를 듣거나 가슴에 없는 진동을 느끼는 예시가 있다고 말한다.</p>
+<p>휴버먼은 철학자 앤디 클라크의 표현을 빌려 일상 경험을 &quot;통제된 환각(controlled hallucination)&quot;이라 부르고, 배럿도 이에 동의한다.</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 370" width="420" style="max-width:100%;height:auto" role="img" aria-label="예측 처리 순환">
+  <rect width="420" height="370" fill="#fff"/>
+  <defs><marker id="c1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#666"/></marker></defs>
+  <rect x="100" y="20" width="220" height="50" rx="10" fill="#e3eef8" stroke="#36a"/>
+  <text x="210" y="50" font-size="16px" text-anchor="middle" fill="#333">과거 경험 → 범주 구성</text>
+  <rect x="20" y="130" width="180" height="50" rx="10" fill="#e8f4e8" stroke="#393"/>
+  <text x="110" y="152" font-size="16px" text-anchor="middle" fill="#333">내장·골격</text>
+  <text x="110" y="172" font-size="16px" text-anchor="middle" fill="#333">운동 계획</text>
+  <rect x="220" y="130" width="180" height="50" rx="10" fill="#fff4dd" stroke="#c90"/>
+  <text x="310" y="152" font-size="16px" text-anchor="middle" fill="#333">원심성 사본</text>
+  <text x="310" y="172" font-size="16px" text-anchor="middle" fill="#333">= 감각 예측</text>
+  <rect x="100" y="250" width="220" height="50" rx="10" fill="#f3e5e5" stroke="#b55"/>
+  <text x="210" y="280" font-size="16px" text-anchor="middle" fill="#333">실제 감각 신호와 비교</text>
+  <g stroke="#666" stroke-width="2" fill="none" marker-end="url(#c1)"><path d="M150,70 L110,128"/><path d="M200,155 L218,155"/><path d="M310,180 L260,248"/><path d="M100,275 L10,275 L10,45 L98,45"/></g>
+  <text x="210" y="118" font-size="16px" text-anchor="middle" fill="#393">사본 전송</text>
+  <text x="210" y="330" font-size="16px" text-anchor="middle" fill="#b55">맞으면 확인으로 끝</text>
+  <text x="210" y="352" font-size="16px" text-anchor="middle" fill="#b55">틀리면 오차 전파 = 학습</text>
+</svg><figcaption>예측 처리 순환</figcaption></figure>
+<h3 id="55-그러면-몸과-감정은-양방향인가"><a href="#55-그러면-몸과-감정은-양방향인가" class="heading-anchor" aria-hidden="true">#</a> 5.5 그러면 몸과 감정은 양방향인가</h3><p>휴버먼이 묻는다. 감정이 움직임에 영향을 주고, 움직임이 감정에 영향을 주는가? 배럿의 답은 &quot;그렇다, 그러나 단순한 기계론으로는 아니다&quot;이다. 느끼는 것은 하는 것과, 하는 것은 느끼는 것과 연결되어 있지만, 그 연결은 예측과 사본과 오차의 순환을 통해 이루어진다.</p>
+<p>휴버먼은 연구의 어려움도 짚는다. 이렇게 동역학적인 시스템을 fMRI 스캐너나 1~10점 리커트 척도 설문으로 재는 것은 매우 거칠다. 또 소셜 미디어에서 &quot;나는 생각이 아니라 느낌으로 생각한다&quot;, &quot;나는 감정이 먼저 몸으로 오고 이름은 한참 뒤에 온다&quot;, &quot;나는 감정을 분명히 언어로 경험한다&quot;고 말하는 사람들을 보며, 사람마다 세계를 꽤 다르게 부호화하는지도 모른다고 말한다.</p>
+<h2 id="6-감정-입자도와-다른-문화의-단어들"><a href="#6-감정-입자도와-다른-문화의-단어들" class="heading-anchor" aria-hidden="true">#</a> 6. 감정 입자도와 다른 문화의 단어들</h2><h3 id="61-언어-하나로는-부족하다"><a href="#61-언어-하나로는-부족하다" class="heading-anchor" aria-hidden="true">#</a> 6.1 언어 하나로는 부족하다</h3><p>휴버먼은 뉴욕에서 누나와 좋은 시간을 보낸 뒤 숙소에 돌아와 이유 모를 강한 외로움에 휩싸였던 경험을 털어놓는다. 피곤했나, 전날 잠을 설쳤나 생각했고, 일기에 &quot;기분 좋음의 상당 부분은 충분히 쉬었고 몸이 아프지 않은 것&quot;이라고 적었다. 한 시간 뒤에는 나아졌지만 완전히 괜찮지는 않은 상태를 부를 단어가 없었다. 정점의 기분에는 단어가 있는데 그 사이의 넓은 영역에는 없다는 것이다.</p>
+<p>배럿의 간단한 답: <strong>언어 하나로는 충분하지 않다.</strong> 영어도, 프랑스어도, 스와힐리어도 혼자서는 부족하다. 각 문화가 단어로 표시하는 상태는 일부 겹치지만 상당 부분 겹치지 않으므로, 다른 문화의 감정 개념을 아는 것이 매우 유용하다.</p>
+<h3 id="62-인터뷰에-나온-단어들"><a href="#62-인터뷰에-나온-단어들" class="heading-anchor" aria-hidden="true">#</a> 6.2 인터뷰에 나온 단어들</h3><div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>인터뷰에서 소개된 개념</th>
+<th>설명</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(독일어, 배럿도 단어를 기억하지 못함)</td>
+<td>어떤 사람의 얼굴이 &quot;한 대 맞을 만하게&quot; 느껴지는 경험</td>
+<td><em>das Backpfeifengesicht</em>(Backpfeife &#39;뺨 때리기&#39; + Gesicht &#39;얼굴&#39;). 구어·비속 뉘앙스</td>
+</tr>
+<tr>
+<td>리겟(liget)</td>
+<td>집단 속의 들뜬 공격성. 축구, 머리 사냥, 군대</td>
+<td>배럿은 &quot;폴리네시아의 머리 사냥&quot; 문화의 단어라고 소개. <strong>정정</strong>: 실제로는 폴리네시아가 아니라 필리핀 북부 루손 일롱곳(Ilongot)족의 개념이다(Renato·Michelle Rosaldo의 연구로 알려짐)</td>
+</tr>
+<tr>
+<td>기길(gigil)</td>
+<td>너무 귀여운 아기를 보면 꽉 쥐고 싶어지는 느낌</td>
+<td>철자 gigil, 필리핀어(타갈로그어). 옥스퍼드 영어 사전에 최근 등재</td>
+</tr>
+<tr>
+<td>(일본어)</td>
+<td>머리를 잘못 잘랐을 때의 절망</td>
+<td><em>age-otori</em>(上げ劣り). 머리를 올리거나 성인식 뒤 이전보다 못나 보이는 상태를 가리키는 <strong>고전 일본어</strong> 용어로, 현대 일상어는 아니다</td>
+</tr>
+<tr>
+<td>(터키어, 들리는 발음 &#39;gusin look&#39;)</td>
+<td>무언가를 잃고 그 때문에 화가 나는 것. 상실과 목표 방해의 결합, 영어로는 &#39;분노+슬픔&#39;</td>
+<td>표기 오류로 보이며 <em>hüzün</em>(아랍어 ḥuzn에서 온 말, 상실·멜랑콜리)일 가능성이 가장 크다. 다만 hüzün에는 분노 성분이 뚜렷하지 않아, 배럿이 말한 &#39;상실+분노&#39;와 정확히 맞는 단어인지는 <strong>확인되지 않았다</strong></td>
+</tr>
+</tbody></table>
+</div><p>리겟 이야기는 특히 깊다. 배럿은 7년도 더 전에 라디오에서, 파병 중 전우들과 적을 &#39;사냥&#39;하며 들뜨고 강렬하며 각성이 높은(행복은 아니지만 유쾌한) 상태를 경험했던 퇴역 군인들이 귀국 후 &quot;내가 사이코패스인가, 사람 죽이는 걸 즐겼나&quot;라고 자문하는 것을 들었다. 배럿은 그들이 겪은 것이 리겟이며, 그 단어가 있었다면 그것이 목숨을 걸고 동료를 책임지는 집단적 강렬함이고 <strong>인간 변이의 정상 범위 안에 있다</strong>는 것을 이해했을 거라고 생각했다. 영어에 그 단어가 없을 뿐이다.</p>
+<blockquote>
+<p><strong>해설:</strong> 단어 하나가 &#39;나는 비정상인가&#39;라는 해석을 &#39;이것은 알려진 인간 경험이다&#39;로 바꿀 수 있다는 예다. 6.4절에서 보듯 단어는 경험을 묘사하는 데서 그치지 않고 경험을 구성하는 재료이므로, 단어가 바뀌면 경험과 그 뒤의 행동 계획도 바뀐다.</p>
+</blockquote>
+<h3 id="63-quot감정-입자도quot는-사물이-아니라-과정이다"><a href="#63-quot감정-입자도quot는-사물이-아니라-과정이다" class="heading-anchor" aria-hidden="true">#</a> 6.3 &quot;감정 입자도&quot;는 사물이 아니라 과정이다</h3><p>배럿은 거의 30년 전 <strong>감정 입자도(emotional granularity)</strong>라는 말을 만들었다. 지금은 사람들이 그것을 하나의 현상처럼 연구하는데, 배럿은 그것이 사물이 아니라 <strong>과정</strong>을 가리킨다고 상기시키고 싶어 한다. 뇌가 범주 구성자라면, 그 범주가 얼마나 세밀하고 정확한가의 문제다.</p>
+<ul>
+<li>동등성의 기준이 &#39;위협&#39;뿐이라면 큰일이다. 위협과 어울리는 감각·운동 패턴이 엄청나게 많아 범주가 거대해지고, 그중 무엇을 쓸지 정하기 어렵다.</li>
+<li>반대로 &quot;지금 이 순간과 똑같은 과거&quot;(턱수염 난 검은 옷의 사람과 마주 앉은 장면)를 찾는다면 대부분 중요하지 않은 세부까지 맞춰야 하니 비효율적이다.</li>
+<li>그래서 중간이 필요하다. &#39;위협&#39;보다는 세밀하되 지나치게 세밀하지 않은 범주.</li>
+</ul>
+<p>도서관 비유로 돌아가면 이렇다. &#39;나쁘다&#39;는 동 하나 분량의 선택지를, &#39;화났다&#39;는 책장 하나를, &#39;좌절했다&#39;는 선반 하나를 부분적으로 구성한다. 뇌는 서로 다른 일반화 규모의 범주를 만드는 법을 배울 수 있다.</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 390" width="420" style="max-width:100%;height:auto" role="img" aria-label="감정 입자도와 도서관 비유">
+  <rect width="420" height="390" fill="#fff"/>
+  <text x="210" y="28" font-size="16px" text-anchor="middle" fill="#333">'기분 나쁘다' = 한 동(wing)</text>
+  <rect x="20" y="40" width="380" height="120" rx="10" fill="#eef" stroke="#669"/>
+  <g fill="#99b"><rect x="40" y="55" width="12" height="90" rx="2"/><rect x="60" y="55" width="12" height="90" rx="2"/><rect x="80" y="55" width="12" height="90" rx="2"/><rect x="100" y="55" width="12" height="90" rx="2"/><rect x="120" y="55" width="12" height="90" rx="2"/><rect x="140" y="55" width="12" height="90" rx="2"/><rect x="160" y="55" width="12" height="90" rx="2"/><rect x="180" y="55" width="12" height="90" rx="2"/><rect x="200" y="55" width="12" height="90" rx="2"/><rect x="220" y="55" width="12" height="90" rx="2"/><rect x="240" y="55" width="12" height="90" rx="2"/><rect x="260" y="55" width="12" height="90" rx="2"/><rect x="280" y="55" width="12" height="90" rx="2"/><rect x="300" y="55" width="12" height="90" rx="2"/><rect x="320" y="55" width="12" height="90" rx="2"/><rect x="340" y="55" width="12" height="90" rx="2"/><rect x="360" y="55" width="12" height="90" rx="2"/></g>
+  <text x="150" y="190" font-size="16px" text-anchor="middle" fill="#333">'화났다' = 책장</text>
+  <rect x="60" y="200" width="180" height="100" rx="8" fill="#dde" stroke="#669"/>
+  <g fill="#99b"><rect x="80" y="215" width="12" height="70" rx="2"/><rect x="100" y="215" width="12" height="70" rx="2"/><rect x="120" y="215" width="12" height="70" rx="2"/><rect x="140" y="215" width="12" height="70" rx="2"/><rect x="160" y="215" width="12" height="70" rx="2"/><rect x="180" y="215" width="12" height="70" rx="2"/><rect x="200" y="215" width="12" height="70" rx="2"/><rect x="220" y="215" width="12" height="70" rx="2"/></g>
+  <text x="330" y="250" font-size="16px" text-anchor="middle" fill="#333">'좌절했다'</text>
+  <text x="330" y="270" font-size="16px" text-anchor="middle" fill="#333">= 선반</text>
+  <rect x="280" y="280" width="100" height="40" rx="6" fill="#bbd" stroke="#669"/>
+  <g fill="#99b"><rect x="300" y="288" width="12" height="24" rx="2"/><rect x="320" y="288" width="12" height="24" rx="2"/><rect x="340" y="288" width="12" height="24" rx="2"/></g>
+  <text x="210" y="350" font-size="16px" text-anchor="middle" fill="#333">범주가 세밀할수록</text>
+  <text x="210" y="372" font-size="16px" text-anchor="middle" fill="#333">다음 행동 계획이 구체적이 된다</text>
+</svg><figcaption>감정 입자도와 도서관 비유</figcaption></figure>
+<h3 id="64-감정을-만들고-나서-이름-붙이는-것이-아니다"><a href="#64-감정을-만들고-나서-이름-붙이는-것이-아니다" class="heading-anchor" aria-hidden="true">#</a> 6.4 감정을 만들고 나서 이름 붙이는 것이 아니다</h3><p>배럿의 핵심 문장: 뇌가 감정 상태를 만든 뒤 그것에 이름을 붙이는 것이 아니다. 뇌는 <strong>다음에 무엇을 할지에 대한 가능한 미래의 범주를 만들고</strong>, 그 상태는 뇌가 무엇을 기억하는지, 곧 거대한 도서관에서 어떤 책을 표집하는지에 크게 좌우된다. 단어는 그 표집에 쓰이는 특징 가운데 하나(그저 소리)이고, 심장이 무엇을 했는지, 어떤 운동을 했는지, 다음에 무엇을 보았는지도 특징이다. 범주의 크기는 사람마다 다르고 평생 바뀔 수 있으며, 새 범주를 더할 수도 있다.</p>
+<p>휴버먼은 여기서 진정한 &#39;감정 지능&#39;이 이 과정을 이해하고 그것과 함께 일하는 능력일지 모른다고 말하고, 새 단어를 배우자마자 차원이 더해지는 이 시스템이 꽤 가소적이라는 데서 위안을 느낀다. 반대로 거의 무한한 상황을 &#39;공포&#39; 하나로 분류하는 삶은 끔찍할 것이다.</p>
+<h3 id="65-이모지화-그리고-복잡성의-수축과-팽창"><a href="#65-이모지화-그리고-복잡성의-수축과-팽창" class="heading-anchor" aria-hidden="true">#</a> 6.5 이모지화, 그리고 복잡성의 수축과 팽창</h3><p>휴버먼은 우리가 반대로 가고 있지 않느냐고 묻는다. 소셜 미디어는 영상·색·소리·파쿠르·폭력·정치·귀여운 동물로 감각적 차원은 극도로 높이면서, 반응은 화난 얼굴, 엄지 위·아래 같은 이모지 여섯 개 정도로 줄인다. 무슨 일인지 파악하려는 영아처럼 퇴행하는 것 아니냐는 것이다.</p>
+<p>배럿은 그 요약이 정확하다고 받으며, 매우 사변적이라는 전제를 달고 생각을 덧붙인다. 19~20세기를 보면 사람들의 반응 복잡성은 확장되기도 수축하기도 한다. <strong>권위주의적 사고는 복잡성을 아주 단순한 것으로, 성기고 저차원적인 흑백 판단으로 줄이는 것, 곧 복잡성의 회피</strong>이며 단순한 단일 답을 가능하게 한다. 무엇이 이런 확장과 수축의 물결을 일으키는지에 대해서도 그는 &quot;아주아주 사변적인&quot; 생각이 있다고만 말한다.</p>
+<blockquote>
+<p><strong>해설:</strong> 개인 차원의 감정 입자도와 사회 차원의 사고 복잡성을 같은 &#39;차원 축소&#39; 틀로 본다는 점이 흥미롭다. 다만 배럿 스스로 사변이라고 못 박았으므로, 연구 결과로 인용해서는 안 된다.</p>
+</blockquote>
+<h2 id="7-정동affect과-몸-예산"><a href="#7-정동affect과-몸-예산" class="heading-anchor" aria-hidden="true">#</a> 7. 정동(affect)과 몸 예산</h2><h3 id="71-느낌과-감정은-같은-것이-아니다"><a href="#71-느낌과-감정은-같은-것이-아니다" class="heading-anchor" aria-hidden="true">#</a> 7.1 느낌과 감정은 같은 것이 아니다</h3><p>배럿은 휴버먼이 &#39;느낌&#39;과 &#39;감정&#39;을 같은 뜻으로 쓰는 것을 짚는다. 뇌는 24시간 몸을 조절하고, 몸은 늘 감각 신호를 뇌로 돌려보낸다. 그러나 우리 신경계는 그 변화를 세밀하게 경험하도록 배선되어 있지 않다. 다행이다. 지금도 심장이 뛰고 췌장이 무언가를 짜내고 간이 거르고 산소 농도가 변하는 &quot;드라마&quot;가 몸 안에서 벌어지는데, 이를 다 느낀다면 아무 말도 들리지 않을 것이다.</p>
+<p>대신 뇌는 저차원 요약, 일종의 기압계를 만든다. 이것이 <strong>정동(affect)</strong>, 곧 정동적 느낌이다. 유쾌함·불쾌함, 들뜸·차분함, 편안함·불편함. 몸 상태의 대략적 지표이며 <strong>감정이 아니다.</strong> 정동은 의식의 특징이다. 뇌가 몸을 늘 조절하고 몸이 늘 신호를 보내므로, 주의를 기울이든 아니든, 감정적이든 아니든 늘 있다. 전경에 있을 때도 배경에 있을 때도 있다.</p>
+<p>고속도로에서 누가 끼어들 때 &quot;저 인간 정말 재수 없다&quot;고 느끼는 그 강렬한 부정적 정동을 우리는 <em>그 사람의 속성</em>으로 경험하지만, 실제로는 내 안에서 온 것이다.</p>
+<p>정동이 신체적인 것의 요약이라는 사실은 실용적 함의를 준다. 이부프로펜이나 타이레놀이 부정적 느낌을 줄인다는 연구가 있다. 달리기나 걷기를 하거나 주의를 바깥세상으로 돌리면, 몸 안에서 온 경험의 특징이 줄어든다. 잠도 마찬가지다. 모두 몸 상태를 바꾸어 감각 상태와 정동을 바꾸는 일이다.</p>
+<p>그러면 감정은 무엇인가? <strong>감정은 정동을 만드는 감각 신호의 원인에 대해 뇌가 들려주는 이야기</strong>다. 무엇이 이 변화를 일으켰고, 나는 무엇을 해야 하는가. 정동보다 훨씬 큰 사건이다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>정동(affect)</th>
+<th>감정(emotion)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>정의</td>
+<td>몸 상태에 대한 뇌의 저차원 요약</td>
+<td>그 감각 신호의 원인과 대처에 대한 범주화(이야기)</td>
+</tr>
+<tr>
+<td>차원</td>
+<td>유쾌–불쾌, 각성–차분 등 소수</td>
+<td>분노, 리겟, 결의 등 세밀한 범주</td>
+</tr>
+<tr>
+<td>존재</td>
+<td>늘 있다(전경 또는 배경)</td>
+<td>정동이 강할 때 등 특정 순간에 구성된다</td>
+</tr>
+<tr>
+<td>바꾸는 법</td>
+<td>몸 상태 변화(잠, 운동, 음식, 진통제, 주의 전환)</td>
+<td>범주화 변화(새 개념, 다른 해석)</td>
+</tr>
+</tbody></table>
+</div><h3 id="72-몸-증상을-감정으로-39격상39해야만-할까"><a href="#72-몸-증상을-감정으로-39격상39해야만-할까" class="heading-anchor" aria-hidden="true">#</a> 7.2 몸 증상을 감정으로 &#39;격상&#39;해야만 할까</h3><p>우리 문화는 몸의 상태를 감정이 아닌 신체 감각으로만 경험하는 사람을 &#39;신체화(somatizing)한다&#39;며 병리화한다. 배럿은 이것이 판단의 문제이고, 때로는 틀린 판단이라고 본다. 때로는 그냥 배가 아프다고 경험하는 편이 더 생산적이다. <strong>감정 지능의 일부는 감정을 구성하지 <em>않아야</em> 할 때를 아는 것이다.</strong></p>
+<h3 id="73-quot몸은-기억한다quot가-아니라-quot뇌가-점수를-기록하고-몸은-점수판이다quot"><a href="#73-quot몸은-기억한다quot가-아니라-quot뇌가-점수를-기록하고-몸은-점수판이다quot" class="heading-anchor" aria-hidden="true">#</a> 7.3 &quot;몸은 기억한다&quot;가 아니라 &quot;뇌가 점수를 기록하고, 몸은 점수판이다&quot;</h3><p>휴버먼의 &#39;감정을 충분히 느껴야 하나, 하향식으로 조절해야 하나&#39;라는 질문에 배럿은 다시 &quot;잘못된 질문&quot;이라고 답한다. <strong>유연성이 언제나 중요하다.<strong> 감정은 몸 안에 있지 않다. 『몸은 기억한다(The Body Keeps the Score)』는 제목은 기억하기 쉽고 반 데어 콜크의 작업은 중요하지만, 배럿은 그것이 과도하게 단순화되어 사람들에게 허리 통증이 트라우마이고 모든 트라우마가 신체화된다고 믿게 했으며, 작동 원리에 대한 설명은 과학적으로 틀렸다고 말한다. 그의 표현으로는 &quot;</strong>뇌가 점수를 기록하고, 몸은 점수판이다.</strong>&quot; 우리는 눈이 아니라 뇌로 보고, 손을 꼬집으면 손이 아니라 뇌에서 느낀다.</p>
+<p>말로 하는 게 나을 때가 있고 달리기가 나을 때가 있다. 목표에 달렸다. 때로는 감정을 떨쳐 내지 않고 <strong>그 안에 머무는 것</strong>이 가장 현명하다. 기분이 나쁘다고 무언가 잘못된 것은 아니며, 어려운 일을 하고 있다는 뜻일 수도 있다. 감정은 <strong>행동의 레시피</strong>이므로, &#39;기분 나쁨&#39;에서 &#39;화남&#39;이나 &#39;슬픔&#39;으로 세분하는 것은 행동의 레시피를 얻는 일이다.</p>
+<h3 id="74-불편함을-일부러-느끼기-허리-수술의-사례"><a href="#74-불편함을-일부러-느끼기-허리-수술의-사례" class="heading-anchor" aria-hidden="true">#</a> 7.4 불편함을 일부러 느끼기: 허리 수술의 사례</h3><p>배럿은 몇 년 전 큰 허리 수술을 받았다. 만성 통증 전문가는 아니지만 데이터를 재분석하고 많이 읽은 그는 만성 통증으로 이어지지 않기를 바랐다. 걸을 수 있도록 옥시코돈이 정말 필요했던 첫 몇 주가 지나자, <strong>불편함을 일부러 조금씩 느꼈다.</strong> 통증이 줄어드는 변화가 곧 몸이 낫고 있다는 뜻인데, 진통제를 먹으면 뇌가 그 변화, 곧 예측 오차를 받아들이지 못한다. 예측하지 못한 것이 가르치는 신호이기 때문이다. 삶에서도 마찬가지로, 불편함이 무언가를 가르쳐 줄 때가 있고 아닐 때가 있다. 늘 불편함을 없애기만 하면 언제 그것이 쓸모 있는지 알 수 없다.</p>
+<h3 id="75-불확실성의-각성-뉴질랜드에서의-결정"><a href="#75-불확실성의-각성-뉴질랜드에서의-결정" class="heading-anchor" aria-hidden="true">#</a> 7.5 불확실성의 각성: 뉴질랜드에서의 결정</h3><p>코로나 팬데믹이 공식 선언되기 직전, 배럿은 뉴질랜드에서 강연 중이었고 대학생 딸이 봄방학을 맞아 비행기로 합류했다. 뉴질랜드에 확진자가 한 명뿐이던 때였다. 그는 남편에게 전화해 &quot;각성 수준이 매우 높고 매우 불쾌하다&quot;고 말했고, 남편은 &quot;불확실성이 크니까&quot;라고 답했다. 남편은 &quot;당신 불안한 거야&quot;라고 하지 않았다. 배럿은 불안한 것이 아니라 불확실했다.</p>
+<p>불확실성이 크면 각성도 크다. 뇌가 배우려 하고, 새것을 배우는 데 중요한 신경조절물질이 주관적 각성을 일으키고 자율신경계도 조절해 심장을 빨리 뛰게 하기 때문이다. 우리가 습관처럼 내놓는 설명은 &#39;불안&#39;이다. 그러나 범주는 행동 계획이다.</p>
+<ul>
+<li><strong>불안·공포</strong>의 레시피: 얼어붙거나 도망친다.</li>
+<li><strong>불확실성</strong>의 레시피: 불편함을 견디며 <strong>정보를 찾아 나선다(forage).</strong></li>
+</ul>
+<p>배럿은 며칠 더 정보를 모았고, 섬에서 섬으로 가는 비행기 안에서 순간적으로 결정해 경로를 바꾸어 귀국했다. 이틀쯤 뒤 국경이 닫혔다.</p>
+<h3 id="76-quot나비들을-대형으로-날게-하라quot"><a href="#76-quot나비들을-대형으로-날게-하라quot" class="heading-anchor" aria-hidden="true">#</a> 7.6 &quot;나비들을 대형으로 날게 하라&quot;</h3><p>『감정은 어떻게 만들어지는가』에 실린 일화. 열두 살, 키가 150cm도 안 되던 딸이 한 자 가까이 큰 사춘기 소년들을 상대로 가라테 검은띠 심사를 받을 때, 10단인 사범은 &quot;두려워하지 마&quot;라고 하지 않고 &quot;<strong>나비들을 대형으로 날게 하라(get your butterflies flying in formation)</strong>&quot;고 말했다. 배럿은 이것이 각성에 줄 수 있는 최고의 의미라고 감탄했다. 가슴의 두근거림을 &#39;결의&#39;로 경험하도록 훈련할 수 있다는 것이다.</p>
+<blockquote>
+<p>감정을 만든다는 것은 정동적 느낌에 의미를 부여하는 일이고, 우리는 생각보다 그 방식을 더 많이 통제할 수 있다.</p>
+</blockquote>
+<p>방법은 두 갈래다. ① 그 느낌을 만드는 <strong>신체 상태를 바꾸거나</strong>, ② <strong>범주를 더 많이, 더 유연하게</strong> 만드는 법을 배워 다른 행동을 하는 것. 그렇다고 느낌이 덜 불쾌해지거나 더 유쾌해진다는 보장은 없다. 핵심은 <strong>느낌이 지혜의 원천, 다른 것을 하라는 신호가 된다</strong>는 점이다. 휴버먼이 짚듯 나비를 없애는 것이 아니라 배치하는 것이다.</p>
+<h3 id="77-주의로-차원을-바꾸기-컵을-빛의-조각으로"><a href="#77-주의로-차원을-바꾸기-컵을-빛의-조각으로" class="heading-anchor" aria-hidden="true">#</a> 7.7 주의로 차원을 바꾸기: 컵을 빛의 조각으로</h3><p>배럿은 잠깐 그림을 배웠던 이야기를 한다. 3차원 컵을 2차원 화폭에 그리려 할 때 &#39;컵&#39;을 그리면 엉망이 된다. 사실주의 화가는 컵을 <strong>빛의 조각들로 쪼개 그 조각을 그리라</strong>고 가르친다. 시각계가 실제로 하는 일이 그것이다. 성긴 저차원 대상 &#39;컵&#39;을 더 고차원적인 특징이 드러나도록 다르게 범주화하는 것이다. 마찬가지로 감정 속에서도 심장이 하는 일, 호흡, 근육의 긴장에 의도적으로 주의를 기울일 수 있다. <strong>주의를 옮기는 것만으로 경험의 차원을 바꿀 수 있다.</strong></p>
+<p>휴버먼은 올리버 색스를 떠올린다. 그는 박쥐가 반향정위로 방을 경험하는 것, 문어의 경험 같은 동물의 감각 세계를 상상하는 훈련을 통해 환자들이 삶을 경험하는 방식에 다가갔고, 결핍의 목록이 아닌 경험으로 그들을 그렸다. 배럿은 에드 용의 『이토록 굉장한 세계(An Immense World)』를 추천한다(그는 저자에게 팬레터를 썼다고 한다). 다른 감각 표면을 가진 동물들은 우리가 감지할 수 없는 신호를 감지한다. 그래서 <strong>실재는 세계에만도, 머릿속에만도 있지 않고 둘 사이의 거래(transaction)에 있다.</strong> 그 동물에게는 그것이 &#39;니치&#39;, 곧 세계에서 자기에게 중요한 부분이다. 이를 이해하면 나와 다른 마음을 가진 사람에 대한 공감도 넓어질 수 있다.</p>
+<h3 id="78-몸-예산-알로스타시스의-은유"><a href="#78-몸-예산-알로스타시스의-은유" class="heading-anchor" aria-hidden="true">#</a> 7.8 몸 예산: 알로스타시스의 은유</h3><p>이제 정동의 정체가 드러난다. 뇌의 근본 임무 가운데 하나는 심장·폐·장 같은 몸 안의 체계를 조율하고 조절하는 것이다. 촉각과 고유감각이 골격 운동을 위해 있듯, 내부 장기의 감각 신호는 몸을 조절하는 데 쓰이지만 우리는 그것을 직접 느끼지 않고 정동으로 경험한다. 그 신호가 매우 강해질 때 뇌는 그것으로 감정을 만든다.</p>
+<p>몸의 예측적 조절을 전문 용어로 <strong>알로스타시스(allostasis)</strong>라 한다. 배럿은 대중에게 설명할 때 은유를 쓴다(&quot;모든 은유는 틀렸지만 어떤 은유는 덜 틀리고 쓸모 있다&quot;). <strong>뇌는 몸을 위해 예산을 운용한다.</strong> 돈이 아니라 포도당, 염분, 산소, 물, 그리고 살아 있는 데 필요한 모든 영양소의 예산이다.</p>
+<figure class="diagram diagram-scroll diagram-light" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 360" width="420" style="max-width:100%;height:auto" role="img" aria-label="몸 예산 은유">
+  <rect width="420" height="360" fill="#fff"/>
+  <defs><marker id="d1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#666"/></marker></defs>
+  <rect x="20" y="20" width="170" height="70" rx="10" fill="#e8f4e8" stroke="#393"/>
+  <text x="105" y="48" font-size="16px" text-anchor="middle" font-weight="bold" fill="#333">입금</text>
+  <text x="105" y="74" font-size="16px" text-anchor="middle" fill="#333">잠, 먹기</text>
+  <rect x="230" y="20" width="170" height="70" rx="10" fill="#f3e5e5" stroke="#b55"/>
+  <text x="315" y="48" font-size="16px" text-anchor="middle" font-weight="bold" fill="#333">인출</text>
+  <text x="315" y="74" font-size="16px" textLength="160" lengthAdjust="spacingAndGlyphs" text-anchor="middle" fill="#333">포도당 연소·산소 소모</text>
+  <rect x="110" y="130" width="200" height="100" rx="14" fill="#fff4dd" stroke="#c90" stroke-width="2"/>
+  <text x="210" y="165" font-size="18px" text-anchor="middle" font-weight="bold" fill="#333">몸 예산</text>
+  <text x="210" y="192" font-size="16px" text-anchor="middle" fill="#333">포도당·염분·산소·물</text>
+  <text x="210" y="215" font-size="16px" text-anchor="middle" fill="#333">정동 = 잔고 요약</text>
+  <rect x="20" y="270" width="170" height="70" rx="10" fill="#e3eef8" stroke="#36a"/>
+  <text x="105" y="298" font-size="16px" text-anchor="middle" font-weight="bold" fill="#333">저축</text>
+  <text x="105" y="324" font-size="16px" text-anchor="middle" fill="#333">믿는 사람과 함께</text>
+  <rect x="230" y="270" width="170" height="70" rx="10" fill="#f6e0f0" stroke="#a37"/>
+  <text x="315" y="298" font-size="16px" text-anchor="middle" font-weight="bold" fill="#333">세금</text>
+  <text x="315" y="324" font-size="16px" text-anchor="middle" fill="#333">사회적 스트레스</text>
+  <g stroke="#666" stroke-width="2" marker-end="url(#d1)"><line x1="105" y1="90" x2="150" y2="128"/><line x1="105" y1="270" x2="150" y2="232"/><line x1="270" y1="128" x2="315" y2="92"/><line x1="270" y1="232" x2="315" y2="268"/></g>
+</svg><figcaption>몸 예산 은유</figcaption></figure>
+<ul>
+<li><strong>인출</strong>: 포도당을 태우고 산소를 쓰는 일.</li>
+<li><strong>입금</strong>: 잠과 식사.</li>
+<li><strong>저축</strong>: 믿는 친구와 함께 있으면 모든 일이 대사적으로 조금 덜 비싸다.</li>
+<li><strong>세금</strong>: 식사 전후 두 시간 안에 사회적 스트레스를 받으면, 같은 식사가 대사 비효율 때문에 <strong>약 104칼로리를 더 먹은 것과 같은 비용</strong>이 든다. 1년이면 약 <strong>11파운드(약 5kg)</strong>에 해당한다(원 연구는 &#39;전날 스트레스&#39; 기준, 참고 4 참고). 그러니 &quot;사람이 피곤하게 한다(taxing)&quot;는 말은 문자 그대로 참이다.</li>
+</ul>
+<p>그래서 <strong>정동은 몸 예산 상태의 대충의 요약</strong>이다. 그럭저럭 잘 돌아가면 괜찮거나 유쾌하고, 적자면 피로하거나 괴롭다. 그렇다고 늘 무언가 잘못된 것은 아니다. 운동 중 환기 역치(10~20분쯤)에 이르면 불쾌하고 지치지만, 그건 열심히 하고 있다는 뜻이고, 이후 물과 음식으로 보충하면 더 강한 미래의 나를 만든다. 몹시 들뜬(worked up) 느낌이라면 어딘가에 불확실성이 있다는 뜻일 가능성이 크다.</p>
+<p>여기서 중요한 귀결이 나온다. <strong>감정 조절은 정동의 의미를 바꾸는 일이라기보다 정동 자체를 바꾸는 일인 경우가 많다.</strong> 그리고 정동이 묶인 대상은 몸 상태 자체가 아니라 <em>몸 상태에 대한 뇌의 믿음</em>이다. 이것이 <strong>내수용감각(interoception)</strong>이다. 배럿에 따르면 내수용감각은 몸에 대한 자각이 아니라 뇌의 몸 모델링, 곧 뇌가 몸의 대사 상태에 대해 참이라고 믿는 것이다.</p>
+<h2 id="8-우울-약물-그리고-39감정-독감39"><a href="#8-우울-약물-그리고-39감정-독감39" class="heading-anchor" aria-hidden="true">#</a> 8. 우울, 약물, 그리고 &#39;감정 독감&#39;</h2><h3 id="81-우울은-파산한-몸-예산이다"><a href="#81-우울은-파산한-몸-예산이다" class="heading-anchor" aria-hidden="true">#</a> 8.1 우울은 파산한 몸 예산이다</h3><p>배럿은 <strong>우울을 파산한 몸 예산</strong>에 비유한다. 너무 지쳐 움직일 수 없고 매우 괴로운 상태다. 그는 우울이 대사 질환이며, 증상을 보면 대사 결핍에 관한 것들이라고 말한다. 휴버먼은 우울의 주관적 특징 가운데 하나가 미래에 대한 긍정적 기대의 결여라는 점을 짚고, 배럿은 예측 오차로 설명한다. 불쾌하면 유쾌한 것을 예측하지 않고, 세상에 기쁨을 줄 것이 있어도 알아차리지 못한다. 예측하지 못한 것에서 배우는 일은 비싸며, 자원이 없으면 하지 못한다.</p>
+<h3 id="82-스톡홀름의-아침과-39감정-독감39"><a href="#82-스톡홀름의-아침과-39감정-독감39" class="heading-anchor" aria-hidden="true">#</a> 8.2 스톡홀름의 아침과 &#39;감정 독감&#39;</h3><p>배럿의 딸은 우울을 앓았다. 배럿은 딸이 우울을 겪는 수백만 청소년·청년 가운데 한 명이라고 말한다. 회복 중이던 딸과 카롤린스카 연구소 기조강연을 위해 스웨덴에 갔을 때, 둘 다 심한 시차 피로에 시달렸고 다음 날 아침 딸은 끔찍해 보였다. 또 한 번의 우울 삽화가 시작되는 듯했다. 배럿은 딸을 일으켜 밥을 먹이고 <strong>이부프로펜 네 알</strong>을 준 뒤 다시 재웠다. 다섯 시간 뒤 일어난 딸은 기분이 완전히 괜찮았다.</p>
+<p>배럿은 분명히 선을 긋는다. <em>우울할 때 이부프로펜을 항우울제로 먹으라는 말이 아니다.</em> 요점은 딸이 피로했고, 전문 용어로 내장 통각(visceral nociception)에 해당하는, 속이 아프고 온몸이 아픈 상태였다는 것이다. 이부프로펜은 다시 잠드는 데 도움을 주었고, 딸은 잠을 자고 회복했다. 이후 스톡홀름을 걸으며 나눈 대화는 딸에게 &quot;스위치를 켠 것&quot; 같았다. 『감정은 어떻게 만들어지는가』는 배럿이 딸에게, 그리고 자신에게 알려 주고 싶은 것을 적은 책이다.</p>
+<p>딸은 여기서 <strong>&#39;감정 독감(emotional flu)&#39;</strong>이라는 새 개념을 만들었다. 잠이 부족했거나, 떨칠 수 없는 직장·학교 스트레스가 있거나 해서 몸 예산이 나쁜 날이다. 배럿의 남편은 &quot;남들의 나에 대한 의견은 그 사람 머릿속의 전기 활동일 뿐&quot;이라고 말한다. 컵을 빛의 조각으로 쪼개듯 범주를 바꾸는 또 다른 방식이다.</p>
+<p>우리는 흔히 정동을 세상 상태의 지표로 쓴다. &quot;기분이 나쁘니 세상에 뭔가 잘못이 있다.&quot; 그러나 때로는 이를 거슬러야 한다. 세상에는 아무 문제가 없고, 잠이 부족하거나 단백질이 조금 더 필요하거나 걷지 않아 몸이 뻣뻣하거나 스트레칭이 필요한 것일 수 있다.</p>
+<blockquote>
+<p><strong>해설:</strong> &#39;감정 독감&#39;이라는 개념의 힘은 <em>귀인(attribution)을 바꾼다</em>는 데 있다. &quot;내 삶이 엉망이다&quot;(세상에 대한 이야기)를 &quot;오늘 내 몸 예산이 적자다&quot;(일시적이고 고칠 수 있는 신체 상태)로 바꾸면, 행동 레시피도 &#39;절망&#39;에서 &#39;자고, 먹고, 걷기&#39;로 바뀐다. 배럿이 말하는 &quot;감정을 구성하지 않아야 할 때&quot;의 가장 구체적인 사례다.</p>
+</blockquote>
+<h3 id="83-알코올약물-그리고-ssri에-대한-신중한-견해"><a href="#83-알코올약물-그리고-ssri에-대한-신중한-견해" class="heading-anchor" aria-hidden="true">#</a> 8.3 알코올·약물, 그리고 SSRI에 대한 신중한 견해</h3><p>휴버먼은 이 틀로 보면 알코올과 남용 약물이 왜 그토록 매력적인지 바로 이해된다고 말한다. 피곤할 때 도파민과 에피네프린을 내는 각성제를 쓰면 이미 과세된 몸 예산에 더 과세해 나중에 더 고갈된다. 회복 중인 알코올 중독자 친구들은 술이 &quot;마법의 묘약&quot;처럼 기분을 &quot;정상으로&quot; 만들어 주었다고 하지만, 대가로 기준선이 처음보다 낮아진다.</p>
+<p>배럿은 동의하며 조심스레 덧붙인다. SSRI도 <em>어쩌면</em> 그럴 수 있다. 미토콘드리아 이상이나 질병 회복처럼 실제 대사 문제가 있으면 기분은 실제로 부정적이 된다. SSRI는 세로토닌을 시냅스에 더 오래 남겨 시스템에 활력을 주어 한동안 움직이고 에너지가 생긴 느낌을 준다. 그러나 신경계는 복잡계라서 다른 곳에서 예산 문제를 처리하려 조정한다. 그래서 남용 약물에서 단기적으로 일어나는 일이 <em>일부 사람에게는</em> SSRI에서 장기적으로 일어날 수 있다. 처음엔 효과가 있다가 멈추고, 대사가 느려져 체중이 늘 수 있다. 그러므로 원인이 중요하다. 뇌는 예산 문제가 있다고 믿지만 실제로는 없을 수도 있고, 실제로 있을 수도 있다. 그 차이가 치료를 바꾼다.</p>
+<p>휴버먼은 기밀 때문에 출처를 밝힐 수 없다면서, 정신과 약물 분야에 밝은 사람에게서 들은 이야기를 전한다. SSRI 이전에는 &#39;치료 저항성 우울&#39;이라는 말을 듣기 어려웠는데, SSRI가 시간이 지나며 기분을 떠받치는 신경계를 고갈시킬 수 있다는 생각이 정신과 공동체 안에서 <em>새롭게 대두하는 이론</em>이라는 것이다. 배럿은 기제가 같다는 것이 아니라 <em>주제가 같다</em>는 뜻이었다고 정리한다. 우울의 바탕이 대사 문제라는 점이 아직 인식되지 않았으며, 당뇨·비만·심장질환과 우울도 하나가 다른 하나를 일으킨다기보다 대사라는 복잡계 어딘가의 공통된 &#39;끌림(drag)&#39;이 부정적 기분으로 경험되는 것이라고 본다.</p>
+<blockquote>
+<p>⚠️ <strong>주의(해설):</strong> 이 대목은 출처를 밝히지 않은 전언과 배럿의 이론적 해석이 섞인 부분이다. 확립된 임상 지침이 아니며, 약물 복용이나 중단은 반드시 의료진과 상의해야 한다. 휴버먼과 배럿도 이를 치료 권고로 제시하지 않았다.</p>
+</blockquote>
+<p>정리하면 까다로운 것은 이것이다. <strong>정동이 &quot;세상에 무언가 잘못되었다&quot;고 말하는 때와 &quot;내 몸 상태에 돌볼 것이 있다&quot;고 말하는 때를 구별하는 것.</strong> 때로 시가는 그냥 시가다.</p>
+<h2 id="9-우리는-서로의-신경계를-돌본다"><a href="#9-우리는-서로의-신경계를-돌본다" class="heading-anchor" aria-hidden="true">#</a> 9. 우리는 서로의 신경계를 돌본다</h2><h3 id="91-최고의-것도-최악의-것도-다른-사람"><a href="#91-최고의-것도-최악의-것도-다른-사람" class="heading-anchor" aria-hidden="true">#</a> 9.1 최고의 것도 최악의 것도 다른 사람</h3><p>휴버먼은 배럿이 렉스 프리드먼 팟캐스트에서 한 &quot;우리는 서로의 신경계를 조절한다&quot;는 말을 잊을 수 없다고 말한다. 배럿의 정식화: <strong>인간 신경계에 가장 좋은 것은 다른 인간이고, 가장 나쁜 것도 다른 인간이다.</strong> 그러니 최선의 자신이 되게 하는 사람 곁에 있어야 한다. 늘 저축만 되는 것은 아니다. 때로는 상대를 돌보며 그 짐을 일부 떠안고, 반대로 맡기기도 한다. 사회적 고립과 외로움 연구, 동기화 연구 등 많은 연구가 우리가 <strong>서로의 신경계를 돌보는 존재</strong>임을 보여 준다. 의견과 상관없이 우리는 그렇게 진화했다. 그러니 선택은 각자의 몫이다. <strong>당신은 저축이 될 것인가, 세금이 될 것인가.</strong> 저축이 되기로 한 사람에게 사람들이 끌린다.</p>
+<h3 id="92-동기화-리더와-페이서가-번갈아"><a href="#92-동기화-리더와-페이서가-번갈아" class="heading-anchor" aria-hidden="true">#</a> 9.2 동기화: 리더와 페이서가 번갈아</h3><p>서로 모르는 사람도 몇 분 만에 호감과 신뢰를 느끼면 심박·움직임·호흡 같은 신체 신호가 동기화되기 시작한다는 연구가 있다. 흥미로운 것은 한 사람이 이끌고(leader) 다른 사람이 맞춰 가는(pacer) 구도가 보인다는 점인데(배럿은 이 용어를 최면을 배울 때 익혔다고 한다), 생산적인 상호작용에서는 <strong>누가 이끄는지가 계속 바뀐다.</strong> 생리적으로 한 사람이 늘 주도하지 않는다.</p>
+<p>휴버먼은 정신과 의사 폴 콘티와의 시리즈를 떠올리며, 나르시시스트는 자신감이 아니라 쾌의 결핍과 강한 질투에서 움직이고, 그들과의 상호작용은 그 순간엔 매력적이어도 나중에 건강한 사람을 지치고 혼란스럽게 만든다고 말한다. 그는 이것이 동기화 결여와 연결되는 듯하다고 덧붙인다. 이것은 휴버먼의 연결이며 배럿이 연구로 제시한 것은 아니다.</p>
+<h3 id="93-직장에서의-신뢰"><a href="#93-직장에서의-신뢰" class="heading-anchor" aria-hidden="true">#</a> 9.3 직장에서의 신뢰</h3><p>배럿은 특히 창의·혁신 부문에서 잠과 수분과 식사를 고려한 뒤의 <strong>직무 성과를 가장 잘 예측하는 것이 팀과 관리자에 대한 신뢰의 정도</strong>라는 연구가 있다고 말한다. 세상이 예측 가능하거나, 예측 불가능해도 내 편이 있으면, 사람들은 서로의 몸 예산에 저축을 만들어 주고 그 자원을 실패하고 다시 일어나 도전하는 더 어려운 일에 쓸 수 있다. 혁신가가 하는 일의 일부가 바로 그것이다.</p>
+<h3 id="94-친절이라는-저평가된-저축"><a href="#94-친절이라는-저평가된-저축" class="heading-anchor" aria-hidden="true">#</a> 9.4 친절이라는 저평가된 저축</h3><p>개인 생활에서도 무작위 친절이나 평소의 친절이 <em>행하는 사람에게</em> 몸 예산상의 이득을 준다는 연구가 있다. 배럿은 한 달에 한 번 친구와 점심을 먹으며 번갈아 계산했던 일을 소개한다. 각자 낼 수 있었지만 그렇게 하면 친절을 베푸는 쪽과 받는 쪽의 &quot;이중 효과&quot;를 얻었다. 기분이 좋지 않을 때(신체적 원인을 먼저 챙긴 뒤) 그는 70대 이웃 부부에게 빵을 구워 준다. 이웃은 늘 고마워하고, 정원 가꾸기의 달인인 그는 배럿의 정원을 도와준다. 배럿은 연구가 뒷받침하지만, 누군가 작은 깜짝 선물에 정말 기뻐할 때의 그 느낌은 연구로 다 묘사되지 않는다고 말한다. &quot;어떤 문화에는 그걸 가리키는 단어가 있을 것&quot;이라는 농담으로 인터뷰은 감정 단어라는 주제로 돌아간다.</p>
+<p><strong>친절은 매우 저평가되어 있다.</strong> 배럿의 이 말은 이론 전체의 귀결이기도 하다. 우리가 서로의 몸 예산을 운용하는 존재라면, 친절은 도덕 이전에 생리학이다.</p>
+<h2 id="10-실천-이-지식으로-무엇을-할-수-있나"><a href="#10-실천-이-지식으로-무엇을-할-수-있나" class="heading-anchor" aria-hidden="true">#</a> 10. 실천: 이 지식으로 무엇을 할 수 있나</h2><p>휴버먼은 이번 인터뷰이 프로토콜보다 <em>지식 자체가 도구가 되는</em> 드문 경우라고 평한다. 그래도 정리하면 다음과 같다.</p>
+<h3 id="101-기초-세-가지배럿와-다섯-가지휴버먼"><a href="#101-기초-세-가지배럿와-다섯-가지휴버먼" class="heading-anchor" aria-hidden="true">#</a> 10.1 기초 세 가지(배럿)와 다섯 가지(휴버먼)</h3><p>배럿은 &quot;하나만 고르라면 규칙적인 좋은 잠&quot;이라고 말한다. 두 개를 더하라면 <strong>건강하게 먹기</strong>(가짜 음식 대신 진짜 음식. 감자튀김은 &quot;신의 가장 완벽한 음식&quot;이라며 좋아하지만)와 <strong>운동</strong>이다. 엄마 잔소리처럼 들려도, 신경과학자로서 &quot;마음의 제다이 트릭&quot; 전에 이것부터 하면 꽤 멀리 갈 수 있다고 한다. 휴버먼은 여기에 <strong>햇빛</strong>과 <strong>사회적 연결</strong>을 더해 다섯 가지를 기초로 꼽고, 범주는 단순해도 아이를 키우고 일하며 여행하는 현실에서 잠을 지키는 데는 유연성과 노력이 든다고 덧붙인다. 그는 모든 정신과적 문제와 자살 자체가 수면·일주기 리듬의 문제와 연관되고 종종 그에 앞서 나타나는 듯하다며, 잠이 정신 건강과 신체 건강의 토대라고 말한다.</p>
+<h3 id="102-정동을-먼저-점검하기"><a href="#102-정동을-먼저-점검하기" class="heading-anchor" aria-hidden="true">#</a> 10.2 정동을 먼저 점검하기</h3><p>기분이 나쁠 때 이야기(감정)를 짓기 전에 물어볼 것: <em>잠은? 먹었나? 움직였나? 통증은? 불확실한 일이 있나?</em> &#39;감정 독감&#39;일 수 있다. 정동을 바꾸는 것이 의미를 바꾸는 것보다 빠를 때가 많다.</p>
+<h3 id="103-범주를-늘리고-다시-짓기"><a href="#103-범주를-늘리고-다시-짓기" class="heading-anchor" aria-hidden="true">#</a> 10.3 범주를 늘리고 다시 짓기</h3><ul>
+<li>다른 언어의 감정 개념을 배워 범주를 늘린다(리겟, 기길 등).</li>
+<li>같은 각성을 &#39;불안&#39;(도망·얼어붙기)이 아니라 &#39;불확실성&#39;(정보 탐색), &#39;결의&#39;(나비를 대형으로)로 범주화해 본다.</li>
+<li>&#39;기분 나쁨&#39;을 더 세밀한 단어로 나눠 본다. 범주가 세밀할수록 행동 레시피가 구체적이 된다.</li>
+</ul>
+<h3 id="104-주의로-차원을-조절하기"><a href="#104-주의로-차원을-조절하기" class="heading-anchor" aria-hidden="true">#</a> 10.4 주의로 차원을 조절하기</h3><p>컵을 빛의 조각으로 그리듯 심장, 호흡, 근육 긴장에 주의를 기울여 경험의 차원을 바꾼다. 반대로 주의를 바깥으로 돌리면(걷기, 달리기) 몸 안에서 오는 정동의 비중이 줄어든다.</p>
+<h3 id="105-불편함과-함께-머물기도-기술이다"><a href="#105-불편함과-함께-머물기도-기술이다" class="heading-anchor" aria-hidden="true">#</a> 10.5 불편함과 함께 머물기도 기술이다</h3><p>불편함이 언제나 제거 대상은 아니다. 수술 후 통증이 줄어드는 변화를 느끼던 배럿처럼, 불편함의 <em>변화</em>가 학습 신호가 될 때가 있다. 늘 없애기만 하면 언제 쓸모 있는지 배울 수 없다. 유연성이 원칙이다.</p>
+<h3 id="106-다른-사람의-얼굴을-39읽지39-말고-묻기"><a href="#106-다른-사람의-얼굴을-39읽지39-말고-묻기" class="heading-anchor" aria-hidden="true">#</a> 10.6 다른 사람의 얼굴을 &#39;읽지&#39; 말고 묻기</h3><p>낯선 사람의 얼굴에서 감정을 읽는다고 믿지 않는다. 맥락과 함께 추론하고 있다는 점, 그리고 그 추론이 자주 틀린다는 점을 기억한다. 오래 알아 온 사람의 &#39;말&#39;은 배운 것이지 보편 사전이 아니다.</p>
+<h3 id="107-저축이-되는-사람-되기"><a href="#107-저축이-되는-사람-되기" class="heading-anchor" aria-hidden="true">#</a> 10.7 저축이 되는 사람 되기</h3><p>신뢰를 쌓고, 이끌기와 따르기를 번갈아 하고, 작은 친절을 건넨다. 그것은 상대의 몸 예산에 대한 저축이자 내 예산에 대한 저축이다.</p>
+<h2 id="맺으며-감정은-신경계가-세계와-맺는-거래의-이야기"><a href="#맺으며-감정은-신경계가-세계와-맺는-거래의-이야기" class="heading-anchor" aria-hidden="true">#</a> 맺으며: 감정은 신경계가 세계와 맺는 거래의 이야기</h2><p>이 인터뷰의 큰 줄기를 한 문장으로 줄이면 이렇다. <strong>뇌는 감각 표면의 신호만 가진 채 두개골 속에서 과거를 재조합해 미래를 추측하고, 그 추측은 먼저 몸을 움직이는 계획으로 나타나며, 우리가 경험하는 것은 그 계획의 사본이다. 정동은 그 과정에서 몸 예산의 잔고를 알려 주는 기압계이고, 감정은 그 잔고 변화의 원인과 대처에 대해 뇌가 짓는 범주, 곧 행동의 레시피다.</strong></p>
+<p>이 틀에서 보면 여러 &#39;상식&#39;이 다르게 보인다. 표정은 읽히는 것이 아니라 추론되는 것이다. 분노는 사물이 아니라 사례들의 범주다. 단어는 감정을 사후에 묘사하지 않고 감정을 구성하는 재료다. 기분 나쁨은 세상의 문제일 수도, 오늘 몸 예산의 문제일 수도 있다. 다른 사람은 우리 신경계에 가장 좋은 것이자 가장 나쁜 것이다.</p>
+<p>배럿이 질문들을 &quot;잘못 놓였다&quot;고 되받은 이유도 여기서 분명해진다. 질문을 바꾸면 할 수 있는 일이 바뀐다. &quot;이 감정을 없애려면?&quot;이 &quot;이 정동은 무엇을 알려 주고, 나는 어떤 범주로 어떤 행동을 준비할 것인가?&quot;로 바뀌는 순간, 느낌은 적이 아니라 지혜의 원천이 된다.</p>
+<hr>
+<h3 id="각주"><a href="#각주" class="heading-anchor" aria-hidden="true">#</a> 각주</h3><ol>
+<li>배럿의 저서: 『How Emotions Are Made』(국역 『감정은 어떻게 만들어지는가』), 『Seven and a Half Lessons About the Brain』(국역 『이토록 뜻밖의 뇌과학』). 『감정은 어떻게 만들어지는가?』는 최호영 옮김, 생각연구소.</li>
+<li>합의 논문의 정확한 서지와 위촉 연도. 인터뷰에서 배럿은 2016년을 &quot;그랬던 것 같다(I think)&quot;고 말했고, 다섯 명의 원로 과학자, 2년 반, 천 편 이상의 논문을 언급했다.</li>
+<li>35% 수치는 인터뷰에서 &quot;메타분석&quot;으로 소개된 것이며, 서구 표본 기준이다.</li>
+<li>104칼로리·연 11파운드 수치는 인터뷰에서 배럿이 인용한 연구 결과다. 원 연구는 Kiecolt-Glaser et al. (2015), &quot;Daily Stressors, Past Depression, and Metabolic Responses to High-Fat Meals,&quot; <em>Biological Psychiatry</em>, 77(7), 653–660. 연구 내용은 <strong>전날 스트레스를 겪은</strong> 여성이 고지방 식사 후 7시간 동안 평균 104kcal를 덜 연소했다는 것이다. 배럿이 말한 &#39;사회적 스트레스&#39;·&#39;식사 전후 두 시간&#39;보다 &#39;전날의 일상 스트레스&#39;가 더 정확하다.</li>
+<li>이노센스 프로젝트가 개입한 사형수 여성 사건은 인터뷰에서 실명이 언급되지 않았지만, 텍사스 사형수 <strong>멜리사 루시오(Melissa Lucio)</strong> 사건이다. 경찰이 표정·자세·시선으로 유죄를 판단한 것이 쟁점이었고, 2022년 집행이 중지됐다(이후 재판 상황은 진행 중).</li>
+</ol>
+
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-03-배럿감정구성.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
