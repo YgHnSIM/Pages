@@ -1,0 +1,3145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>모든 것은 파일이다 — 리눅스의 /dev, /proc, /sys가 가리키는 보편 인터페이스</title>
+  <meta name="description" content="리눅스의 '모든 것은 파일이다(Everything is a file)'라는 설계 철학이 1970년대 초 벨 연구소의 유닉스 기원에서 출발해 오늘날 /dev의 장치와 특수 파일, /proc과 /proc/sys의 가상 프로세스·커널 설정, /sys와 cgroup의 하드웨어·컨테이너 제어, 그리고 파일 디스크립터와 셸 파이프로 이어지는 구조를 체계적으로 해설한다. 아울러 소켓과 ioctl, Plan 9의 사례를 통해 이 명제가 물리 법칙이 아니라 안내 원칙임을 짚고, '모든 것은 파일 디스크립터다'라는 더 정확한 표현과 엔지니어 실무의 쓰임을 정리한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">모든 것은 파일이다 — 리눅스의 /dev, /proc, /sys가 가리키는 보편 인터페이스</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#서문-명령어-더미가-하나의-단순한-체계로-보일-때" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서문: 명령어 더미가 하나의 단순한 체계로 보일 때</span></a></li><li class="depth-2"><a href="#1-만능-리모컨의-탄생-왜-모든-것을-파일로-만들었을까" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 만능 리모컨의 탄생: 왜 모든 것을 파일로 만들었을까</span></a></li><li class="depth-3"><a href="#장치마다-39개인-언어39를-배우던-시절" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">장치마다 &#39;개인 언어&#39;를 배우던 시절</span></a></li><li class="depth-3"><a href="#네-개의-버튼만-있는-만능-리모컨" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">네 개의 버튼만 있는 만능 리모컨</span></a></li><li class="depth-2"><a href="#2-오해-바로잡기와-ls--l이-보여-주는-일곱-가지-이름표" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 오해 바로잡기와 ls -l이 보여 주는 일곱 가지 이름표</span></a></li><li class="depth-3"><a href="#quot모든-것이-디스크-위-텍스트-문서quot라는-뜻은-아니다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">&quot;모든 것이 디스크 위 텍스트 문서&quot;라는 뜻은 아니다</span></a></li><li class="depth-3"><a href="#ls--l의-첫-글자-정체를-밝히는-이름표" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">ls -l의 첫 글자: 정체를 밝히는 이름표</span></a></li><li class="depth-2"><a href="#3-dev-물리-하드웨어와-순수한-마법의-특수-파일들" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. /dev: 물리 하드웨어와 순수한 마법의 특수 파일들</span></a></li><li class="depth-3"><a href="#물리-디스크를-바이트-단위로-읽고-쓰는-dd" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">물리 디스크를 바이트 단위로 읽고 쓰는 dd</span></a></li><li class="depth-3"><a href="#하드웨어-없는-순수한-마법-dev의-네-가지-특수-파일" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">하드웨어 없는 순수한 마법: /dev의 네 가지 특수 파일</span></a></li><li class="depth-3"><a href="#두-터미널-창으로-해-보는-작은-실험-tty와-의사-터미널" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">두 터미널 창으로 해 보는 작은 실험: TTY와 의사 터미널</span></a></li><li class="depth-2"><a href="#4-proc-디스크에-없는-가상-파일시스템-커널의-뇌로-난-창" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. /proc: 디스크에 없는 가상 파일시스템, 커널의 뇌로 난 창</span></a></li><li class="depth-3"><a href="#프로세스마다-생기는-폴더와-거울-procself" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">프로세스마다 생기는 폴더와 거울 /proc/self</span></a></li><li class="depth-3"><a href="#시스템-전역-정보와-모니터링-도구의-비밀" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">시스템 전역 정보와 모니터링 도구의 비밀</span></a></li><li class="depth-3"><a href="#proc은-읽기-전용이-아니다-procsys와-커널-실시간-제어" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">/proc은 읽기 전용이 아니다: /proc/sys와 커널 실시간 제어</span></a></li><li class="depth-2"><a href="#5-sys-하드웨어-계층과-컨테이너-제한까지" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. /sys: 하드웨어 계층과 컨테이너 제한까지</span></a></li><li class="depth-3"><a href="#배터리-잔량-읽기에서-화면-밝기-조절-cgroup까지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">배터리 잔량 읽기에서 화면 밝기 조절, cgroup까지</span></a></li><li class="depth-2"><a href="#6-그-아래의-진짜-열쇠-파일-디스크립터와-셸-파이프" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 그 아래의 진짜 열쇠: 파일 디스크립터와 셸 파이프</span></a></li><li class="depth-3"><a href="#외투-보관소-번호표-비유" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">외투 보관소 번호표 비유</span></a></li><li class="depth-3"><a href="#태어날-때부터-쥐고-있는-세-장의-표-0-1-2" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">태어날 때부터 쥐고 있는 세 장의 표: 0, 1, 2</span></a></li><li class="depth-3"><a href="#프로그램은-표-뒤에-무엇이-있는지-모른다-파이프의-우아함" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">프로그램은 표 뒤에 무엇이 있는지 모른다: 파이프의 우아함</span></a></li><li class="depth-2"><a href="#7-솔직한-한계와-더-정확한-말-quot모든-것은-파일-디스크립터다quot" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 솔직한 한계와 더 정확한 말: &quot;모든 것은 파일 디스크립터다&quot;</span></a></li><li class="depth-3"><a href="#파일-경로로-환원되지-않는-예외들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">파일 경로로 환원되지 않는 예외들</span></a></li><li class="depth-3"><a href="#plan-9의-극단과-리눅스의-실용적-균형" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">Plan 9의 극단과 리눅스의 실용적 균형</span></a></li><li class="depth-2"><a href="#8-왜-엔지니어에게-중요한가-하나의-마음-모형-끝없는-쓰임" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 왜 엔지니어에게 중요한가: 하나의 마음 모형, 끝없는 쓰임</span></a></li><li class="depth-2"><a href="#9-정리와-세-가지-작은-실험" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 정리와 세 가지 작은 실험</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-11-13</span>
+          <span class="meta-badge">⏱️ 약 45분</span>
+          
+        </div>
+        <h1 class="article-title">모든 것은 파일이다 — 리눅스의 /dev, /proc, /sys가 가리키는 보편 인터페이스</h1>
+        <p class="article-subtitle">열기·읽기·쓰기·닫기라는 네 동작이 장치와 프로세스와 커널 설정까지 같은 도구로 다루게 만든 유닉스 설계, 그리고 그 철학이 파일 디스크립터에서 멈추는 지점</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#컴퓨터과학</span>
+          
+          <span class="tag-pill">#시스템프로그래밍</span>
+          
+          <span class="tag-pill">#컴퓨터과학사</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-11-13-리눅스모든것은파일.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="서문-명령어-더미가-하나의-단순한-체계로-보일-때"><a href="#서문-명령어-더미가-하나의-단순한-체계로-보일-때" class="heading-anchor" aria-hidden="true">#</a> 서문: 명령어 더미가 하나의 단순한 체계로 보일 때</h2><p>리눅스를 처음 마주하면 끝없이 이어지는 명령어와 알 수 없는 디렉터리 이름들이 거대한 미로처럼 느껴진다. 그런데 리눅스 파일시스템을 보물 찾기하듯 하나씩 열어 보면, 그 명령어 더미가 사실은 놀라울 만큼 단순한 하나의 체계 위에 놓여 있다는 사실이 드러난다. 키보드도 파일이고, 물리적인 하드디스크도 파일이다. 지금 실행 중인 프로그램은 파일로 가득한 폴더로 나타나고, 암호화 키를 만드는 난수 생성기마저 파일이다. 심지어 집어넣는 모든 것을 삼켜 버리고 아무것도 돌려주지 않는 아주 특별한 파일도 존재한다.</p>
+<p>처음 들으면 기이하게 들리지만, 이것은 컴퓨팅 역사에서 가장 유명한 생각 중 하나를 압축한 네 단어에서 비롯된다. <strong>&quot;모든 것은 파일이다(Everything is a file).&quot;</strong> 이 네 단어의 의미를 제대로 이해하는 순간, 리눅스는 제각각 흩어진 명령어들의 집합이 아니라 하나의 일관된 인터페이스로 동작하는 정교한 시스템으로 보이기 시작한다.</p>
+<p>이 글은 그 설계가 왜 탄생했는지부터 시작해, <code>/dev</code>, <code>/proc</code>, <code>/sys</code>라는 세 디렉터리를 따라 실제 리눅스 내부를 탐색하고, 그 아래에서 모든 입출력을 지탱하는 <strong>파일 디스크립터(File Descriptor)</strong>의 원리까지 짚어 본다. 마지막으로는 이 유명한 문장이 어디까지 참이고 어디에서 멈추는지, 그리고 왜 엔지니어들이 오늘날에도 이 마음 모형(mental model)에 깊이 의존하는지를 살핀다.</p>
+<hr>
+<h2 id="1-만능-리모컨의-탄생-왜-모든-것을-파일로-만들었을까"><a href="#1-만능-리모컨의-탄생-왜-모든-것을-파일로-만들었을까" class="heading-anchor" aria-hidden="true">#</a> 1. 만능 리모컨의 탄생: 왜 모든 것을 파일로 만들었을까</h2><h3 id="장치마다-39개인-언어39를-배우던-시절"><a href="#장치마다-39개인-언어39를-배우던-시절" class="heading-anchor" aria-hidden="true">#</a> 장치마다 &#39;개인 언어&#39;를 배우던 시절</h3><p>왜 운영체제를 이런 방식으로 설계했을까? 답을 찾으려면 1970년대 초 벨 연구소(Bell Labs)로 거슬러 올라가야 한다. 당시 그곳에서 켄 톰슨(Ken Thompson)과 데니스 리치(Dennis Ritchie)는 유닉스(Unix)를 만들고 있었다<a class="footnote-ref" href="#fn-1" id="fnref-1">1</a>. 그 시절에는 하드웨어 종류마다 말을 거는 방식이 제각각이었다. 테이프 드라이브는 자기만의 명령 집합을 요구했고, 프린터는 또 다른 명령 집합을 요구했으며, 터미널 역시 전혀 다른 명령 집합을 필요로 했다. 프로그램을 작성할 때마다 연결할 장치의 &#39;개인 언어&#39;를 일일이 배워야 했으니, 시스템 전체가 지저분하고 다루기 어려울 수밖에 없었다.</p>
+<p>유닉스 설계자들은 여기서 <strong>번뜩이면서도 거의 게으른(brilliant, almost lazy)</strong> 아이디어를 떠올렸다. <em>&quot;만약 모든 것이 같은 언어를 쓴다면 어떨까?&quot;</em> 프린터를 텍스트 파일과 똑같은 방식으로 다룰 수 있다면 어떨까? 즉, <strong>열기(open), 읽기(read), 쓰기(write), 닫기(close)</strong>라는 단 네 가지 동작만으로 모든 대상을 다루게 하자는 것이었다. 프로그램이 파일을 다루는 법만 알면, 나머지 모든 장치와 자원도 자동으로 다룰 줄 알게 되는 구조다.</p>
+<h3 id="네-개의-버튼만-있는-만능-리모컨"><a href="#네-개의-버튼만-있는-만능-리모컨" class="heading-anchor" aria-hidden="true">#</a> 네 개의 버튼만 있는 만능 리모컨</h3><p>이 발상은 <strong>만능 리모컨</strong>에 비유할 수 있다. 거실에 TV용 리모컨, 스피커용 리모컨, 에어컨용 리모컨을 따로 두는 대신, 모든 기기에 통하는 똑같은 버튼 네 개짜리 리모컨 하나만 쥐는 셈이다. 바로 이것이 유닉스 철학의 핵심이며, 유닉스의 설계를 따른 리눅스 역시 이 철학을 온전히 물려받았다.</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 780" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="eiaf1ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="eiaf1ahg" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="780" rx="14" fill="#0b1120"/>
+
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">유닉스·리눅스의 만능 리모컨</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">네 가지 공통 동작</text>
+<text x="210" y="74" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">open / read / write / close</text>
+<text x="210" y="100" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">프로그램은 대상의 '개인 언어'를</text>
+<text x="210" y="120" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">배우는 대신, 동일한 네 버튼으로</text>
+<text x="210" y="140" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">모든 자원에 접근한다</text>
+<rect x="16" y="158" width="388" height="108" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
+<text x="210" y="186" fill="#7dd3fc" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">사용자 프로그램</text>
+<text x="210" y="210" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">파일을 다룰 줄만 알면</text>
+<text x="210" y="230" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">나머지도 다룬다</text>
+<rect x="135" y="232" width="150" height="26" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="251" fill="#94a3b8" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">cat / echo / dd</text>
+<line x1="210" y1="266" x2="210" y2="290" stroke="#38bdf8" stroke-width="3" marker-end="url(#eiaf1ah)"/>
+<rect x="16" y="298" width="388" height="214" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+<text x="210" y="326" fill="#fcd34d" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">만능 리모컨 (보편 인터페이스)</text>
+<rect x="60" y="342" width="300" height="32" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="210" y="364" fill="#e2e8f0" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">1. open()  열기</text>
+<rect x="60" y="382" width="300" height="32" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+<text x="210" y="404" fill="#e2e8f0" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">2. read()  읽기</text>
+<rect x="60" y="422" width="300" height="32" rx="6" fill="#0f172a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="210" y="444" fill="#e2e8f0" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">3. write() 쓰기</text>
+<rect x="60" y="462" width="300" height="32" rx="6" fill="#0f172a" stroke="#f43f5e" stroke-width="1.5"/>
+<text x="210" y="484" fill="#e2e8f0" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">4. close() 닫기</text>
+<line x1="210" y1="512" x2="210" y2="542" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#eiaf1ahg)"/>
+<rect x="16" y="548" width="188" height="72" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="110.0" y="578" fill="#f1f5f9" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">일반 텍스트 파일</text>
+<text x="110.0" y="602" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">/ 디렉터리</text>
+<rect x="216" y="548" width="188" height="72" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="310.0" y="578" fill="#f1f5f9" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">하드웨어 장치</text>
+<text x="310.0" y="602" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(/dev: 디스크·터미널)</text>
+<rect x="16" y="632" width="188" height="72" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="110.0" y="662" fill="#f1f5f9" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">실행 중 프로세스</text>
+<text x="110.0" y="686" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">·커널 설정 (/proc)</text>
+<rect x="216" y="632" width="188" height="72" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="310.0" y="662" fill="#f1f5f9" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">하드웨어 계층</text>
+<text x="310.0" y="686" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">·컨테이너 제한 (/sys)</text>
+<text x="210" y="728" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">유닉스 철학: 1970년대 초</text>
+<text x="210" y="750" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">벨 연구소의 설계가 리눅스로 그대로 이어짐</text>
+</svg></figure>
+<p>[해설] 이 구조의 핵심은 <strong>추상화의 경계</strong>를 어디에 두었는가이다. 장치마다 고유한 입출력 규칙을 사용자 공간(User Space) 프로그램에 노출하지 않고, 운영체제 커널 아래의 장치 드라이버가 번역 책임을 맡도록 넘긴 덕분에 상위 도구는 단 하나의 파일 인터페이스만 알면 되게 되었다<a class="footnote-ref" href="#fn-2" id="fnref-2">2</a>.</p>
+<hr>
+<h2 id="2-오해-바로잡기와-ls--l이-보여-주는-일곱-가지-이름표"><a href="#2-오해-바로잡기와-ls--l이-보여-주는-일곱-가지-이름표" class="heading-anchor" aria-hidden="true">#</a> 2. 오해 바로잡기와 <code>ls -l</code>이 보여 주는 일곱 가지 이름표</h2><h3 id="quot모든-것이-디스크-위-텍스트-문서quot라는-뜻은-아니다"><a href="#quot모든-것이-디스크-위-텍스트-문서quot라는-뜻은-아니다" class="heading-anchor" aria-hidden="true">#</a> &quot;모든 것이 디스크 위 텍스트 문서&quot;라는 뜻은 아니다</h3><p>&quot;모든 것은 파일이다&quot;라는 말을 처음 접할 때 가장 흔히 빠지는 오해가 있다. 키보드나 하드디스크가 폴더 안에 들어 있는 텍스트 문서처럼 디스크 공간을 차지하고 있다는 뜻으로 받아들이는 것이다. 그러나 리눅스가 말하는 의미는 그것이 아니다.</p>
+<p>정확한 뜻은 다음과 같다. <strong>시스템 안의 모든 자원이 파일시스템을 통해 도달할 수 있고, 경로(path)를 가지며, 같은 기본 도구로 열고 읽고 쓸 수 있다</strong>는 것이다.</p>
+<h3 id="ls--l의-첫-글자-정체를-밝히는-이름표"><a href="#ls--l의-첫-글자-정체를-밝히는-이름표" class="heading-anchor" aria-hidden="true">#</a> <code>ls -l</code>의 첫 글자: 정체를 밝히는 이름표</h3><p>이 구조를 눈으로 확인하는 가장 깔끔한 방법은 아무 폴더에서나 <code>ls -l</code>을 실행해 각 줄의 <strong>맨 앞 한 글자</strong>를 보는 것이다. 그 작은 알파벳 하나가 해당 항목이 실제로 무엇인지를 알려 주는 이름표(name badge) 역할을 한다. 리눅스 파일시스템에는 이렇게 일곱 가지 파일 유형이 존재한다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="center">첫 글자</th>
+<th align="left">영문 명칭</th>
+<th align="left">한국어 명칭</th>
+<th align="left">성격과 역할</th>
+<th align="left">대표 예시</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-</code></td>
+<td align="left">Regular file</td>
+<td align="left">일반 파일</td>
+<td align="left">데이터를 담고 있는 보통 파일</td>
+<td align="left">사진, 스크립트, 텍스트 문서</td>
+</tr>
+<tr>
+<td align="center"><code>d</code></td>
+<td align="left">Directory</td>
+<td align="left">디렉터리</td>
+<td align="left">폴더 역시 파일이다. 다른 파일들의 <strong>이름 목록</strong>을 담은 특수 파일</td>
+<td align="left"><code>/home</code>, <code>/dev</code>, <code>/proc</code></td>
+</tr>
+<tr>
+<td align="center"><code>l</code></td>
+<td align="left">Symbolic link</td>
+<td align="left">심볼릭 링크</td>
+<td align="left">다른 파일이나 경로를 가리키는 바로가기</td>
+<td align="left"><code>/proc/self/fd/0</code> 등 링크</td>
+</tr>
+<tr>
+<td align="center"><code>c</code></td>
+<td align="left">Character device</td>
+<td align="left">문자 장치</td>
+<td align="left">데이터를 <strong>한 글자(문자) 단위</strong>로 순차 전송하는 장치</td>
+<td align="left">키보드, 터미널</td>
+</tr>
+<tr>
+<td align="center"><code>b</code></td>
+<td align="left">Block device</td>
+<td align="left">블록 장치</td>
+<td align="left">데이터를 <strong>큰 덩어리(블록) 단위</strong>로 읽고 쓰는 장치</td>
+<td align="left">하드디스크, USB 저장장치</td>
+</tr>
+<tr>
+<td align="center"><code>p</code></td>
+<td align="left">Named pipe</td>
+<td align="left">네임드 파이프</td>
+<td align="left">두 프로그램이 데이터를 주고받을 수 있게 해 주는 작은 터널</td>
+<td align="left">프로세스 간 파이프 파일</td>
+</tr>
+<tr>
+<td align="center"><code>s</code></td>
+<td align="left">Socket</td>
+<td align="left">소켓</td>
+<td align="left">프로그램끼리 대화하기 위해 사용하는 문(doorway)</td>
+<td align="left">로컬·네트워크 통신 소켓</td>
+</tr>
+</tbody></table>
+</div><p>일곱 가지 성격이 서로 다른 대상들이 <strong>하나의 파일시스템</strong> 안에 나란히 놓이고, <strong>하나의 도구 집합</strong>으로 다뤄진다. 디렉터리조차 예외가 아니다. 폴더는 파일과 별개의 신비한 그릇이 아니라, 그저 안에 담긴 이름들의 목록을 보관하는 특수한 파일일 뿐이다.</p>
+<hr>
+<h2 id="3-dev-물리-하드웨어와-순수한-마법의-특수-파일들"><a href="#3-dev-물리-하드웨어와-순수한-마법의-특수-파일들" class="heading-anchor" aria-hidden="true">#</a> 3. <code>/dev</code>: 물리 하드웨어와 순수한 마법의 특수 파일들</h2><p>보물 찾기의 첫 번째 목적지는 <code>/dev</code> 디렉터리다. 이름 그대로 장치(devices)의 줄임말이며, 리눅스가 하드웨어와 특수 장치를 나타내는 파일들을 모아 두는 곳이다. <code>ls /dev</code>를 실행하면 긴 목록이 쏟아져 나온다.</p>
+<h3 id="물리-디스크를-바이트-단위로-읽고-쓰는-dd"><a href="#물리-디스크를-바이트-단위로-읽고-쓰는-dd" class="heading-anchor" aria-hidden="true">#</a> 물리 디스크를 바이트 단위로 읽고 쓰는 <code>dd</code></h3><p><code>/dev</code> 안에는 시스템에 연결된 저장장치가 파일 이름으로 올라와 있다. 디스크의 종류에 따라 <code>sda</code>나 <code>nvme0n1</code> 같은 이름으로 나타나고, 그 안의 파티션은 <code>sda1</code>, <code>sda2</code>처럼 번호가 붙어 표시된다.</p>
+<p>여기서 놀라운 점은, 사용자가 <strong>root</strong> 권한을 가지고 있다면 그 디스크 파일을 열어서 물리 하드디스크 전체를 <strong>바이트 단위로 통째로 읽을 수 있다</strong>는 사실이다. 디스크를 복제하거나 USB 설치 이미지를 굽는 <code>dd</code> 명령이 동작하는 원리가 바로 이것이다. <code>dd</code>는 그저 한 파일에서 데이터를 읽어 다른 파일에 쓸 뿐이다. 도구 입장에서는 자기가 읽고 쓰는 파일 중 하나가 물리적인 디스크 통째라는 사실을 전혀 신경 쓰지 않는다.</p>
+<p>그렇기 때문에 <code>dd</code>를 쓸 때는 각별히 조심해야 한다. 잘못된 디스크 파일 경로를 지정해 쓰기를 실행하면, 그 디스크 전체가 그대로 덮어써져 버린다. 같은 단순한 규칙이 아주 현실적이고 무서운 결과를 낳는 셈이다.</p>
+<p>[해설] <code>dd</code> 명령은 원래 IBM JCL의 <code>DD</code>(Data Definition) 구문에서 유래했다고 알려져 있으며, 오타 한 번으로 디스크를 통째로 지워 버릴 수 있다는 점에서 엔지니어들 사이에선 흔히 &#39;Disk Destroyer&#39;라는 별명으로 불리기도 한다<a class="footnote-ref" href="#fn-3" id="fnref-3">3</a>.</p>
+<h3 id="하드웨어-없는-순수한-마법-dev의-네-가지-특수-파일"><a href="#하드웨어-없는-순수한-마법-dev의-네-가지-특수-파일" class="heading-anchor" aria-hidden="true">#</a> 하드웨어 없는 순수한 마법: <code>/dev</code>의 네 가지 특수 파일</h3><p><code>/dev</code>에는 물리적인 하드웨어와 전혀 연결되어 있지 않지만, 모든 리눅스 엔지니어가 알아야 할 순수한 가상 특수 파일들도 살고 있다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">특수 파일</th>
+<th align="left">비유·역할</th>
+<th align="left">읽기(<code>read</code>) 동작</th>
+<th align="left">쓰기(<code>write</code>) 동작</th>
+<th align="left">주된 쓰임새</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>/dev/null</code></td>
+<td align="left">리눅스의 <strong>블랙홀</strong></td>
+<td align="left">읽으려 하면 <strong>아무것도 나오지 않음</strong></td>
+<td align="left">쓰는 모든 데이터가 흔적 없이 사라짐</td>
+<td align="left">스크립트의 불필요한 메시지·에러 침묵시키기</td>
+</tr>
+<tr>
+<td align="left"><code>/dev/zero</code></td>
+<td align="left">끝없는 <strong>0의 샘</strong></td>
+<td align="left">0(널 바이트, 0x00)을 끝없이 내보냄</td>
+<td align="left">—</td>
+<td align="left">일정 크기의 빈 파일 생성, 저장공간 깨끗이 지우기</td>
+</tr>
+<tr>
+<td align="left"><code>/dev/random</code><br><code>/dev/urandom</code></td>
+<td align="left"><strong>커널 난수 생성기</strong></td>
+<td align="left">커널이 생성한 무작위 바이트 반환</td>
+<td align="left">—</td>
+<td align="left">암호화 키, 비밀번호, 보안 웹사이트 연결</td>
+</tr>
+<tr>
+<td align="left"><code>/dev/full</code></td>
+<td align="left"><strong>가득 찬 디스크</strong></td>
+<td align="left">—</td>
+<td align="left">쓰려고 하면 항상 <strong>&quot;디스크가 가득 참&quot;</strong> 오류 반환</td>
+<td align="left">저장공간 부족 상황에서 프로그램 동작 테스트</td>
+</tr>
+</tbody></table>
+</div><ul>
+<li><strong><code>/dev/null</code></strong>: 리눅스의 블랙홀이다. 여기에 무엇을 쓰든 즉시 사라져 버리고, 반대로 읽으려고 하면 아무것도 돌려주지 않는다. 명령어가 관심 없는 경고나 출력 메시지를 홍수처럼 쏟아낼 때 그 출력을 <code>/dev/null</code>로 리다이렉션해 소음을 없애는 데 자주 쓰인다. 엔지니어들 사이에서는 누군가의 불만을 들을 생각이 없을 때 *&quot;불만 사항은 <code>/dev/null</code>로 보내라(Send your complaints to /dev/null)&quot;*라고 농담하기도 한다.</li>
+<li><strong><code>/dev/zero</code></strong>: 읽을 때마다 끝없는 0을 내어 준다. 원하는 크기의 빈 파일을 미리 만들어 두거나, 무언가를 0으로 덮어 깨끗하게 지워야 할 때 유용하다.</li>
+<li><strong><code>/dev/random</code>과 <code>/dev/urandom</code></strong>: 이 파일들을 읽으면 커널이 만들어 낸 무작위 바이트(random bytes)를 얻는다. 바로 이 무작위성이 암호화 키, 비밀번호, 그리고 보안 연결의 바탕이 된다. 우리가 보안 웹사이트에 접속할 때, 프로그램 입장에서는 그저 파일 하나를 읽은 것처럼 보이지만 실제로는 커널이 건네준 난수가 보안을 뒷받침하고 있을 가능성이 크다.</li>
+</ul>
+<p>[해설] 결정론적인 컴퓨터가 난수를 만들기 위해 리눅스 커널은 키보드 입력 간격, 하드웨어 인터럽트 타이밍 등 환경 노이즈를 엔트로피 풀(entropy pool)에 모아 암호학적 CSPRNG(현재 구현은 주로 ChaCha20 스트림 암호)를 시드·재시드하고, 그 출력으로 <code>/dev/random</code>과 <code>/dev/urandom</code>의 난수를 만든다<a class="footnote-ref" href="#fn-4" id="fnref-4">4</a>. 전통적으로 <code>/dev/random</code>은 엔트로피 추정량이 부족하면 대기(blocking)하고 <code>/dev/urandom</code>은 대기하지 않는 것으로 구분되었다. Linux 5.6(2020) 이후에는 <code>/dev/random</code>의 블로킹 풀이 제거되어, 초기화 이후에는 <code>/dev/urandom</code>과 거의 동일하게 동작하며, 조기 부팅 단계에서만 <code>/dev/random</code>이 대기할 수 있다.</p>
+<ul>
+<li><strong><code>/dev/full</code></strong>: 재미있으면서도 실용적인 파일이다. 여기에 무엇이든 쓰려고 하면 항상 *&quot;죄송합니다, 디스크가 가득 찼습니다&quot;*라는 오류를 돌려준다. 오직 개발자들이 디스크 공간이 바닥났을 때 자기 프로그램이 어떻게 반응하고 버티는지 시험해 볼 수 있도록 존재한다. 리눅스에서는 <strong>에러 메시지조차 파일로 구현되어 있는 것</strong>이다.</li>
+</ul>
+<h3 id="두-터미널-창으로-해-보는-작은-실험-tty와-의사-터미널"><a href="#두-터미널-창으로-해-보는-작은-실험-tty와-의사-터미널" class="heading-anchor" aria-hidden="true">#</a> 두 터미널 창으로 해 보는 작은 실험: TTY와 의사 터미널</h3><p>터미널과 셸의 관계에서도 <code>/dev</code>의 파일 철학은 생생하게 드러난다<a class="footnote-ref" href="#fn-5" id="fnref-5">5</a>. 터미널에서 <code>tty</code> 명령을 입력하면 <code>/dev/pts/0</code>이나 <code>/dev/pts/1</code> 같은 경로가 출력된다. 바로 그것이 파일이며, 사용자의 터미널 세션 전체가 이 파일을 통해 연결되어 있다.</p>
+<p>이 사실은 간단한 실험 하나로 바로 증명된다.</p>
+<ol>
+<li>터미널 창을 두 개 연다.</li>
+<li>첫 번째 창에서 <code>tty</code>를 실행해 자기 터미널 장치 파일의 경로를 확인한다.</li>
+<li>두 번째 창에서 <code>echo hello &gt; /dev/pts/&lt;첫_창_번호&gt;</code>처럼 첫 번째 창의 파일 경로로 텍스트를 리다이렉션해 보낸다.</li>
+</ol>
+<p>그러면 놀랍게도 첫 번째 터미널 창 화면에 <code>hello</code>라는 글자가 불쑥 나타난다. 특별한 메신저 프로그램도 없고 네트워크 통신 코드를 짠 것도 아니다. 그저 파일에 글을 썼을 뿐인데 다른 터미널 창으로 메시지가 전달되었다. 이것이 &quot;모든 것은 파일이다&quot;라는 철학을 한눈에 보여 주는 가장 작은 실험이다.</p>
+<hr>
+<h2 id="4-proc-디스크에-없는-가상-파일시스템-커널의-뇌로-난-창"><a href="#4-proc-디스크에-없는-가상-파일시스템-커널의-뇌로-난-창" class="heading-anchor" aria-hidden="true">#</a> 4. <code>/proc</code>: 디스크에 없는 가상 파일시스템, 커널의 뇌로 난 창</h2><p>지금까지는 하드웨어나 가상 장치를 다루는 <code>/dev</code>를 보았다. 이제 한 걸음 더 기이한 곳, <strong><code>/proc</code></strong> 디렉터리로 들어가 보자.</p>
+<p><code>/proc</code>의 가장 중요한 특징은 <strong>디스크 위에 실제로 존재하지 않는다</strong>는 점이다. 이곳은 <strong>가상 파일시스템(Virtual File System)</strong>이다. 사용자가 파일을 읽으려고 시도하는 바로 그 순간, 커널이 즉석에서 파일을 만들어 내어 내용을 채워 넣는다. 말하자면 커널의 뇌 속을 들여다볼 수 있도록 뚫어 놓은 마법의 창이다.</p>
+<h3 id="프로세스마다-생기는-폴더와-거울-procself"><a href="#프로세스마다-생기는-폴더와-거울-procself" class="heading-anchor" aria-hidden="true">#</a> 프로세스마다 생기는 폴더와 거울 <code>/proc/self</code></h3><p>시스템에서 실행 중인 모든 프로세스는 <code>/proc</code> 아래에 자신의 프로세스 ID(PID)를 이름으로 갖는 폴더를 얻는다. 예를 들어 어떤 프로그램의 PID가 <code>1234</code>라면 <code>/proc/1234</code> 폴더가 생긴다. 그 폴더 안을 열어 보면 해당 프로세스를 실행한 명령어, 환경 변수, 메모리 사용량, 그리고 지금 열어 둔 파일 목록까지 모두 파일 형태로 들어 있다.</p>
+<p>여기에는 아주 영리한 바로가기 하나가 더 있다. <strong><code>/proc/self</code></strong>는 언제나 <em>지금 그 경로를 들여다보고 있는 프로세스 자기 자신</em>을 가리킨다. 따라서 터미널에서 <code>cat /proc/self/status</code>를 실행하면, <code>cat</code> 프로그램이 자기 자신의 상태 정보를 읽게 된다. 프로그램이 거울을 들여다보는 셈이다.</p>
+<h3 id="시스템-전역-정보와-모니터링-도구의-비밀"><a href="#시스템-전역-정보와-모니터링-도구의-비밀" class="heading-anchor" aria-hidden="true">#</a> 시스템 전역 정보와 모니터링 도구의 비밀</h3><p><code>/proc</code>은 개별 프로세스 정보만 담고 있지 않다. 시스템 전체를 보여 주는 파일들도 가득하다.</p>
+<ul>
+<li><code>cat /proc/cpuinfo</code>: 시스템의 프로세서(CPU) 상세 정보</li>
+<li><code>cat /proc/meminfo</code>: 메모리가 현재 어떻게 사용되고 있는지에 대한 상세 내역</li>
+<li><code>cat /proc/uptime</code>: 시스템이 켜진 뒤 얼마나 오래 가동되었는지</li>
+</ul>
+<p>우리가 일상적으로 쓰는 모니터링 도구들의 비밀도 여기에 있다. <code>ps</code>, <code>top</code>, <code>free</code> 같은 명령어들이 프로세스 목록과 메모리 상태를 보여 줄 때, 이들은 대부분 비밀스러운 전용 통로를 쓰는 것이 아니라 <strong><code>/proc</code> 아래의 파일들을 읽어 사람 눈에 보기 좋게 단장해 출력할 뿐</strong>이다. 마음만 먹으면 <code>cat</code>만으로도 같은 날것의 데이터를 확인할 수 있다. <code>ps</code>나 <code>top</code>은 그저 그것을 더 예쁘게 보여 줄 뿐이다.</p>
+<h3 id="proc은-읽기-전용이-아니다-procsys와-커널-실시간-제어"><a href="#proc은-읽기-전용이-아니다-procsys와-커널-실시간-제어" class="heading-anchor" aria-hidden="true">#</a> <code>/proc</code>은 읽기 전용이 아니다: <code>/proc/sys</code>와 커널 실시간 제어</h3><p>여기서 흔히 저지르는 잘못된 도식을 하나 바로잡아야 한다. <code>/proc</code>을 &#39;읽기 전용&#39;, <code>/sys</code>를 &#39;쓰기 전용&#39;으로 나누어 이해하는 것은 사실과 다르다. <strong><code>/proc</code> 역시 양방향</strong>이다.</p>
+<p>특히 <strong><code>/proc/sys</code></strong> 아래에 있는 일부 파일들은 읽는 것뿐 아니라 <strong>쓰기</strong>도 가능하다. 여기에 값을 쓰면 시스템을 재부팅하지 않고도 실행 중인 커널의 동작 방식을 즉시 바꿀 수 있다. 대표적인 예가 네트워크 트래픽 포워딩 설정이다. 리눅스 머신이 여러 네트워크 인터페이스 사이에서 트래픽을 전달할지, 즉 일종의 라우터처럼 동작할지를 결정하는 파일이 <code>/proc/sys</code> 아래에 있다. 이 파일에 <code>0</code>이 들어 있으면 포워딩이 꺼져 있는 상태이고, <strong>root</strong> 권한으로 <code>1</code>을 써 넣으면 그 즉시 포워딩 기능이 켜진다. 도커 같은 컨테이너 플랫폼이나 쿠버네티스(Kubernetes)의 네트워킹이 바로 이런 커널 설정에 의존한다.</p>
+<p>리눅스 관리자들이 자주 쓰는 <code>sysctl</code> 명령어도 마법이 아니다. 그것은 단지 <code>/proc/sys</code> 아래의 바로 이 파일들을 좀 더 친숙하고 편하게 읽고 쓸 수 있게 감싸 놓은 도구일 뿐이다. 결국 커널의 핵심 동작을 바꾸는 일조차 <strong>파일에 숫자 하나를 쓰는 일</strong>로 환원된다.</p>
+<hr>
+<h2 id="5-sys-하드웨어-계층과-컨테이너-제한까지"><a href="#5-sys-하드웨어-계층과-컨테이너-제한까지" class="heading-anchor" aria-hidden="true">#</a> 5. <code>/sys</code>: 하드웨어 계층과 컨테이너 제한까지</h2><p><code>/proc</code>에는 <strong><code>/sys</code></strong>라는 동생이 하나 있다. <code>/sys</code> 역시 디스크에 없는 또 하나의 가상 파일시스템이다. <code>/proc</code>에 비해 구조가 훨씬 더 정돈되어 있으며, 주로 시스템에 연결된 장치, 드라이버, 그리고 물리적 하드웨어의 계층 구조를 기술한다.</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 844" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="420" height="844" rx="14" fill="#0b1120"/>
+
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">가상 파일시스템 /proc과 /sys</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">둘 다 읽기·쓰기가 가능한 커널 창구</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">디스크에 저장되지 않고, 읽는 순간</text>
+<text x="210" y="96" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">커널이 생성하거나 쓰는 순간</text>
+<text x="210" y="116" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">커널·하드웨어 동작을 바꾼다</text>
+<rect x="16" y="132" width="388" height="330" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
+<text x="210" y="158" fill="#7dd3fc" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">/proc</text>
+<text x="210" y="182" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">프로세스·시스템·커널 설정</text>
+<rect x="26" y="202" width="368" height="84" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+<text x="210" y="224" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">프로세스 및 시스템 상태 읽기</text>
+<text x="210" y="244" fill="#94a3b8" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">/proc/&lt;PID&gt;/, /proc/self/status,</text>
+<text x="210" y="264" fill="#94a3b8" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">cpuinfo, meminfo, uptime</text>
+<rect x="26" y="294" width="368" height="84" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+<text x="210" y="316" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">모니터링 도구의 원천</text>
+<text x="210" y="336" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">ps, top, free는 대체로 /proc을 읽어</text>
+<text x="210" y="356" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">예쁘게 보여 줌</text>
+<rect x="26" y="386" width="368" height="64" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="210" y="408" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">양방향 쓰기: /proc/sys (sysctl)</text>
+<text x="210" y="428" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">재부팅 없이 커널 동작 변경 (예: IP 포워딩 0/1)</text>
+<rect x="16" y="478" width="388" height="350" rx="10" fill="#111827" stroke="#10b981" stroke-width="2"/>
+<text x="210" y="504" fill="#6ee7b7" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">/sys</text>
+<text x="210" y="528" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">/proc의 동생 · 장치·드라이버·cgroup</text>
+<rect x="26" y="548" width="368" height="84" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+<text x="210" y="570" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">하드웨어 상태 읽기</text>
+<text x="210" y="590" fill="#94a3b8" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">/sys/class/power_supply/.../capacity</text>
+<text x="210" y="610" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(배터리 %)</text>
+<rect x="26" y="640" width="368" height="84" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+<text x="210" y="662" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">하드웨어 직접 제어 (root 쓰기)</text>
+<text x="210" y="682" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">백라이트 brightness 파일에 더 작은 숫자를 써</text>
+<text x="210" y="702" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">화면을 어둡게</text>
+<rect x="26" y="732" width="368" height="84" rx="8" fill="#0f172a" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="210" y="754" fill="#c4b5fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">컨테이너 자원 제한 (/sys/fs/cgroup)</text>
+<text x="210" y="774" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">도커·쿠버네티스 CPU·메모리 제한도</text>
+<text x="210" y="794" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">파일에 숫자를 씀</text>
+</svg></figure>
+<h3 id="배터리-잔량-읽기에서-화면-밝기-조절-cgroup까지"><a href="#배터리-잔량-읽기에서-화면-밝기-조절-cgroup까지" class="heading-anchor" aria-hidden="true">#</a> 배터리 잔량 읽기에서 화면 밝기 조절, cgroup까지</h3><p><code>/sys</code>가 실제 하드웨어와 맞닿아 있는 모습은 리눅스 노트북에서 쉽게 확인할 수 있다.</p>
+<ol>
+<li><strong>배터리 잔량 확인</strong>: 많은 리눅스 노트북에서는 <code>/sys/class/power_supply</code> 아래로 들어가 <code>capacity</code> 파일을 읽으면 현재 배터리가 몇 퍼센트 남아 있는지 숫자로 나온다.</li>
+<li><strong>화면 백라이트 제어</strong>: 일부 머신에는 화면 백라이트를 담당하는 <code>brightness</code> 파일이 존재한다. <strong>root</strong> 권한으로 이 파일에 지금보다 더 작은 숫자를 쓰면, 실제로 노트북 화면이 어두워진다. 파일의 숫자를 고쳐 쓰는 행위로 물리적 하드웨어를 직접 제어하는 것이다.</li>
+<li><strong>컨테이너 자원 격리(cgroup)</strong>: 도커(Docker)나 쿠버네티스 같은 컨테이너 기술이 특정 컨테이너의 CPU와 메모리 사용량을 제한할 때 쓰는 <strong>cgroup</strong> 설정 역시 보통 <code>/sys/fs/cgroup</code> 아래에 파일로 존재한다. 도커나 쿠버네티스가 컨테이너의 메모리 상한을 정할 때, 깊은 곳에서 일어나는 일은 결국 이 파일에 숫자를 쓰는 작업이다. 밑바닥 끝까지 내려가도 여전히 파일이 파일인 것이다.</li>
+</ol>
+<p>[해설] 일부 시스템에서는 화면 백라이트 파일이 <code>/sys/class/backlight</code> 아래에 있으며, cgroup v2 환경에서 메모리 상한 파일의 표준 이름은 <code>memory.max</code>이다(cgroup v1의 대응 파일은 <code>memory.limit_in_bytes</code>). <code>/sys</code>(sysfs)는 2.5 개발 주기에서 만들어져 Linux 2.6.0에 포함되었고, 장치 모델과 자원 제어 인터페이스를 일관된 디렉터리 트리로 정리해 준다<a class="footnote-ref" href="#fn-6" id="fnref-6">6</a>.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">구분</th>
+<th align="left"><code>/proc</code></th>
+<th align="left"><code>/sys</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>성격</strong></td>
+<td align="left">디스크에 없는 가상 파일시스템 (커널의 뇌로 난 창)</td>
+<td align="left">디스크에 없는 가상 파일시스템 (<code>/proc</code>의 더 정돈된 동생)</td>
+</tr>
+<tr>
+<td align="left"><strong>주된 대상</strong></td>
+<td align="left">실행 중 프로세스(<code>/proc/&lt;PID&gt;</code>), CPU·메모리·가동시간, 커널 매개변수</td>
+<td align="left">장치, 드라이버, 하드웨어 계층, cgroup 자원 제한</td>
+</tr>
+<tr>
+<td align="left"><strong>대표 읽기 예</strong></td>
+<td align="left"><code>/proc/cpuinfo</code>, <code>/proc/meminfo</code>, <code>/proc/uptime</code>, <code>/proc/self/status</code></td>
+<td align="left"><code>/sys/class/power_supply</code>의 <code>capacity</code> (배터리 잔량)</td>
+</tr>
+<tr>
+<td align="left"><strong>대표 쓰기 예</strong></td>
+<td align="left"><strong><code>/proc/sys</code></strong> 아래 파일(예: IP 포워딩 <code>0</code>/<code>1</code>, <code>sysctl</code>)</td>
+<td align="left">백라이트 <code>brightness</code> 파일(root 쓰기), <code>/sys/fs/cgroup</code> 아래 컨테이너 제한</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="6-그-아래의-진짜-열쇠-파일-디스크립터와-셸-파이프"><a href="#6-그-아래의-진짜-열쇠-파일-디스크립터와-셸-파이프" class="heading-anchor" aria-hidden="true">#</a> 6. 그 아래의 진짜 열쇠: 파일 디스크립터와 셸 파이프</h2><p>이제 한 층 더 깊이 내려가 보자. 지금까지 파일 경로의 세계를 보았다면, 이번에는 프로그램이 그 파일을 연 <strong>다음에</strong> 커널과 어떻게 대화하는지 살펴볼 차례다.</p>
+<h3 id="외투-보관소-번호표-비유"><a href="#외투-보관소-번호표-비유" class="heading-anchor" aria-hidden="true">#</a> 외투 보관소 번호표 비유</h3><p>프로그램이 어떤 파일을 열면, 커널은 그 대가로 아주 작은 정수 하나를 돌려준다. 이것이 바로 <strong>파일 디스크립터(File Descriptor, FD)</strong>다.</p>
+<p>이는 레스토랑이나 극장의 <strong>외투 보관소 번호표</strong>와 똑같다. 손님이 코트를 맡기면 직원이 &quot;3번&quot;이라고 적힌 번호표를 건넨다. 그 뒤로는 코트가 어떤 브랜드인지, 어느 옷걸이에 걸려 있는지 길게 설명할 필요 없이 그저 3번 번호표만 내밀면 자기 코트를 찾을 수 있다. 프로그램도 마찬가지다. 파일을 한 번 열어 번호를 받으면, 이후의 모든 읽기와 쓰기는 그 작은 번호를 통해 이뤄진다.</p>
+<h3 id="태어날-때부터-쥐고-있는-세-장의-표-0-1-2"><a href="#태어날-때부터-쥐고-있는-세-장의-표-0-1-2" class="heading-anchor" aria-hidden="true">#</a> 태어날 때부터 쥐고 있는 세 장의 표: 0, 1, 2</h3><p>리눅스의 모든 프로그램은 실행되는 순간부터 <strong>이미 세 장의 번호표</strong>를 손에 쥐고 시작한다.</p>
+<ul>
+<li><strong>0번 — 표준 입력(Standard Input, stdin)</strong>: 프로그램이 데이터를 읽어 들이는 곳. 보통 키보드다.</li>
+<li><strong>1번 — 표준 출력(Standard Output, stdout)</strong>: 정상적인 실행 결과가 나가는 곳. 보통 화면이다.</li>
+<li><strong>2번 — 표준 에러(Standard Error, stderr)</strong>: 오류 메시지가 나가는 곳.</li>
+</ul>
+<p>이 번호를 알고 나면 셸 스크립트에서 흔히 마주치는 <code>2&gt;/dev/null</code> 같은 기호가 단번에 읽힌다. 이는 *&quot;2번 번호표, 즉 표준 에러 흐름을 리눅스의 블랙홀(<code>/dev/null</code>)로 보내라&quot;*라는 뜻이다.</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 552" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="eiaf3ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="eiaf3dn" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="552" rx="14" fill="#0b1120"/>
+
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">파일 디스크립터</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">커널이 건네는 외투 보관소 번호표</text>
+<text x="210" y="74" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(0 · 1 · 2와 이후 번호)</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">모든 프로세스는 0·1·2 세 장의 표를 쥔 채 시작하며,</text>
+<text x="210" y="118" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">/proc/self/fd에서 열린 번호 목록을 볼 수 있다</text>
+<rect x="16" y="140" width="388" height="118" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
+<text x="210" y="168" fill="#7dd3fc" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">실행 중인 프로세스</text>
+<text x="210" y="192" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">표 뒤에 무엇이 있는지 신경 쓰지 않고</text>
+<text x="210" y="214" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">번호표로만 읽고 쓴다</text>
+<rect x="50" y="224" width="320" height="26" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="243" fill="#94a3b8" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">/proc/self/fd/  →  실제 대상 링크</text>
+<line x1="90.0" y1="258" x2="90.0" y2="288" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#eiaf3dn)"/>
+<rect x="16" y="294" width="148" height="52" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="90.0" y="327" fill="#7dd3fc" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">표 0 (stdin)</text>
+<line x1="166" y1="320.0" x2="190" y2="320.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#eiaf3ah)"/>
+<rect x="192" y="294" width="210" height="52" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="297.0" y="315" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">보통 키보드</text>
+<text x="297.0" y="335" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(또는 파이프 입력)</text>
+<rect x="16" y="356" width="148" height="52" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+<text x="90.0" y="389" fill="#6ee7b7" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">표 1 (stdout)</text>
+<line x1="166" y1="382.0" x2="190" y2="382.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#eiaf3ah)"/>
+<rect x="192" y="356" width="210" height="52" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="297.0" y="377" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">보통 화면 / 파일</text>
+<text x="297.0" y="397" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">/ 파이프 / 소켓</text>
+<rect x="16" y="418" width="148" height="52" rx="8" fill="#0f172a" stroke="#f43f5e" stroke-width="1.5"/>
+<text x="90.0" y="451" fill="#fda4af" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">표 2 (stderr)</text>
+<line x1="166" y1="444.0" x2="190" y2="444.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#eiaf3ah)"/>
+<rect x="192" y="418" width="210" height="52" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="297.0" y="439" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">에러 화면 또는</text>
+<text x="297.0" y="459" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">2&gt;/dev/null 블랙홀</text>
+<rect x="16" y="480" width="148" height="52" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="90.0" y="513" fill="#fcd34d" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">표 3, 4 …</text>
+<line x1="166" y1="506.0" x2="190" y2="506.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#eiaf3ah)"/>
+<rect x="192" y="480" width="210" height="52" rx="8" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+<text x="297.0" y="501" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">추가로 연 파일, 장치,</text>
+<text x="297.0" y="521" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">네트워크 소켓</text>
+</svg></figure>
+<h3 id="프로그램은-표-뒤에-무엇이-있는지-모른다-파이프의-우아함"><a href="#프로그램은-표-뒤에-무엇이-있는지-모른다-파이프의-우아함" class="heading-anchor" aria-hidden="true">#</a> 프로그램은 표 뒤에 무엇이 있는지 모른다: 파이프의 우아함</h3><p>이 구조가 가장 아름답게 빛나는 지점은 <strong>무지(ignorance)의 설계</strong>에 있다. 프로그램은 자기 번호표 뒤에 실제로 무엇이 연결되어 있는지 알지 못하며, 신경 쓸 필요도 없다. 1번 번호표가 모니터 화면일 수도 있고, 디스크의 텍스트 파일일 수도 있으며, 다른 프로그램으로 이어지는 파이프나 네트워크 연결일 수도 있다. 프로그램은 그저 1번 번호표에 데이터를 쓸 뿐이고, 리눅스가 그 데이터를 적절한 목적지로 배달한다.</p>
+<p>그래서 유닉스와 리눅스의 <strong>파이프(<code>|</code>)</strong>가 이토록 매끄럽게 작동한다. 사용자가 첫 번째 명령어, 세로 막대(<code>|</code>), 두 번째 명령어를 나란히 입력하면, <strong>셸(Shell)</strong>이 첫 번째 프로그램의 1번 출력 번호표를 두 번째 프로그램의 0번 입력 번호표에 이어 준다. 두 프로그램 중 어느 쪽도 상대방이 누구인지 알거나 신경 쓰지 않는다. 그저 자기 번호표에서 읽고 자기 번호표에 쓸 뿐이다.</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 348" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="eiaf4ahg" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#10b981"/></marker><marker id="eiaf4ahb" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="348" rx="14" fill="#0b1120"/>
+
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">파이프(|)의 원리</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">셸이 1번 출력 표와</text>
+<text x="210" y="74" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">0번 입력 표를 잇는다</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">어느 프로그램도 상대방을 알지 못한 채</text>
+<text x="210" y="118" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">자기 번호표에만 읽고 쓴다</text>
+<rect x="8" y="136" width="132" height="124" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
+<text x="74.0" y="162" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">명령어 1</text>
+<text x="74.0" y="186" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">1번 표에</text>
+<text x="74.0" y="206" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">결과를 쓸 뿐</text>
+<rect x="80" y="226" width="52" height="24" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+<text x="106.0" y="243" fill="#6ee7b7" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">FD 1</text>
+<line x1="140" y1="198.0" x2="154" y2="198.0" stroke="#10b981" stroke-width="3" marker-end="url(#eiaf4ahg)"/>
+<line x1="266" y1="198.0" x2="280" y2="198.0" stroke="#38bdf8" stroke-width="3" marker-end="url(#eiaf4ahb)"/>
+<rect x="154" y="144" width="112" height="108" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+<text x="210.0" y="172" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">셸이 연결</text>
+<text x="210.0" y="196" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">| (파이프)</text>
+<text x="210.0" y="226" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">1번 → 0번</text>
+<rect x="280" y="136" width="132" height="124" rx="10" fill="#111827" stroke="#a78bfa" stroke-width="2"/>
+<text x="346.0" y="162" fill="#c4b5fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">명령어 2</text>
+<text x="346.0" y="186" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">0번 표에서</text>
+<text x="346.0" y="206" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">데이터를 읽을 뿐</text>
+<rect x="288" y="226" width="52" height="24" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="314.0" y="243" fill="#7dd3fc" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">FD 0</text>
+<text x="210" y="288" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">참고: 셸이 파이프라인을 배선하면,</text>
+<text x="210" y="310" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">커널은 그 파일 디스크립터들을 통해</text>
+<text x="210" y="332" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">데이터를 흘려보낸다</text>
+</svg></figure>
+<p>[해설] 셸은 사용자가 입력한 <code>|</code> 기호를 해석해 파이프 생성과 표준 입출력 재배선(<code>pipe</code>, <code>dup2</code> 등)을 설정하는 주체이며, 실제 데이터 버퍼와 전송은 커널이 맡아 처리한다<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a>.</p>
+<p>이 번호표들의 실제 목록은 앞서 살펴본 <code>/proc</code>에서도 직접 확인할 수 있다. <strong><code>/proc/self/fd</code></strong> 폴더 안을 들여다보면, 현재 프로세스가 열어 둔 모든 파일의 번호(<code>0</code>, <code>1</code>, <code>2</code>와 그 이상의 번호들)가 나열되어 있고, <strong>각 번호는 실제로 그 뒤에 연결된 대상을 가리키는 링크</strong>로 되어 있다.</p>
+<hr>
+<h2 id="7-솔직한-한계와-더-정확한-말-quot모든-것은-파일-디스크립터다quot"><a href="#7-솔직한-한계와-더-정확한-말-quot모든-것은-파일-디스크립터다quot" class="heading-anchor" aria-hidden="true">#</a> 7. 솔직한 한계와 더 정확한 말: &quot;모든 것은 파일 디스크립터다&quot;</h2><p>&quot;모든 것은 파일이다&quot;라는 문장은 강력하지만, 현실의 리눅스를 과장 없이 이해하려면 솔직한 한정선을 그을 필요가 있다. 이 문장은 <strong>철학이지 완벽한 규칙이 아니며</strong>, 리눅스 안에도 이 틀에 딱 들어맞지 않는 것들이 분명히 존재한다.</p>
+<h3 id="파일-경로로-환원되지-않는-예외들"><a href="#파일-경로로-환원되지-않는-예외들" class="heading-anchor" aria-hidden="true">#</a> 파일 경로로 환원되지 않는 예외들</h3><ol>
+<li><strong>네트워크 연결</strong>: 웹 서버에 접속하거나 소켓 통신을 할 때, 우리는 <code>/net/google</code> 같은 경로를 <code>open</code>하는 방식으로 연결을 만들지 않는다. 네트워크 연결은 주로 <strong>소켓(socket)</strong>과 전용 <strong>시스템 콜</strong>을 통해 생성된다.</li>
+<li><strong>네트워크 카드</strong>: 디스크가 <code>/dev/sda</code>처럼 나타나는 것과 달리, 네트워크 카드는 보통 <code>/dev</code> 아래에 파일로 나타나지 않는다.</li>
+<li><strong>단순 읽기·쓰기를 넘는 하드웨어 제어</strong>: 현대 하드웨어 제어의 상당 부분은 단순히 바이트를 읽고 쓰는 것만으로는 부족하기 때문에 <strong><code>ioctl</code></strong>이라는 특수 명령(시스템 콜)을 통해 이뤄진다.</li>
+</ol>
+<p>[해설] 예컨대 광학 드라이브 트레이를 열거나 직렬 포트의 통신 속도(baud rate)를 바꾸는 것처럼, 데이터 흐름이 아닌 장치 자체의 상태·옵션을 제어하는 작업에는 전통적으로 <code>ioctl</code>이 쓰인다. 통신 속도는 이식성을 위해 POSIX <code>termios</code>/<code>tcsetattr</code>로 설정하는 경우가 많으며, 그 구현이 내부적으로 ioctl을 호출하는 것이 보통이다<a class="footnote-ref" href="#fn-8" id="fnref-8">8</a>.</p>
+<h3 id="plan-9의-극단과-리눅스의-실용적-균형"><a href="#plan-9의-극단과-리눅스의-실용적-균형" class="heading-anchor" aria-hidden="true">#</a> Plan 9의 극단과 리눅스의 실용적 균형</h3><p>유닉스를 만든 창시자들은 나중에 벨 연구소에서 <strong>Plan 9</strong>이라는 연구용 운영체제를 만들면서 이 생각을 유닉스보다 한층 더 밀어붙였다. Plan 9에서는 네트워크 연결은 물론이고 심지어 화면의 <strong>창(Windows)</strong>까지도 파일로 만들었다<a class="footnote-ref" href="#fn-9" id="fnref-9">9</a>.</p>
+<p>반면 리눅스는 이 아이디어를 <strong>대체로, 그리고 매우 성공적으로</strong> 따른다. 즉, &quot;모든 것은 파일이다&quot;는 깨뜨릴 수 없는 물리 법칙이 아니라, 시스템 전체를 일관되게 엮어 주는 <strong>안내 원칙(guiding principle)</strong>이다.</p>
+<p>그래서 조금 더 정확하게 표현하자면 <strong>&quot;모든 것은 파일 디스크립터다(Everything is a file descriptor)&quot;</strong>라고 말하는 편이 낫다. 처음에 문을 여는 방식이 경로를 통한 <code>open</code>이든, 소켓 시스템 콜이든 간에, 일단 한 번 열리고 나면 — 그것이 디스크든, 파이프든, 소켓이든, 터미널이든 — 프로그램은 그 번호표를 쥐고 거의 똑같은 방식으로 읽고 쓰기 때문이다.</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 654" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="eiaf5ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="654" rx="14" fill="#0b1120"/>
+
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">철학의 한계와 정밀화</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">&quot;모든 것은 파일&quot;에서</text>
+<text x="210" y="76" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">&quot;모든 것은 파일 디스크립터&quot;로</text>
+<text x="210" y="100" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">안내 원칙이지 물리 법칙이 아니다</text>
+<text x="210" y="120" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">생성 경로는 달라도</text>
+<text x="210" y="140" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">열린 뒤에는 같은 번호표로 다룬다</text>
+<rect x="16" y="156" width="388" height="230" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+<text x="210" y="184" fill="#fcd34d" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">경로 모델이 그대로 맞지 않는 예외</text>
+<text x="36" y="212" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 네트워크 연결: /net/google 대신</text>
+<text x="54" y="232" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">소켓·특수 시스템 콜</text>
+<text x="36" y="258" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 네트워크 카드: 보통 /dev에</text>
+<text x="54" y="278" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">파일로 나타나지 않음</text>
+<text x="36" y="304" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 복잡한 하드웨어 제어:</text>
+<text x="54" y="324" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">읽기·쓰기를 넘는 ioctl 호출</text>
+<text x="36" y="352" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif">(참고: 벨 연구소 Plan 9은</text>
+<text x="36" y="372" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif">네트워크와 창까지 파일화)</text>
+<line x1="210" y1="388" x2="210" y2="422" stroke="#94a3b8" stroke-width="3" marker-end="url(#eiaf5ah)"/>
+<rect x="16" y="424" width="388" height="214" rx="10" fill="#111827" stroke="#10b981" stroke-width="2"/>
+<text x="210" y="452" fill="#6ee7b7" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">더 정확한 말:</text>
+<text x="210" y="474" fill="#6ee7b7" font-size="17px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">Everything is a File Descriptor</text>
+<rect x="36" y="488" width="348" height="40" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+<text x="210" y="514" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">디스크 · 파이프 · 소켓 · 터미널</text>
+<text x="210" y="552" fill="#38bdf8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">↓ 일단 열리고 나면</text>
+<rect x="36" y="568" width="348" height="52" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+<text x="210" y="590" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">거의 같은 방식으로</text>
+<text x="210" y="610" fill="#6ee7b7" font-size="16px" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">read() · write() · close()</text>
+</svg></figure>
+<hr>
+<h2 id="8-왜-엔지니어에게-중요한가-하나의-마음-모형-끝없는-쓰임"><a href="#8-왜-엔지니어에게-중요한가-하나의-마음-모형-끝없는-쓰임" class="heading-anchor" aria-hidden="true">#</a> 8. 왜 엔지니어에게 중요한가: 하나의 마음 모형, 끝없는 쓰임</h2><p>이 설계가 50년도 더 지난 오늘날에도 현업 엔지니어에게 엄청난 힘을 주는 이유는 단순하다. <strong><code>cat</code>, <code>echo</code>, <code>grep</code>, 그리고 리다이렉션(<code>&gt;</code>, <code>2&gt;</code>) 같은 지극히 단순한 도구들이 갑자기 텍스트 파일뿐 아니라 하드웨어, 실행 중인 프로세스, 커널 설정, 컨테이너에까지 똑같이 통하기 때문이다.</strong></p>
+<p>하나의 마음 모형(mental model)을 머릿속에 세워 두면 실무에서의 쓰임새는 끝이 없다.</p>
+<ul>
+<li><strong>프로덕션 서버 디버깅</strong>: 장애가 난 서버에 들어가 <code>/proc</code>을 들여다보면, 지금 특정 프로세스가 정확히 무슨 일을 하고 있는지, 어떤 파일들을 열어 두었는지, 어떤 환경 변수로 시작되었는지를 별도의 무거운 도구 없이도 확인할 수 있다.</li>
+<li><strong>원인 모를 디스크 용량 고갈 추적</strong>: 디스크가 알 수 없는 이유로 계속 차오를 때, 파일은 이미 삭제되었지만 프로세스가 여전히 파일 디스크립터로 붙잡고 놓아주지 않은 <strong>삭제된 파일</strong>을 찾아낼 수 있다.</li>
+<li><strong>커널 튜닝</strong>: 재부팅 없이 커널 동작을 조정해야 할 때, 결국 해야 하는 일은 <code>/proc/sys</code> 등의 파일에 숫자를 쓰는 것이다.</li>
+<li><strong>스크립트 소음 제거</strong>: 자동화 스크립트를 짤 때 불필요한 출력이나 에러 홍수는 <code>/dev/null</code>로 흘려보내 깔끔하게 침묵시킨다.</li>
+</ul>
+<hr>
+<h2 id="9-정리와-세-가지-작은-실험"><a href="#9-정리와-세-가지-작은-실험" class="heading-anchor" aria-hidden="true">#</a> 9. 정리와 세 가지 작은 실험</h2><p>돌아보면 리눅스에서 모든 것은 파일이다. 우리가 매일 여는 일반 파일과 폴더는 물론이고, <code>/dev</code>의 디스크, <code>/dev/null</code>의 블랙홀, 난수 생성기, 터미널 세션, <code>/proc</code>에 모인 모든 실행 중 프로세스, <code>/proc/sys</code>의 커널 설정, <code>/sys</code>의 하드웨어, 그리고 cgroup의 컨테이너 자원 제한까지 모두 하나의 체계 아래에 놓인다.</p>
+<p>그 모든 것의 바닥에 깔린 약속은 단 하나다. <strong>열기, 읽기, 쓰기, 닫기.</strong> 만능 리모컨의 같은 네 버튼. 50년도 더 전에 벨 연구소에서 시작된 영리한 지름길이<a class="footnote-ref" href="#fn-1">1</a>, 오늘날까지도 리눅스를 이토록 일관되고, 스크립트하기 쉽고, 탐험하기 즐거운 운영체제로 만드는 이유다.</p>
+<p>[해설] 오늘날 클라우드 API, 스마트홈 기기, 각종 AI 도구들이 각기 다른 인터페이스와 규격을 요구하며 파편화되는 풍경을 보면, 장치마다 달랐던 1970년대의 혼란을 네 버튼으로 정리해 낸 유닉스의 만능 리모컨 비유는 시대를 건너뛰어 여전히 묵직한 질문을 던진다. 현대의 분산된 소프트웨어 세계에도 이런 보편 인터페이스가 다시 등장할 수 있을까?</p>
+<p>이 글의 개념을 손끝으로 직접 확인해 보고 싶다면, 터미널을 열고 다음 <strong>세 가지 작은 숙제</strong>를 해 보는 것으로 충분하다.</p>
+<ol>
+<li><code>cat /proc/cpuinfo</code>를 실행해 내 컴퓨터의 프로세서가 파일이라는 창을 통해 어떻게 읽히는지 확인한다.</li>
+<li>터미널 창 두 개를 열어 <code>tty</code>로 첫 번째 창의 장치 파일 경로를 확인한 뒤, 두 번째 창에서 그 파일로 글을 써 메시지를 보내 본다.</li>
+<li><code>/proc/self</code> 안을 들여다보며 프로그램이 거울 속에서 자기 자신의 무엇을 보고 있는지 직접 확인한다.</li>
+</ol>
+<hr>
+<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1">유닉스는 1969년경 벨 연구소에서 시작되었고, 제1판 매뉴얼은 1971년 11월 3일이다. D. M. Ritchie, “The Evolution of the Unix Time-sharing System”, <a href="https://www.nokia.com/bell-labs/about/dennis-m-ritchie/hist.html">https://www.nokia.com/bell-labs/about/dennis-m-ritchie/hist.html</a>; Unix Programmer’s Manual, <a href="https://www.nokia.com/bell-labs/about/dennis-m-ritchie/1stEdman.html">https://www.nokia.com/bell-labs/about/dennis-m-ritchie/1stEdman.html</a>. “1970년대 초”와, 2026년 기준으로 “50년도 더 전”은 이 연대와 맞는다. 장치와 파일을 같은 입출력으로 다루는 설계는 초기 유닉스부터 있었다(Ritchie &amp; Thompson, “The UNIX Time-Sharing System”, <a href="https://www.nokia.com/bell-labs/about/dennis-m-ritchie/cacm.html">https://www.nokia.com/bell-labs/about/dennis-m-ritchie/cacm.html</a>). 다만 영어 표어 “Everything is a file” 자체는 초기 매뉴얼·논문에 그대로 등장하는 문구가 아니라, 그 설계를 나중에 요약한 관용구로 보는 것이 정확하다.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<li id="fn-2">같은 논문은 “Compatible file, device, and inter-process I/O”를 핵심 특징으로 들고, 특수 파일을 보통 파일처럼 읽고 쓰면 해당 장치가 동작한다고 설명한다. ioctl이나 소켓처럼 이 모형이 그대로 닿지 않는 지점은 본문 7장에서 다룬다.<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li>
+<li id="fn-3"><code>dd</code>의 이름이 IBM JCL의 DD(Data Definition)에서 왔다는 설명은 Dennis Ritchie의 후일 언급으로 자주 인용되며, ‘Disk Destroyer’는 같은 맥락에서 엔지니어들 사이에 퍼진 별명이다.<a class="backlink" href="#fnref-3" aria-label="본문으로">↩</a></li>
+<li id="fn-4">엔트로피 풀이 CSPRNG를 시드한다는 설명은 random(7), <a href="https://man7.org/linux/man-pages/man7/random.7.html">https://man7.org/linux/man-pages/man7/random.7.html</a>. 현재 커널 CSPRNG는 ChaCha20을 쓴다(<code>drivers/char/random.c</code>, <a href="https://github.com/torvalds/linux/blob/master/drivers/char/random.c">https://github.com/torvalds/linux/blob/master/drivers/char/random.c</a>). Linux 5.6 이후 <code>/dev/random</code>이 조기 부팅을 제외하면 더 이상 막지 않는다는 점은 random(4), <a href="https://man7.org/linux/man-pages/man4/random.4.html">https://man7.org/linux/man-pages/man4/random.4.html</a>와 LWN, “Removing the Linux /dev/random blocking pool”, <a href="https://lwn.net/Articles/808575/">https://lwn.net/Articles/808575/</a> (2020-01-07; 5.6 출시 <a href="https://lwn.net/Articles/816213/">https://lwn.net/Articles/816213/</a>). random(7)의 비교표는 예전 블로킹 풀 동작을 적어 둔 곳이 있어, 5.6 이후 동작은 random(4)와 위 LWN을 따른다.<a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
+<li id="fn-5">터미널과 셸의 차이는 별도 주제의 배경지식으로, 여기서는 터미널 세션이 <code>/dev/pts/...</code> 파일에 연결된다는 점만 다룬다.<a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li>
+<li id="fn-6">백라이트 ABI는 <a href="https://www.kernel.org/doc/Documentation/ABI/stable/sysfs-class-backlight">https://www.kernel.org/doc/Documentation/ABI/stable/sysfs-class-backlight</a> (<code>/sys/class/backlight/&lt;device&gt;/brightness</code>). cgroup v2 <code>memory.max</code>는 <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html">https://docs.kernel.org/admin-guide/cgroup-v2.html</a>, cgroup v1 <code>memory.limit_in_bytes</code>는 <a href="https://docs.kernel.org/admin-guide/cgroup-v1/memory.html">https://docs.kernel.org/admin-guide/cgroup-v1/memory.html</a>. sysfs 문서는 <a href="https://docs.kernel.org/filesystems/sysfs.html">https://docs.kernel.org/filesystems/sysfs.html</a> (원문 날짜 2003-01-10). 2.5 개발 주기와 2.6.0-test 언급은 LWN, “kobjects and sysfs”, <a href="https://lwn.net/Articles/54651/">https://lwn.net/Articles/54651/</a> (2003-10-22). Patrick Mochel, “The sysfs Filesystem”, OLS 2005, <a href="https://www.kernel.org/pub/linux/kernel/people/mochel/doc/papers/ols-2005/mochel.pdf">https://www.kernel.org/pub/linux/kernel/people/mochel/doc/papers/ols-2005/mochel.pdf</a>.<a class="backlink" href="#fnref-6" aria-label="본문으로">↩</a></li>
+<li id="fn-7">pipe(2), <a href="https://man7.org/linux/man-pages/man2/pipe.2.html">https://man7.org/linux/man-pages/man2/pipe.2.html</a>; dup(2)/<code>dup2</code>, <a href="https://man7.org/linux/man-pages/man2/dup.2.html">https://man7.org/linux/man-pages/man2/dup.2.html</a>. 셸이 파이프를 이을 때는 <code>pipe</code>/<code>pipe2</code>, <code>fork</code>, <code>dup2</code>, <code>close</code>, <code>execve</code>가 함께 쓰이며, 커널이 파이프 버퍼와 전송을 담당한다.<a class="backlink" href="#fnref-7" aria-label="본문으로">↩</a></li>
+<li id="fn-8">ioctl(2), <a href="https://man7.org/linux/man-pages/man2/ioctl.2.html">https://man7.org/linux/man-pages/man2/ioctl.2.html</a>. 터미널·시리얼 ioctl은 ioctl_tty(2), <a href="https://man7.org/linux/man-pages/man2/ioctl_tty.2.html">https://man7.org/linux/man-pages/man2/ioctl_tty.2.html</a>. 이식성 있는 설정은 termios(3)/<code>tcsetattr</code>를 권한다.<a class="backlink" href="#fnref-8" aria-label="본문으로">↩</a></li>
+<li id="fn-9">Rob Pike et al., “Plan 9 from Bell Labs”, <a href="https://9p.io/sys/doc/9.html">https://9p.io/sys/doc/9.html</a>. 파일시스템형 자원을 프로세스·그래픽·네트워크까지 확장했다고 명시한다. 창을 파일로 다루는 설계는 같은 계통의 “8½, the Plan 9 Window System”, <a href="https://9p.io/sys/doc/8%C2%BD/8%C2%BD.html">https://9p.io/sys/doc/8½/8½.html</a>과 이후 rio에도 이어진다.<a class="backlink" href="#fnref-9" aria-label="본문으로">↩</a></li></ol></section>
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-13-리눅스모든것은파일.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>

@@ -685,11 +685,11 @@
 
       <div class="preset-wrap" id="preset-wrap">
         <div class="preset-scroller" id="preset-filters">
-          <button type="button" class="tag-filter-btn active" data-preset="all" aria-pressed="true">전체 <span class="chip-count">66</span></button>
+          <button type="button" class="tag-filter-btn active" data-preset="all" aria-pressed="true">전체 <span class="chip-count">67</span></button>
           
           <button type="button" class="tag-filter-btn" data-preset="AI" aria-pressed="false">AI <span class="chip-count">34</span></button>
           
-          <button type="button" class="tag-filter-btn" data-preset="컴퓨터" aria-pressed="false">컴퓨터 <span class="chip-count">26</span></button>
+          <button type="button" class="tag-filter-btn" data-preset="컴퓨터" aria-pressed="false">컴퓨터 <span class="chip-count">27</span></button>
           
           <button type="button" class="tag-filter-btn" data-preset="법" aria-pressed="false">법 <span class="chip-count">10</span></button>
           
@@ -714,11 +714,11 @@
           <input type="text" id="tag-sheet-search" class="tag-sheet-search" placeholder="태그 검색" autocomplete="off" />
           <div class="tag-sheet-list" id="tag-sheet-list">
             
-            <button type="button" class="tag-sheet-row" data-tag="해설"><span>#해설</span><span class="chip-count">45</span></button>
+            <button type="button" class="tag-sheet-row" data-tag="해설"><span>#해설</span><span class="chip-count">46</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="AI"><span>#AI</span><span class="chip-count">34</span></button>
             
-            <button type="button" class="tag-sheet-row" data-tag="컴퓨터과학"><span>#컴퓨터과학</span><span class="chip-count">19</span></button>
+            <button type="button" class="tag-sheet-row" data-tag="컴퓨터과학"><span>#컴퓨터과학</span><span class="chip-count">20</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="에이전트"><span>#에이전트</span><span class="chip-count">13</span></button>
             
@@ -738,6 +738,8 @@
             
             <button type="button" class="tag-sheet-row" data-tag="노동법"><span>#노동법</span><span class="chip-count">5</span></button>
             
+            <button type="button" class="tag-sheet-row" data-tag="컴퓨터과학사"><span>#컴퓨터과학사</span><span class="chip-count">5</span></button>
+            
             <button type="button" class="tag-sheet-row" data-tag="가치평가"><span>#가치평가</span><span class="chip-count">4</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="사회과학"><span>#사회과학</span><span class="chip-count">4</span></button>
@@ -748,13 +750,13 @@
             
             <button type="button" class="tag-sheet-row" data-tag="철학"><span>#철학</span><span class="chip-count">4</span></button>
             
-            <button type="button" class="tag-sheet-row" data-tag="컴퓨터과학사"><span>#컴퓨터과학사</span><span class="chip-count">4</span></button>
-            
             <button type="button" class="tag-sheet-row" data-tag="AGI"><span>#AGI</span><span class="chip-count">4</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="계산이론"><span>#계산이론</span><span class="chip-count">3</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="기업재무"><span>#기업재무</span><span class="chip-count">3</span></button>
+            
+            <button type="button" class="tag-sheet-row" data-tag="시스템프로그래밍"><span>#시스템프로그래밍</span><span class="chip-count">3</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="아키텍처"><span>#아키텍처</span><span class="chip-count">3</span></button>
             
@@ -787,8 +789,6 @@
             <button type="button" class="tag-sheet-row" data-tag="수학사"><span>#수학사</span><span class="chip-count">2</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="스튜어트러셀"><span>#스튜어트러셀</span><span class="chip-count">2</span></button>
-            
-            <button type="button" class="tag-sheet-row" data-tag="시스템프로그래밍"><span>#시스템프로그래밍</span><span class="chip-count">2</span></button>
             
             <button type="button" class="tag-sheet-row" data-tag="지정학"><span>#지정학</span><span class="chip-count">2</span></button>
             
@@ -928,10 +928,24 @@
 
     <div class="list-stats">
       <span>아티클 목록</span>
-      <span id="article-count">총 66편</span>
+      <span id="article-count">총 67편</span>
     </div>
 
     <div class="feed-list" id="feed-list">
+      
+      <a href="articles/linux-everything-is-a-file.html" class="article-item" data-title="모든 것은 파일이다 — 리눅스의 /dev, /proc, /sys가 가리키는 보편 인터페이스" data-summary="리눅스의 '모든 것은 파일이다(Everything is a file)'라는 설계 철학이 1970년대 초 벨 연구소의 유닉스 기원에서 출발해 오늘날 /dev의 장치와 특수 파일, /proc과 /proc/sys의 가상 프로세스·커널 설정, /sys와 cgroup의 하드웨어·컨테이너 제어, 그리고 파일 디스크립터와 셸 파이프로 이어지는 구조를 체계적으로 해설한다. 아울러 소켓과 ioctl, Plan 9의 사례를 통해 이 명제가 물리 법칙이 아니라 안내 원칙임을 짚고, '모든 것은 파일 디스크립터다'라는 더 정확한 표현과 엔지니어 실무의 쓰임을 정리한다." data-tags="[&quot;컴퓨터과학&quot;,&quot;시스템프로그래밍&quot;,&quot;컴퓨터과학사&quot;,&quot;해설&quot;]" data-presets="[&quot;컴퓨터&quot;]">
+        <div class="item-top-row">
+          <div class="item-badges">
+            <span class="item-date">📅 2026-11-13</span>
+            <span class="item-reading-time">⏱️ 약 45분</span>
+          </div>
+          <span class="item-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </div>
+        <h2 class="item-title">모든 것은 파일이다 — 리눅스의 /dev, /proc, /sys가 가리키는 보편 인터페이스</h2>
+        <p class="item-summary">리눅스의 '모든 것은 파일이다(Everything is a file)'라는 설계 철학이 1970년대 초 벨 연구소의 유닉스 기원에서 출발해 오늘날 /dev의 장치와 특수 파일, /proc과 /proc/sys의 가상 프로세스·커널 설정, /sys와 cgroup의 하드웨어·컨테이너 제어, 그리고 파일 디스크립터와 셸 파이프로 이어지는 구조를 체계적으로 해설한다. 아울러 소켓과 ioctl, Plan 9의 사례를 통해 이 명제가 물리 법칙이 아니라 안내 원칙임을 짚고, '모든 것은 파일 디스크립터다'라는 더 정확한 표현과 엔지니어 실무의 쓰임을 정리한다.</p>
+      </a>
       
       <a href="articles/context-as-infrastructure-ragflow.html" class="article-item" data-title="문맥은 인프라다: 검색 하네스 시대를 위한 지식 컴파일과 에이전트 네이티브 데이터베이스" data-summary="검색 증강 생성(RAG)이 자율적 검색 하네스 루프로 진화함에 따라 정확도 병목은 해소되었으나 극심한 토큰 낭비와 문맥 비효율이 노출되었습니다. InfiniFlow 연구진은 벡터 인덱스를 전면 배제하고 BM25와 grep 기반 하네스 위에 '지식 컴파일' 공급 계층을 결합하여, 클레임-증거 쌍 치환을 통해 질의 토큰을 평균 38% 절감하고 결정 게이트로 지연 시간을 140초에서 30초로 단축하는 에이전트 네이티브 데이터베이스 아키텍처를 제시합니다." data-tags="[&quot;AI&quot;,&quot;에이전트&quot;,&quot;논문리뷰&quot;]" data-presets="[&quot;AI&quot;]">
         <div class="item-top-row">
