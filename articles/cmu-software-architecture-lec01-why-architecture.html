@@ -1,0 +1,3344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>코딩 전에 무엇을 정해야 하는가 — CMU 소프트웨어 아키텍처 1강</title>
+  <meta name="description" content="카네기멜런대학교(CMU) 17-635 「소프트웨어 아키텍처」 1강을 바탕으로, 코드를 짜기 전에 왜 아키텍처를 먼저 설계해야 하는지 기초부터 해설한다. 차량 호출 앱을 중심 예시로 삼아 기능 요구만 충족한 '쓸모 모를 코드 덩어리'와 사업 요구에 맞춘 구조의 차이를 짚고, LLM 서비스·아마존·노키아 사례로 품질 속성('-ilities')의 중요성을 살핀다. 이어 입국 심사 줄 비유와 장바구니 상태 관리를 통해 처리량·지연 시간·지속성과 비용 사이의 트레이드오프를 분석하며, 소프트웨어 아키텍처의 정식 정의, 정적·동적·배치 뷰, 패턴·프레임워크·프로토타입 검증, 아키텍처의 두 가지 법칙('모든 것은 트레이드오프다', '왜가 어떻게보다 중요하다'), 그리고 아키텍트의 여섯 가지 핵심 활동을 체계적으로 정리한다.">
+  
+  
+
+  <!-- Favicon / Page Icon (📚) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Naver D2Coding -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding@1.3.2/d2coding.css" />
+  <script>
+    (function () {
+      try {
+        var f = localStorage.getItem("pages_font");
+        if (f === "d2coding" || f === "pretendard") {
+          document.documentElement.setAttribute("data-font", f);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- KaTeX for Math Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script>
+    function renderPageMath() {
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false,
+        output: 'html'
+      });
+      document.querySelectorAll('.katex-display').forEach(function (el) {
+        if (el.parentElement && el.parentElement.classList.contains('math-scroll')) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'math-scroll';
+        wrap.setAttribute('data-scroll-hint', '좌우로 스크롤');
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);
+      });
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderPageMath()"></script>
+  
+
+  <style>
+    .katex-mathml {
+      display: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      margin: 1.15em 0;
+      padding: 0.85em 0.4em;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .katex {
+      font-size: 1.05em;
+      line-height: 1.4;
+      max-width: 100%;
+    }
+    .katex .text,
+    .katex .mord.text {
+      font-family: var(--font-sans) !important;
+    }
+    .math-scroll {
+      margin: 1.15em 0;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .math-scroll .katex-display {
+      margin: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .math-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .math-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    :root {
+      --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    :root[data-font="d2coding"] {
+      --font-sans: "D2 coding", "D2Coding", Pretendard, monospace;
+      --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-page: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-surface: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-light: #64748b;
+        --border: #243049;
+        --border-focus: #60a5fa;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.12);
+        --code-bg: #020617;
+        --code-text: #f8fafc;
+        --inline-code-bg: #243049;
+        --inline-code-text: #38bdf8;
+        --quote-bg: #141f36;
+        --quote-border: #38bdf8;
+        --header-bg: rgba(11, 15, 25, 0.88);
+        --drawer-bg: #131b2e;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-surface: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #243049;
+      --border-focus: #60a5fa;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.12);
+      --code-bg: #020617;
+      --code-text: #f8fafc;
+      --inline-code-bg: #243049;
+      --inline-code-text: #38bdf8;
+      --quote-bg: #141f36;
+      --quote-border: #38bdf8;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --drawer-bg: #131b2e;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --inline-code-bg: #e2e8f0;
+      --inline-code-text: #0f172a;
+      --quote-bg: #f8fafc;
+      --quote-border: #3b82f6;
+      --header-bg: rgba(248, 250, 252, 0.88);
+      --drawer-bg: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.8;
+      font-size: 16.5px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px;
+        line-height: 1.85;
+      }
+    }
+
+    /* Top Sticky Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+    }
+
+    .font-picker {
+      position: relative;
+    }
+
+    .font-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 156px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 60;
+    }
+
+    .font-menu[hidden] {
+      display: none;
+    }
+
+    .font-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .font-option:hover,
+    .font-option:focus-visible {
+      background: var(--bg-surface);
+      outline: none;
+    }
+
+    .font-option[aria-selected="true"] {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .font-option[data-font="pretendard"] {
+      font-family: Pretendard, sans-serif;
+    }
+
+    .font-option[data-font="d2coding"] {
+      font-family: "D2 coding", "D2Coding", monospace;
+    }
+
+    .nav-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .nav-title {
+        max-width: 380px;
+      }
+    }
+
+    .nav-title.visible {
+      opacity: 1;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      z-index: 50;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Main Container */
+    .article-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .article-container {
+        padding: 40px 24px 100px;
+      }
+    }
+
+    /* Article Card Wrapper */
+    .article-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .article-card {
+        padding: 40px 44px;
+      }
+    }
+
+    /* Article Header */
+    .article-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .article-subtitle {
+      font-size: clamp(16px, 3.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-pill {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+    }
+
+    .companion-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .companion-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .companion-banner a:hover {
+      text-decoration: underline;
+    }
+    .companion-footer-box {
+      margin-top: 36px;
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .companion-footer-box .cf-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .companion-footer-box .cf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+
+    /* Typography & Markdown Content */
+    .content {
+      color: var(--text-main);
+    }
+
+    .content h1, .content h2, .content h3, .content h4, .verification-card {
+      scroll-margin-top: 80px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      margin-top: 2.2em;
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+
+    .content h1 {
+      font-size: clamp(21px, 4.8vw, 27px);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4em;
+    }
+
+    .content h2 {
+      font-size: clamp(20px, 4.6vw, 26px);
+      padding-left: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content h3 {
+      font-size: clamp(18px, 4vw, 21.5px);
+    }
+
+    .content h4 {
+      font-size: 1em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .content a.heading-anchor {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.82em;
+      margin-right: 0.35em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      word-break: keep-all;
+    }
+    .content h1:hover > a.heading-anchor,
+    .content h2:hover > a.heading-anchor,
+    .content h3:hover > a.heading-anchor,
+    .content h4:hover > a.heading-anchor,
+    .content a.heading-anchor:focus,
+    .content a.heading-anchor:focus-visible {
+      opacity: 1;
+      color: var(--text-muted);
+    }
+
+    .content p {
+      margin-top: 0;
+      margin-bottom: 1.15em;
+      text-align: start;
+    }
+
+    .content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .content a:hover {
+      color: var(--primary-hover);
+    }
+
+    .content strong, .content b {
+      font-weight: 700;
+    }
+
+    .content ul, .content ol {
+      margin-bottom: 1.15em;
+      padding-left: 1.4em;
+    }
+
+    .content li {
+      margin-bottom: 0.5em;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5em 0;
+    }
+
+    .content blockquote {
+      margin: 1.5em 0;
+      padding: 14px 18px;
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Inline Code */
+    .content code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.6em 0;
+      border-radius: var(--radius-md);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .code-lang {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-lang.lang-generic {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn:focus-visible,
+    .sim-btn:focus-visible,
+    .sim-tab-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .toc-close-btn:focus-visible,
+    #back-to-top:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .content pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      background: transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .content pre code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--code-text);
+      display: block;
+      background: none;
+      padding: 0;
+    }
+
+    /* Tables (Responsive Scroll) */
+    /* Callout & Note Blocks */
+    .callout-box {
+      margin: 1.6em 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box.tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-box.info {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-box.danger {
+      border-left-color: #e11d48;
+      background: rgba(225, 29, 72, 0.08);
+    }
+
+    .callout-box.quote {
+      background: var(--quote-bg);
+      border-left-color: var(--quote-border);
+      box-shadow: none;
+    }
+
+    details.callout-box > summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.callout-box > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .md-highlight {
+      background: #fde68a;
+      color: #0f172a;
+      padding: 0 0.15em;
+      border-radius: 3px;
+    }
+
+    :root[data-theme="dark"] .md-highlight {
+      background: rgba(245, 158, 11, 0.28);
+      color: var(--text-main);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .md-highlight {
+        background: rgba(245, 158, 11, 0.28);
+        color: var(--text-main);
+      }
+    }
+
+    .wikilink-missing,
+    .embed-missing {
+      color: var(--text-muted);
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .note-embed {
+      margin: 1.4em 0;
+      padding: 0.9em 1em 0.2em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+    }
+
+    .note-embed .embed-source {
+      font-size: 13px;
+      margin-bottom: 0.6em;
+    }
+
+    .embed-image {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      margin: 1.2em auto;
+      border-radius: 8px;
+    }
+
+    .content li:has(> input[type="checkbox"]) {
+      list-style: none;
+    }
+
+    .content li:has(> input[type="checkbox"]) input {
+      margin-right: 0.45em;
+      accent-color: var(--primary);
+    }
+
+    .content li:has(> input[type="checkbox"]:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    pre.mermaid,
+    .mermaid-diagram {
+      margin: 1.4em 0;
+      padding: 12px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      margin: 1.75em 0;
+      max-width: 100%;
+    }
+
+    .diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram svg {
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+      min-width: 0 !important;
+      display: block;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.55em;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram-scroll[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 2px 0;
+      text-align: right;
+    }
+
+    @media (max-width: 759px) {
+      .diagram-scroll svg {
+        width: max(100%, min(var(--diagram-w, 720px), 720px)) !important;
+        max-width: none !important;
+        min-width: min(var(--diagram-w, 720px), 720px) !important;
+      }
+      .diagram-scroll[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .diagram-light {
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .diagram-dark {
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .code-block-wrapper.ascii-diagram {
+      background: var(--bg-surface);
+    }
+
+    .code-block-wrapper.ascii-diagram .code-header {
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram .copy-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .code-block-wrapper.ascii-diagram pre code {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    /* Interactive Simulator Component */
+    .sim-container {
+      margin: 2em 0;
+      padding: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sim-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sim-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .sim-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-tab-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 420px) {
+      .sim-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sim-btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .sim-btn {
+        justify-content: center;
+      }
+    }
+
+    .sim-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sim-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sim-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .sim-status-badge {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .sim-panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-registers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sim-reg-card {
+      background: var(--bg-surface);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .sim-reg-card.changed {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      animation: pulse-orange 0.8s ease;
+    }
+
+    .sim-reg-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sim-reg-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sim-mem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-mem-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      transition: all 0.2s ease;
+    }
+
+    .sim-mem-row.pc-target {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .sim-mem-row.modified {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      font-weight: 700;
+      animation: pulse-red 0.8s ease;
+    }
+
+    .sim-mem-row.read-target {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: 700;
+    }
+
+    .sim-badge-sm {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .badge-code { background: #3b82f6; color: white; }
+    .badge-data { background: #10b981; color: white; }
+    .badge-mod { background: #ef4444; color: white; }
+
+    .sim-desc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .sim-desc-step {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .sim-desc-step strong {
+      color: var(--primary);
+    }
+
+    @keyframes pulse-orange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sim-reg-card.changed,
+      .sim-mem-row.modified {
+        animation: none;
+      }
+    }
+
+    /* Footnotes and Citations */
+    .footnote-ref {
+      font-size: 0.78em;
+      line-height: 0;
+      vertical-align: super;
+      padding: 0 2px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footnote-ref:hover {
+      text-decoration: underline;
+    }
+    .footnotes-section {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .footnotes-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+    .footnotes-list {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      padding-left: 1.6rem;
+    }
+    .footnotes-list li {
+      margin-bottom: 0.85rem;
+    }
+    .footnotes-list a.backlink {
+      color: var(--primary);
+      text-decoration: none;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .footnotes-list a.backlink:hover {
+      text-decoration: underline;
+    }
+
+    /* Military Operational Labels */
+    .badge-record {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-estimate {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #f59e0b;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-scenario {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #8b5cf6;
+      color: #ffffff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Archival Metadata Card */
+    .archival-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 1.2rem 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .archival-card .card-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .archival-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .archival-meta-item strong {
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      margin: 1.8em 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-card);
+    }
+    .table-wrapper:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+    .table-wrapper[data-scroll-hint]::after {
+      content: "↔ " attr(data-scroll-hint);
+      display: none;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 5px 12px;
+      text-align: right;
+      border-top: 1px dashed var(--border);
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 768px) {
+      .table-wrapper[data-scroll-hint]::after {
+        display: block;
+      }
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .content td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+      word-break: keep-all;
+    }
+
+    .content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* 7대 표준 판정 체계 및 신뢰도 배지 */
+    .badge-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-verdict::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-verified::before { background: #10b981; }
+
+    .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0f766e;
+      border: 1px solid rgba(13, 148, 136, 0.35);
+    }
+    .badge-mostly-verified::before { background: #0d9488; }
+
+    .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-partially-verified::before { background: #f59e0b; }
+
+    .badge-misleading {
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      border: 1px solid rgba(234, 88, 12, 0.35);
+    }
+    .badge-misleading::before { background: #ea580c; }
+
+    .badge-insufficient {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+    .badge-insufficient::before { background: #64748b; }
+
+    .badge-refuted {
+      background: rgba(225, 29, 72, 0.12);
+      color: #be123c;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+    .badge-refuted::before { background: #f43f5e; }
+
+    .badge-pending {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .badge-pending::before { background: #6366f1; }
+
+    /* 신뢰도 배지 */
+    .badge-confidence {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    .badge-confidence-high {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    .badge-confidence-moderate {
+      background: rgba(168, 85, 247, 0.1);
+      color: #7e22ce;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* 증거 수준 (Evidence Level) 배지 */
+    .badge-evidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+    }
+    .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+      border: 1px solid rgba(100, 116, 139, 0.35);
+    }
+
+    /* Dark Mode Badges */
+    :root[data-theme="dark"] .badge-evidence-high {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-moderate {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-evidence-low {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-verified {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    :root[data-theme="dark"] .badge-mostly-verified {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+    :root[data-theme="dark"] .badge-partially-verified {
+      background: rgba(217, 119, 6, 0.18);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    :root[data-theme="dark"] .badge-misleading {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, 0.35);
+    }
+    :root[data-theme="dark"] .badge-insufficient {
+      background: rgba(100, 116, 139, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    :root[data-theme="dark"] .badge-refuted {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    :root[data-theme="dark"] .badge-pending {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(165, 180, 252, 0.35);
+    }
+    :root[data-theme="dark"] .badge-confidence-high {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-moderate {
+      background: rgba(192, 132, 252, 0.16);
+      color: #e9d5ff;
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+    :root[data-theme="dark"] .badge-confidence-low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    /* 4단계 공통 템플릿 검증 카드 */
+    .verification-card {
+      margin: 2.2em 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .verification-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+    .vc-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .vc-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .vc-step-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .vc-issue-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .vc-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .vc-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .vc-block {
+      border-left: 3px solid var(--border);
+      padding-left: 14px;
+    }
+    .vc-block.step-1 { border-left-color: #3b82f6; }
+    .vc-block.step-2 { border-left-color: #10b981; }
+    .vc-block.step-3 { border-left-color: #f59e0b; }
+    .vc-block.step-4 { border-left-color: #64748b; }
+    .vc-block.step-5 { border-left-color: #8b5cf6; }
+
+    .vc-step-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vc-block.step-1 .vc-step-label { color: #2563eb; }
+    .vc-block.step-2 .vc-step-label { color: #059669; }
+    .vc-block.step-3 .vc-step-label { color: #d97706; }
+    .vc-block.step-4 .vc-step-label { color: #475569; }
+    .vc-block.step-5 .vc-step-label { color: #7c3aed; }
+
+    :root[data-theme="dark"] .vc-block.step-1 .vc-step-label { color: #60a5fa; }
+    :root[data-theme="dark"] .vc-block.step-2 .vc-step-label { color: #34d399; }
+    :root[data-theme="dark"] .vc-block.step-3 .vc-step-label { color: #fbbf24; }
+    :root[data-theme="dark"] .vc-block.step-4 .vc-step-label { color: #94a3b8; }
+    :root[data-theme="dark"] .vc-block.step-5 .vc-step-label { color: #a78bfa; }
+
+    /* External Links in References */
+    .references-list a.ext-link,
+    .content a.ext-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .references-list a.ext-link::after,
+    .content a.ext-link::after {
+      content: "↗";
+      font-size: 11px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    /* Collapsible References Section */
+    .references-collapsible {
+      margin: 2rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .references-collapsible summary.references-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .references-collapsible summary.references-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .references-collapsible summary.references-toggle:hover {
+      background: var(--bg-subtle, rgba(0, 0, 0, 0.03));
+    }
+
+    :root[data-theme="dark"] .references-collapsible summary.references-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .references-collapsible[open] summary.references-toggle {
+      border-bottom-color: var(--border);
+    }
+
+    .references-toggle .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .references-toggle .toggle-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .references-toggle .toggle-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .references-collapsible[open] summary.references-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .references-body {
+      padding: 1.25rem 1.4rem;
+    }
+
+    .references-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.8rem 0 0.5rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .references-group-title:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .references-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vc-speaker-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vc-speaker-meta strong {
+      color: var(--text-main);
+    }
+    .vc-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .vc-content p:last-child {
+      margin-bottom: 0;
+    }
+    .vc-content ul {
+      margin-bottom: 0;
+      padding-left: 18px;
+    }
+    .vc-content li {
+      margin-bottom: 4px;
+    }
+
+    /* TOC Drawer (Slide-in) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 320px;
+      max-width: 88vw;
+      height: 100%;
+      background: var(--drawer-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toc-drawer.active {
+      transform: translateX(0);
+    }
+
+    .toc-drawer-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .toc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .toc-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 40px;
+    }
+
+    .toc-drawer-body ul.toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-drawer-body li {
+      margin-bottom: 6px;
+    }
+
+    .toc-drawer-body li.depth-2 {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .toc-drawer-body li.depth-2 > .toc-link {
+      font-weight: 700;
+      color: var(--text-main);
+      border-left: 2px solid var(--primary);
+      padding-left: 8px;
+    }
+    .toc-drawer-body li.depth-3 {
+      padding-left: 14px;
+      margin-bottom: 3px;
+    }
+    .toc-drawer-body li.depth-3 > .toc-link {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .toc-drawer-body li.depth-4 {
+      padding-left: 24px;
+      margin-bottom: 2px;
+    }
+    .toc-drawer-body li.depth-4 > .toc-link {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .toc-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .toc-badge.badge-h2 {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+    .toc-badge.badge-h3 {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .toc-badge.badge-h4 {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px dashed var(--border);
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    .toc-text {
+      word-break: keep-all;
+    }
+
+    /* Heading Anchor Tooltip */
+    .anchor-tooltip {
+      position: absolute;
+      transform: translateX(-50%);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .anchor-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Floating Back to Top */
+    #back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .article-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+
+    .article-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-btn" title="목록으로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>목록</span>
+      </a>
+      <span class="nav-title" id="nav-title-text">코딩 전에 무엇을 정해야 하는가 — CMU 소프트웨어 아키텍처 1강</span>
+    </div>
+    
+    <div class="nav-right">
+      <div class="font-picker" id="font-picker">
+        <button class="nav-btn" id="font-toggle" type="button" aria-label="본문 폰트" title="본문 폰트 선택" aria-expanded="false" aria-haspopup="listbox" aria-controls="font-menu">가</button>
+        <div class="font-menu" id="font-menu" role="listbox" hidden>
+          <button type="button" class="font-option" role="option" data-font="pretendard" aria-selected="true">Pretendard</button>
+          <button type="button" class="font-option" role="option" data-font="d2coding" aria-selected="false">D2Coding</button>
+        </div>
+      </div>
+      <button class="nav-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span id="theme-icon">🌓</span>
+      </button>
+      <button class="nav-btn" id="toc-toggle" aria-label="목차 열기" title="목차 보기" aria-expanded="false" aria-controls="toc-drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        <span>목차</span>
+      </button>
+    </div>
+    <!-- Reading Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </header>
+
+  <!-- TOC Slide-in Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="toc-drawer" id="toc-drawer" aria-label="문서 목차">
+    <div class="toc-drawer-header">
+      <span class="toc-drawer-title">📑 목차</span>
+      <button class="toc-close-btn" id="toc-close" aria-label="목차 닫기">&times;</button>
+    </div>
+    <div class="toc-drawer-body">
+      <ul class="toc-list"><li class="depth-2"><a href="#서문-키보드를-두드리기-전에-멈춰-서야-하는-이유" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서문: 키보드를 두드리기 전에 멈춰 서야 하는 이유</span></a></li><li class="depth-2"><a href="#1-이-과목이-겨냥하는-지도-여섯-가지-목표와-전체-여정" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 이 과목이 겨냥하는 지도: 여섯 가지 목표와 전체 여정</span></a></li><li class="depth-3"><a href="#11-아키텍처-수업의-여섯-가지-목표" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 아키텍처 수업의 여섯 가지 목표</span></a></li><li class="depth-3"><a href="#12-품질-보증qa이-아닌-39품질-속성39이라는-개념" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 품질 보증(QA)이 아닌 &#39;품질 속성&#39;이라는 개념</span></a></li><li class="depth-3"><a href="#13-앞으로-밟아-갈-아키텍처의-전체-주제와-두-권의-교재" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.3 앞으로 밟아 갈 아키텍처의 전체 주제와 두 권의 교재</span></a></li><li class="depth-2"><a href="#2-기능만으로는-부족하다-차량-호출-앱으로-보는-사업-요구와-설계의-분화" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 기능만으로는 부족하다: 차량 호출 앱으로 보는 사업 요구와 설계의 분화</span></a></li><li class="depth-3"><a href="#21-기능-목록에서-출발하는-익숙한-절차" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 기능 목록에서 출발하는 익숙한 절차</span></a></li><li class="depth-3"><a href="#22-아키텍처-없이도-코드는-돌아간다-하지만-그다음은" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 아키텍처 없이도 코드는 돌아간다 — 하지만 그다음은?</span></a></li><li class="depth-3"><a href="#23-사업의-답에-따라-설계도가-39뜯어고쳐지는39-순간" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 사업의 답에 따라 설계도가 &#39;뜯어고쳐지는&#39; 순간</span></a></li><li class="depth-2"><a href="#3-현실은-어떻게-구조를-갈랐는가-llm-아마존-노키아-그리고-39-ilities39" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 현실은 어떻게 구조를 갈랐는가: LLM, 아마존, 노키아, 그리고 &#39;-ilities&#39;</span></a></li><li class="depth-3"><a href="#31-같은-생성형-ai에서-갈라진-llm-서비스들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 같은 생성형 AI에서 갈라진 LLM 서비스들</span></a></li><li class="depth-3"><a href="#32-아마존amazon-39서점39이-아니라-39플랫폼39을-지었을-때" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 아마존(Amazon): &#39;서점&#39;이 아니라 &#39;플랫폼&#39;을 지었을 때</span></a></li><li class="depth-3"><a href="#33-노키아nokia-전화는-걸렸지만-39고칠-수-없는-구조39에-발목-잡히다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.3 노키아(Nokia): 전화는 걸렸지만 &#39;고칠 수 없는 구조&#39;에 발목 잡히다</span></a></li><li class="depth-3"><a href="#34-39-ilities39-quot무엇을quot이-아니라-quot얼마나-잘quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.4 &#39;-ilities&#39;: &quot;무엇을&quot;이 아니라 &quot;얼마나 잘&quot;</span></a></li><li class="depth-2"><a href="#4-구조가-품질을-만든다-입국-심사-줄로-이해하는-처리량-지연-시간-그리고-대가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 구조가 품질을 만든다: 입국 심사 줄로 이해하는 처리량, 지연 시간, 그리고 대가</span></a></li><li class="depth-3"><a href="#41-공항-입국-심사-줄의-비유-처리량-늘리기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 공항 입국 심사 줄의 비유: 처리량 늘리기</span></a></li><li class="depth-3"><a href="#42-지연-시간latency을-줄이는-두-가지-길-자원과-전문화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 지연 시간(Latency)을 줄이는 두 가지 길: 자원과 전문화</span></a></li><li class="depth-3"><a href="#43-스콧-파베티의-지적-공짜는-없다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.3 스콧 파베티의 지적: 공짜는 없다</span></a></li><li class="depth-2"><a href="#5-상태는-어디에-두어야-하는가-장바구니와-트레이드오프의-기술" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 상태는 어디에 두어야 하는가: 장바구니와 트레이드오프의 기술</span></a></li><li class="depth-3"><a href="#51-아키텍트가-내려야-하는-구조-결정들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 아키텍트가 내려야 하는 구조 결정들</span></a></li><li class="depth-3"><a href="#52-장바구니-딜레마-클라이언트브라우저-vs-서버백엔드" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 장바구니 딜레마: 클라이언트(브라우저) vs 서버(백엔드)</span></a></li><li class="depth-3"><a href="#53-품질-속성은-설계의-39결과물39이-아니라-39입력값39이다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 품질 속성은 설계의 &#39;결과물&#39;이 아니라 &#39;입력값&#39;이다</span></a></li><li class="depth-2"><a href="#6-소프트웨어-아키텍처의-정의와-시스템을-바라보는-세-가지-눈" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 소프트웨어 아키텍처의 정의와 시스템을 바라보는 세 가지 눈</span></a></li><li class="depth-3"><a href="#61-강의식-정의와-정식-정의" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 강의식 정의와 정식 정의</span></a></li><li class="depth-3"><a href="#62-하나의-시스템을-세-가지-눈으로-보기-정적동적배치-구조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 하나의 시스템을 세 가지 눈으로 보기: 정적·동적·배치 구조</span></a></li><li class="depth-3"><a href="#63-쪼개는-순간-따라오는-두-가지-숙제-통신-방식과-횡단-관심사" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.3 쪼개는 순간 따라오는 두 가지 숙제: 통신 방식과 횡단 관심사</span></a></li><li class="depth-2"><a href="#7-바퀴를-다시-발명하지-않는-법-패턴-프레임워크-프로토타입-그리고-두-가지-법칙" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 바퀴를 다시 발명하지 않는 법: 패턴, 프레임워크, 프로토타입, 그리고 두 가지 법칙</span></a></li><li class="depth-3"><a href="#71-아키텍처-패턴과-프레임워크-검증된-뼈대-빌려-쓰기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 아키텍처 패턴과 프레임워크: 검증된 뼈대 빌려 쓰기</span></a></li><li class="depth-3"><a href="#72-모를-때는-실험하라-프로토타입과-끝에서-끝까지-이어지는-뼈대" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 모를 때는 실험하라: 프로토타입과 끝에서 끝까지 이어지는 뼈대</span></a></li><li class="depth-3"><a href="#73-소프트웨어-아키텍처의-두-가지-법칙" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 소프트웨어 아키텍처의 두 가지 법칙</span></a></li><li class="depth-2"><a href="#8-아키텍트는-코딩-전에-무엇을-하는가-여섯-가지-핵심-활동과-총정리" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 아키텍트는 코딩 전에 무엇을 하는가: 여섯 가지 핵심 활동과 총정리</span></a></li><li class="depth-3"><a href="#81-아키텍트의-여섯-가지-핵심-활동" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.1 아키텍트의 여섯 가지 핵심 활동</span></a></li><li class="depth-3"><a href="#82-코딩-전에-할-일이-이렇게-많다-다섯-가지-관통-통찰" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">8.2 코딩 전에 할 일이 이렇게 많다 — 다섯 가지 관통 통찰</span></a></li></ul>
+    </div>
+  </aside>
+
+  <!-- Main Article Content Container -->
+  <main class="article-container">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="meta-badge">📅 2026-11-19</span>
+          <span class="meta-badge">⏱️ 약 95분</span>
+          
+        </div>
+        <h1 class="article-title">코딩 전에 무엇을 정해야 하는가 — CMU 소프트웨어 아키텍처 1강</h1>
+        <p class="article-subtitle">기능이 같아도 사업 요구가 다르면 구조가 달라진다. 품질 속성, 트레이드오프, 정적·동적·배치 구조, 그리고 \"어떻게보다 왜\"</p>
+        
+        <div class="tag-list">
+          
+          <span class="tag-pill">#컴퓨터과학</span>
+          
+          <span class="tag-pill">#소프트웨어공학</span>
+          
+          <span class="tag-pill">#아키텍처</span>
+          
+          <span class="tag-pill">#해설</span>
+          
+        </div>
+        
+        <div class="companion-banner">
+          <span>🗂️ <strong>예습·복습 아카이브</strong>에서 10분 핵심 요약과 플래시카드·퀴즈를 확인할 수 있습니다.</span>
+          <a href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처1강.html" rel="noopener">예습·복습 페이지 열기 ↗</a>
+        </div>
+        
+      </header>
+
+      <section class="content" id="article-content">
+        <h2 id="서문-키보드를-두드리기-전에-멈춰-서야-하는-이유"><a href="#서문-키보드를-두드리기-전에-멈춰-서야-하는-이유" class="heading-anchor" aria-hidden="true">#</a> 서문: 키보드를 두드리기 전에 멈춰 서야 하는 이유</h2><p>소프트웨어를 만들어 본 사람이라면 누구나 새 아이디어를 듣자마자 곧장 키보드에 손을 올리고 싶은 충동을 느낀다. 요즘처럼 거대 언어 모델(LLM)에게 원하는 기능을 설명하면 몇 초 만에 코드 덩어리를 써 주는 시대에는 그 유혹이 한층 더 거세다. 이 강의는 바로 그 지점에서 질문을 던지며 시작한다. 지금 당장 코드를 치고 싶고 AI에게 코드를 생성하게 만들고 싶겠지만, <strong>그것만으로는 좋은 소프트웨어가 나오지 않는다</strong>는 것이다.</p>
+<p>카네기멜런대학교(CMU)의 과목 번호 17-635 「소프트웨어 아키텍처(Software Architectures)」 1강(강사 Swarnalatha Ashok, Scott Pavetti)<a class="footnote-ref" href="#fn-1" id="fnref-1">1</a>은 소프트웨어 아키텍처를 처음 배우는 사람에게 가장 근본적인 물음을 건넨다. 우리가 아키텍처를 배우는 동기는 무엇이며, 소프트웨어 아키텍처의 정식 정의는 무엇이고, 아키텍트가 실제로 수행하는 공통 활동은 무엇인가? 이 강의가 처음부터 못 박는 사실 하나는 분명하다. <strong>아키텍처는 단순히 상자와 화살표로 다이어그램 몇 장 그리는 일이 아니다.</strong></p>
+<p>물론 세상의 모든 프로그램에 거창한 아키텍처가 필요한 것은 아니다. 사칙연산을 수행하는 아주 작은 <strong>계산기(calculator)</strong> 프로그램 하나를 혼자서 만든다면 어떨까? 이런 아주 작은 단독 프로그램(standalone application)이라면 별도의 아키텍처 설계 없이 곧바로 코딩을 시작해도 꽤 괜찮은 결과물이 나온다. 하지만 이 강의는 곧바로 뼈 있는 한마디를 덧붙인다. <strong>&quot;오늘날엔 계산기조차 단독 프로그램이 아니다.&quot;</strong> [해설] 계산기처럼 작은 프로그램도 이제는 다른 기기·서비스와 이어져 돌아가는 경우가 많다는 뜻으로 읽힌다. 하물며 수만 명 이상이 동시에 접속해 돈을 결제하고 움직이는 서비스라면, 첫 줄의 코드를 쓰기 전에 무엇을 결정해야 하는지가 소프트웨어의 운명을 가른다.</p>
+<p>이 글은 소프트웨어 아키텍처를 전혀 모르는 독자도 한 걸음씩 따라올 수 있도록, 전문 기호나 어려운 용어를 앞세우지 않고 <strong>우버(Uber) 같은 &#39;차량 호출 앱&#39;</strong>이라는 일상적인 예시 하나를 중심 기둥으로 삼아 개념을 쌓아 올린다. 강의에 등장하는 다른 사례들—LLM 서비스들, 아마존, 노키아, 입국 심사 줄, 온라인 장바구니—도 빠짐없이 살피되, 각각의 교훈이 결국 차량 호출 앱에서는 어떤 설계 결정으로 이어지는지 다시 연결해 본다.</p>
+<blockquote>
+<p><strong>[해설] 이 글의 구성과 표기 원칙</strong><br>이 글은 원 강의의 핵심 주장을 빠짐없이, 왜곡 없이 전달하는 데 최우선 목적이 있다. 강의 자체의 논지와 사례는 독립된 에세이 형식으로 정확히 옮겼고, 독자의 이해를 돕기 위해 덧붙인 배경 지식과 개념 보충은 <strong><code>[해설]</code></strong>로 구분해 표시했다. 아울러 인명·과목 번호 철자, 인용 문장의 원출처, 역사적·산업적 수치처럼 강의 밖 사실은 외부 자료로 확인해 각주에 출처를 달았고, 끝내 확인되지 않은 것만 <strong><code>(확인 필요)</code></strong>로 남겨 두었다. 강사가 한 말은 강의 그대로 전하고, 외부 사실과 다른 대목은 해설과 각주에서 따로 바로잡았다.</p>
+</blockquote>
+<hr>
+<h2 id="1-이-과목이-겨냥하는-지도-여섯-가지-목표와-전체-여정"><a href="#1-이-과목이-겨냥하는-지도-여섯-가지-목표와-전체-여정" class="heading-anchor" aria-hidden="true">#</a> 1. 이 과목이 겨냥하는 지도: 여섯 가지 목표와 전체 여정</h2><p>무엇인가를 배우기 전에 전체 지도를 펼치면 길을 잃지 않는다. 소프트웨어 아키텍처라는 과목이 끝날 때 학습자가 손에 쥐어야 할 역량은 여섯 가지로 요약된다.</p>
+<h3 id="11-아키텍처-수업의-여섯-가지-목표"><a href="#11-아키텍처-수업의-여섯-가지-목표" class="heading-anchor" aria-hidden="true">#</a> 1.1 아키텍처 수업의 여섯 가지 목표</h3><ol>
+<li><strong>소프트웨어 아키텍처를 정의할 수 있어야 한다.</strong> &quot;아키텍처가 뭐냐&quot;고 물었을 때 막연한 느낌이나 &quot;그림 그리는 것&quot;이 아니라, 명확한 언어로 설명할 수 있어야 한다.</li>
+<li><strong>만드는 시스템의 맥락(context) 안에서 아키텍처 요구사항과 그 우선순위를 정할 수 있어야 한다.</strong> 모든 요구를 똑같이 다 만족시킬 수는 없으므로, 지금 우리가 만드는 시스템에서 무엇이 먼저이고 무엇이 나중인지 가려낼 수 있어야 한다.</li>
+<li><strong>시스템 전체의 성질이 사업 요구(business needs)와 어떻게 연결되는지 이해해야 한다.</strong> 소프트웨어가 어떤 기능(functionality)을 수행하는지도 물론 중요하지만, 기능을 넘어 이 소프트웨어가 왜 만들어졌는가라는 사업적 목적을 충족해야 한다. 강의는 이 연결 고리가 빠진 코드는 <strong>&quot;쓸모가 있을지 없을지 모르는 코드 덩어리(a piece of code, which may or may not be useful)&quot;</strong>에 불과하다고 단언한다.</li>
+<li><strong>모든 아키텍처 동인(architectural drivers)을 만족하는 시스템을 설계할 수 있어야 한다.</strong> 시스템을 특정 모양으로 밀어붙이는 핵심 입력 조건들을 모두 수용해 구조를 세워야 한다.</li>
+<li><strong>검증된 설계와 아키텍처를 재사용할 수 있어야 한다.</strong> 소프트웨어 공학의 오랜 원칙 가운데 하나는 <strong>&quot;바퀴를 다시 발명하지 않는다(don&#39;t reinvent the wheel)&quot;</strong>는 것이다. 특정 성질을 잘 이끌어 낸다고 이미 증명된 <strong>아키텍처 패턴(architectural patterns)</strong>과, 그보다 더 작은 단위에서 특정 성질을 달성하기 위한 모범 사례인 <strong>전술(tactics)</strong>을 적재적소에 가져다 쓸 줄 알아야 한다.</li>
+<li><strong>아키텍처를 문서화하고 결정의 이유(rationale)를 남길 수 있어야 한다.</strong> 문서를 쓰는 이유는 크게 두 가지다. 첫째, 실제로 코드를 작성하거나 세부 설계를 맡을 사람에게 지식을 온전히 넘겨주기 위해서다. 둘째, 시간이 흐른 뒤 <strong>미래의 나 자신이</strong> &quot;왜 그때 이 패턴과 이 전술, 이 아키텍처 결정을 선택했는지&quot; 잊지 않고 기억하기 위해서다.</li>
+</ol>
+<h3 id="12-품질-보증qa이-아닌-39품질-속성39이라는-개념"><a href="#12-품질-보증qa이-아닌-39품질-속성39이라는-개념" class="heading-anchor" aria-hidden="true">#</a> 1.2 품질 보증(QA)이 아닌 &#39;품질 속성&#39;이라는 개념</h3><p>여기서 아키텍처에 입문하는 사람들이 가장 자주 헷갈리는 용어 하나를 시작부터 정확히 갈라 두어야 한다. 바로 시스템 전체의 성질(systemic properties)을 뜻하는 <strong>품질 속성(quality attributes)</strong>이다.</p>
+<p>얼마나 빨리 응답하는가(<strong>성능<strong>, performance), 얼마나 안전하게 막아 내는가(</strong>보안<strong>, security), 얼마나 멈추지 않고 버티는가(</strong>가용성<strong>, availability), 나중에 기능을 고치거나 새 기능을 붙이기 얼마나 쉬운가(</strong>수정 용이성<strong>, modifiability), 사용자가 갑자기 불어나도 감당할 수 있는가(</strong>확장성</strong>, scalability) 같은 성질들을 가리킨다. 이 강의는 분명하게 선을 긋는다. <strong>품질 속성은 우리가 흔히 말하는 QA(Quality Assurance, 품질 보증)와는 전혀 다른 개념이다.</strong></p>
+<blockquote>
+<p><strong>[해설] QA(품질 보증)와 품질 속성(Quality Attributes)의 차이</strong><br>실무에서 QA는 보통 완성되거나 개발 중인 소프트웨어를 시험해 버그를 찾아내고, 요구된 기능이 오류 없이 동작하는지 검증하는 활동과 조직을 뜻한다. 반면 아키텍처에서 말하는 품질 속성은 테스트 절차나 조직 이름이 아니라, 시스템이 본래부터 갖추어야 할 작동 성질 그 자체다. 예컨대 &quot;승객이 배차 버튼을 눌렀을 때 1초 안에 응답해야 한다&quot;거나 &quot;출퇴근 시간 사용자가 100배 늘어도 버텨야 한다&quot;는 것은 QA 팀이 나중에 테스트해서 만들어 낼 수 있는 것이 아니라, 처음부터 시스템의 뼈대(구조)를 어떻게 짜느냐에 따라 결정되는 성질이다.</p>
+</blockquote>
+<p>짧은 미니 학기(mini-semester)로 진행되는 이 강의에서는 수많은 품질 속성 가운데 특히 네 가지—<strong>모듈성(modularity), 성능(performance), 가용성(availability), 확장성(scalability)</strong>—에 집중하고, 나머지 속성들은 학습자가 스스로 확장해 공부하도록 안내한다.</p>
+<h3 id="13-앞으로-밟아-갈-아키텍처의-전체-주제와-두-권의-교재"><a href="#13-앞으로-밟아-갈-아키텍처의-전체-주제와-두-권의-교재" class="heading-anchor" aria-hidden="true">#</a> 1.3 앞으로 밟아 갈 아키텍처의 전체 주제와 두 권의 교재</h3><p>강의가 예고하는 전체 여정은 아키텍처가 한 번의 영감으로 끝나는 일이 아니라 치밀한 단계의 연속임을 보여 준다.</p>
+<ol>
+<li><strong>정의·활동·결정</strong>: 소프트웨어 아키텍처란 무엇이며, 아키텍트는 어떤 결정을 내리고 어떤 활동을 하는가.</li>
+<li><strong>컨텍스트 다이어그램(Context Diagram)으로 범위 잡기</strong>: 내가 만드는 소프트웨어의 안과 밖을 가르는 지도다. 내가 직접 책임지고 만들어야 할 범위는 어디까지이고, 신경 쓰지 않아도 되거나 바깥에서 연동해야 할 대상은 무엇인지, 대상 사용자는 누구인지, 다른 시스템과 어떤 데이터를 주고받아야 하는지를 한눈에 파악한다.</li>
+<li><strong>아키텍처 동인(Architectural Drivers)</strong>: 아키텍처를 어떤 모양으로 빚어낼지 결정짓는 핵심 입력 조건들을 이해한다.</li>
+<li><strong>품질 속성의 정식 분석과 &#39;6부분 시나리오(Six-part Scenario)&#39;</strong>: 막연히 &quot;시스템이 빨라야 한다&quot;고 말하면 설계를 할 수 없다. <strong>무엇이 자극을 주고, 그 결과가 무엇이며, 그것을 어떻게 측정할 것인가</strong>를 따지는 정식 분석 틀로 품질 속성 요구사항을 구체화한다.</li>
+<li><strong>뷰(Views)로 시스템 바라보기</strong>: 아키텍처는 단순히 코드를 여러 폴더와 모듈로 쪼개는 작업으로 끝나지 않는다. 코드가 어떻게 나뉘어 있는지를 보는 <strong>정적 뷰(static view)</strong>, 프로그램이 실제로 실행되는 동안 모듈 인스턴스가 하나만 뜨는지 여러 개로 복제되어 병렬로 도는지를 보는 <strong>동적 뷰(dynamic view)</strong>, 그리고 그 코드 조각들이 내 주머니 속 스마트폰에 놓이는지, 내 몸에 걸친 웨어러블 기기에 놓이는지, 클라우드나 백엔드 서버에 놓이는지를 보는 <strong>배치 뷰(deployment view)</strong>까지 여러 시선으로 입체적으로 살펴야 한다.</li>
+<li><strong>패턴과 전술, 그리고 속성 주도 설계</strong>: 인기 있는 아키텍처 패턴과 세부 전술을 익힌 뒤, 응답 시간 같은 품질 속성 요구에서 출발해 아키텍처를 도출해 나가는 <strong>속성 주도 과정(attribute-driven process / approach)</strong>을 배운다.</li>
+<li><strong>대상 독자별 문서화와 아키텍처 결정 기록(ADR)</strong>: 개발자, 나중에 요구사항이 바뀌어 다시 문서를 열어 볼 미래의 아키텍트, 비용 관점에서 구조의 타당성을 보고 싶어 하는 경영진 등 <strong>서로 다른 독자가 자기에게 필요한 대목을 쉽게 찾아볼 수 있도록</strong> 문서를 구성한다. 특히 업계에서 매우 유용하다고 입증된 <strong>아키텍처 결정 기록(Architectural Decision Records, ADR)</strong>을 통해, 무엇을 왜 결정했는지, 우선순위는 무엇이었는지, 그 결정을 택하면서 무엇을 포기(compromise)했는지, 그 결정을 충분히 이해하고 문서화했는지, 회의에 누가 참석했는지까지 남긴다.</li>
+<li><strong>LLM 기반 시스템과 애자일 환경</strong>: 마지막 강의에서는 <strong>LLM을 소프트웨어의 한 구성 요소로 쓰는 시스템</strong>(예: 챗봇)을 어떻게 설계할지—소프트웨어가 어떤 부품들로 나뉘고 그 부품들이 LLM과 어떻게 상호작용해야 하는지—를 다루며, 여건이 허락하면 <strong>애자일(Agile) 프로젝트</strong> 안에서 아키텍처를 어떻게 수행할지도 다룬다.</li>
+</ol>
+<p>이 여정의 길잡이로는 두 권의 교재가 제시된다. Len Bass 외 공저의 『Software Architecture in Practice』(최신 4판)와 『Documenting Software Architectures: Views and Beyond』(최신 2판)이며, 두 책 모두 CMU 도서관 온라인을 통해 열람할 수 있다<a class="footnote-ref" href="#fn-2" id="fnref-2">2</a>.</p>
+<blockquote>
+<p><strong>[해설] &#39;6부분 시나리오&#39;와 &#39;속성 주도 설계(ADD)&#39;의 정식 배경</strong><br>강의에서는 6부분 시나리오의 세부 명칭을 &quot;무엇이 자극하고, 결과가 무엇이며, 어떻게 측정하는가&quot; 수준으로만 맛보기로 소개하고, 설계 과정도 &quot;attribute-driven process / approach&quot;라고 부른다. 소프트웨어 아키텍처 교재(Bass 등)의 표준 어휘에서 6부분 시나리오(Quality Attribute Scenario)는 보통 <strong>① 자극의 근원(Source of Stimulus) ② 자극(Stimulus) ③ 대상(Artifact) ④ 환경(Environment) ⑤ 응답(Response) ⑥ 응답 측정(Response Measure)</strong>의 여섯 요소로 구성된다. 속성 주도 과정의 정식 명칭은 SEI가 정리한 <strong>속성 주도 설계(Attribute-Driven Design, ADD)</strong>이며, 현재 주로 쓰이는 판은 ADD 3.0이다<a class="footnote-ref" href="#fn-3" id="fnref-3">3</a>.</p>
+</blockquote>
+<p>이 모든 목차를 우리의 중심 예시인 <strong>차량 호출 앱</strong>에 얹어 보면 감이 단번에 온다. 승객용 앱, 운전자용 앱, 지도 서비스, 카드 결제망 중 어디까지가 우리가 짜야 할 시스템 안쪽이고 어디가 바깥쪽인지 가르는 것이 <strong>컨텍스트 다이어그램</strong>이고, &quot;피크 타임에도 배차 응답이 2초 이내&quot;라는 조건을 측정 가능한 문장으로 다듬는 것이 <strong>6부분 시나리오</strong>이며, 이 코드가 승객 폰에 들어갈지 클라우드 서버에 들어갈지 나누는 것이 <strong>세 가지 뷰</strong>다. 왜 이런 일들이 코딩보다 먼저 와야 하는지, 이제 차량 호출 앱을 처음부터 한 단계씩 지어 보며 직접 확인해 보자.</p>
+<hr>
+<h2 id="2-기능만으로는-부족하다-차량-호출-앱으로-보는-사업-요구와-설계의-분화"><a href="#2-기능만으로는-부족하다-차량-호출-앱으로-보는-사업-요구와-설계의-분화" class="heading-anchor" aria-hidden="true">#</a> 2. 기능만으로는 부족하다: 차량 호출 앱으로 보는 사업 요구와 설계의 분화</h2><h3 id="21-기능-목록에서-출발하는-익숙한-절차"><a href="#21-기능-목록에서-출발하는-익숙한-절차" class="heading-anchor" aria-hidden="true">#</a> 2.1 기능 목록에서 출발하는 익숙한 절차</h3><p>우버(Uber)와 같은 <strong>차량 호출 앱(car hailing application)</strong>을 만든다고 상상해 보자. 소프트웨어 공학을 어느 정도 배운 사람이라면 가장 먼저 고객에게 찾아가 &quot;이 앱이 무슨 일을 할 수 있어야 합니까?&quot;라고 기능(functionality)부터 물어볼 것이다.</p>
+<p>이 앱을 쓰는 사용자는 크게 두 부류다.</p>
+<ul>
+<li><strong>승객(commuter)</strong>: 여러 차종 가운데 원하는 차량을 고르고, 출발지(pickup)와 목적지(destination)를 지정하며, 지금 차가 어디쯤 오고 있는지 운행 경로를 추적하고, 도착 뒤 요금을 결제할 수 있어야 한다.</li>
+<li><strong>운전자(driver)</strong>: 본인 정보와 자기 차량을 공인 운전자로 등록할 수 있어야 한다. 만약 본인 차가 없다면 Enterprise 같은 렌터카 서비스(car hiring service)에서 차량을 빌려 공인 운전자로 등록하는 경우도 지원해야 한다. 또한 운전자가 쉬고 싶을 때는 운행 상태(ride)를 끄고(&quot;오늘은 도로에서 빠지겠다&quot;) 다시 일할 때 켤 수 있어야 하며, 들어온 호출을 수락(accept)하거나 취소(cancel)할 수 있어야 한다.</li>
+</ul>
+<p>이렇게 사용자별 기능을 모으고 나면, 보통은 교과서적인 <strong>요구사항 모델링과 분석</strong> 단계로 넘어간다. 유스케이스(use case)나 사용자 스토리(user story)를 적고, 시스템에 어떤 개념적 덩어리(도메인 모델, domain model)와 모듈이 필요하며 서로 어떻게 연결되는지 그린다. 사용자에게 화면이 어떻게 보일지 분석하고, 예컨대 운전자 모듈과 직접 말을 주고받는 &#39;드라이버 컨트롤러(driver controller)&#39; 같은 분석 모델을 만든다.</p>
+<p>여기서 한 걸음 더 나아가 시간 순서대로 상호작용을 그린 <strong>시퀀스 다이어그램(sequence diagram)</strong>도 작성할 수 있다. 예를 들어 &#39;라이드 컨트롤러(ride controller)&#39;가 현재 도로 위에 나와 있는 모든 차량 목록을 조회한 뒤, 각 차량에게 이 호출을 수락할 수 있는지 묻고, 수락이 돌아온 차량에게 운행을 배정하는 흐름을 그리는 식이다.</p>
+<h3 id="22-아키텍처-없이도-코드는-돌아간다-하지만-그다음은"><a href="#22-아키텍처-없이도-코드는-돌아간다-하지만-그다음은" class="heading-anchor" aria-hidden="true">#</a> 2.2 아키텍처 없이도 코드는 돌아간다 — 하지만 그다음은?</h3><p>문제는 바로 이 시점에 찾아온다. 시퀀스 다이어그램까지 그려 놓고 나면 많은 개발자가 이렇게 선언한다. <em>&quot;좋아, 분석도 다 했고 승객과 운전자 사이의 상호작용 흐름도 완벽히 이해했으니 이제 코딩을 시작하자!&quot;</em></p>
+<p>실제로 아키텍처라는 것을 전혀 고민하지 않고도 이 기능 목록을 코드로 구현할 수는 있다. 가장 단순하게 생각해 보자. 휴대폰 안에서 혼자 돌아가는 <strong>단독 모바일 앱(standalone mobile app)</strong>을 하나 만들어 승객 폰과 운전자 폰에 깔고, 승객 앱이 도로 위의 모든 차와 직접 통신하게 짤 수도 있다. 아니면 <strong>백엔드 서버 딱 하나를 둔 단순 웹 애플리케이션(web app)</strong>으로 만들 수도 있다. 어쨌든 위에서 나열한 기능—출발지 지정, 호출 수락, 결제—은 모두 돌아간다. 구현 방법은 한두 가지가 아니다.</p>
+<p>그러나 이 강의가 던지는 핵심 질문은 단 하나다. <strong>그렇게 만든 프로그램이 &#39;사업 요구(business needs)&#39;와 맞는가?</strong></p>
+<p>고객에게 기능 목록만 묻고 돌아오면 반쪽짜리 질문만 던진 셈이다. 아키텍처를 결정하려면 반드시 다음과 같은 <strong>사업 질문</strong>을 추가로 던져야 한다.</p>
+<ul>
+<li>이 앱을 사용할 전체 사용자는 몇 명인가?</li>
+<li><strong>같은 시각에 동시에 접속하는 사용자(concurrent users)</strong>는 몇 명을 목표로 하는가?</li>
+<li>이 서비스는 피츠버그(Pittsburgh) 지역이나 대학가 안에서만 쓸 것인가, 아니면 전 세계 어느 곳에서나 쓸 수 있게 키울 계획인가?</li>
+<li>나중에 사업을 확장해 차량 호출 외에 <strong>택배(courier)나 음식 배달(food delivery)</strong> 같은 다른 서비스까지 이 앱에 얹을 계획이 있는가?</li>
+</ul>
+<h3 id="23-사업의-답에-따라-설계도가-39뜯어고쳐지는39-순간"><a href="#23-사업의-답에-따라-설계도가-39뜯어고쳐지는39-순간" class="heading-anchor" aria-hidden="true">#</a> 2.3 사업의 답에 따라 설계도가 &#39;뜯어고쳐지는&#39; 순간</h3><p>이 질문에 고객이 어떻게 답하느냐에 따라, 아까 그린 분석 모델은 전혀 다른 모양으로 갈라진다.</p>
+<p>첫째, 고객이 <strong>&quot;나중에 택배나 음식 배달 서비스까지 확장할 계획이다&quot;</strong>라고 답했다고 하자. 그렇다면 소프트웨어 구조는 처음부터 <strong>수정 용이성(modifiability)</strong>과 <strong>확장 가능성(extensibility)</strong>을 품어야 한다. 나중에 새 기능을 끼워 넣을 때 기존 차량 호출 코드를 다 뜯어고치지 않고도 쉽게 붙일 수 있는 구조로 쪼개 두어야 한다.</p>
+<p>둘째, <strong>&quot;동시 사용자가 10명 정도인가, 아니면 1만 명 이상인가?&quot;</strong>라는 질문의 답을 보자. 동시 접속자가 10명뿐인 소규모 앱이라면 구조가 단순해도 버틴다. 반면 1만 명 이상이 동시에 호출을 누른다면 시스템은 <strong>확장성(scalability)</strong>을 갖춰야 한다. 더 나아가 현실에서는 한밤중의 한산한 시간대와 출퇴근 러시아워(rush hours)처럼 동시 사용자 수가 극심하게 요동친다. 그렇다면 부하가 클 때는 자원을 늘리고(<strong>scale up</strong>) 한산할 때는 줄일(<strong>scale down</strong>) 수 있는 구조여야 하는지까지 고민해야 한다.</p>
+<p>이 지점에 이르면 처음 떠올렸던 &#39;모든 차와 직접 통신하는 단독 모바일 앱&#39;은 더 이상 선택지가 될 수 없다. 확장성이 전혀 나오지 않기 때문이다. 결국 우리는 아까 만든 분석 단계의 설계를 <strong>그대로 두지 못하고 &quot;뜯어내야(rip apart)&quot; 한다.</strong></p>
+<ul>
+<li>화면 표시와 사용자 입력 같은 일부 기능은 <strong>휴대폰(모바일 클라이언트)</strong>에 남기고,</li>
+<li>배차·매칭·데이터 처리 같은 핵심 부분은 <strong>백엔드(back end)</strong>로 옮겨 떼어 내며,</li>
+<li>출퇴근 시간대에 맞춰 자원을 늘렸다 줄였다 해야 한다면 <strong>클라우드(cloud)</strong> 위에서 탄력적으로 돌도록 배치한다.</li>
+<li><strong>결제(payment)</strong> 역시 사업 결정에 따라 구조가 갈린다. 회사가 자체 결제 시스템을 직접 구축할지, 아니면 이미 존재하는 외부 결제 서비스에 위임·연동(delegate / interface)할지에 따라 결제 모듈의 내부 구현과 인터페이스가 완전히 달라지기 때문이다.</li>
+</ul>
+<p>이처럼 <strong>&quot;아키텍처는 사업 요구에 맞춰져야 한다(architecture has to be aligned to the business needs).&quot;</strong> 이어지는 학생 질문에 답하면서, 강의는 분석 모델과 설계 모델의 관계를 정리해 준다. <strong>분석 모델(analysis model)</strong>은 무엇이 필요한지 개념적으로 파악한 출발점일 뿐이다. 반면 <strong>설계 모델(design model)</strong>은 바로 그 분석 모델을, 사업 요구에서 도출된 아키텍처 요구에 맞게 쪼개고 재구성한 <strong>다듬은 판(refinement)</strong>이다.</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 1218" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cmu1_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#0f172a" />
+<stop offset="100%" stop-color="#1e293b" />
+</linearGradient>
+<marker id="cmu1arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" /></marker>
+<marker id="cmu1gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8" /></marker>
+</defs>
+<rect x="0" y="0" width="420" height="1218" rx="14" fill="url(#cmu1_bg)"/>
+<rect x="2" y="2" width="416" height="1214" rx="12" fill="none" stroke="#334155" stroke-width="1.5"/>
+<text x="210" y="32" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">차량 호출 앱의 구조 분화</text>
+<text x="210" y="54" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">기능 목록만 본 설계 vs</text>
+<text x="210" y="76" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">사업 요구를 반영한 아키텍처</text>
+<text x="210" y="102" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">같은 기능(출발지·배차·결제)이라도</text>
+<text x="210" y="122" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">동시 사용자 수·확장 계획·결제 정책에 따라</text>
+<text x="210" y="142" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">분석 모델을 '뜯어서' 재배치한다</text>
+<rect x="16" y="160" width="388" height="366" rx="12" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+<rect x="16" y="160" width="388" height="56" rx="10" fill="#334155"/>
+<rect x="16" y="188.0" width="388" height="28.0" fill="#334155"/>
+<text x="210" y="184" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">① 기능만 보고 만든 구조</text>
+<text x="210" y="204" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(단독 모바일 앱)</text>
+<rect x="32" y="228" width="356" height="150" rx="10" fill="#0f172a" stroke="#94a3b8" stroke-width="1.2"/>
+<text x="210" y="256" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">휴대폰 앱 하나에 전부 탑재</text>
+<text x="48" y="284" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 승객 화면 + 운전자 화면</text>
+<text x="48" y="306" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 도로 위 모든 차량과 직접 통신</text>
+<text x="48" y="328" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 배차 매칭 + 결제 로직 일체 포함</text>
+<text x="48" y="352" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif">(또는 백엔드 1개짜리 단순 웹 앱)</text>
+<rect x="32" y="388" width="356" height="122" rx="8" fill="#1c1917" stroke="#ef4444" stroke-width="1.2"/>
+<text x="210" y="414" fill="#fca5a5" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">한계: 기능은 돌지만 사업에 안 맞음</text>
+<text x="210" y="438" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">동시 사용자 1만 명↑ 시 확장 불가</text>
+<text x="210" y="462" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">택배·음식 배달 확장 및</text>
+<text x="210" y="484" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">부하 탄력 대응 불가</text>
+<text x="210" y="552" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">사업 요구 반영해 쪼갬</text>
+<line x1="210" y1="562" x2="210" y2="586" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#cmu1arr)"/>
+<rect x="16" y="594" width="388" height="608" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+<rect x="16" y="594" width="388" height="56" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="622.0" width="388" height="28.0" fill="#0c4a6e"/>
+<text x="210" y="618" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">② 사업 요구를 반영한 설계 모델</text>
+<text x="210" y="638" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(분산·확장 구조)</text>
+<rect x="32" y="662" width="356" height="128" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="210" y="688" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">휴대폰 앱</text>
+<text x="210" y="712" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">승객·운전자 UI</text>
+<text x="210" y="734" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">출발지·목적지 입력 · 운행 켜기/끄기</text>
+<text x="210" y="758" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(클라이언트 경량화)</text>
+<line x1="210" y1="790" x2="210" y2="818" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmu1gray)"/>
+<rect x="32" y="826" width="356" height="150" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+<text x="210" y="852" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">백엔드 &amp; 클라우드</text>
+<text x="210" y="876" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">배차·라이드 컨트롤러 · 차량 매칭</text>
+<text x="210" y="898" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">출퇴근↑ / 심야↓ 탄력 확장</text>
+<text x="210" y="920" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(Scale up/down)</text>
+<text x="210" y="942" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">택배·음식 배달 추가 쉬운 모듈 분리</text>
+<text x="210" y="964" fill="#34d399" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">(확장성·수정 용이성 확보)</text>
+<line x1="210" y1="976" x2="210" y2="1004" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmu1gray)"/>
+<rect x="32" y="1012" width="356" height="152" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="210" y="1038" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">결제 모듈 결정</text>
+<text x="210" y="1060" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">자체 구현 vs</text>
+<text x="210" y="1082" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">기존 외부 결제 서비스 연동(위임)</text>
+<text x="210" y="1108" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">직접 결제를 구현할지, 외부 결제</text>
+<text x="210" y="1130" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">게이트웨이에 위임하고 인터페이스만 둘지</text>
+<text x="210" y="1154" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">사업 전략에 따라 내부 모듈 구조와</text>
+<text x="210" y="1176" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">시스템 경계가 달라짐</text>
+</svg></figure>
+<hr>
+<h2 id="3-현실은-어떻게-구조를-갈랐는가-llm-아마존-노키아-그리고-39-ilities39"><a href="#3-현실은-어떻게-구조를-갈랐는가-llm-아마존-노키아-그리고-39-ilities39" class="heading-anchor" aria-hidden="true">#</a> 3. 현실은 어떻게 구조를 갈랐는가: LLM, 아마존, 노키아, 그리고 &#39;-ilities&#39;</h2><p>사업 요구가 구조를 가른다는 원리는 교과서 속 차량 호출 앱에서만 성립하는 이야기가 아니다. 이 강의는 현실 산업계의 세 가지 사례—LLM 서비스, 아마존, 노키아—를 통해 기능 바깥의 성질이 어떻게 기업의 승패와 제품의 구조를 갈랐는지 짚어 낸다.</p>
+<h3 id="31-같은-생성형-ai에서-갈라진-llm-서비스들"><a href="#31-같은-생성형-ai에서-갈라진-llm-서비스들" class="heading-anchor" aria-hidden="true">#</a> 3.1 같은 생성형 AI에서 갈라진 LLM 서비스들</h3><p>오늘날 우리는 수많은 거대 언어 모델(LLM)과 그 위에서 동작하는 에이전트 도구들을 매일 쓴다. 겉으로 보면 이 서비스들은 모두 똑같은 일을 하는 것처럼 보인다. <strong>생성형 AI(GenAI)</strong>라는 동일한 개념을 사용해 사용자의 질문을 받고 답을 내놓기 때문이다.</p>
+<p>하지만 실제로 각 서비스를 들여다보면 초점이 제각각이다. 어떤 도구는 <strong>결과물의 정확도(accuracy)</strong>를 끌어올리는 데 집중하고, 어떤 도구는 깔끔한 <strong>텍스트 입출력</strong>에 무게를 둔다. 또 어떤 도구는 <strong>이미지와 영상까지 다루는 멀티모달(multimodal)</strong> 역량에 집중하며, 코파일럿(Copilot) 같은 도구는 <strong>코딩과 개발자 생산성</strong>에 초점을 맞춘다(강의에서는 이 서비스별 초점 비교를 Copilot과 Gemini에게 물어 참고했다고 밝혔다).</p>
+<p>왜 같은 LLM 개념에서 출발했는데 이토록 다른 제품들이 나왔을까? <strong>사업 모델(business model)이 다르고, 사업 요구(business needs)가 다르며, 겨냥하는 대상 사용자와 활동이 다르기 때문</strong>이다. 사업 요구에 맞추려다 보니 같은 생성형 AI 기술이라도 전혀 다른 아키텍처와 제품 구성을 갖게 된다.</p>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> 똑같이 &#39;지도에서 가까운 기사 연결&#39;이라는 기술을 쓰더라도, 대학가 학생용 초저가 합승 앱, 기업 임원용 정시 보장 의전 앱, 30분 내 음식 배달 겸용 앱은 사업 모델과 대상 고객이 다르므로 서버 배치와 응답 우선순위를 전혀 다르게 설계해야 한다.</p>
+</blockquote>
+<h3 id="32-아마존amazon-39서점39이-아니라-39플랫폼39을-지었을-때"><a href="#32-아마존amazon-39서점39이-아니라-39플랫폼39을-지었을-때" class="heading-anchor" aria-hidden="true">#</a> 3.2 아마존(Amazon): &#39;서점&#39;이 아니라 &#39;플랫폼&#39;을 지었을 때</h3><p>두 번째 현실 사례는 전자상거래의 판도를 바꾼 <strong>아마존(Amazon)</strong>이다. 아마존이 처음 사업을 시작했을 때 주력 상품은 책이었다. 당시 온라인에서 책을 판 곳은 아마존만이 아니었다. 강의는 반스앤노블(Barnes &amp; Noble), books.com, 보더스(Borders) 같은 곳들도 온라인에서 책을 팔았다고 짚는다. [해설] 이 가운데 books.com(Book Stacks Unlimited 운영)은 아마존보다 먼저 문을 열었고, 반스앤노블(1997년경)과 보더스(1998년)의 본격 온라인 판매는 아마존(1995년)보다 늦었다<a class="footnote-ref" href="#fn-4" id="fnref-4">4</a>.</p>
+<p>그런데 왜 아마존이 크게 이겼을까? 핵심은 <strong>사업 모델과 사업 요구의 차이</strong>였다. 아마존은 단순한 &#39;온라인 전자상거래 웹사이트&#39;가 아니라 <strong>&#39;플랫폼(platform)&#39;</strong>을 만들고자 했다.</p>
+<ol>
+<li>처음에는 책으로 시작했지만, 장기적으로는 책에서 시작해 세상의 거의 모든 상품으로 취급 범위를 넓히는 확장 구조를 원했다.</li>
+<li>강의가 강조한 또 하나의 축은 <strong>통합(integration)</strong>과 <strong>적시 주문(just-in-time orders)</strong>이었다. 기존 서점들이 자기 재고를 직접 보유하고 관리하는 데 집중한 것과 달리, 아마존이 제공한 핵심 사업 가치는 다양한 판매자(sellers)들을 연결해 통합하는 것이었다. 강의는 이를 이렇게 대비한다. 반스앤노블 같은 곳은 자기 책 재고를 두었지만, 아마존은 &quot;재고도 창고도 없다(no warehouse, no inventory)&quot;고, 잠시 보관하는 창고는 있을지 몰라도 물건을 쌓아 두지는 않는다고 했다. 이 발언은 실제 아마존의 운영과 다르다(아래 해설).</li>
+</ol>
+<blockquote>
+<p><strong>[해설] 아마존은 정말 재고와 창고가 없었나</strong><br>이 대목에서 강의가 전하고자 하는 핵심 요점은 <strong>&#39;여러 외부 판매자를 잇는 플랫폼·통합 중심의 사업 모델&#39;</strong>이라는 점이다. 강의는 아마존에 재고도 창고도 없다고 했지만, 실제로는 그렇지 않다. 창업 직후(1995년 전후)에는 재고를 최소로 두고 Ingram 같은 도서 도매상에서 책을 받아 주문을 처리해 &#39;재고 없음&#39;에 가까웠다. 그러나 1995년 시애틀에 첫 작은 창고를 두었고, 1997년에는 델라웨어 등에 본격 유통센터를 열었다. 제3자 판매자를 들이는 마켓플레이스는 1999년 zShops로 시작해 2000년 Marketplace로 넓어졌다. 지금의 아마존은 수백 개의 대형 물류센터(Fulfillment Center)를 운영하며, 직접 사들인 재고(1P)와 제3자 판매(3P)를 함께 다룬다. 따라서 &#39;재고·창고가 없다&#39;는 말은 창업 초기의 아주 짧은 시기에만 가까운 설명이다. 그래도 강의의 요점, 곧 사업 모델이 재고 관리보다 판매자 통합을 중심에 두면 아키텍처의 중심도 바뀐다는 점은 그대로 유효하다<a class="footnote-ref" href="#fn-5" id="fnref-5">5</a>.</p>
+</blockquote>
+<p>사업 요구가 다르면 코드의 중심축도 바뀐다. 반스앤노블이나 보더스용 시스템을 설계한다면 핵심 관심사는 <strong>자체 데이터베이스와 자체 재고(inventory) 관리</strong>가 된다. 반면 아마존 같은 플랫폼을 설계한다면 아키텍처의 중심축은 수많은 판매자 시스템과 매끄럽게 맞물리는 <strong>통합(integration)</strong>이 된다. 같은 &#39;온라인 판매&#39;라는 기능도 사업 요구에 따라 아키텍처가 근본적으로 달라지는 것이다.</p>
+<p>더욱 결정적인 사실은, 아마존에서는 <strong>기능 바깥의 요인이 곧바로 매출과 직결되었다</strong>는 점이다.</p>
+<ul>
+<li><strong>성능과 매출</strong>: 강의는 아마존에서 응답 시간을 <strong>100밀리초(ms, 0.1초) 줄일 때마다 매출이 1%씩 늘었다</strong>고 소개한다. &#39;상품 검색과 결제&#39;라는 기능 목록에는 응답 속도 0.1초가 적혀 있지 않지만, 사업 성과는 그 속도에 달려 있었다는 것이다. [해설] 이 수치의 원 출처는 전 아마존 엔지니어 Greg Linden이 2006년 블로그와 발표에서 전한 A/B 테스트이고, 원래 내용은 반대 방향이다. 페이지를 100ms 늦추자 매출이 약 1% 줄었다는 것이다. 아마존 공식 보고서나 학술 논문은 아니다. 어느 쪽으로 읽든 &#39;응답 속도가 매출을 움직인다&#39;는 강의의 요점은 같다<a class="footnote-ref" href="#fn-6" id="fnref-6">6</a>.</li>
+<li><strong>가용성과 장애</strong>: 반대로 강의는 몇 년 전(대략 5~7년 전으로 기억한다고 했다) 아마존에 큰 서비스 장애(outage)가 있었고, 주된 원인은 <strong>백업 실패와 네트워크 오류 처리(error handling)를 세밀하게 다루지 않은 것</strong>이었다고 말한다. 큰 소동이 일었고 매출도 잃었을 것이라고 덧붙였다. [해설] 강의가 어느 사건을 가리켰는지는 확인되지 않았다(확인 필요). 시기상 가장 가까운 사건은 2021년 12월 7일 AWS us-east-1 대규모 장애인데, 공식 사후 보고서가 밝힌 원인은 백업 실패가 아니다. 내부 네트워크의 자동 용량 확장 작업이 연결 폭주를 일으켜 네트워크 장비를 압도했고, 재시도가 몰리며 악화된 네트워크 혼잡이었다. 아마존 쇼핑과 Alexa에도 영향이 갔다<a class="footnote-ref" href="#fn-7" id="fnref-7">7</a>.</li>
+</ul>
+<p><strong>&quot;우리 시스템은 99.999%의 시간 동안 멈추지 않고 쓸 수 있어야(available) 한다&quot;</strong>는 말은 기능 목록이 아니라 <strong>사업 요구</strong>다. 네트워크 오류가 나더라도 시스템이 무너지지 않고 버티게 만드는 설계는 아키텍처가 풀어야 할 숙제다.</p>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> 승객이 &#39;호출&#39; 버튼을 눌렀을 때 배차 화면이 0.5초 늦게 뜰 때마다 승객은 다른 앱을 켜 버리고(성능 → 매출), 금요일 밤 비 오는 퇴근길에 네트워크 오류 한 번으로 서버가 멈추면(99.999% 가용성 실패) 신뢰와 하루 매출이 한꺼번에 무너진다.</p>
+</blockquote>
+<h3 id="33-노키아nokia-전화는-걸렸지만-39고칠-수-없는-구조39에-발목-잡히다"><a href="#33-노키아nokia-전화는-걸렸지만-39고칠-수-없는-구조39에-발목-잡히다" class="heading-anchor" aria-hidden="true">#</a> 3.3 노키아(Nokia): 전화는 걸렸지만 &#39;고칠 수 없는 구조&#39;에 발목 잡히다</h3><p>세 번째 현실 사례는 한때 휴대전화 시장의 제왕이었던 <strong>노키아(Nokia)</strong>다. 노키아 폰은 그 시절 최고였고, 이후 애플(Apple) 등이 스마트폰이라는 새로운 패러다임을 들고 나오자 무너졌다. 그런데 노키아 폰이 전화 거는 기능 자체가 안 되어서 망했을까? 아니다. 노키아 폰도 전화를 걸고 받을 수 있었다.</p>
+<p>이 강의는 노키아의 실패 원인을 기능 밖의 세 가지 요인으로 짚는다.</p>
+<ol>
+<li><strong>사용성(usability)의 부재</strong>: 애플과 경쟁할 만큼 직관적이고 편리한 사용자 경험을 만들지 못했다. 사용성은 &#39;전화를 건다&#39;는 기능 자체가 아니라, 그 기능을 얼마나 쓰기 좋게 제공하느냐의 문제다.</li>
+<li><strong>수정 용이성(modifiability)의 결여</strong>: 소프트웨어가 기능이 제한된 운영체제에 너무 단단히 묶여(tightly coupled) 있었다. 그 결과 시장 환경이 바뀌었을 때 소프트웨어를 재빨리 고쳐 새 요구를 반영할 수 없었다.</li>
+<li><strong>안일함(complacency)</strong>: &quot;우리는 1등이고 앞으로도 계속 1등일 것&quot;이라는 자만 속에서 사업 요구 변화에 맞게 소프트웨어를 제때 재정렬하지 못했고, 경직된(rigid) 소프트웨어 구조가 회사의 발목을 잡았다.</li>
+</ol>
+<blockquote>
+<p><strong>[해설] 노키아가 묶여 있던 운영체제 — 심비안(Symbian)</strong><br>강의에서는 해당 운영체제의 이름을 직접 말하지 않고 &quot;기능이 제한된 운영체제(this operating system which had limited capabilities)&quot;라고만 언급했다. 배경 지식으로 보면, 2007년 아이폰이 나올 무렵 노키아 스마트폰의 주력 OS는 <strong>심비안(Symbian, S60)</strong>이었다. 터치 화면과 앱 생태계에 제때 대응하지 못한 것이 쇠퇴의 주요 원인으로 널리 지적되며, 2011년 당시 CEO 스티븐 엘롭(Stephen Elop)의 &#39;불타는 플랫폼(Burning Platform)&#39; 메모가 이를 인정한 대표 사례로 꼽힌다<a class="footnote-ref" href="#fn-8" id="fnref-8">8</a>.</p>
+</blockquote>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> 만약 차량 호출 앱을 만들면서 초기 특정 지도 엔진이나 특정 단말 OS의 비표준 기능에 비즈니스 로직을 찰싹 붙여 짜 버리면, 몇 년 뒤 새 지도나 새 결제 수단, 음성 호출 인터페이스를 붙이려 할 때 앱 전체를 새로 짜야 하는 &#39;노키아의 경직성&#39;에 갇히게 된다.</p>
+</blockquote>
+<h3 id="34-39-ilities39-quot무엇을quot이-아니라-quot얼마나-잘quot"><a href="#34-39-ilities39-quot무엇을quot이-아니라-quot얼마나-잘quot" class="heading-anchor" aria-hidden="true">#</a> 3.4 &#39;-ilities&#39;: &quot;무엇을&quot;이 아니라 &quot;얼마나 잘&quot;</h3><p>지금까지 살펴본 성능, 가용성, 사용자 경험(사용성), 수정 용이성, 확장성, 보안, 정확도처럼 영어 단어 끝이 대체로 <code>-ility</code>로 끝나는 성질들을 아키텍처에서는 흔히 <strong><code>-ilities</code></strong>라고 묶어 부른다. 이것이 바로 <strong>품질 속성(quality attributes)</strong>이다.</p>
+<p>기능 요구(functional requirements)와 품질 속성의 차이는 한 문장으로 정리된다. 기능은 시스템이 <strong>&quot;무엇을(what)&quot;</strong> 할 수 있는가이고, 품질 속성은 그 무엇을 <strong>&quot;얼마나 잘(how well)&quot;</strong> 수행하는가다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">비교 대상</th>
+<th align="left">본래 사업 모델 / 요구</th>
+<th align="left">핵심 품질 속성 (&#39;-ilities&#39;)</th>
+<th align="left">아키텍처에 생긴 결정적 차이</th>
+<th align="left">차량 호출 앱으로 치환하면?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>LLM 서비스들</strong></td>
+<td align="left">같은 GenAI를 쓰되 정확도·텍스트·멀티모달·코딩 등 목표 고객과 과업이 다름</td>
+<td align="left">정확도, 응답 속도, 처리 형태 적합성</td>
+<td align="left">모델 서빙·입출력 파이프라인·도구 연동 구조가 서비스마다 갈림</td>
+<td align="left">같은 배차 기술이라도 통근자용·의전용·배달 겸용 앱의 구조가 다름</td>
+</tr>
+<tr>
+<td align="left"><strong>아마존 vs 기존 서점</strong></td>
+<td align="left">자체 재고 서점(B&amp;N·Borders) vs 모든 상품·판매자 잇는 <strong>플랫폼</strong></td>
+<td align="left">확장 가능성, <strong>통합(integration)</strong>, 성능(응답 속도→매출, 각주 5), <strong>가용성(99.999%)</strong></td>
+<td align="left">자체 재고 DB 중심 구조 ↔ 외부 판매자 통합·장애 복구 중심 구조</td>
+<td align="left">자체 차량만 굴리는 회사 앱 ↔ 외부 개인 기사·렌터카·외부 결제를 잇는 플랫폼</td>
+</tr>
+<tr>
+<td align="left"><strong>노키아 vs 애플</strong></td>
+<td align="left">1등 안주·제한된 OS에 묶인 구조 vs 직관적 경험 중심 패러다임 전환</td>
+<td align="left"><strong>사용성(usability)</strong>, <strong>수정 용이성(modifiability)</strong></td>
+<td align="left">OS에 강결합된 경직된 구조 ↔ 새 기능·UI를 빠르게 바꾸는 유연한 구조</td>
+<td align="left">특정 단말·OS에 얽매여 택배 기능이나 새 UI를 못 붙이는 경직된 앱</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2 id="4-구조가-품질을-만든다-입국-심사-줄로-이해하는-처리량-지연-시간-그리고-대가"><a href="#4-구조가-품질을-만든다-입국-심사-줄로-이해하는-처리량-지연-시간-그리고-대가" class="heading-anchor" aria-hidden="true">#</a> 4. 구조가 품질을 만든다: 입국 심사 줄로 이해하는 처리량, 지연 시간, 그리고 대가</h2><p>품질 속성이 그렇게 중요하다는 것은 알겠다. 그렇다면 대체 무엇이 소프트웨어의 품질 속성을 결정할까? 좋은 알고리즘을 쓰는 것도 중요하고 빠른 CPU를 사는 것도 중요하지만, 이 강의가 강조하는 핵심은 <strong>&#39;구조(structure)&#39;가 품질 속성에 엄청난 영향을 미친다</strong>는 사실이다. 물론 구조가 유일한 요인은 아니지만, 시스템 전체 성질의 아주 큰 부분을 좌우한다.</p>
+<p>여기서 말하는 구조란 구체적으로 다음과 같은 질문에 대한 답이다.</p>
+<ul>
+<li>소프트웨어를 어떤 <strong>모듈(modules)</strong>로 쪼개고 나눌 것인가? (일단은 이것을 <strong>분해(decomposition)</strong>라고 생각해도 좋지만, 실제 구조는 분해 그 이상이다.)</li>
+<li>어떤 모듈을 여러 개로 <strong>복제(replicate)</strong>해서 돌릴 수 있게 만들 것인가?</li>
+<li>모듈들끼리 <strong>어떤 방식으로 통신(communicate)</strong>할 것인가?</li>
+<li>모듈 사이에 <strong>얼마나 많은 데이터를, 어떤 메커니즘으로</strong> 주고받을 것인가?</li>
+</ul>
+<p>이 질문들에 어떻게 답하느냐가 앞서 본 모든 <code>-ilities</code>에 영향을 준다. 요컨대 <strong>&quot;큰 구조(gross structure)가 시스템의 성질을 좌우한다.&quot;</strong></p>
+<h3 id="41-공항-입국-심사-줄의-비유-처리량-늘리기"><a href="#41-공항-입국-심사-줄의-비유-처리량-늘리기" class="heading-anchor" aria-hidden="true">#</a> 4.1 공항 입국 심사 줄의 비유: 처리량 늘리기</h3><p>소프트웨어 바깥의 일상적인 공간으로 잠깐 걸어 들어가 보자. 해외여행을 다녀온 사람이라면 공항 <strong>입국 심사(immigration)</strong> 줄에 서서 답답함을 느껴 본 적이 있을 것이다. 줄은 구불구불 끝도 없이 길게 늘어섰는데, 앞을 보니 <strong>심사관(officer)은 단 한 명</strong>뿐이다.</p>
+<p>여기서 소프트웨어의 첫 번째 핵심 지표가 자연스럽게 모습을 드러낸다. <strong>처리량(throughput)</strong>이다. 처리량이란 1초나 10분 같은 <strong>정해진 시간 동안 총 몇 명의 사람을 처리해 통과시킬 수 있는가</strong>를 뜻한다. 한 명만 서 있는 창구에서는 이 처리량이 턱없이 낮고, 기다리는 사람들은 불만이 쌓인다.</p>
+<p>이 대기 시간을 줄이고 처리량을 끌어올리려면 어떻게 해야 할까? 강의 중 한 학생이 던진 한 단어의 답은 <strong>&quot;병렬화(parallelize)&quot;</strong>였다.</p>
+<ul>
+<li>심사관을 여러 명 세우고, 대기 줄도 여러 개로 나눈다.</li>
+<li>이렇게 나란히 동시에 처리하면 정해진 10분 동안 통과하는 사람 수(<strong>처리량</strong>)가 크게 늘어나고, 줄이 짧아져 기다리는 시간도 줄어든다.</li>
+</ul>
+<h3 id="42-지연-시간latency을-줄이는-두-가지-길-자원과-전문화"><a href="#42-지연-시간latency을-줄이는-두-가지-길-자원과-전문화" class="heading-anchor" aria-hidden="true">#</a> 4.2 지연 시간(Latency)을 줄이는 두 가지 길: 자원과 전문화</h3><p>강의는 병렬화가 기다리는 시간, 곧 지연 시간도 줄여 준다고 말한 뒤 한 걸음 더 들어간다. 처리량은 &quot;10분 동안 몇 명 처리&quot;처럼 전체 묶음의 양을 말한다. 반면 <strong>한 사람</strong>을 심사하는 데 걸리는 시간—한 건당 응답 시간인 <strong>지연 시간(latency)</strong>—은 다른 방법으로도 줄일 수 있지 않을까? [해설] 심사관 한 명이 여권 한 권을 검사하는 데 2분이 걸린다면, 창구를 늘려도 그 2분 자체는 그대로일 수 있다. 그래서 한 건당 시간을 줄이는 방법이 따로 필요하다.</p>
+<p>한 사람당 걸리는 <strong>지연 시간</strong>을 줄이려면 어떤 구조를 써야 할까? 강의가 정리한 해법은 두 가지다.</p>
+<ol>
+<li><strong>더 많은 자원(resources) 투입</strong>: 심사와 확인 작업에 자원을 더 투입해 한 건당 처리 속도를 끌어올린다.</li>
+<li><strong>종류별로 줄 나누기 — 전문화(specialization)</strong>: 모든 사람을 한 종류의 줄에 세우는 대신, <strong>자국민(citizens) 전용 줄</strong>과 <strong>외국인 방문객(visitors) 전용 줄</strong>처럼 처리 대상의 종류별로 줄을 분류(categorize)한다. 이렇게 하면 자국민 줄을 맡은 심사관은 자국민 여권에서 무엇을 확인해야 하는지에 훨씬 익숙해져서, 한 사람당 훨씬 빠르게 처리할 수 있다. 전문화가 개개인의 지연 시간을 깎아 주는 것이다.</li>
+</ol>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 1180" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cmu2_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#0f172a" />
+<stop offset="100%" stop-color="#1e293b" />
+</linearGradient>
+<marker id="cmu2arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8" /></marker>
+</defs>
+<rect x="0" y="0" width="420" height="1180" rx="14" fill="url(#cmu2_bg)"/>
+<rect x="2" y="2" width="416" height="1176" rx="12" fill="none" stroke="#334155" stroke-width="1.5"/>
+<text x="210" y="32" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">입국 심사 줄로 보는 구조와 품질 속성</text>
+<text x="210" y="54" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">병렬화 · 전문화 · 비용 트레이드오프</text>
+<text x="210" y="80" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">구조(창구 수와 줄 분류)가</text>
+<text x="210" y="100" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">처리량(Throughput)과</text>
+<text x="210" y="120" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">지연 시간(Latency)을 바꾼다</text>
+<text x="210" y="140" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">그러나 공짜는 없다</text>
+<rect x="16" y="158" width="388" height="220" rx="10" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+<rect x="16" y="158" width="388" height="40" rx="10" fill="#334155"/>
+<rect x="16" y="178.0" width="388" height="20.0" fill="#334155"/>
+<text x="210" y="184" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 단일 창구 (병목)</text>
+<text x="210" y="224" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">긴 줄 1개 → 심사관 1명</text>
+<rect x="32" y="238" width="200" height="32" rx="5" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="132" y="260" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">대기자 · · · · · ·</text>
+<line x1="236" y1="254" x2="268" y2="254" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmu2arr)"/>
+<rect x="276" y="238" width="112" height="32" rx="5" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+<text x="332" y="260" fill="#fecaca" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">심사관 1</text>
+<text x="32" y="298" fill="#f87171" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">• 처리량(Throughput): 매우 낮음</text>
+<text x="32" y="322" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 대기 시간 폭증, 답답함</text>
+<text x="32" y="346" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 비용: 최소 (심사관 1명분)</text>
+<line x1="210" y1="378" x2="210" y2="406" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmu2arr)"/>
+<rect x="16" y="414" width="388" height="244" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+<rect x="16" y="414" width="388" height="40" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="434.0" width="388" height="20.0" fill="#0c4a6e"/>
+<text x="210" y="440" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 병렬 창구 (병렬화)</text>
+<text x="210" y="480" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">줄 여러 개 + 심사관 여러 명</text>
+<rect x="32" y="494" width="356" height="32" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+<text x="210" y="516" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">줄 A  ──▶  심사관 A</text>
+<rect x="32" y="532" width="356" height="32" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+<text x="210" y="554" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">줄 B  ──▶  심사관 B</text>
+<text x="32" y="590" fill="#38bdf8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">• 처리량(Throughput): 크게 향상</text>
+<text x="32" y="614" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 정해진 10분 내 다수 동시 처리</text>
+<text x="32" y="638" fill="#fbbf24" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 대가: 인력·자원 비용 증가</text>
+<line x1="210" y1="658" x2="210" y2="686" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmu2arr)"/>
+<rect x="16" y="694" width="388" height="244" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+<rect x="16" y="694" width="388" height="40" rx="10" fill="#064e3b"/>
+<rect x="16" y="714.0" width="388" height="20.0" fill="#064e3b"/>
+<text x="210" y="720" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 줄 분류 (전문화 + 자원)</text>
+<text x="210" y="760" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">대상별 전용 큐로 숙련도·속도↑</text>
+<rect x="32" y="774" width="356" height="32" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+<text x="210" y="796" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">자국민 줄  ──▶  전담 심사관</text>
+<rect x="32" y="812" width="356" height="32" rx="4" fill="#0f172a" stroke="#a78bfa" stroke-width="1"/>
+<text x="210" y="834" fill="#ddd6fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">방문객 줄  ──▶  전담 심사관</text>
+<text x="32" y="870" fill="#34d399" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">• 지연 시간(Latency): 1인당 단축</text>
+<text x="32" y="894" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 익숙한 절차로 처리 효율 극대화</text>
+<text x="32" y="918" fill="#fbbf24" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 대가: 전용 자원·분류 비용 추가</text>
+<rect x="16" y="954" width="388" height="210" rx="8" fill="#0b1220" stroke="#f59e0b" stroke-width="1.3"/>
+<text x="210" y="980" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">핵심 대가 (Trade-off)</text>
+<text x="210" y="1004" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">"공짜는 없다. 트레이드오프 없는</text>
+<text x="210" y="1026" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">품질 속성은 없다."</text>
+<text x="210" y="1056" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">소프트웨어에서도 API 서비스</text>
+<text x="210" y="1078" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">인스턴스를 늘리거나 요청별 전용 큐를</text>
+<text x="210" y="1100" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">두면 처리량·지연은 좋아지지만,</text>
+<text x="210" y="1122" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">CPU·전력·운영 비용이 늘어난다.</text>
+</svg></figure>
+<h3 id="43-스콧-파베티의-지적-공짜는-없다"><a href="#43-스콧-파베티의-지적-공짜는-없다" class="heading-anchor" aria-hidden="true">#</a> 4.3 스콧 파베티의 지적: 공짜는 없다</h3><p>입국 심사 비유가 한창 무르익을 때, 공동 강사인 스콧 파베티(Scott Pavetti)가 한 마디를 보탠다.</p>
+<blockquote>
+<p>&quot;트레이드오프를 잊지 마세요. 줄을 하나 더 만들려면, 처리 자원도 하나 더 투입해야 합니다.&quot;</p>
+</blockquote>
+<p>맞다. 이것이 소프트웨어 아키텍처를 관통하는 핵심 진실, <strong>트레이드오프(trade-off)</strong>다. <strong>&quot;공짜는 없다(Nothing comes for free). 트레이드오프 없는 품질 속성은 없다.&quot;</strong> 처리량과 지연 시간을 얻으려면 더 많은 심사관을 배치하는 <strong>비용(cost)</strong>을 치러야 한다.</p>
+<p>이제 이 비유를 그대로 소프트웨어와 우리의 차량 호출 앱으로 옮겨 보자.</p>
+<ul>
+<li>우리가 웹 서비스나 API를 만든다고 할 때, 외부에서 수많은 요청(requests)이 동시에 쏟아져 들어온다.</li>
+<li>이 요청들을 <strong>어떻게 줄 세울(queue) 것인가?</strong></li>
+<li>서비스의 실행 복제본(인스턴스, instances)을 여러 개 띄우면 처리량이 좋아지지만, 그만큼 더 많은 <strong>CPU 시간, 전력 같은 시스템 자원</strong>, 곧 비용이 들어간다. 바로 트레이드오프다.</li>
+<li>입국 심사에서 자국민 줄과 방문객 줄을 나누었듯, 소프트웨어에서도 <strong>요청의 종류별로 서로 다른 큐(queue)</strong>를 둘 수 있다.</li>
+</ul>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> 출퇴근 시간대에 승객 수만 명이 동시에 &#39;차량 호출&#39; 버튼을 누르고 운전자 수만 대가 3초마다 GPS 좌표를 쏘아 올린다면, 배차 서비스 인스턴스를 여러 개 띄워(병렬화) 처리량을 늘려야 한다. 하지만 인스턴스를 무작정 100개 띄우면 클라우드 요금(비용)이 폭증한다. 또한 운전자의 주기적 위치 보고와 승객의 즉각적인 호출 요청을 같은 줄에 세우지 않고 전용 큐로 분리하면(전문화), 급한 배차 요청의 지연 시간을 줄일 수 있다.</p>
+</blockquote>
+<hr>
+<h2 id="5-상태는-어디에-두어야-하는가-장바구니와-트레이드오프의-기술"><a href="#5-상태는-어디에-두어야-하는가-장바구니와-트레이드오프의-기술" class="heading-anchor" aria-hidden="true">#</a> 5. 상태는 어디에 두어야 하는가: 장바구니와 트레이드오프의 기술</h2><h3 id="51-아키텍트가-내려야-하는-구조-결정들"><a href="#51-아키텍트가-내려야-하는-구조-결정들" class="heading-anchor" aria-hidden="true">#</a> 5.1 아키텍트가 내려야 하는 구조 결정들</h3><p>구조를 설계한다는 것은 구체적으로 어떤 선택들을 내리는 일일까? 강의는 네 가지 대표적인 구조 결정을 예로 든다.</p>
+<ol>
+<li><strong>병렬·동시 실행 단위가 필요한가?</strong> 한 번에 하나씩 차례대로 처리할 것인가, 여러 작업 단위를 동시에 띄울 것인가?</li>
+<li><strong>어떤 기능을 어떤 프로세스(process)에 맡길 것인가?</strong> 실행 단위들 사이에 일감을 어떻게 배분할 것인가?</li>
+<li><strong>기능을 어떤 코드 모듈(code modules)에 배정할 것인가?</strong> 소스 코드 수준에서 역할의 경계를 어떻게 그을 것인가?</li>
+<li><strong>상태 관리(state management)</strong>: 사용자마다 달라지고 계속 변하는 데이터를 어디에 보관할 것인가?</li>
+</ol>
+<h3 id="52-장바구니-딜레마-클라이언트브라우저-vs-서버백엔드"><a href="#52-장바구니-딜레마-클라이언트브라우저-vs-서버백엔드" class="heading-anchor" aria-hidden="true">#</a> 5.2 장바구니 딜레마: 클라이언트(브라우저) vs 서버(백엔드)</h3><p>네 번째인 <strong>상태 관리</strong>를 이해하기 위해 강의는 온라인 쇼핑의 <strong>장바구니(shopping cart)</strong>를 예로 든다.</p>
+<p>먼저 &#39;상태(state)&#39;라는 말부터 쉽게 풀어 보자. 쇼핑몰에 접속해 물건을 구경할 때, 내가 장바구니에 치약을 담고 수건을 뺐다가 다시 운동화를 넣는 그 목록은 모든 사용자에게 똑같은 공용 데이터가 아니다. <strong>오직 나 개인에게 묶여 있고, 시간이 지나며 계속 바뀌는 데이터</strong>다. 이것이 애플리케이션의 <strong>상태(application state)</strong>다.</p>
+<p>그렇다면 이 장바구니 상태를 <strong>어디에 저장하고 유지(maintain)</strong>해야 할까? 선택지는 크게 두 곳이며, 양쪽 모두 뚜렷한 장단점을 안고 있다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">저장 위치</th>
+<th align="left">얻는 것 (장점)</th>
+<th align="left">잃는 것 (단점)</th>
+<th align="left">핵심 트레이드오프</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>브라우저(클라이언트) 쪽</strong></td>
+<td align="left">사용자 바로 옆에 있으므로 <strong>성능(빠른 반응 속도)</strong>이 좋고, 로컬에 캐시(cached)되어 있어 서버 통신이 잠시 흔들려도 <strong>가용성(availability)</strong>이 높다.</td>
+<td align="left">브라우저가 강제 종료되거나(crash) 다른 기기에서 다시 접속하면 <strong>상태를 완전히 잃어버린다(지속성 상실).</strong></td>
+<td align="left">속도·가용성 ↑ / 지속성 ↓</td>
+</tr>
+<tr>
+<td align="left"><strong>서버(백엔드) 쪽</strong></td>
+<td align="left">브라우저가 꺼지거나 기기를 바꿔도 장바구니가 그대로 남아 있는 <strong>지속성(persistency)</strong>을 확보한다.</td>
+<td align="left">물건을 하나 담거나 뺄 때마다 네트워크를 건너 서버에 다녀와야 하므로 <strong>응답 시간(지연 시간, latency)이 길어진다.</strong></td>
+<td align="left">지속성 ↑ / 지연 시간 ↑ (더 느림)</td>
+</tr>
+</tbody></table>
+</div><p>여기서 초보자가 가장 자주 묻는 질문이 나온다. <em>&quot;그럼 둘 중에 어느 쪽이 더 좋은 아키텍처인가요?&quot;</em></p>
+<p>답은 단호하다. <strong>절대적인 정답은 없으며, 오직 &quot;사업 요구에 달렸다(It depends on the business needs)!&quot;</strong></p>
+<ul>
+<li>만약 고객이 장바구니에 물건을 담아 두었다가 몇 시간 뒤나 다음 날 다시 들어와 결제까지 이어지는 것이 매출에 치명적인 쇼핑몰이라면, 응답이 아주 조금 느려지더라도 <strong>지속성(persistency)</strong>이 우선이므로 서버 쪽에 두는 설계가 맞다.</li>
+<li>반대로 어떤 다른 종류의 앱에서는 데이터를 영구히 기억하는 것(지속성)보다 네트워크가 불안정한 환경에서도 화면이 즉시 반응하는 <strong>가용성과 짧은 지연 시간</strong>이 훨씬 더 중요할 수 있다. 그렇다면 클라이언트 쪽에 두는 편이 낫다.</li>
+</ul>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> 차량 호출 앱 안에도 성격이 다른 여러 &#39;상태&#39;가 섞여 있다. 승객이 지도를 이리저리 확대·축소하며 출발지 핀을 조금씩 옮기는 중의 임시 화면 상태는 휴대폰(클라이언트)에 두어야 0.1초 안에 부드럽게 움직인다. 설령 앱이 꺼져도 다시 켜서 찍으면 그만이다. 반면 승객과 운전자가 매칭되어 <strong>&quot;배차 확정, 현재 탑승 중, 누적 요금 14,000원&quot;</strong>이 된 운행 상태는 승객의 휴대폰 배터리가 꺼지더라도 절대 사라지면 안 되므로, 지연 시간을 일부 감수하더라도 반드시 백엔드 서버에 지속성 있게 저장해야 한다.</p>
+</blockquote>
+<h3 id="53-품질-속성은-설계의-39결과물39이-아니라-39입력값39이다"><a href="#53-품질-속성은-설계의-39결과물39이-아니라-39입력값39이다" class="heading-anchor" aria-hidden="true">#</a> 5.3 품질 속성은 설계의 &#39;결과물&#39;이 아니라 &#39;입력값&#39;이다</h3><p>장바구니 예시가 보여 주는 교훈은 분명하다. 시스템의 구조가 지연 시간, 처리량, 가용성, 지속성 같은 품질 속성을 좌우하기 때문에, <strong>품질 속성은 나중에 측정해 보는 부수적 결과가 아니라 아키텍처와 설계의 &#39;입력(input)&#39;이 되어야 한다.</strong></p>
+<p>그리고 그 입력값은 개발자의 머릿속이 아니라 <strong>사용자와 고객에게서 나온다.</strong> 따라서 아키텍트는 기능 요구사항(&quot;무엇을 할 수 있어야 하나요?&quot;)을 수집하러 갈 때, 반드시 <strong>아키텍처 요구사항, 즉 품질 속성(&quot;얼마나 빨라야 하고, 끊겨도 데이터를 보존해야 하며, 동시 몇 명을 버텨야 하나요?&quot;)</strong>을 함께 수집해 와야 한다. 그래야 비로소 아키텍처를 설계할 수 있다.</p>
+<hr>
+<h2 id="6-소프트웨어-아키텍처의-정의와-시스템을-바라보는-세-가지-눈"><a href="#6-소프트웨어-아키텍처의-정의와-시스템을-바라보는-세-가지-눈" class="heading-anchor" aria-hidden="true">#</a> 6. 소프트웨어 아키텍처의 정의와 시스템을 바라보는 세 가지 눈</h2><p>앞에서 다룬 동기, 사업 요구, 품질 속성, 구조를 한데 모으면 드디어 소프트웨어 아키텍처가 무엇인지 명확하게 정의할 수 있다.</p>
+<h3 id="61-강의식-정의와-정식-정의"><a href="#61-강의식-정의와-정식-정의" class="heading-anchor" aria-hidden="true">#</a> 6.1 강의식 정의와 정식 정의</h3><p>이 강의가 제시하는 직관적 정의부터 보자.</p>
+<blockquote>
+<p><strong>소프트웨어 아키텍처란 품질 속성에 영향을 주는 설계 결정이며, 품질 속성에 영향을 미치도록 시스템을 구조화(structuring)하는 것이다.</strong></p>
+</blockquote>
+<p>그리고 한 걸음 더 나아간 <strong>정식 정의(formal definition)</strong>로 다음 영어 문장을 인용한다.</p>
+<blockquote>
+<p><strong>&quot;The software architecture of a system is the set of structures needed to reason about the system.&quot;</strong><br>(&quot;한 시스템의 소프트웨어 아키텍처란, 그 시스템에 대해 추론하는 데 필요한 구조들의 집합이다.&quot;)</p>
+</blockquote>
+<p>여기서 <strong>&quot;시스템에 대해 추론한다(reason about the system)&quot;</strong>는 말은 무슨 뜻일까? 코드를 다 짜서 실행해 보기 전에도, 또는 시스템을 고치기 전에도 이 구조들을 들여다보며 <strong>&quot;이 시스템이 얼마나 빠를지(성능), 얼마나 안전할지(보안), 얼마나 커질 수 있을지(확장성) 따져 보고 논리적으로 판단할 수 있다&quot;</strong>는 뜻이다. 바로 그 판단을 가능하게 해 주는 구조들의 묶음이 아키텍처다.</p>
+<blockquote>
+<p><strong>[해설] 정식 정의의 원출처와 전체 문장</strong><br>강의에서는 이 정의의 앞부분 핵심 문장만 인용하고 저자를 따로 호명하지 않았으나, 이 문구는 본 과목의 첫 번째 교재인 Len Bass·Paul Clements·Rick Kazman 공저 『Software Architecture in Practice』에 실린 정의의 앞부분이다. 이 형태는 3판에서 자리 잡아 4판에도 그대로 실렸고, 바로 뒤에 <strong>&quot;These structures comprise software elements, relations among them, and properties of both.&quot;</strong>(이 구조들은 소프트웨어 요소들과, 요소들 사이의 관계, 그리고 그 둘의 속성으로 이루어진다)라는 문장이 이어진다<a class="footnote-ref" href="#fn-9" id="fnref-9">9</a>.</p>
+</blockquote>
+<h3 id="62-하나의-시스템을-세-가지-눈으로-보기-정적동적배치-구조"><a href="#62-하나의-시스템을-세-가지-눈으로-보기-정적동적배치-구조" class="heading-anchor" aria-hidden="true">#</a> 6.2 하나의 시스템을 세 가지 눈으로 보기: 정적·동적·배치 구조</h3><p>정의에서 눈여겨볼 대목은 &#39;구조(structure)&#39;가 단수가 아니라 <strong>&#39;구조들의 집합(the set of structures)&#39;</strong>이라는 복수형이라는 점이다. 같은 차량 호출 앱도 코드가 어떻게 나뉘었는지, 실행 중에 무엇이 몇 개 도는지, 휴대폰과 서버 중 어디에 놓이는지를 따로 봐야 전체를 따질 수 있다. 이렇게 <strong>세 가지 서로 다른 시선(뷰, views)</strong>으로 나누어 본다.</p>
+<ol>
+<li><p><strong>정적 구조 (Static Structure / Static View): &quot;코드를 어떻게 나누어 놓았나?&quot;</strong><br>프로그램이 아직 실행되기 전, 소스 코드 파일들이 어떤 모듈(modules), 서브시스템(subsystems), 계층(layers)으로 나뉘어 설계되어 있는가를 본다. 코드를 나누는 방식에는 여러 갈래가 있다.</p>
+<ul>
+<li><strong>가로(계층)로 나누기</strong>: 데이터를 저장·조회하는 <strong>데이터 접근 계층(data access layer)</strong>, 규칙을 계산하는 <strong>업무 처리 계층(business processing layer)</strong>, 화면을 보여 주고 입력을 받는 <strong>사용자 상호작용 계층(user interaction layer)</strong>으로 층을 쌓아 분리하는 방식이다.</li>
+<li><strong>세로(기능·도메인)로 자르기</strong>: 재무 기능(financial), 재고 기능(inventory), 고객관리 기능(customer relation)처럼 업무 영역별로 수직 기둥을 세워 쪼개는 방식이다.</li>
+<li>어느 방식을 택하든 기준은 같다. <strong>사업 요구에서 도출된 품질 속성에 가장 잘 맞아야 한다.</strong></li>
+</ul>
+</li>
+<li><p><strong>동적 구조 (Dynamic Structure / Dynamic View): &quot;실행 중에 몇 개가 어떻게 돌아가나?&quot;</strong><br>이제 프로그램을 실제로 실행(runtime)해 보자. 코드가 디스크에 얌전히 놓여 있을 때와 달리, 실행 중에는 어떤 일들이 <strong>병렬(parallel) 또는 동시(concurrent)</strong>로 일어나야 하는지, 특정 모듈의 실행 복제본(인스턴스)을 딱 하나만 띄울지 아니면 여러 개를 동시에 띄워 돌릴지를 정해야 한다.</p>
+</li>
+<li><p><strong>배치 구조 (Deployment Structure / Deployment View): &quot;조각들이 물리적으로 어디에 놓이나?&quot;</strong><br>강의는 슬라이드에 이 세 번째 관점이 빠져 있다고 짚고 덧붙인다. 쪼개 놓은 코드 모듈들이 실제로 어느 하드웨어와 환경 위에 올라가는가 하는 문제다. 과목 소개의 표현을 빌리면, <strong>&quot;내 주머니 속(스마트폰)? 내 몸(웨어러블 기기)? 백엔드 서버? 아니면 클라우드?&quot;</strong> 중 어디에 배치할지 결정해야 한다.</p>
+</li>
+</ol>
+<h3 id="63-쪼개는-순간-따라오는-두-가지-숙제-통신-방식과-횡단-관심사"><a href="#63-쪼개는-순간-따라오는-두-가지-숙제-통신-방식과-횡단-관심사" class="heading-anchor" aria-hidden="true">#</a> 6.3 쪼개는 순간 따라오는 두 가지 숙제: 통신 방식과 횡단 관심사</h3><p>모듈을 여러 개로 쪼개고 여러 곳에 배치하는 순간, 아키텍트는 피할 수 없는 두 가지 후속 질문과 마주한다.</p>
+<p>첫째, <strong>서로 어떻게 통신(interact)할 것인가?</strong><br>조각들을 분리해 놓았으니 이제 그 사이를 건너 데이터를 주고받아야 한다. 호출을 보낸 쪽이 답이 올 때까지 멈춰서 기다리는 <strong>동기 호출(synchronous call)</strong>로 할 것인가, 요청만 던져 놓고 자기 할 일을 계속하는 <strong>비동기 호출(asynchronous call)</strong>로 할 것인가, 아니면 같은 메모리 공간을 함께 읽고 쓰는 <strong>공유 메모리(shared memory)</strong> 방식으로 대화할 것인가를 정해야 한다.</p>
+<p>둘째, <strong>횡단 관심사(cross-cutting concerns)를 어떻게 다룰 것인가?</strong><br>시스템의 어느 한 조각에만 속하지 않고 모든 곳을 가로지르는 공통 기능이 있다. 강의는 <strong>감사 로그(audit log)</strong>—시스템 안에서 일어나는 모든 활동을 빠짐없이 기록하는 기능—를 예로 든다. 로깅은 사용자 화면 계층에서만 찍고 끝날 일이 아니라 데이터 계층, 업무 계층, 결제 계층까지 시스템 전체를 관통하며(cross-cutting) 일어나야 한다. 이때 아키텍트는 선택해야 한다. 이 감사 로그 기능을 모든 계층과 컴포넌트 안에 일일이 집어넣을(embed) 것인가, 아니면 <strong>따로 떼어 내어 독립 모듈로 만든 뒤 모든 계층에서 필요할 때마다 호출(invoke)할 수 있게</strong> 설계할 것인가?</p>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 1418" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cmu3_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#0f172a" />
+<stop offset="100%" stop-color="#1e293b" />
+</linearGradient>
+<marker id="cmu3arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" /></marker>
+</defs>
+<rect x="0" y="0" width="420" height="1418" rx="14" fill="url(#cmu3_bg)"/>
+<rect x="2" y="2" width="416" height="1414" rx="12" fill="none" stroke="#334155" stroke-width="1.5"/>
+<text x="210" y="32" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">소프트웨어 아키텍처를 바라보는</text>
+<text x="210" y="54" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">세 가지 눈</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Static · Dynamic · Deployment</text>
+<text x="210" y="102" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">하나의 차량 호출 앱도</text>
+<text x="210" y="122" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">정적 분할, 실행 중 인스턴스,</text>
+<text x="210" y="142" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">물리적 배치, 통신 방식,</text>
+<text x="210" y="162" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">횡단 관심사를 함께 결정해야 한다</text>
+<rect x="16" y="180" width="388" height="248" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+<rect x="16" y="180" width="388" height="40" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="200.0" width="388" height="20.0" fill="#0c4a6e"/>
+<text x="210" y="206" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 정적 구조 (Static View)</text>
+<text x="210" y="242" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">"코드를 어떻게 나누어 두나?"</text>
+<rect x="32" y="258" width="356" height="62" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="284" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">가로 나누기 (계층화)</text>
+<text x="210" y="306" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">화면 UI / 업무 처리 / 데이터 접근</text>
+<rect x="32" y="328" width="356" height="84" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="354" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">세로 나누기 (도메인·기능별)</text>
+<text x="210" y="376" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">재무·재고·고객</text>
+<text x="210" y="398" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">(예: 승객·운전자·배차·결제)</text>
+<rect x="16" y="444" width="388" height="248" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+<rect x="16" y="444" width="388" height="40" rx="10" fill="#064e3b"/>
+<rect x="16" y="464.0" width="388" height="20.0" fill="#064e3b"/>
+<text x="210" y="470" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 동적 구조 (Dynamic View)</text>
+<text x="210" y="506" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">"실행 중 몇 개가 어떻게 도나?"</text>
+<rect x="32" y="522" width="356" height="84" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="548" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">인스턴스 수 &amp; 병렬·동시 실행</text>
+<text x="210" y="570" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">배차 엔진 N개 병렬 vs</text>
+<text x="210" y="592" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">단일 제어기 1개</text>
+<rect x="32" y="614" width="356" height="62" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="640" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">실행 시점 상호작용</text>
+<text x="210" y="662" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">러시아워 인스턴스 증설·심야 축소</text>
+<rect x="16" y="708" width="388" height="270" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+<rect x="16" y="708" width="388" height="40" rx="10" fill="#4c1d95"/>
+<rect x="16" y="728.0" width="388" height="20.0" fill="#4c1d95"/>
+<text x="210" y="734" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 배치 구조 (Deployment View)</text>
+<text x="210" y="770" fill="#ddd6fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">"조각들이 어디에 놓이나?"</text>
+<rect x="32" y="786" width="356" height="84" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="812" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">물리적·가상 실행 위치</text>
+<text x="210" y="834" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">내 주머니(폰) · 내 몸(웨어러블)</text>
+<text x="210" y="856" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">· 서버 · 클라우드</text>
+<rect x="32" y="878" width="356" height="84" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+<text x="210" y="904" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">차량 호출 앱 배치 예</text>
+<text x="210" y="926" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">UI(휴대폰) + 배차(클라우드)</text>
+<text x="210" y="948" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">+ 결제(외부망)</text>
+<rect x="16" y="994" width="388" height="196" rx="10" fill="#0b1220" stroke="#f59e0b" stroke-width="1.4"/>
+<text x="32" y="1020" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700">나누는 순간 정해야 하는 것 ①</text>
+<text x="32" y="1042" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700">조각 간 통신 방식</text>
+<text x="32" y="1070" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 동기 호출 (Synchronous):</text>
+<text x="48" y="1090" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">답이 올 때까지 대기 (예: 결제 승인)</text>
+<text x="32" y="1112" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 비동기 호출 (Asynchronous):</text>
+<text x="48" y="1132" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">던지고 진행 (예: 위치 보고·알림)</text>
+<text x="32" y="1154" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 공유 메모리 (Shared Memory):</text>
+<text x="48" y="1174" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">같은 기계 내 빠른 메모리 공유</text>
+<rect x="16" y="1206" width="388" height="196" rx="10" fill="#0b1220" stroke="#ef4444" stroke-width="1.4"/>
+<text x="32" y="1232" fill="#fca5a5" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700">나누는 순간 정해야 하는 것 ②</text>
+<text x="32" y="1254" fill="#fca5a5" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700">횡단 관심사 (Cross-cutting)</text>
+<text x="32" y="1282" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 예: 모든 활동을 남기는</text>
+<text x="48" y="1302" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif">감사 로그 (Audit Log)</text>
+<text x="32" y="1324" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• UI 계층만 아니라 모든 계층·</text>
+<text x="48" y="1344" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">컴포넌트에 두루 걸치는 성질</text>
+<text x="32" y="1366" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 각 계층에 직접 심을지, 따로 떼어</text>
+<text x="48" y="1386" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">어디서든 호출하게 할지 결정</text>
+</svg></figure>
+<hr>
+<h2 id="7-바퀴를-다시-발명하지-않는-법-패턴-프레임워크-프로토타입-그리고-두-가지-법칙"><a href="#7-바퀴를-다시-발명하지-않는-법-패턴-프레임워크-프로토타입-그리고-두-가지-법칙" class="heading-anchor" aria-hidden="true">#</a> 7. 바퀴를 다시 발명하지 않는 법: 패턴, 프레임워크, 프로토타입, 그리고 두 가지 법칙</h2><p>아키텍처를 매번 백지상태에서 창조할 필요는 없다. 소프트웨어가 수십 년 동안 발전해 오면서 수많은 개발자가 비슷한 문제를 반복해 풀었고, 그 경험이 검증된 도구들로 축적되어 있기 때문이다.</p>
+<h3 id="71-아키텍처-패턴과-프레임워크-검증된-뼈대-빌려-쓰기"><a href="#71-아키텍처-패턴과-프레임워크-검증된-뼈대-빌려-쓰기" class="heading-anchor" aria-hidden="true">#</a> 7.1 아키텍처 패턴과 프레임워크: 검증된 뼈대 빌려 쓰기</h3><p>첫 번째 도구는 <strong>아키텍처 패턴(architectural patterns)</strong>이다. 어떤 구조가 특정 요구사항과 특정 품질 속성에 특히 잘 맞는다는 사실이 오랜 기간 증명되면 하나의 패턴으로 정립된다. 우리는 바퀴를 다시 발명하지 않고, 이런 패턴들을 익혀 두었다가 자기 애플리케이션의 맥락에 알맞은 것을 골라 쓰면 된다.</p>
+<p>두 번째 도구는 <strong>참조 아키텍처(reference architectures)</strong>와 <strong>프레임워크(frameworks)</strong>다. 모든 기반 코드를 바닥부터 직접 짤 필요가 없다. 집을 지을 때 수도와 전기 배관 같은 기초 공사를 뜻하는 말처럼, 소프트웨어에서도 반복되는 지루한 기반 작업(<strong>plumbing work</strong>)은 이미 프레임워크 안에 다 만들어져 있다. 강의 중 한 학생이 웹 개발과 배포를 위한 프레임워크로 <strong>라라벨(Laravel)</strong>을 예로 들자, 강의는 프레임워크의 본질을 정확히 짚어 낸다.</p>
+<blockquote>
+<p><strong>&quot;프레임워크는 아키텍처를 제공한다. 우리는 정해진 자리에 애플리케이션 고유의 코드만 끼워 넣음으로써 그 아키텍처를 따르게 된다.&quot;</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> 차량 호출 앱의 백엔드 웹 API를 처음부터 TCP 소켓이나 HTTP 파서부터 직접 짜는 사람은 거의 없다. 검증된 웹 프레임워크가 제공하는 요청 처리와 데이터베이스 연결 &#39;배관&#39; 위에, 우리는 승객 매칭과 요금 계산이라는 고유 컴포넌트만 정해진 위치에 끼워 넣어 배포하면 된다.</p>
+</blockquote>
+<h3 id="72-모를-때는-실험하라-프로토타입과-끝에서-끝까지-이어지는-뼈대"><a href="#72-모를-때는-실험하라-프로토타입과-끝에서-끝까지-이어지는-뼈대" class="heading-anchor" aria-hidden="true">#</a> 7.2 모를 때는 실험하라: 프로토타입과 끝에서 끝까지 이어지는 뼈대</h3><p>물론 패턴과 프레임워크를 다 알아도 아키텍처 앞에는 여전히 짙은 안개가 낀 <strong>위험과 미지수(risks and unknowns)</strong>가 남는다. 강의는 두 가지 생생한 예를 든다.</p>
+<ul>
+<li><strong>어떤 LLM이 내 앱에 최적인가?</strong> 챗봇이나 AI 에이전트 서비스를 만들고 싶은데, 내 앱의 요구에 어느 LLM이 가장 잘 맞는지 사전에 문서만 보고는 확신하기 어렵다.</li>
+<li><strong>계층형(layered) vs 마이크로서비스(microservice) 중 무엇이 나은가?</strong> 두 가지 큰 구조 후보 사이에서 어느 쪽이 우리가 원하는 품질 속성(성능, 수정 용이성 등)에 더 맞는지 불확실하다.</li>
+</ul>
+<p>이럴 때 아키텍트가 해야 할 일은 머릿속으로만 논쟁하거나 감으로 찍는 것이 아니라 <strong>프로토타입(prototypes)과 실험(experiments)</strong>을 해 보는 것이다. 특히 시스템의 맨 앞단부터 맨 뒷단까지 <strong>끝에서 끝까지 이어지는 얇은 뼈대(end-to-end skeleton)</strong>를 먼저 프로토타입으로 만들어 실제로 돌려 보고 측정·평가해 보아야 한다. 이것이 바로 <strong>아키텍처 검증(validating the architecture)</strong>이다.</p>
+<blockquote>
+<p><strong>차량 호출 앱으로 연결하면:</strong> &quot;피크 타임 동시 호출 1만 건을 버티려면 단순 계층형 서버로 충분할까, 아니면 배차·결제·알림을 마이크로서비스로 쪼개야 할까?&quot;가 불확실하다면, 전체 기능을 다 만들기 전에 승객 요청 → 배차 모의 처리 → 응답까지 끝에서 끝까지 이어지는 얇은 뼈대를 두 방식으로 각각 프로토타입해 부하를 걸어 보고 선택을 검증해야 한다.</p>
+</blockquote>
+<h3 id="73-소프트웨어-아키텍처의-두-가지-법칙"><a href="#73-소프트웨어-아키텍처의-두-가지-법칙" class="heading-anchor" aria-hidden="true">#</a> 7.3 소프트웨어 아키텍처의 두 가지 법칙</h3><p>강의는 지금까지의 논의를 관통하는 <strong>소프트웨어 아키텍처의 두 가지 법칙</strong>으로 개념의 못을 박는다.</p>
+<ol>
+<li><strong>제1법칙: 소프트웨어 아키텍처의 모든 것은 트레이드오프다 (Everything in software architecture is a trade-off).</strong><br>앞서 입국 심사 줄에서 스콧 파베티가 짚은 원칙이자, 장바구니 상태 관리에서 본 가용성 대 지연 시간의 맞교환이다. 어느 한 품질 속성을 끌어올리면 다른 품질 속성이나 비용 중 무언가는 반드시 내어주어야 한다. 공짜로 얻어지는 품질 속성은 없다.</li>
+<li><strong>제2법칙: &#39;어떻게&#39;보다 &#39;왜&#39;가 더 중요하다 (Why is more important than how).</strong><br>똑같은 기능이라도 서로 다른 여러 아키텍처(&#39;어떻게&#39;)로 구현해 낼 수 있다. 단독 모바일 앱으로도, 단일 웹 백엔드로도, 클라우드 분산 구조로도 차량 호출은 돌아간다. 그러므로 진짜 중요한 것은 구현 방식 자체가 아니라 <strong>&quot;왜 수많은 대안 중 하필 이 아키텍처를 골랐는가&quot;</strong>를 품질 속성과 트레이드오프에 비추어 논리적으로 설명할 수 있는 능력이다. 그리고 모든 선택이 트레이드오프인 만큼, 그 결정이 <strong>사업 요구와 정확히 맞물려 있는지</strong> 끝까지 확인해야 한다.</li>
+</ol>
+<blockquote>
+<p><strong>[해설] 소프트웨어 아키텍처의 두 법칙 원출처</strong><br>강의에서는 이 두 법칙의 책이나 저자 출처를 따로 말하지 않고 핵심 명제로 제시했다. 소프트웨어 아키텍처 분야에서 이 두 문장은 Mark Richards와 Neal Ford의 『Fundamentals of Software Architecture』(O&#39;Reilly, 2020)가 &#39;소프트웨어 아키텍처의 제1법칙(Everything in software architecture is a trade-off)&#39;과 &#39;제2법칙(Why is more important than how)&#39;으로 제시한 명제다. 2025년 2판에서는 제3법칙(대부분의 아키텍처 결정은 둘 중 하나가 아니라 스펙트럼 위에 있다)이 더해졌다<a class="footnote-ref" href="#fn-10" id="fnref-10">10</a>.</p>
+</blockquote>
+<hr>
+<h2 id="8-아키텍트는-코딩-전에-무엇을-하는가-여섯-가지-핵심-활동과-총정리"><a href="#8-아키텍트는-코딩-전에-무엇을-하는가-여섯-가지-핵심-활동과-총정리" class="heading-anchor" aria-hidden="true">#</a> 8. 아키텍트는 코딩 전에 무엇을 하는가: 여섯 가지 핵심 활동과 총정리</h2><p>그렇다면 이 모든 이론을 손에 쥔 아키텍트는 실제 프로젝트에서 무엇을 하며 하루를 보낼까? 강의의 마지막 장은 아키텍트의 공통 활동을 여섯 가지로 명확하게 정리한다.</p>
+<h3 id="81-아키텍트의-여섯-가지-핵심-활동"><a href="#81-아키텍트의-여섯-가지-핵심-활동" class="heading-anchor" aria-hidden="true">#</a> 8.1 아키텍트의 여섯 가지 핵심 활동</h3><ol>
+<li><p><strong>요구사항 도출(requirements elicitation)에 참여하기</strong><br>아키텍트는 기능 목록이 다 정해진 뒤에야 불려 들어오는 사람이 아니다. 처음 요구사항을 모으는 자리부터 함께 들어가 <strong>아키텍처 요구사항</strong>, 즉 성능·보안·사용성 같은 품질 속성을 파악해야 한다. 동시에 피해 갈 수 없는 <strong>제약(constraints)</strong>도 정확히 알아내야 한다. 예컨대 발주처나 스폰서가 &quot;.NET 프레임워크만 써야 하고, 클라우드는 AWS가 아니라 반드시 Azure만 써야 한다&quot;고 못 박는다면, 아키텍트는 아무리 다른 도구가 좋아 보여도 그 제약을 따르는 범위 안에서 설계해야 한다.</p>
+</li>
+<li><p><strong>우선순위(priorities) 파악하기</strong><br>제1법칙에 따라 품질 속성들은 서로 트레이드오프 관계에 놓여 충돌한다. 속도를 높이면 비용이 오르고, 지속성을 챙기면 지연 시간이 길어진다. 따라서 사업 입장에서 <strong>무엇이 가장 중요하고 무엇을 양보할 수 있는지</strong> 우선순위를 파악해야 진짜 중요한 품질 속성에 자원을 집중할 수 있다.</p>
+</li>
+<li><p><strong>범위(scope) 파악하기</strong><br>우리가 직접 설계하고 만들어야 할 시스템 <strong>안쪽</strong>은 어디까지이고, 우리가 만들지 않고 바깥에 두되 데이터를 주고받거나 기능을 빌려 써야 할 <strong>외부 시스템</strong>은 무엇인지 경계를 긋는다. 직접 만들지 않는 외부 대상이라 하더라도, 그와 <strong>어떻게 상호작용(interact)할지</strong>는 반드시 설계해야 하기 때문이다.</p>
+</li>
+<li><p><strong>정적·동적·배치 관점(perspectives) 개발하기</strong><br>코드를 어떤 모듈로 나눌지(정적 뷰), 실행 중에 인스턴스를 몇 개나 병렬로 돌릴지(동적 뷰), 그 조각들을 스마트폰·서버·클라우드 중 어디에 올려놓을지(배치 뷰)와 그 사이의 통신 방식을 구체적으로 설계한다.</p>
+</li>
+<li><p><strong>기술 위험 완화(technical risks mitigation)</strong><br>플랫폼, 프레임워크, 소프트웨어 컴포넌트, 알고리즘, 아키텍처 뷰에 이르기까지 눈앞의 여러 선택지 가운데 무엇이 최선인지 평가한다. 아키텍트의 핵심 역량 중 하나는 <strong>&quot;우리 상황에 가장 잘 맞는 최선의 선택지가 무엇인지 평가하는 기술&quot;</strong>이다. 이를 위해 타당성 조사(feasibility studies)를 수행하고, 실험을 돌리며, 프로토타입을 만든다.</p>
+</li>
+<li><p><strong>아키텍처와 결정의 이유 문서화(documenting decisions)하기</strong><br>기술 위험을 줄이든, 우선순위를 잡아 세 가지 뷰를 선택하든, 그 모든 결정을 문서로 남겨야 한다. 제2법칙이 말하듯 <strong>&#39;어떻게&#39;보다 &#39;왜&#39;가 더 중요하기 때문</strong>이다.</p>
+<ul>
+<li><strong>왜</strong> 이 대안을 선택했는가?</li>
+<li>검토했던 <strong>다른 대안들</strong>은 무엇이었는가?</li>
+<li>그중 하나를 고르기 전에 <strong>어떤 분석과 검증</strong>을 거쳤는가?</li>
+<li>아울러 실제로 구현할 아키텍처 자체도 <strong>정적·동적·배치 뷰</strong>로 정리해 문서화한다.</li>
+</ul>
+</li>
+</ol>
+<figure class="diagram diagram-scroll diagram-adaptive" style="--diagram-w:420px" data-scroll-hint="좌우로 밀어서 그림 전체 보기"><svg viewBox="0 0 420 1318" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cmu4_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#0f172a" />
+<stop offset="100%" stop-color="#1e293b" />
+</linearGradient>
+<marker id="cmu4arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" /></marker>
+<marker id="cmu4arrL" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 10 1 L 0 5 L 10 9 z" fill="#38bdf8" /></marker>
+</defs>
+<rect x="0" y="0" width="420" height="1318" rx="14" fill="url(#cmu4_bg)"/>
+<rect x="2" y="2" width="416" height="1314" rx="12" fill="none" stroke="#334155" stroke-width="1.5"/>
+<text x="210" y="32" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">코딩 전 아키텍처의 전체 흐름</text>
+<text x="210" y="54" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">사업 요구에서 '왜(Rationale)'의</text>
+<text x="210" y="76" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">문서화까지</text>
+<text x="210" y="102" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">기능만 구현하면 코드 덩어리에 그친다</text>
+<text x="210" y="122" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">사업 맥락과 품질 속성이 맞물려야</text>
+<text x="210" y="142" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">구조 결정이 완성된다</text>
+<rect x="16" y="162" width="388" height="196" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+<rect x="16" y="162" width="388" height="40" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="182.0" width="388" height="20.0" fill="#0c4a6e"/>
+<text x="210" y="188" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 사업 요구 · 제약</text>
+<text x="36" y="228" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 사용자·동시 접속 규모</text>
+<text x="36" y="250" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 사업 확장 계획(택배 등)</text>
+<text x="36" y="272" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 안팎 범위 (컨텍스트)</text>
+<text x="36" y="294" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 기술 제약 (.NET·Azure)</text>
+<text x="36" y="324" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">→ 기능 너머의 맥락 수집</text>
+<line x1="210" y1="358" x2="210" y2="386" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#cmu4arr)"/>
+<rect x="16" y="394" width="388" height="196" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+<rect x="16" y="394" width="388" height="40" rx="10" fill="#064e3b"/>
+<rect x="16" y="414.0" width="388" height="20.0" fill="#064e3b"/>
+<text x="210" y="420" fill="#d1fae5" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 품질 속성 · 우선순위</text>
+<text x="36" y="460" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 모듈성 · 성능 · 가용성</text>
+<text x="36" y="482" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 확장성 · 수정 용이성</text>
+<text x="36" y="504" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 6부분 시나리오 정식화</text>
+<text x="36" y="526" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 사업 중요도별 우선순위</text>
+<text x="36" y="556" fill="#6ee7b7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">→ '얼마나 잘'의 입력 확정</text>
+<line x1="210" y1="590" x2="210" y2="618" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#cmu4arr)"/>
+<rect x="16" y="626" width="388" height="196" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+<rect x="16" y="626" width="388" height="40" rx="10" fill="#78350f"/>
+<rect x="16" y="646.0" width="388" height="20.0" fill="#78350f"/>
+<text x="210" y="652" fill="#fef3c7" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 구조 결정 · 검증</text>
+<text x="36" y="692" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 정적 · 동적 · 배치 뷰 설계</text>
+<text x="36" y="714" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 패턴·프레임워크 재사용</text>
+<text x="36" y="736" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 트레이드오프 균형 잡기</text>
+<text x="36" y="758" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 프로토타입·뼈대 실험</text>
+<text x="36" y="788" fill="#fcd34d" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">→ 제1법칙(트레이드오프) 다루기</text>
+<line x1="210" y1="822" x2="210" y2="850" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#cmu4arr)"/>
+<rect x="16" y="858" width="388" height="196" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+<rect x="16" y="858" width="388" height="40" rx="10" fill="#4c1d95"/>
+<rect x="16" y="878.0" width="388" height="20.0" fill="#4c1d95"/>
+<text x="210" y="884" fill="#ede9fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">4. 문서화 (왜 · 뷰)</text>
+<text x="36" y="924" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 대안과 분석 기록 (ADR)</text>
+<text x="36" y="946" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 포기한 것과 근거 남김</text>
+<text x="36" y="968" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 정적·동적·배치 뷰 명세</text>
+<text x="36" y="990" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif">• 개발자·경영진·미래의 나</text>
+<text x="36" y="1020" fill="#ddd6fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="600">→ 제2법칙(왜 &gt; 어떻게)</text>
+<rect x="16" y="1074" width="388" height="228" rx="8" fill="#0b1220" stroke="#475569" stroke-width="1.2"/>
+<text x="210" y="1100" fill="#38bdf8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">최종 요약: 상호 지원 · 정합</text>
+<text x="210" y="1122" fill="#38bdf8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">(Alignment)</text>
+<rect x="28" y="1138" width="150" height="70" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="103" y="1168" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">사업 맥락</text>
+<text x="103" y="1190" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Business Context</text>
+<rect x="242" y="1138" width="150" height="70" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+<text x="317" y="1168" fill="#d1fae5" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">품질 속성</text>
+<text x="317" y="1190" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Quality Attributes</text>
+<line x1="186" y1="1166" x2="234" y2="1166" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#cmu4arr)"/>
+<line x1="234" y1="1182" x2="186" y2="1182" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#cmu4arrL)"/>
+<text x="210" y="1240" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">이 둘의 맞물림이 시스템의 큰 구조를</text>
+<text x="210" y="1262" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">빚어내는 근본적인 아키텍처 결정이며,</text>
+<text x="210" y="1284" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">그 바탕 위에서 비로소 코딩을 시작한다.</text>
+</svg></figure>
+<h3 id="82-코딩-전에-할-일이-이렇게-많다-다섯-가지-관통-통찰"><a href="#82-코딩-전에-할-일이-이렇게-많다-다섯-가지-관통-통찰" class="heading-anchor" aria-hidden="true">#</a> 8.2 코딩 전에 할 일이 이렇게 많다 — 다섯 가지 관통 통찰</h3><p>강의는 놀라움 섞인 질문으로 마무리된다. <em>&quot;아키텍트가 이렇게 많은 일을 한다고 생각했는가? 그저 코딩만 하는 줄 알았는가? 실제로 코딩을 시작하기 전에 해야 할 일이 이렇게나 많다.&quot;</em> 그리고 한 문장으로 전체를 요약한다. <strong>사업 맥락(business context)과 시스템 성질(품질 속성)은 서로 맞물려 지원되어야 하며, 바로 이 둘이 시스템의 구조를 만드는 근본적인 아키텍처 결정이다.</strong></p>
+<p>이 1강 전체를 하나로 꿰뚫어 보면, 소프트웨어 아키텍처를 처음 배우는 사람이라도 반드시 기억해야 할 <strong>다섯 가지 핵심 통찰</strong>과 <strong>아키텍트 활동 요약</strong>이 선명하게 남는다.</p>
+<div class="table-wrapper" data-scroll-hint="좌우로 스크롤하여 확인" tabindex="0" role="region" aria-label="데이터 표"><table>
+<thead>
+<tr>
+<th align="left">아키텍트의 6대 활동</th>
+<th align="left">무엇을 하는가 (원문 기준)</th>
+<th align="left">차량 호출 앱에서의 구체적 질문</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>1. 요구사항 도출 참여</strong></td>
+<td align="left">기능 외의 품질 속성(성능·보안·사용성)과 기술 제약(.NET, Azure 등)을 수집</td>
+<td align="left">&quot;동시 접속 1만 명 기준 배차 응답은 몇 초 안이어야 하며, 회사가 강제한 클라우드·결제 규격은 무엇인가?&quot;</td>
+</tr>
+<tr>
+<td align="left"><strong>2. 우선순위 파악</strong></td>
+<td align="left">품질 속성 사이의 트레이드오프 앞에서 사업상 무엇이 더 중요한지 결정</td>
+<td align="left">&quot;배차 속도(짧은 지연)와 운행 기록 보존(지속성) 중 어느 쪽을 우선할 것인가?&quot;</td>
+</tr>
+<tr>
+<td align="left"><strong>3. 범위 파악</strong></td>
+<td align="left">직접 구현할 안쪽과 연동해 쓸 외부 영역의 경계(컨텍스트) 설정</td>
+<td align="left">&quot;지도·문자 인증·결제 승인 중 외부 API에 맡길 것과 직접 짤 것은 무엇인가?&quot;</td>
+</tr>
+<tr>
+<td align="left"><strong>4. 세 가지 관점 개발</strong></td>
+<td align="left">정적(코드 분할)·동적(실행 인스턴스·병렬성)·배치(폰·서버·클라우드)와 통신 설계</td>
+<td align="left">&quot;모바일 앱에는 UI만 남기고 배차 컨트롤러는 클라우드에서 병렬 실행하며, 운행 로그는 비동기 횡단 모듈로 뺄까?&quot;</td>
+</tr>
+<tr>
+<td align="left"><strong>5. 기술 위험 완화</strong></td>
+<td align="left">플랫폼·프레임워크·컴포넌트·알고리즘·뷰를 평가하고 타당성 조사·실험·프로토타입 수행</td>
+<td align="left">&quot;계층형과 마이크로서비스 중 어느 구조가 피크 부하를 버티는지 끝에서 끝까지 뼈대 프로토타입으로 실험해 보자.&quot;</td>
+</tr>
+<tr>
+<td align="left"><strong>6. 결정과 구조 문서화</strong></td>
+<td align="left">고른 대안, 검토한 다른 대안, 분석 내용(&#39;왜&#39;) 및 정적·동적·배치 뷰 문서화</td>
+<td align="left">&quot;왜 결제를 직접 짜지 않고 외부 서비스에 위임했는지, 그때 무엇을 포기했는지를 ADR로 남겨 후임과 미래의 내가 보게 하자.&quot;</td>
+</tr>
+</tbody></table>
+</div><ol>
+<li><strong>기능이 같아도 사업 요구가 다르면 &#39;좋은 구조&#39;가 달라진다.</strong> 차량 호출 앱, LLM 서비스, 아마존 대 기존 서점 사례가 증명하듯, 무엇을 하느냐가 같아도 누구를 위해 어떻게 사업하느냐에 따라 알맞은 아키텍처는 완전히 달라진다.</li>
+<li><strong>품질 속성은 &quot;무엇을&quot;이 아니라 &quot;얼마나 잘&quot;이며, 그것을 조절하는 가장 큰 손잡이가 구조다.</strong> 입국 심사 줄의 병렬화와 전문화처럼, 모듈을 어떻게 나누고 복제하고 통신하게 하느냐가 처리량·지연·가용성·수정 용이성을 결정한다.</li>
+<li><strong>공짜 품질 속성은 없으며, 모든 선택은 거래(트레이드오프)다.<strong> 그렇기 때문에 사업이 무엇을 더 중요하게 여기는지(</strong>우선순위</strong>)를 알아야 올바른 결정을 내릴 수 있다.</li>
+<li><strong>그래서 문서에는 &#39;어떻게&#39;보다 &#39;왜&#39;(검토한 대안, 분석, 포기한 것)를 남겨야 한다.</strong> 코드는 &#39;어떻게&#39;를 보여 주지만, 나중에 시스템을 고치거나 넘겨줄 때 정말 필요한 것은 &#39;왜&#39; 그렇게 정했는지에 대한 맥락이다.</li>
+<li><strong>LLM이 코드를 써 주는 시대일수록, 코드를 쓰기 전의 결정이 소프트웨어의 운명을 가른다.</strong> 키보드를 두드리기 전에 사업 맥락과 품질 속성을 맞물려 세운 큰 구조가 없다면, 아무리 빠르게 생성된 코드라도 쓸모 있을지 모를 코드 덩어리에 머물 뿐이다.</li>
+</ol>
+<hr>
+<section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1"><strong>과목과 강사:</strong> CMU 17-635 「Software Architectures」(2026년 봄). Swarnalatha Ashok은 Associate Teaching Professor(Software and Societal Systems Department, MSE 부디렉터), Scott Pavetti는 Assistant Teaching Professor로, 두 사람 모두 이 과목 강사(Instructor)로 등재되어 있다. 출처: <a href="https://mse.s3d.cmu.edu/0_documents/syllabi/17635-software-architectures-2026-syllabus-v1.01.pdf">CMU 2026 실러버스</a>, <a href="http://isri.cmu.edu/people/core-faculty/ashok-swarnalatha.html">Ashok 소개</a>, <a href="http://isri.cmu.edu/people/core-faculty/pavetti-scott.html">Pavetti 소개</a><a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
+<li id="fn-2"><strong>교재:</strong> 『Software Architecture in Practice』 4판(Addison-Wesley, 2021/©2022), Len Bass·Paul Clements·Rick Kazman. 『Documenting Software Architectures: Views and Beyond』 2판(Addison-Wesley, 2010), Paul Clements·Felix Bachmann·Len Bass·David Garlan·James Ivers·Reed Little·Paulo Merson·Robert Nord·Judith Stafford. 강의는 첫 책을 &quot;Len Bass and all&quot;로, 둘째 책은 제목만 소개했다. 출처: <a href="https://www.pearson.com/en-us/subject-catalog/p/Bass-Software-Architecture-in-Practice-4th-Edition/P200000000111">Pearson 4판</a>, <a href="https://www.sei.cmu.edu/library/documenting-software-architectures-views-and-beyond-second-edition/">SEI 2판</a><a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li>
+<li id="fn-3"><strong>6부분 시나리오와 ADD:</strong> 강의는 6부분 시나리오를 &quot;무엇이 자극하고, 결과가 무엇이며, 어떻게 측정하는가&quot; 정도로만 소개하고 설계 방법은 &quot;attribute-driven process/approach&quot;라고 불렀다. 여섯 요소 이름(Source of Stimulus, Stimulus, Artifact, Environment, Response, Response Measure)은 『Software Architecture in Practice』 3·4판과 SEI 자료에서 같다. ADD 3.0은 Cervantes·Kazman의 『Designing Software Architectures』(2016) 등에서 정리되었다. 출처: <a href="https://www.sei.cmu.edu/library/attribute-driven-design-add-version-20/">SEI ADD 2.0</a>, <a href="https://www.sei.cmu.edu/library/add-30-rethinking-drivers-and-decisions-in-the-design-process/">SEI ADD 3.0</a><a class="backlink" href="#fnref-3" aria-label="본문으로">↩</a></li>
+<li id="fn-4"><strong>초기 온라인 서점:</strong> books.com은 Charles M. Stack이 세운 Book Stacks Unlimited가 운영했다(1992년 BBS, 1994년 웹사이트). 이후 Cendant를 거쳐 Barnes &amp; Noble이 인수했다. bn.com은 1997년경, Borders Online은 1998년에 시작했다. 출처: <a href="https://en.wikipedia.org/wiki/Book_Stacks_Unlimited">Wikipedia, Book Stacks Unlimited</a>, <a href="https://www.cnet.com/tech/services-and-software/book-site-wars-bring-price-cuts/">CNET 1997</a>, <a href="https://www.reuters.com/article/business/timeline-a-short-history-of-borders-group-bookstores-idUSTRE71F3AT/">Reuters, Borders 연표</a><a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
+<li id="fn-5"><strong>아마존의 재고와 창고:</strong> 강의 발언은 &quot;Amazon has no warehouse, no inventory&quot;(잠시 보관하는 창고는 있을 수 있음)였다. 실제로는 1995년 시애틀 첫 창고, 1997년 델라웨어 등 유통센터를 열었고, 지금은 수백 개의 물류센터에서 1P 재고와 3P 판매를 함께 운영한다. Ingram 등 도매상 활용과 1999년 zShops → 2000년 Marketplace 확대도 확인되었다. 출처: <a href="https://www.nplusonemag.com/online-only/online-only/the-everything-warehouse/">n+1 &quot;The Everything Warehouse&quot;</a>, <a href="https://www.cnn.com/interactive/2018/10/business/amazon-history-timeline/">CNN 아마존 연표</a>, <a href="https://www.aboutamazon.com/workplace/facilities">About Amazon 시설</a>, <a href="https://www.publishersweekly.com/pw/by-topic/industry-news/bookselling/article/67986-20-years-of-amazon-com-bookselling.html">Publishers Weekly</a><a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li>
+<li id="fn-6"><strong>100ms와 매출 1%:</strong> 강의 표현은 &quot;every 100 millisecond decrease in the response time actually increased their sales by 1%&quot;였다. 원 출처는 Greg Linden의 2006년 블로그(Geeking with Greg)와 스탠퍼드 발표 &quot;Make Data Useful&quot;로, 페이지를 100ms 늦추는 A/B 테스트에서 매출이 약 1% 줄었다는 경험담이다. 출처: <a href="https://www.conductor.com/academy/page-speed-resources/faq/amazon-page-speed-study/">Conductor 정리</a>, <a href="https://latencycost.com/">latencycost.com</a><a class="backlink" href="#fnref-6" aria-label="본문으로">↩</a></li>
+<li id="fn-7"><strong>아마존 장애:</strong> 강의가 말한 사건이 어느 것인지는 확인되지 않았다(확인 필요). 시기가 가장 가까운 2021년 12월 7일 AWS us-east-1 장애(약 7~11시간)의 공식 원인은 네트워크 혼잡과 재시도 폭주였고 백업 실패는 아니었다. 2017년 S3 장애 등 다른 사건과도 다르다. 출처: <a href="https://aws.amazon.com/message/12721/">AWS 공식 사후 요약</a>, <a href="https://www.infoq.com/news/2021/12/aws-outage-postmortem/">InfoQ</a><a class="backlink" href="#fnref-7" aria-label="본문으로">↩</a></li>
+<li id="fn-8"><strong>노키아와 심비안:</strong> 강의는 OS 이름을 말하지 않고 &quot;기능이 제한된 운영체제&quot;라고만 했다. 출처: <a href="https://www.slashgear.com/nokia-our-platform-is-burning-elop-memo-reportedly-leaks-in-full-admits-ecosystem-war-09131936/">SlashGear, 엘롭 메모</a>, <a href="https://appleinsider.com/articles/13/10/10/how-apples-iphone-rapidly-destroyed-nokias-world-leading-symbian-platform">AppleInsider</a><a class="backlink" href="#fnref-8" aria-label="본문으로">↩</a></li>
+<li id="fn-9"><strong>정식 정의:</strong> 강의는 첫 문장만 인용했다. 4판 기준 전체 정의는 &quot;The software architecture of a system is the set of structures needed to reason about the system. These structures comprise software elements, relations among them, and properties of both.&quot;이다. 2판의 정의는 &quot;the structure or structures of the system, which comprise software elements, the externally visible properties of those elements, and the relationships among them&quot;으로 조금 달랐다. 출처: <a href="https://www.sei.cmu.edu/library/software-architecture-in-practice-fourth-edition/">SEI, 4판 소개</a><a class="backlink" href="#fnref-9" aria-label="본문으로">↩</a></li>
+<li id="fn-10"><strong>두 법칙의 출처:</strong> Mark Richards·Neal Ford, 『Fundamentals of Software Architecture』(O&#39;Reilly, 2020). 강의는 출처를 말하지 않았다. 출처: <a href="https://www.oreilly.com/library/view/fundamentals-of-software/9781098175504/ch27.html">O&#39;Reilly 2판</a>, <a href="https://deviq.com/laws/laws-software-architecture">DevIQ</a><a class="backlink" href="#fnref-10" aria-label="본문으로">↩</a></li></ol></section>
+      </section>
+
+      
+      <div class="companion-footer-box">
+        <span class="cf-text">✅ 심화 학습을 마치셨나요? 핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
+        <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처1강.html" rel="noopener">🗂️ 복습 & 퀴즈 풀기 (Archive ↗)</a>
+      </div>
+      
+
+      <footer class="article-footer">
+        <p>© Curated Reading Hub · <a href="../index.html">← 목록으로 돌아가기</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" aria-label="맨 위로 가기" title="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function getTheme() {
+      const saved = localStorage.getItem('pages_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pages_theme', theme);
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+    }
+
+    applyTheme(getTheme());
+
+    const FONT_KEY = "pages_font";
+    const fontToggle = document.getElementById("font-toggle");
+    const fontMenu = document.getElementById("font-menu");
+    const fontOptions = fontMenu ? fontMenu.querySelectorAll(".font-option") : [];
+
+    function getFont() {
+      try {
+        const saved = localStorage.getItem(FONT_KEY);
+        if (saved === "d2coding" || saved === "pretendard") return saved;
+      } catch (e) {}
+      return "pretendard";
+    }
+
+    function applyFont(font) {
+      document.documentElement.setAttribute("data-font", font);
+      try { localStorage.setItem(FONT_KEY, font); } catch (e) {}
+      fontOptions.forEach((btn) => {
+        btn.setAttribute("aria-selected", btn.dataset.font === font ? "true" : "false");
+      });
+    }
+
+    function closeFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      fontMenu.hidden = true;
+      fontToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleFontMenu() {
+      if (!fontMenu || !fontToggle) return;
+      const open = fontMenu.hidden;
+      fontMenu.hidden = !open;
+      fontToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    applyFont(getFont());
+
+    if (fontToggle) {
+      fontToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFontMenu();
+      });
+    }
+    fontOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyFont(btn.dataset.font);
+        closeFontMenu();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (fontMenu && !fontMenu.hidden && !e.target.closest("#font-picker")) {
+        closeFontMenu();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeFontMenu();
+    });
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    }
+
+    // Reading Progress & Header Title Visibility
+    const progressBar = document.getElementById('progress-bar');
+    const navTitle = document.getElementById('nav-title-text');
+    const backToTop = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+      
+      if (navTitle) {
+        if (scrollTop > 140) {
+          navTitle.classList.add('visible');
+        } else {
+          navTitle.classList.remove('visible');
+        }
+      }
+
+      if (backToTop) {
+        if (scrollTop > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
+
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // TOC Drawer Interactions
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const tocClose = document.getElementById('toc-close');
+
+    function openDrawer() {
+      if (tocDrawer) tocDrawer.classList.add('active');
+      if (drawerOverlay) drawerOverlay.classList.add('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      if (tocDrawer) tocDrawer.classList.remove('active');
+      if (drawerOverlay) drawerOverlay.classList.remove('active');
+      if (tocToggle) tocToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (tocToggle) tocToggle.addEventListener('click', openDrawer);
+    if (tocClose) tocClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Heading Anchor Click: Copy URL and show tooltip
+    document.querySelectorAll('.heading-anchor').forEach(anchor => {
+      anchor.setAttribute('aria-hidden', 'false');
+      anchor.setAttribute('aria-label', '섹션 고유 링크 복사');
+      anchor.setAttribute('title', '클릭하여 링크 복사');
+      anchor.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute('href');
+        const targetId = href.replace(/^#/, '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+          history.pushState(null, '', href);
+        }
+        const fullUrl = window.location.origin + window.location.pathname + href;
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          showAnchorTooltip(anchor, '✓ 링크 복사됨!');
+        } catch (err) {
+          showAnchorTooltip(anchor, href);
+        }
+      });
+    });
+
+    function showAnchorTooltip(element, message) {
+      let tip = document.getElementById('anchor-copy-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'anchor-copy-tooltip';
+        tip.className = 'anchor-tooltip';
+        document.body.appendChild(tip);
+      }
+      tip.textContent = message;
+      const rect = element.getBoundingClientRect();
+      tip.style.top = `${window.scrollY + rect.top - 28}px`;
+      tip.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
+      tip.classList.add('visible');
+      clearTimeout(tip._timer);
+      tip._timer = setTimeout(() => {
+        tip.classList.remove('visible');
+      }, 1800);
+    }
+
+    // Copy Code Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.code-block-wrapper').querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '✓ 복사됨';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (e) {
+          btn.textContent = '실패';
+        }
+      });
+    });
+
+    // ==========================================
+    // Interactive Memory & Step Simulator Logic
+    // ==========================================
+    function initSimulator() {
+      const simContainer = document.getElementById('interactive-simulator');
+      if (!simContainer) return;
+
+      const smcSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0이다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "20호 상자 안의 값(7)을 합계에 더함",
+          sum: "7", memo: "-", cmd6: "add [20]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 주소 6의 명령 <code>add [20]</code>을 읽어 20호의 재료(7)를 합계(주소 4)에 더합니다. (합계: 0 → <strong>7</strong>)",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 20에서 21로 수정",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>6호 레시피의 잉크를 긁어고칩니다!</strong> 명령 속 '20'이 '21'로 덮어써집니다. (6호 명령: <code>add [20]</code> → <strong style='color:#ef4444;'>add [21]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "주소칸(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 주소칸(21)을 22와 비교합니다. 끝에 도달하지 않았으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "21호 상자 안의 값(3)을 합계에 더함",
+          sum: "10", memo: "-", cmd6: "add [21]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 착지했습니다! 하지만 이제 6호에 적힌 명령은 <code>add [21]</code>입니다. 21호의 재료(3)를 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "6호 명령의 주소 필드를 21에서 22로 수정",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 다시 6호 레시피를 수정합니다. 명령 속 '21'이 '22'로 변합니다. (6호 명령: <strong style='color:#ef4444;'>add [22]</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-6"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "주소칸(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "-", cmd6: "add [22]",
+          desc: "<strong>[박자 6]</strong> 주소칸이 22와 일치하므로 루프를 통과합니다. <strong>최종 합계: 10</strong>. 단, 끝난 뒤에도 6호 레시피는 원본과 다른 <code>add [22]</code>로 영구 변질되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      const ptrSteps = [
+        {
+          beat: 0, pc: 6, nextPc: 6,
+          action: "실행 전",
+          sum: "0", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[실행 전]</strong> 아직 아무 명령도 실행하지 않았다. PC는 첫 명령인 6호를 가리키고, 합계는 0, 메모지는 20호다.",
+          highlightRow: null, pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 1, pc: 6, nextPc: 7,
+          action: "3호 메모지(20)가 가리키는 20호의 값(7)을 더함",
+          sum: "7", memo: "20", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 1]</strong> PC가 6을 가리킵니다. 명령 <code>add [4], [[3]]</code>은 3호 메모지(20호)를 보고 20호의 재료(7)를 합계에 더합니다. <strong>(명령어는 고정!)</strong>",
+          highlightRow: "mem-20", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 2, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 20에서 21로 증가",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 2]</strong> 7호 명령이 <strong>3호 메모지의 숫자만 20에서 21로 변경</strong>합니다. 6호 레시피는 전혀 건드리지 않습니다. (메모지: 20 → <strong style='color:#10b981;'>21</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 3, pc: 8, nextPc: 6,
+          action: "메모지(21) ≠ 22 이므로 주소 6으로 점프",
+          sum: "7", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 3]</strong> 8호 명령이 메모지의 숫자(21)를 22와 비교합니다. 일치하지 않으므로 <strong>PC를 6으로 점프</strong>시킵니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        },
+        {
+          beat: 4, pc: 6, nextPc: 7,
+          action: "3호 메모지(21)가 가리키는 21호의 값(3)을 더함",
+          sum: "10", memo: "21", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 4]</strong> 다시 주소 6으로 왔습니다. 명령 글자는 여전히 똑같은 <code>add [4], [[3]]</code>이지만, 손에 든 메모지가 21호이므로 21호의 3을 더합니다. (합계: 7 → <strong>10</strong>)",
+          highlightRow: "mem-21", pcRow: "mem-6", modRow: null
+        },
+        {
+          beat: 5, pc: 7, nextPc: 8,
+          action: "3호 메모지의 숫자를 21에서 22로 증가",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 5]</strong> 7호 명령이 3호 메모지 숫자를 21에서 22로 올립니다. 레시피 6호는 여전히 깨끗합니다. (메모지: 21 → <strong style='color:#10b981;'>22</strong>)",
+          highlightRow: null, pcRow: "mem-7", modRow: "mem-3"
+        },
+        {
+          beat: 6, pc: 8, nextPc: 9,
+          action: "메모지(22) == 22 이므로 루프 종료",
+          sum: "10", memo: "22", cmd6: "add [4], [[3]]",
+          desc: "<strong>[박자 6]</strong> 메모지가 22에 도달하여 루프를 마칩니다. <strong>최종 합계: 10</strong>. 6호 레시피는 원본 그대로 완벽하게 보존되었습니다.",
+          highlightRow: null, pcRow: "mem-8", modRow: null
+        }
+      ];
+
+      let currentMode = 'smc'; // 'smc' or 'ptr'
+      let currentStep = 0;
+      let autoPlayTimer = null;
+
+      const tabSmc = document.getElementById('sim-tab-smc');
+      const tabPtr = document.getElementById('sim-tab-ptr');
+      const btnPrev = document.getElementById('sim-prev');
+      const btnNext = document.getElementById('sim-next');
+      const btnReset = document.getElementById('sim-reset');
+      const btnPlay = document.getElementById('sim-play');
+
+      const elBeat = document.getElementById('sim-val-beat');
+      const elPc = document.getElementById('sim-val-pc');
+      const elNextPc = document.getElementById('sim-val-nextpc');
+      const elAction = document.getElementById('sim-val-action');
+      const elSum = document.getElementById('sim-val-sum') || document.getElementById('sim-mem-4-val');
+      const elMemo = document.getElementById('sim-val-memo') || document.getElementById('sim-mem-3-val');
+      const elCmd6 = document.getElementById('sim-val-cmd6') || document.getElementById('sim-mem-6-val');
+      const elDesc = document.getElementById('sim-val-desc');
+
+      function setText(el, value) {
+        if (el) el.textContent = value;
+      }
+      function setHtml(el, value) {
+        if (el) el.innerHTML = value;
+      }
+      function lastBeat(steps) {
+        return steps.length ? steps[steps.length - 1].beat : 0;
+      }
+
+      function updateUI() {
+        const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+        const data = steps[currentStep];
+        if (!data) return;
+
+        setText(elBeat, `박자 ${data.beat} / ${lastBeat(steps)}`);
+        setText(elPc, `${data.pc}호`);
+        setText(elNextPc, `${data.nextPc}호`);
+        setText(elAction, data.action);
+        setText(elSum, data.sum);
+        setText(elMemo, data.memo);
+        setText(elCmd6, data.cmd6);
+        setHtml(elDesc, data.desc);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+        if (btnNext) btnNext.disabled = currentStep === steps.length - 1;
+
+        document.querySelectorAll('.sim-mem-row').forEach(row => {
+          row.classList.remove('pc-target', 'modified', 'read-target');
+        });
+
+        if (data.pcRow) {
+          const r = document.getElementById(data.pcRow);
+          if (r) r.classList.add('pc-target');
+        }
+        if (data.highlightRow) {
+          const r = document.getElementById(data.highlightRow);
+          if (r) r.classList.add('read-target');
+        }
+        if (data.modRow) {
+          const r = document.getElementById(data.modRow);
+          if (r) r.classList.add('modified');
+        }
+
+        const row6Val = document.getElementById('sim-mem-6-val');
+        if (row6Val) row6Val.textContent = data.cmd6;
+        const row3Val = document.getElementById('sim-mem-3-val');
+        if (row3Val) row3Val.textContent = data.memo;
+        const row4Val = document.getElementById('sim-mem-4-val');
+        if (row4Val) row4Val.textContent = data.sum;
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          if (btnPlay) btnPlay.textContent = '▶ 자동 재생';
+        }
+      }
+
+      function startAutoPlay() {
+        if (btnPlay) btnPlay.textContent = '⏸ 일시 정지';
+        autoPlayTimer = setInterval(() => {
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1600);
+      }
+
+      function applyModeChrome(mode) {
+        currentMode = mode;
+        if (tabSmc) {
+          tabSmc.classList.toggle('active', mode === 'smc');
+          tabSmc.setAttribute('aria-selected', mode === 'smc' ? 'true' : 'false');
+        }
+        if (tabPtr) {
+          tabPtr.classList.toggle('active', mode === 'ptr');
+          tabPtr.setAttribute('aria-selected', mode === 'ptr' ? 'true' : 'false');
+        }
+        const memoRow = document.getElementById('mem-3');
+        if (memoRow) memoRow.style.opacity = mode === 'smc' ? '0.4' : '1';
+      }
+
+      if (tabSmc) {
+        tabSmc.addEventListener('click', () => {
+          if (currentMode === 'smc') return;
+          stopAutoPlay();
+          applyModeChrome('smc');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (tabPtr) {
+        tabPtr.addEventListener('click', () => {
+          if (currentMode === 'ptr') return;
+          stopAutoPlay();
+          applyModeChrome('ptr');
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          stopAutoPlay();
+          if (currentStep > 0) {
+            currentStep--;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          stopAutoPlay();
+          const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+          if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateUI();
+          }
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          stopAutoPlay();
+          currentStep = 0;
+          updateUI();
+        });
+      }
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', () => {
+          if (autoPlayTimer) {
+            stopAutoPlay();
+          } else {
+            const steps = currentMode === 'smc' ? smcSteps : ptrSteps;
+            if (currentStep >= steps.length - 1) currentStep = 0;
+            updateUI();
+            startAutoPlay();
+          }
+        });
+      }
+
+      // Initial state: beat 0 idle
+      applyModeChrome('smc');
+      currentStep = 0;
+      updateUI();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
