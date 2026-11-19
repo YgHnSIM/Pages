@@ -242,24 +242,6 @@
       margin-top: 16px;
     }
 
-    .hero-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: var(--new);
-      color: #ffffff !important;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14.5px;
-      text-decoration: none !important;
-      transition: opacity 0.15s ease;
-    }
-
-    .hero-cta-btn:hover {
-      opacity: 0.9;
-    }
-
     .hero-src-btn {
       display: inline-flex;
       align-items: center;
@@ -322,21 +304,6 @@
       margin: 0 0 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .toc .orig {
-      display: block;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--line);
-      font-size: 13.5px;
-      color: var(--accent-text);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .toc .orig:hover {
-      text-decoration: underline;
     }
 
     @media (max-width: 960px) {
@@ -1671,40 +1638,6 @@
       opacity: 0.8;
     }
 
-    /* Companion Review Box at End of Article */
-    .companion-footer-box {
-      margin-top: 32px;
-      padding: 18px 22px;
-      border-radius: var(--radius);
-      background: var(--new-soft);
-      border: 1px solid var(--line);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .companion-footer-box .cf-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .companion-footer-box .cf-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 10px;
-      background: var(--new);
-      color: #ffffff !important;
-      font-size: 14.5px;
-      font-weight: 700;
-      text-decoration: none !important;
-      white-space: nowrap;
-    }
-
     /* Mobile Slide-in TOC Drawer */
     .drawer-overlay {
       position: fixed;
@@ -1928,22 +1861,12 @@
       </div>
 
       
-      <div class="hero-cta-row">
-        
-        <a class="hero-cta-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처3강.html" rel="noopener">🗂️ 예습·복습 페이지 열기 (Archive) ↗</a>
-        
-        
-      </div>
-      
     </header>
 
     <div class="grid">
       <nav class="toc" id="desktop-toc" aria-label="목차">
         <p class="toc-t">목차</p>
         <ul class="toc-list"><li class="depth-2"><a href="#서문-39무엇을39-너머의-39얼마나-잘39을-받아-적는-법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서문: &#39;무엇을&#39; 너머의 &#39;얼마나 잘&#39;을 받아 적는 법</span></a></li><li class="depth-2"><a href="#1-컨텍스트-다이어그램에서-아키텍처-요구로-질문이-동인이-되는-순간" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 컨텍스트 다이어그램에서 아키텍처 요구로: 질문이 동인이 되는 순간</span></a></li><li class="depth-2"><a href="#2-같은-기능-다른-구조-다른-품질-온라인-쇼핑-웹-앱과-트레이드오프" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 같은 기능, 다른 구조, 다른 품질: 온라인 쇼핑 웹 앱과 트레이드오프</span></a></li><li class="depth-3"><a href="#21-수정-용이성modifiability-기술이나-규칙을-바꿀-때-얼마나-손이-덜-가는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 수정 용이성(Modifiability): 기술이나 규칙을 바꿀 때 얼마나 손이 덜 가는가</span></a></li><li class="depth-3"><a href="#22-보안security-공격-지점을-줄일-것인가-층별로-강도를-조절할-것인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 보안(Security): 공격 지점을 줄일 것인가, 층별로 강도를 조절할 것인가</span></a></li><li class="depth-3"><a href="#23-성능performance-한-번에-부를-것인가-관문을-여러-번-거칠-것인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.3 성능(Performance): 한 번에 부를 것인가, 관문을 여러 번 거칠 것인가</span></a></li><li class="depth-3"><a href="#24-개발-속도speed-of-development-슬라이드에-오른-넷째-속성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.4 개발 속도(Speed of development): 슬라이드에 오른 넷째 속성</span></a></li><li class="depth-2"><a href="#3-39비기능-요구39와-품질-속성의-경계-그리고-사용성-논쟁" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. &#39;비기능 요구&#39;와 품질 속성의 경계, 그리고 사용성 논쟁</span></a></li><li class="depth-3"><a href="#31-왜-quot모든-비기능-요구가-품질-속성은-아닌가quot" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.1 왜 &quot;모든 비기능 요구가 품질 속성은 아닌가&quot;</span></a></li><li class="depth-3"><a href="#32-사용성usability은-품질-속성인가-그저-화면-디자인-문제인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3.2 사용성(Usability)은 품질 속성인가, 그저 화면 디자인 문제인가</span></a></li><li class="depth-2"><a href="#4-세-가지-아키텍처-동인과-첫-번째-동인-기능-요구-포착" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 세 가지 아키텍처 동인과 첫 번째 동인: 기능 요구 포착</span></a></li><li class="depth-3"><a href="#41-기능-요구를-포착할-때-빠뜨리면-안-되는-다섯-가지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 기능 요구를 포착할 때 빠뜨리면 안 되는 다섯 가지</span></a></li><li class="depth-3"><a href="#42-우버-사례-요구와-아키텍처가-서로-밀고-당기는-이유" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 우버 사례: 요구와 아키텍처가 서로 밀고 당기는 이유</span></a></li><li class="depth-2"><a href="#5-두-번째-동인-피할-수-없는-제약과-기록하는-법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 두 번째 동인: 피할 수 없는 제약과 기록하는 법</span></a></li><li class="depth-3"><a href="#51-제약은-어디서-오는가-기존-시스템-상용-컴포넌트-시장의-힘-그리고-내-선택" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 제약은 어디서 오는가: 기존 시스템, 상용 컴포넌트, 시장의 힘, 그리고 내 선택</span></a></li><li class="depth-3"><a href="#52-제약의-네-종류" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 제약의 네 종류</span></a></li><li class="depth-3"><a href="#53-제약은-왜-우선순위를-매기지-않으며-무엇을-기록해야-하는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 제약은 왜 우선순위를 매기지 않으며, 무엇을 기록해야 하는가</span></a></li><li class="depth-2"><a href="#6-세-번째-동인-그리고-모호한-품질-요구가-위험한-이유" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 세 번째 동인, 그리고 모호한 품질 요구가 위험한 이유</span></a></li><li class="depth-3"><a href="#61-업계에서-흔히-보는-모호한-요구-문장들" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 업계에서 흔히 보는 모호한 요구 문장들</span></a></li><li class="depth-3"><a href="#62-차량-호출-플랫폼에서의-질문-수치화측정-가능성시험-가능성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 차량 호출 플랫폼에서의 질문: 수치화·측정 가능성·시험 가능성</span></a></li><li class="depth-2"><a href="#7-모호함을-번역하는-틀-6부분-품질-속성-시나리오" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 모호함을 번역하는 틀: 6부분 품질 속성 시나리오</span></a></li><li class="depth-3"><a href="#71-여섯-가지-구성-요소" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.1 여섯 가지 구성 요소</span></a></li><li class="depth-3"><a href="#72-실전-연습-1-보안-sql-인젝션-공격-막기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.2 실전 연습 1 — 보안: SQL 인젝션 공격 막기</span></a></li><li class="depth-3"><a href="#73-실전-연습-2-성능과-안전-건물-관리-시스템의-연기-감지기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.3 실전 연습 2 — 성능(과 안전): 건물 관리 시스템의 연기 감지기</span></a></li><li class="depth-3"><a href="#74-실전-연습-3-수정-용이성-비용용이성누가언제-바꾸는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.4 실전 연습 3 — 수정 용이성: 비용·용이성·누가·언제 바꾸는가</span></a></li><li class="depth-3"><a href="#75-차량-호출-플랫폼에-6부분-시나리오-적용해-보기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">7.5 차량 호출 플랫폼에 6부분 시나리오 적용해 보기</span></a></li><li class="depth-2"><a href="#맺음말-요구를-받아-적는-손끝에서-아키텍처가-시작된다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">맺음말: 요구를 받아 적는 손끝에서 아키텍처가 시작된다</span></a></li></ul>
-        
-        <a class="orig" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처3강.html" rel="noopener">예습·복습 (Archive) ↗</a>
-        
       </nav>
 
       <main id="content" class="article-main">
@@ -2672,13 +2595,6 @@
 <li id="fn-4"><strong>제약의 네 분류와 비기능 요구 구분 출처:</strong> 제약을 기술·사업·프로젝트·규제의 네 종류로 나누는 것과 &quot;비기능 요구와 품질 속성은 다르다(CMU에서는 구분한다)&quot;는 입장은 이 강의의 설명이다. 『Software Architecture in Practice』나 SEI 문헌에서 이 네 분류나 &quot;비기능 요구라고 부르는 데 반대한다&quot;는 명시적 문장은 찾지 못했다. 이 책은 품질 속성이라는 용어를 쓰고 기본 기능을 넘어서는 측정·시험 가능한 성질로 정의하며, 기술·사업 제약 같은 구분은 있지만 위의 네 분류와 같지는 않다 <code>(확인 필요)</code>.<a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
 <li id="fn-5"><strong>품질 속성 시나리오의 기원:</strong> <code>[해설]</code> SEI와 Bosch의 작업에서 이 틀이 나왔다는 강의 설명을 뒷받침하는 자료는 찾지 못했다(반대로 그렇지 않다는 자료도 확인하지 못했다). 확인된 것은 이 6부분 틀이 『Software Architecture in Practice』 2판(2003)에서 체계적으로 소개됐다는 점이며, 그 전의 SEI 작업(ATAM, QAW 등)도 시나리오를 썼다. 참고: <a href="https://people.ece.ubc.ca/matei/EECE417/BASS/">https://people.ece.ubc.ca/matei/EECE417/BASS/</a> , <a href="https://www.sei.cmu.edu/library/">https://www.sei.cmu.edu/library/</a> (근거가 약한 2차 자료)<a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li></ol></section>
           </section>
-
-          
-          <div class="companion-footer-box">
-            <span class="cf-text">핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
-            <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처3강.html" rel="noopener">복습 &amp; 퀴즈 풀기 (Archive) ↗</a>
-          </div>
-          
         </article>
       </main>
     </div>
@@ -2701,7 +2617,6 @@
         
         <a class="arc-tag" href="../index.html?tag=%ED%95%B4%EC%84%A4">#해설</a>
         
-        <span>·</span><a href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처3강.html" rel="noopener">예습·복습(Archive) ↗</a>
         
       </div>
       <div class="arc-foot-nav">

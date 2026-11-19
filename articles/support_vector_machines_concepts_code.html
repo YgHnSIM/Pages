@@ -242,24 +242,6 @@
       margin-top: 16px;
     }
 
-    .hero-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: var(--new);
-      color: #ffffff !important;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14.5px;
-      text-decoration: none !important;
-      transition: opacity 0.15s ease;
-    }
-
-    .hero-cta-btn:hover {
-      opacity: 0.9;
-    }
-
     .hero-src-btn {
       display: inline-flex;
       align-items: center;
@@ -322,21 +304,6 @@
       margin: 0 0 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .toc .orig {
-      display: block;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--line);
-      font-size: 13.5px;
-      color: var(--accent-text);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .toc .orig:hover {
-      text-decoration: underline;
     }
 
     @media (max-width: 960px) {
@@ -1671,40 +1638,6 @@
       opacity: 0.8;
     }
 
-    /* Companion Review Box at End of Article */
-    .companion-footer-box {
-      margin-top: 32px;
-      padding: 18px 22px;
-      border-radius: var(--radius);
-      background: var(--new-soft);
-      border: 1px solid var(--line);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .companion-footer-box .cf-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .companion-footer-box .cf-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 10px;
-      background: var(--new);
-      color: #ffffff !important;
-      font-size: 14.5px;
-      font-weight: 700;
-      text-decoration: none !important;
-      white-space: nowrap;
-    }
-
     /* Mobile Slide-in TOC Drawer */
     .drawer-overlay {
       position: fixed;
@@ -1926,22 +1859,12 @@
       </div>
 
       
-      <div class="hero-cta-row">
-        
-        <a class="hero-cta-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-29-SVM.html" rel="noopener">🗂️ 예습·복습 페이지 열기 (Archive) ↗</a>
-        
-        
-      </div>
-      
     </header>
 
     <div class="grid">
       <nav class="toc" id="desktop-toc" aria-label="목차">
         <p class="toc-t">목차</p>
         <ul class="toc-list"><li class="depth-2"><a href="#서론-데이터-사이를-가르는-가장-견고한-경계선을-찾아서" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서론: 데이터 사이를 가르는 가장 견고한 경계선을 찾아서</span></a></li><li class="depth-2"><a href="#1-선-하나-긋기의-어려움-임계값과-마진" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 선 하나 긋기의 어려움 — 임계값과 마진</span></a></li><li class="depth-3"><a href="#단순-임계값의-한계와-임의성의-위험" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">단순 임계값의 한계와 임의성의 위험</span></a></li><li class="depth-3"><a href="#가장자리-관측과-중점-임계값" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">가장자리 관측과 중점 임계값</span></a></li><li class="depth-3"><a href="#마진margin의-수학적-정의" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">마진(Margin)의 수학적 정의</span></a></li><li class="depth-3"><a href="#최대-마진-분류기maximal-margin-classifier" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">최대 마진 분류기(Maximal Margin Classifier)</span></a></li><li class="depth-2"><a href="#2-이상치의-횡포와-오분류를-허용할-용기-편향-분산과-소프트-마진" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 이상치의 횡포와 오분류를 허용할 용기 — 편향-분산과 소프트 마진</span></a></li><li class="depth-3"><a href="#최대-마진-분류기의-아킬레스건-이상치-민감성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">최대 마진 분류기의 아킬레스건: 이상치 민감성</span></a></li><li class="depth-3"><a href="#오분류를-허용해야-이상치에-둔감해진다" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">오분류를 허용해야 이상치에 둔감해진다</span></a></li><li class="depth-3"><a href="#편향-분산-트레이드오프bias-variance-tradeoff의-기하학" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">편향-분산 트레이드오프(Bias-Variance Tradeoff)의 기하학</span></a></li><li class="depth-3"><a href="#소프트-마진soft-margin과-교차검증cross-validation" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">소프트 마진(Soft Margin)과 교차검증(Cross Validation)</span></a></li><li class="depth-2"><a href="#3-서포트-벡터-분류기와-차원의-언어-선면초평면" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 서포트 벡터 분류기와 차원의 언어 — 선·면·초평면</span></a></li><li class="depth-3"><a href="#서포트-벡터support-vector와-이름의-유래" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">서포트 벡터(Support Vector)와 이름의 유래</span></a></li><li class="depth-3"><a href="#2차원-공간에서의-서포트-벡터-분류기-직선" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2차원 공간에서의 서포트 벡터 분류기: 직선</span></a></li><li class="depth-3"><a href="#3차원-공간에서의-서포트-벡터-분류기-평면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3차원 공간에서의 서포트 벡터 분류기: 평면</span></a></li><li class="depth-3"><a href="#차원의-기하학적-통합-flat-affine-부분공간과-초평면" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">차원의 기하학적 통합: Flat Affine 부분공간과 초평면</span></a></li><li class="depth-2"><a href="#4-겹친-데이터와-차원-올리기-골디락스-문제와-svm의-세-단계" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 겹친 데이터와 차원 올리기 — 골디락스 문제와 SVM의 세 단계</span></a></li><li class="depth-3"><a href="#서포트-벡터-분류기의-한계-quot골디락스quot-데이터셋" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">서포트 벡터 분류기의 한계: &quot;골디락스&quot; 데이터셋</span></a></li><li class="depth-3"><a href="#svm의-직관-math-inline-37-축의-창조" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">SVM의 직관: %%MATH_INLINE_37%% 축의 창조</span></a></li><li class="depth-3"><a href="#svm의-세-단계-메커니즘-요약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">SVM의 세 단계 메커니즘 요약</span></a></li><li class="depth-2"><a href="#5-커널-다항-커널의-차수-math-inline-44와-rbf-커널의-가중-최근접-이웃" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 커널: 다항 커널의 차수 %%MATH_INLINE_44%%와 RBF 커널의 가중 최근접 이웃</span></a></li><li class="depth-3"><a href="#변환의-자의성을-극복하는-커널-함수kernel-function" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">변환의 자의성을 극복하는 커널 함수(Kernel Function)</span></a></li><li class="depth-3"><a href="#다항-커널polynomial-kernel과-차수-math-inline-48" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">다항 커널(Polynomial Kernel)과 차수 %%MATH_INLINE_48%%</span></a></li><li class="depth-3"><a href="#방사형-기저-함수-커널-radial-rbf-kernel" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">방사형 기저 함수 커널 (Radial / RBF Kernel)</span></a></li><li class="depth-2"><a href="#6-커널-트릭-변환하지-않고-변환한-것처럼" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 커널 트릭: 변환하지 않고 변환한 것처럼</span></a></li><li class="depth-3"><a href="#커널-트릭kernel-trick의-충격적-실체" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">커널 트릭(Kernel Trick)의 충격적 실체</span></a></li><li class="depth-3"><a href="#왜-커널-트릭이어야만-하는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">왜 커널 트릭이어야만 하는가?</span></a></li><li class="depth-3"><a href="#커널-트릭의-불가피한-대가-보이지-않는-모델" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">커널 트릭의 불가피한 대가: 보이지 않는 모델</span></a></li><li class="depth-2"><a href="#7-코드로-확인하기-데이터-준비스케일링누수-poly-svc-68" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 코드로 확인하기 — 데이터 준비·스케일링·누수, poly SVC 68%</span></a></li><li class="depth-3"><a href="#데이터셋-탐색과-구조-분석" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">데이터셋 탐색과 구조 분석</span></a></li><li class="depth-3"><a href="#데이터-분할과-특성-스케일링-데이터-누수data-leakage의-철저한-방지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">데이터 분할과 특성 스케일링: 데이터 누수(Data Leakage)의 철저한 방지</span></a></li><li class="depth-3"><a href="#다항-커널-svc-모델-학습과-68-정확도의-의미" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">다항 커널 SVC 모델 학습과 68% 정확도의 의미</span></a></li><li class="depth-2"><a href="#8-보이지-않는-모델을-그리기-수동-제곱-선형-커널-같은-결과-기울기절편" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">8. 보이지 않는 모델을 그리기 — 수동 제곱 + 선형 커널, 같은 결과, 기울기·절편</span></a></li><li class="depth-3"><a href="#커널-트릭을-벗겨내는-수동-변환-실험" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">커널 트릭을 벗겨내는 수동 변환 실험</span></a></li><li class="depth-3"><a href="#이론과-실제의-일치" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">이론과 실제의 일치</span></a></li><li class="depth-3"><a href="#가중치math-inline-114와-편향math-inline-115으로부터-기울기와-절편-유도하기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">가중치(%%MATH_INLINE_114%%)와 편향(%%MATH_INLINE_115%%)으로부터 기울기와 절편 유도하기</span></a></li><li class="depth-3"><a href="#포물선-위의-빨간-직선-시각화" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">포물선 위의 빨간 직선 시각화</span></a></li><li class="depth-2"><a href="#9-정리-개념-계보도와-머신러닝-실무-지침" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">9. 정리: 개념 계보도와 머신러닝 실무 지침</span></a></li><li class="depth-3"><a href="#선형-분류기의-3단계-진화-계보" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">선형 분류기의 3단계 진화 계보</span></a></li><li class="depth-3"><a href="#3대-선형-분류기-핵심-특성-전수-비교" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">3대 선형 분류기 핵심 특성 전수 비교</span></a></li><li class="depth-3"><a href="#코드에서-챙길-다섯-가지" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">코드에서 챙길 다섯 가지</span></a></li><li class="depth-2"><a href="#각주" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">각주</span></a></li></ul>
-        
-        <a class="orig" href="https://yghnsim.github.io/Archive/pages/2026-10-29-SVM.html" rel="noopener">예습·복습 (Archive) ↗</a>
-        
       </nav>
 
       <main id="content" class="article-main">
@@ -2964,13 +2887,6 @@ scikit-learn에서는 서포트 벡터 &#39;분류기&#39;라는 이름의 <code
 <h2 id="각주"><a href="#각주" class="heading-anchor" aria-hidden="true">#</a> 각주</h2><section class="footnotes-section"><h3>각주</h3><ol class="footnotes-list"><li id="fn-1">소프트 마진 최적화와 슬랙 변수의 표준적 정식화는 C. Cortes &amp; V. Vapnik, &quot;Support-Vector Networks&quot;, <em>Machine Learning</em> 20 (1995)에서 비롯한다. 본문의 [보충] 블록은 이 표준 형식을 요약한 것이다.<a class="backlink" href="#fnref-1" aria-label="본문으로">↩</a></li>
 <li id="fn-2">다항 커널 $(\gamma,a\cdot b + r)^d$, RBF 커널 $\exp(-\gamma|a-b|^2)$, <code>gamma=&#39;scale&#39;</code>의 정의와 <code>SVC</code>의 기본 커널(RBF)·기본 <code>C=1.0</code>은 scikit-learn의 <code>sklearn.svm.SVC</code> 문서 기준이다.<a class="backlink" href="#fnref-2" aria-label="본문으로">↩</a></li></ol></section>
           </section>
-
-          
-          <div class="companion-footer-box">
-            <span class="cf-text">핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
-            <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-29-SVM.html" rel="noopener">복습 &amp; 퀴즈 풀기 (Archive) ↗</a>
-          </div>
-          
         </article>
       </main>
     </div>
@@ -2991,7 +2907,6 @@ scikit-learn에서는 서포트 벡터 &#39;분류기&#39;라는 이름의 <code
         
         <a class="arc-tag" href="../index.html?tag=%ED%95%B4%EC%84%A4">#해설</a>
         
-        <span>·</span><a href="https://yghnsim.github.io/Archive/pages/2026-10-29-SVM.html" rel="noopener">예습·복습(Archive) ↗</a>
         
       </div>
       <div class="arc-foot-nav">

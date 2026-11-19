@@ -10,7 +10,6 @@ tags:
   - 조직설계
   - 해설
 summary: "구글 딥마인드 인스티튜트(DMI)의 알렉스 이마스, 앤드루 고, 셰인 레그 에세이 심화 해설. AI 벤치마크 점수는 빠르게 오르는데 경제가 거의 그대로인 이유를, 개별 에이전트가 아니라 조직을 분석 단위로 삼아 설명한다. 역량은 생산성 수준을 서서히 바꾸고, 협력이 임계점을 넘으면 시장 구조·고용·임금이 급변한다는 틀로 네 체제(최소 AGI, 초역량 AI, 초협력 AI, ASI)를 정리한다."
-archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-30-지능의경제학.html"
 ---
 
 2026년 10월 29일, 구글 딥마인드 인스티튜트(Google DeepMind Institute, DMI)는 인공일반지능(AGI)이 실제 경제를 언제, 어떻게 변혁시키는지를 분석한 에세이 「지능의 경제학: AGI는 언제, 어떻게 경제를 바꾸는가?(The Economics of Intelligence: How and when does AGI lead to economic transformation?)」를 발표했다. 이 에세이는 구글 딥마인드의 AGI 경제학 디렉터이자 시카고 대학교 경제학·응용AI 교수인 알렉스 이마스(Alex Imas), 구글 딥마인드 연구과학자이자 컬럼비아 대학교 경제학 조교수인 앤드루 고(Andrew Koh), 그리고 구글 딥마인드 공동창업자 겸 최고 AGI 과학자인 셰인 레그(Shane Legg)가 함께 썼다.[^0] 에세이는 같은 세 저자의 논문 「지능의 조직화(Organizing Intelligence)」를 바탕으로 하며, 전체 경제 모형과 결과의 형식적 도출은 그 논문에 있다[s.0]. 에세이의 부제는 한 문장으로 요약된다. 더 똑똑한 AI는 생산성을 높이겠지만, 실질적인 경제 변혁은 에이전트가 협력하는 법을 배우는 데 달려 있다[s.0].

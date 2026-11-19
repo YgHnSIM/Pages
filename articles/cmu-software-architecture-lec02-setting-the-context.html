@@ -242,24 +242,6 @@
       margin-top: 16px;
     }
 
-    .hero-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: var(--new);
-      color: #ffffff !important;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14.5px;
-      text-decoration: none !important;
-      transition: opacity 0.15s ease;
-    }
-
-    .hero-cta-btn:hover {
-      opacity: 0.9;
-    }
-
     .hero-src-btn {
       display: inline-flex;
       align-items: center;
@@ -322,21 +304,6 @@
       margin: 0 0 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .toc .orig {
-      display: block;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--line);
-      font-size: 13.5px;
-      color: var(--accent-text);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .toc .orig:hover {
-      text-decoration: underline;
     }
 
     @media (max-width: 960px) {
@@ -1671,40 +1638,6 @@
       opacity: 0.8;
     }
 
-    /* Companion Review Box at End of Article */
-    .companion-footer-box {
-      margin-top: 32px;
-      padding: 18px 22px;
-      border-radius: var(--radius);
-      background: var(--new-soft);
-      border: 1px solid var(--line);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .companion-footer-box .cf-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .companion-footer-box .cf-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 10px;
-      background: var(--new);
-      color: #ffffff !important;
-      font-size: 14.5px;
-      font-weight: 700;
-      text-decoration: none !important;
-      white-space: nowrap;
-    }
-
     /* Mobile Slide-in TOC Drawer */
     .drawer-overlay {
       position: fixed;
@@ -1928,22 +1861,12 @@
       </div>
 
       
-      <div class="hero-cta-row">
-        
-        <a class="hero-cta-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처2강.html" rel="noopener">🗂️ 예습·복습 페이지 열기 (Archive) ↗</a>
-        
-        
-      </div>
-      
     </header>
 
     <div class="grid">
       <nav class="toc" id="desktop-toc" aria-label="목차">
         <p class="toc-t">목차</p>
         <ul class="toc-list"><li class="depth-2"><a href="#서문-코드를-쓰기-전-왜-39맥락39의-선부터-그어야-하는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">서문: 코드를 쓰기 전, 왜 &#39;맥락&#39;의 선부터 그어야 하는가</span></a></li><li class="depth-2"><a href="#1-경계선-그리기-컨텍스트-다이어그램의-기초와-두-가지-표기법" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 경계선 그리기: 컨텍스트 다이어그램의 기초와 두 가지 표기법</span></a></li><li class="depth-3"><a href="#11-우리가-만들-것과-이미-바깥에-있는-것-사이의-선" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.1 우리가 만들 것과 이미 바깥에 있는 것 사이의 선</span></a></li><li class="depth-3"><a href="#12-uml과-c4-같은-내용-다른-옷" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">1.2 UML과 C4: 같은 내용, 다른 옷</span></a></li><li class="depth-2"><a href="#2-앱이-아니라-39플랫폼39이다-차량-호출-서비스의-컨텍스트-다이어그램-그리기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 앱이 아니라 &#39;플랫폼&#39;이다: 차량 호출 서비스의 컨텍스트 다이어그램 그리기</span></a></li><li class="depth-3"><a href="#21-왜-39차량-호출-앱39이-아니라-39차량-호출-플랫폼39인가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.1 왜 &#39;차량 호출 앱&#39;이 아니라 &#39;차량 호출 플랫폼&#39;인가</span></a></li><li class="depth-3"><a href="#22-한-칸씩-그려-보는-차량-호출-플랫폼의-컨텍스트-다이어그램" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">2.2 한 칸씩 그려 보는 차량 호출 플랫폼의 컨텍스트 다이어그램</span></a></li><li class="depth-2"><a href="#3-이-그림은-누구를-이롭게-하는가-행위자-너머의-사업-가치-찾기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 이 그림은 누구를 이롭게 하는가: 행위자 너머의 사업 가치 찾기</span></a></li><li class="depth-2"><a href="#4-그림이-끌어내는-범위의-질문들-아키텍트는-왜-요구사항-단계에-들어가는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 그림이 끌어내는 범위의 질문들: 아키텍트는 왜 요구사항 단계에 들어가는가</span></a></li><li class="depth-3"><a href="#41-업무-분석가와-아키텍트가-함께-그림을-그리는-이유" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.1 업무 분석가와 아키텍트가 함께 그림을 그리는 이유</span></a></li><li class="depth-3"><a href="#42-경계선과-연결선에서-쏟아지는-다섯-갈래-범위-질문" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">4.2 경계선과 연결선에서 쏟아지는 다섯 갈래 범위 질문</span></a></li><li class="depth-2"><a href="#5-39얼마나-잘39을-캐묻는-질문들-품질-속성과-제약-그리고-애자일-환경" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. &#39;얼마나 잘&#39;을 캐묻는 질문들: 품질 속성과 제약, 그리고 애자일 환경</span></a></li><li class="depth-3"><a href="#51-39얼마나-많이-얼마나-자주-얼마나-크게39로-뽑아내는-품질-속성" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.1 &#39;얼마나 많이, 얼마나 자주, 얼마나 크게&#39;로 뽑아내는 품질 속성</span></a></li><li class="depth-3"><a href="#52-바꿀-수-없는-조건들-여러-방향에서-오는-제약" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.2 바꿀 수 없는 조건들: 여러 방향에서 오는 제약</span></a></li><li class="depth-3"><a href="#53-요구가-매일-바뀌는-애자일스타트업-환경에서는-어떻게-하나" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">5.3 요구가 매일 바뀌는 애자일·스타트업 환경에서는 어떻게 하나</span></a></li><li class="depth-2"><a href="#6-컨텍스트-너머의-다음-걸음-유스케이스이벤트-모델링과-v-모델-검증" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 컨텍스트 너머의 다음 걸음: 유스케이스·이벤트 모델링과 V-모델 검증</span></a></li><li class="depth-3"><a href="#61-유스케이스와-세-가지-이벤트-누가-시스템을-깨우는가" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.1 유스케이스와 세 가지 이벤트: 누가 시스템을 깨우는가</span></a></li><li class="depth-3"><a href="#62-아키텍처는-어떤-테스트로-검증하는가-v-모델" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">6.2 아키텍처는 어떤 테스트로 검증하는가 — V-모델</span></a></li><li class="depth-2"><a href="#맺음말-컨텍스트-다이어그램-한-장이-여는-것들" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">맺음말: 컨텍스트 다이어그램 한 장이 여는 것들</span></a></li></ul>
-        
-        <a class="orig" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처2강.html" rel="noopener">예습·복습 (Archive) ↗</a>
-        
       </nav>
 
       <main id="content" class="article-main">
@@ -2583,13 +2506,6 @@
 <li id="fn-4"><strong>세 가지 이벤트 분류의 출처:</strong> business·signal·temporal 세 분류는 Karl Wiegers &amp; Joy Beatty, 『Software Requirements』 3rd ed.(Microsoft Press, 2013)에 나온다. McMenamin &amp; Palmer(1984)의 event partitioning은 외부 이벤트와 시간 이벤트를 구분했다. 출처: <a href="https://www.modernanalyst.com/Resources/Articles/tabid/115/ID/2932/Modeling-System-Events.aspx">https://www.modernanalyst.com/Resources/Articles/tabid/115/ID/2932/Modeling-System-Events.aspx</a> , <a href="https://en.wikipedia.org/wiki/Event_partitioning">https://en.wikipedia.org/wiki/Event_partitioning</a><a class="backlink" href="#fnref-4" aria-label="본문으로">↩</a></li>
 <li id="fn-5"><strong>V-모델의 표준 대응 관계:</strong> 요구사항 ↔ 인수·시스템 테스트, 아키텍처(상위) 설계 ↔ 통합 테스트, 상세(모듈) 설계 ↔ 단위 테스트가 일반적인 대응이며, 판본마다 단계 이름과 세분화가 조금 다르다. 출처: <a href="https://istqbfoundation.wordpress.com/2017/09/18/v-model-sequential-development-model/">https://istqbfoundation.wordpress.com/2017/09/18/v-model-sequential-development-model/</a> , <a href="https://www.browserstack.com/guide/v-model-testing">https://www.browserstack.com/guide/v-model-testing</a><a class="backlink" href="#fnref-5" aria-label="본문으로">↩</a></li></ol></section>
           </section>
-
-          
-          <div class="companion-footer-box">
-            <span class="cf-text">핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
-            <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처2강.html" rel="noopener">복습 &amp; 퀴즈 풀기 (Archive) ↗</a>
-          </div>
-          
         </article>
       </main>
     </div>
@@ -2612,7 +2528,6 @@
         
         <a class="arc-tag" href="../index.html?tag=%ED%95%B4%EC%84%A4">#해설</a>
         
-        <span>·</span><a href="https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처2강.html" rel="noopener">예습·복습(Archive) ↗</a>
         
       </div>
       <div class="arc-foot-nav">

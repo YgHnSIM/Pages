@@ -10,7 +10,6 @@ tags:
   - 머신러닝
   - 논문리뷰
 summary: "구글 딥마인드 연구진이 제시한 AGI 이후의 지능 발전 지도. 연산 확장, 패러다임 전환, 재귀적 자기개선, 그룹 에이전시의 4대 경로와 데이터 벽, 자원 제약, 추상화 장벽 등 6대 병목을 심층 분석하며, 단일 특이점이 아닌 연쇄적 사회 변화의 도래를 정리한다."
-archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-30-AGI에서ASI로.html"
 ---
 
 > "We can only see a short distance ahead, but we can see plenty there that needs to be done."  

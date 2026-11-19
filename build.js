@@ -1054,11 +1054,10 @@ async function build() {
     const outSubdir = isPreview ? 'preview' : 'articles';
     const publicUrl = `${outSubdir}/${slug}.html`;
     const fileStem = path.basename(job.file, '.md');
-    const archive_url = data.archive_url || '';
     const source_url = data.source_url || '';
     loaded.push({
       content, title, subtitle, date, author, summary, tags, unlisted, isPreview,
-      publicUrl, slug, fileStem, outSubdir, archive_url, source_url
+      publicUrl, slug, fileStem, outSubdir, source_url
     });
   }
 
@@ -1067,7 +1066,7 @@ async function build() {
   for (const item of loaded) {
     const {
       content, title, subtitle, date, author, summary, tags, unlisted, isPreview,
-      publicUrl, outSubdir, archive_url, source_url
+      publicUrl, outSubdir, source_url
     } = item;
     const readingTime = estimateReadingTime(content);
     const ctx = {
@@ -1115,9 +1114,7 @@ async function build() {
       root_path: rootPath,
       robots_meta: robotsMeta,
       mermaid: ctx.hasMermaid,
-      archive_url,
-      source_url,
-      has_links: Boolean(archive_url || source_url)
+      source_url
     });
 
     fs.writeFileSync(outFilePath, articleHtml, 'utf-8');
@@ -1134,7 +1131,6 @@ async function build() {
         tag_string: tags.join(' '),
         reading_time: readingTime,
         url: publicUrl,
-        archive_url,
         _timestamp: new Date(date).getTime() || 0
       });
     }
@@ -1151,7 +1147,6 @@ async function build() {
       tag_string: "AI 언어모델 정보이론 압축 논문리뷰",
       reading_time: 44,
       url: "articles/language_modeling_compression_intelligence.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-22-언어모델압축.html",
       _timestamp: new Date("2026-10-22T13:15:00Z").getTime()
     },
     {
@@ -1163,7 +1158,6 @@ async function build() {
       tag_string: "생물학 시스템생물학 과학철학 데니스노블 해설",
       reading_time: 30,
       url: "articles/noble_genes_not_blueprint.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-22-데니스노블.html",
       _timestamp: new Date("2026-10-22T08:20:00Z").getTime()
     },
     {
@@ -1175,7 +1169,6 @@ async function build() {
       tag_string: "AI 해석가능성 언어모델 AI안전 인터뷰",
       reading_time: 41,
       url: "articles/inside_the_black_box_how_llms_think.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-19-언어모델_블랙박스.html",
       _timestamp: new Date("2026-10-18T14:20:00Z").getTime()
     },
     {
@@ -1187,7 +1180,6 @@ async function build() {
       tag_string: "AI 컴퓨터과학 에이전트 Go 튜토리얼",
       reading_time: 35,
       url: "articles/build_a_coding_agent_workshop.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-16-코딩에이전트_워크숍.html",
       _timestamp: new Date("2026-10-15T19:50:00Z").getTime()
     },
     {
@@ -1199,7 +1191,6 @@ async function build() {
       tag_string: "AI 에이전트 소프트웨어공학 제프리헌틀리 튜토리얼",
       reading_time: 50,
       url: "articles/huntley_nobody_should_type_code_by_hand.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-15-헌틀리_손코딩.html",
       _timestamp: new Date("2026-10-15T13:00:00Z").getTime()
     },
     {
@@ -1211,7 +1202,6 @@ async function build() {
       tag_string: "컴퓨터과학 가비지컬렉션 메모리모델 프로그래밍언어 해설",
       reading_time: 20,
       url: "articles/garbage_collection_mark_and_sweep.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-15-가비지컬렉션_마크앤스윕.html",
       _timestamp: new Date("2026-10-15T12:00:00Z").getTime()
     },
     {
@@ -1223,7 +1213,6 @@ async function build() {
       tag_string: "AI 디자인 소프트웨어공학 강연",
       reading_time: 20,
       url: "articles/digital_craftsmanship_ai_era.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-10-13-디지털장인정신.html",
       _timestamp: new Date("2026-10-13T12:00:00Z").getTime()
     },
     {
@@ -1235,7 +1224,6 @@ async function build() {
       tag_string: "컴퓨터과학 Python CPython 메모리모델 해설",
       reading_time: 18,
       url: "articles/python_object_creation_and_binding.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-09-15-CPython1부_객체바인딩.html",
       _timestamp: new Date("2026-09-15T12:00:00Z").getTime()
     },
     {
@@ -1247,7 +1235,6 @@ async function build() {
       tag_string: "컴퓨터과학 Python CPython 시스템프로그래밍 해설",
       reading_time: 22,
       url: "articles/python_callable_and_execution_engine.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-09-15-CPython2부_실행엔진.html",
       _timestamp: new Date("2026-09-15T12:01:00Z").getTime()
     },
     {
@@ -1259,7 +1246,6 @@ async function build() {
       tag_string: "컴퓨터과학 컴퓨터구조 메모리모델 해설",
       reading_time: 15,
       url: "articles/cpu_dram_memory_interface.html",
-      archive_url: "https://yghnsim.github.io/Archive/pages/2026-09-01-CPU_DRAM_인터페이스.html",
       _timestamp: new Date("2026-09-01").getTime()
     }
   ];

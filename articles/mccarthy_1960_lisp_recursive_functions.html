@@ -242,24 +242,6 @@
       margin-top: 16px;
     }
 
-    .hero-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: var(--new);
-      color: #ffffff !important;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14.5px;
-      text-decoration: none !important;
-      transition: opacity 0.15s ease;
-    }
-
-    .hero-cta-btn:hover {
-      opacity: 0.9;
-    }
-
     .hero-src-btn {
       display: inline-flex;
       align-items: center;
@@ -322,21 +304,6 @@
       margin: 0 0 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .toc .orig {
-      display: block;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--line);
-      font-size: 13.5px;
-      color: var(--accent-text);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .toc .orig:hover {
-      text-decoration: underline;
     }
 
     @media (max-width: 960px) {
@@ -1671,40 +1638,6 @@
       opacity: 0.8;
     }
 
-    /* Companion Review Box at End of Article */
-    .companion-footer-box {
-      margin-top: 32px;
-      padding: 18px 22px;
-      border-radius: var(--radius);
-      background: var(--new-soft);
-      border: 1px solid var(--line);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .companion-footer-box .cf-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .companion-footer-box .cf-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 10px;
-      background: var(--new);
-      color: #ffffff !important;
-      font-size: 14.5px;
-      font-weight: 700;
-      text-decoration: none !important;
-      white-space: nowrap;
-    }
-
     /* Mobile Slide-in TOC Drawer */
     .drawer-overlay {
       position: fixed;
@@ -1931,12 +1864,7 @@
 
       
       <div class="hero-cta-row">
-        
-        <a class="hero-cta-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-25-매카시LISP.html" rel="noopener">🗂️ 예습·복습 페이지 열기 (Archive) ↗</a>
-        
-        
         <a class="hero-src-btn" href="https://pages.cs.wisc.edu/~horwitz/CS704-NOTES/PAPERS/mccarthy.pdf" rel="noopener">원문 보기 ↗</a>
-        
       </div>
       
     </header>
@@ -1945,9 +1873,6 @@
       <nav class="toc" id="desktop-toc" aria-label="목차">
         <p class="toc-t">목차</p>
         <ul class="toc-list"><li class="depth-2"><a href="#먼저-알아-둘-것-prerequisites" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">먼저 알아 둘 것 (Prerequisites)</span></a></li><li class="depth-2"><a href="#전반적인-해설-overview" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">전반적인 해설 (Overview)</span></a></li><li class="depth-2"><a href="#1-논문이-나온-맥락" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">1. 논문이 나온 맥락</span></a></li><li class="depth-2"><a href="#2-함수와-함수-정의" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">2. 함수와 함수 정의</span></a></li><li class="depth-2"><a href="#3-기호식s-식과-그-함수들" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">3. 기호식(S-식)과 그 함수들</span></a></li><li class="depth-2"><a href="#4-기계-속의-lisp-ibm-704" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">4. 기계 속의 LISP (IBM 704)</span></a></li><li class="depth-2"><a href="#5-다른-형식linear-lisp과-순서도" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">5. 다른 형식(linear LISP)과 순서도</span></a></li><li class="depth-2"><a href="#6-흔한-오해와-오늘날의-의미" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">6. 흔한 오해와 오늘날의 의미</span></a></li><li class="depth-2"><a href="#7-최종-점검-및-복습" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">7. 최종 점검 및 복습</span></a></li></ul>
-        
-        <a class="orig" href="https://yghnsim.github.io/Archive/pages/2026-10-25-매카시LISP.html" rel="noopener">예습·복습 (Archive) ↗</a>
-        
       </nav>
 
       <main id="content" class="article-main">
@@ -2573,13 +2498,6 @@ pgLoad();gxShow();factLoad();rtLoad();evLoad();buildQuiz();
 </script>
 
           </section>
-
-          
-          <div class="companion-footer-box">
-            <span class="cf-text">핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
-            <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-10-25-매카시LISP.html" rel="noopener">복습 &amp; 퀴즈 풀기 (Archive) ↗</a>
-          </div>
-          
         </article>
       </main>
     </div>
@@ -2604,7 +2522,6 @@ pgLoad();gxShow();factLoad();rtLoad();evLoad();buildQuiz();
         
         <a class="arc-tag" href="../index.html?tag=%EB%85%BC%EB%AC%B8%EB%A6%AC%EB%B7%B0">#논문리뷰</a>
         
-        <span>·</span><a href="https://yghnsim.github.io/Archive/pages/2026-10-25-매카시LISP.html" rel="noopener">예습·복습(Archive) ↗</a>
         <span>·</span><a href="https://pages.cs.wisc.edu/~horwitz/CS704-NOTES/PAPERS/mccarthy.pdf" rel="noopener">원문 ↗</a>
       </div>
       <div class="arc-foot-nav">

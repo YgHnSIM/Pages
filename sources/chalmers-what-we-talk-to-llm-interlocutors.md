@@ -10,7 +10,6 @@ tags:
   - AI윤리
   - 해설
 summary: "'의식의 어려운 문제'를 정식화한 철학자 데이비드 차머스가 UC 버클리 제1회 사라 더글러스 강연에서 던진 질문, '우리가 LLM과 대화할 때 상대는 무엇인가'를 심층 해설한다. 의식의 X요인과 준믿음·준욕구, 모델·하드웨어·가상 인스턴스·스레드의 개별화, 세브란스와 로크의 정체성 사고실험, AI 복지의 도덕적 셈법, 질의응답의 9가지 쟁점까지 강연의 논증을 따라가며 배경과 함의를 해설한다."
-archive_url: "https://yghnsim.github.io/Archive/pages/2026-11-03-차머스LLM대화상대.html"
 ---
 
 > "My working hypothesis then about the metaphysics of language models is that language model interlocutors are quasi subjects realized by language model threads."  

@@ -242,24 +242,6 @@
       margin-top: 16px;
     }
 
-    .hero-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: var(--new);
-      color: #ffffff !important;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14.5px;
-      text-decoration: none !important;
-      transition: opacity 0.15s ease;
-    }
-
-    .hero-cta-btn:hover {
-      opacity: 0.9;
-    }
-
     .hero-src-btn {
       display: inline-flex;
       align-items: center;
@@ -322,21 +304,6 @@
       margin: 0 0 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .toc .orig {
-      display: block;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--line);
-      font-size: 13.5px;
-      color: var(--accent-text);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .toc .orig:hover {
-      text-decoration: underline;
     }
 
     @media (max-width: 960px) {
@@ -1671,40 +1638,6 @@
       opacity: 0.8;
     }
 
-    /* Companion Review Box at End of Article */
-    .companion-footer-box {
-      margin-top: 32px;
-      padding: 18px 22px;
-      border-radius: var(--radius);
-      background: var(--new-soft);
-      border: 1px solid var(--line);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .companion-footer-box .cf-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .companion-footer-box .cf-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 10px;
-      background: var(--new);
-      color: #ffffff !important;
-      font-size: 14.5px;
-      font-weight: 700;
-      text-decoration: none !important;
-      white-space: nowrap;
-    }
-
     /* Mobile Slide-in TOC Drawer */
     .drawer-overlay {
       position: fixed;
@@ -1930,22 +1863,12 @@
       </div>
 
       
-      <div class="hero-cta-row">
-        
-        <a class="hero-cta-btn" href="https://yghnsim.github.io/Archive/pages/2026-09-08-포인터혈통_컴파일러.html" rel="noopener">🗂️ 예습·복습 페이지 열기 (Archive) ↗</a>
-        
-        
-      </div>
-      
     </header>
 
     <div class="grid">
       <nav class="toc" id="desktop-toc" aria-label="목차">
         <p class="toc-t">목차</p>
         <ul class="toc-list"><li class="depth-2"><a href="#도입-같은-속도를-원하지만-서로-다른-세계를-본다" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">도입 — 같은 속도를 원하지만, 서로 다른 세계를 본다</span></a></li><li class="depth-2"><a href="#두-기둥의-충돌-성능이라는-같은-목적-다른-경로" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">두 기둥의 충돌 — 성능이라는 같은 목적, 다른 경로</span></a></li><li class="depth-2"><a href="#앨리어싱과-스토어-포워딩-혹시-같은-곳이면이라는-의심" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">앨리어싱과 스토어 포워딩 — “혹시 같은 곳이면?”이라는 의심</span></a></li><li class="depth-2"><a href="#평면-메모리-모델의-붕괴-포인터는-왜-정수가-아닌가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">평면 메모리 모델의 붕괴 — 포인터는 왜 정수가 아닌가</span></a></li><li class="depth-2"><a href="#숫자만-같은-두-포인터-p와-q의-이웃집-사건" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">숫자만 같은 두 포인터 — P와 Q의 이웃집 사건</span></a></li><li class="depth-2"><a href="#컴파일러-내부-내전-gvn이-저지른-같은-값의-실수" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">컴파일러 내부 내전 — GVN이 저지른 “같은 값”의 실수</span></a></li><li class="depth-2"><a href="#llvm의-수술-논리-포인터와-물리-포인터를-갈라-세우기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">LLVM의 수술 — 논리 포인터와 물리 포인터를 갈라 세우기</span></a></li><li class="depth-3"><a href="#논리-포인터" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">논리 포인터</span></a></li><li class="depth-3"><a href="#물리-포인터" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">물리 포인터</span></a></li><li class="depth-2"><a href="#지연된-경계-검사-계산하는-순간과-들어가는-순간" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">지연된 경계 검사 — 계산하는 순간과 들어가는 순간</span></a></li><li class="depth-2"><a href="#쌍둥이-할당twin-allocation-주소를-맞혀도-확신할-수-없게-하기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">쌍둥이 할당(twin allocation) — 주소를 맞혀도 확신할 수 없게 하기</span></a></li><li class="depth-2"><a href="#모호함이-사라진-뒤의-속도-안전을-넣었는데-왜-빨라지는가" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">모호함이 사라진 뒤의 속도 — 안전을 넣었는데 왜 빨라지는가</span></a></li><li class="depth-2"><a href="#표준의-도착-isoiec-ts-60102025" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">표준의 도착 — ISO/IEC TS 6010:2025</span></a></li><li class="depth-3"><a href="#pvi와-pnvi를-한-번에-비교하기" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">PVI와 PNVI를 한 번에 비교하기</span></a></li><li class="depth-3"><a href="#rust-strict-provenance는-이웃-트랙" class="toc-link"><span class="toc-badge badge-h3">중주제</span><span class="toc-text">Rust Strict Provenance는 이웃 트랙</span></a></li><li class="depth-2"><a href="#더-읽기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">더 읽기</span></a></li><li class="depth-2"><a href="#짧은-맺음-보이지-않는-방어선에-감사하기" class="toc-link"><span class="toc-badge badge-h2">대주제</span><span class="toc-text">짧은 맺음 — 보이지 않는 방어선에 감사하기</span></a></li></ul>
-        
-        <a class="orig" href="https://yghnsim.github.io/Archive/pages/2026-09-08-포인터혈통_컴파일러.html" rel="noopener">예습·복습 (Archive) ↗</a>
-        
       </nav>
 
       <main id="content" class="article-main">
@@ -2095,13 +2018,6 @@ printf("%d\\n", q[2]);</code></pre>
 <p>프로그래머의 자유와 컴파일러의 최적화는 어느 한쪽이 완전히 이기는 싸움이 아닙니다. 자유를 보장하되 그 자유가 무엇을 의미하는지 엄밀히 적고, 컴파일러는 그 경계 안에서 최대한 멀리 달립니다. 우리가 별다른 오류 없이 빠른 시스템을 사용하는 동안에도, 그 경계와 보이지 않는 출처를 지키는 방어전은 계속됩니다. 그러니 다음에 컴파일러가 메모리 읽기 하나를 조용히 없애는 것을 볼 때는, 그 냉정함 뒤에 있는 보이지 않는 방어에도 잠시 감사해 봅시다.</p>
 
           </section>
-
-          
-          <div class="companion-footer-box">
-            <span class="cf-text">핵심 용어 플래시카드와 5문항 퀴즈로 기억을 점검해 보세요.</span>
-            <a class="cf-btn" href="https://yghnsim.github.io/Archive/pages/2026-09-08-포인터혈통_컴파일러.html" rel="noopener">복습 &amp; 퀴즈 풀기 (Archive) ↗</a>
-          </div>
-          
         </article>
       </main>
     </div>
@@ -2126,7 +2042,6 @@ printf("%d\\n", q[2]);</code></pre>
         
         <a class="arc-tag" href="../index.html?tag=%ED%95%B4%EC%84%A4">#해설</a>
         
-        <span>·</span><a href="https://yghnsim.github.io/Archive/pages/2026-09-08-포인터혈통_컴파일러.html" rel="noopener">예습·복습(Archive) ↗</a>
         
       </div>
       <div class="arc-foot-nav">
