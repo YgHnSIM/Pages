@@ -1,0 +1,242 @@
+/* Archive 디자인 시스템 공통 토큰 (Pages 이식 버전)
+   기준: /workspace/archive/assets/archive-tokens.css & STYLE_GUIDE.md
+   라이트 모드 기본값은 Archive와 동일하며, Pages의 다크 모드(시스템 설정 및 수동 전환)와 폰트 전환을 지원합니다. */
+
+:root {
+  /* Archive Core Tokens (Light) */
+  --bg: #faf8f3;
+  --paper: #ffffff;
+  --surface: #f3efe6;
+  --surface-soft: #fdfcf9;
+  --ink: #1f2328;
+  --muted: #5b6470;
+  --subtle: #78808a;
+  --line: #e6e1d6;
+  --accent: #c8553d;
+  --accent-hover: #a8432e;
+  --accent-ink: #ffffff;
+  --accent-soft: #fbeee9;
+  --accent-text: #a8432e;
+  --link: #4a6b8a;
+  --link-hover: #35526d;
+  --arc-link: #4a6b8a;
+  --new: #3d5f80;
+  --new-soft: #eaf0f6;
+  --chip: #efe9dd;
+  --chip-ink: #3b424b;
+  --focus: #4a6b8a;
+  --band-bg: #f3efe6;
+  --header-bg: rgba(243, 239, 230, 0.94);
+
+  /* Semantic Status (Archive STYLE_GUIDE 기준) */
+  --good: #2f6b45;
+  --good-soft: #e6f1ea;
+  --warn: #9a5b13;
+  --warn-soft: #fdf3e3;
+  --bad: #a2452f;
+  --bad-soft: #fbeee9;
+
+  /* Code & Surface */
+  --code-bg: #f6f4ee;
+  --code-header: #efeae0;
+  --code-text: #1f2328;
+  --inline-code-bg: #f3efe6;
+  --inline-code-text: #1f2328;
+
+  /* Geometry & Elevation */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 4px 14px rgba(0, 0, 0, .05);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, .06);
+  --shadow-lg: 0 12px 28px rgba(31, 35, 40, .12);
+
+  /* Typography */
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans CJK KR", "Malgun Gothic", "Gothic A1", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "D2Coding", "D2 coding", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Legacy Pages Token Aliases (기존 컴포넌트·시뮬레이터·단독 글 호환) */
+  --bg-page: var(--bg);
+  --bg-card: var(--paper);
+  --bg-surface: var(--surface);
+  --text-main: var(--ink);
+  --text-muted: var(--muted);
+  --text-light: var(--subtle);
+  --border: var(--line);
+  --border-focus: var(--focus);
+  --primary: var(--accent);
+  --primary-hover: var(--accent-hover);
+  --primary-light: var(--accent-soft);
+  --quote-bg: var(--surface-soft);
+  --quote-border: var(--accent);
+  --drawer-bg: var(--paper);
+  --card-hover-border: var(--accent);
+}
+
+:root[data-font="d2coding"] {
+  --font-sans: "D2 coding", "D2Coding", "Pretendard", monospace;
+  --font-mono: "D2 coding", "D2Coding", ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171a;
+    --paper: #1e2125;
+    --surface: #252930;
+    --surface-soft: #1a1d21;
+    --ink: #e7e9ec;
+    --muted: #9aa3ad;
+    --subtle: #78828e;
+    --line: #2e3238;
+    --accent: #e0765f;
+    --accent-hover: #eb8e7a;
+    --accent-ink: #15171a;
+    --accent-soft: rgba(224, 118, 95, 0.16);
+    --accent-text: #f09582;
+    --link: #8fb0d0;
+    --link-hover: #adc8e2;
+    --arc-link: #8fb0d0;
+    --new: #8fb0d0;
+    --new-soft: rgba(143, 176, 208, 0.14);
+    --chip: #2a2e34;
+    --chip-ink: #d5d9de;
+    --focus: #8fb0d0;
+    --band-bg: #1b1e23;
+    --header-bg: rgba(27, 30, 35, 0.94);
+
+    --good: #6ec28a;
+    --good-soft: rgba(47, 107, 69, 0.24);
+    --warn: #e6b35a;
+    --warn-soft: rgba(180, 120, 30, 0.22);
+    --bad: #f08a75;
+    --bad-soft: rgba(162, 69, 47, 0.24);
+
+    --code-bg: #181b1f;
+    --code-header: #22262c;
+    --code-text: #e7e9ec;
+    --inline-code-bg: #2a2e34;
+    --inline-code-text: #f0b5a7;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, .42);
+    --shadow-lg: 0 12px 28px rgba(0, 0, 0, .55);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #15171a;
+  --paper: #1e2125;
+  --surface: #252930;
+  --surface-soft: #1a1d21;
+  --ink: #e7e9ec;
+  --muted: #9aa3ad;
+  --subtle: #78828e;
+  --line: #2e3238;
+  --accent: #e0765f;
+  --accent-hover: #eb8e7a;
+  --accent-ink: #15171a;
+  --accent-soft: rgba(224, 118, 95, 0.16);
+  --accent-text: #f09582;
+  --link: #8fb0d0;
+  --link-hover: #adc8e2;
+  --arc-link: #8fb0d0;
+  --new: #8fb0d0;
+  --new-soft: rgba(143, 176, 208, 0.14);
+  --chip: #2a2e34;
+  --chip-ink: #d5d9de;
+  --focus: #8fb0d0;
+  --band-bg: #1b1e23;
+  --header-bg: rgba(27, 30, 35, 0.94);
+
+  --good: #6ec28a;
+  --good-soft: rgba(47, 107, 69, 0.24);
+  --warn: #e6b35a;
+  --warn-soft: rgba(180, 120, 30, 0.22);
+  --bad: #f08a75;
+  --bad-soft: rgba(162, 69, 47, 0.24);
+
+  --code-bg: #181b1f;
+  --code-header: #22262c;
+  --code-text: #e7e9ec;
+  --inline-code-bg: #2a2e34;
+  --inline-code-text: #f0b5a7;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, .42);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, .55);
+}
+
+:root[data-theme="light"] {
+  --bg: #faf8f3;
+  --paper: #ffffff;
+  --surface: #f3efe6;
+  --surface-soft: #fdfcf9;
+  --ink: #1f2328;
+  --muted: #5b6470;
+  --subtle: #78808a;
+  --line: #e6e1d6;
+  --accent: #c8553d;
+  --accent-hover: #a8432e;
+  --accent-ink: #ffffff;
+  --accent-soft: #fbeee9;
+  --accent-text: #a8432e;
+  --link: #4a6b8a;
+  --link-hover: #35526d;
+  --arc-link: #4a6b8a;
+  --new: #3d5f80;
+  --new-soft: #eaf0f6;
+  --chip: #efe9dd;
+  --chip-ink: #3b424b;
+  --focus: #4a6b8a;
+  --band-bg: #f3efe6;
+  --header-bg: rgba(243, 239, 230, 0.94);
+
+  --good: #2f6b45;
+  --good-soft: #e6f1ea;
+  --warn: #9a5b13;
+  --warn-soft: #fdf3e3;
+  --bad: #a2452f;
+  --bad-soft: #fbeee9;
+
+  --code-bg: #f6f4ee;
+  --code-header: #efeae0;
+  --code-text: #1f2328;
+  --inline-code-bg: #f3efe6;
+  --inline-code-text: #1f2328;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 4px 14px rgba(0, 0, 0, .05);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, .06);
+  --shadow-lg: 0 12px 28px rgba(31, 35, 40, .12);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--link);
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 16px;
+  }
+}

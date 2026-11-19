@@ -1,0 +1,277 @@
+/* Archive 공통 머리띠·꼬리말 (Pages 이식 버전)
+   기준: /workspace/archive/assets/archive-page.css
+   - .arc-band (상단 바) / .arc-foot (하단 푸터)
+   - Pages의 테마 전환(다크/라이트), 폰트 선택, 목차 드로어 버튼, 읽기 진행 바와 자연스럽게 결합 */
+
+.arc-band,
+.arc-foot {
+  --arc-max: 1180px;
+  display: block;
+  background: var(--band-bg, #f3efe6);
+  color: var(--ink, #1f2328);
+  font-family: var(--font-sans, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: left;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+.arc-band *,
+.arc-foot * {
+  box-sizing: border-box;
+  letter-spacing: normal;
+}
+
+.arc-band {
+  border-bottom: 1px solid var(--line, #e6e1d6);
+}
+
+.arc-band.is-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--header-bg, rgba(243, 239, 230, 0.94));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.arc-foot {
+  border-top: 1px solid var(--line, #e6e1d6);
+  margin-top: auto;
+  clear: both;
+}
+
+.arc-inner {
+  max-width: var(--arc-max);
+  margin: 0 auto;
+  padding: 6px max(20px, env(safe-area-inset-right)) 6px max(20px, env(safe-area-inset-left));
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.arc-band a,
+.arc-foot a {
+  color: var(--link, #4a6b8a);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.arc-band a:hover,
+.arc-foot a:hover {
+  text-decoration: underline;
+}
+
+.arc-band a:focus-visible,
+.arc-foot a:focus-visible,
+.arc-band button:focus-visible {
+  outline: 2px solid var(--focus, #4a6b8a);
+  outline-offset: 2px;
+}
+
+.arc-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-weight: 700;
+  color: var(--ink, #1f2328) !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.arc-back b {
+  color: var(--accent, #c8553d);
+  font-weight: 800;
+  margin-right: 6px;
+}
+
+.arc-crumb {
+  flex: 1 1 180px;
+  min-width: 0;
+  color: var(--muted, #5b6470);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arc-crumb::before {
+  content: "/";
+  margin-right: 10px;
+  color: var(--subtle, #b9b2a3);
+}
+
+.arc-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.arc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--line, #e6e1d6);
+  background: var(--paper, #ffffff);
+  color: var(--ink, #1f2328);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.arc-btn:hover {
+  border-color: var(--accent, #c8553d);
+  color: var(--accent-text, #a8432e);
+}
+
+.arc-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  color: var(--muted, #5b6470);
+}
+
+.arc-meta time {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.arc-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--chip, #ebe5d8);
+  color: var(--chip-ink, #3b424b) !important;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.arc-tag:hover {
+  text-decoration: none !important;
+  background: var(--accent-soft, #fbeee9);
+  color: var(--accent-text, #a8432e) !important;
+}
+
+.arc-src {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line, #e6e1d6);
+  background: var(--paper, #ffffff);
+  color: var(--link, #4a6b8a) !important;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.arc-src:hover {
+  border-color: var(--link, #4a6b8a);
+  text-decoration: none !important;
+}
+
+/* Reading Progress Bar under Sticky Band */
+#progress-container {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: transparent;
+  pointer-events: none;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent, #c8553d), var(--link, #4a6b8a));
+  transition: width 0.08s ease-out;
+}
+
+/* Footer Band */
+.arc-foot .arc-inner {
+  padding-top: 20px;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 6px;
+}
+
+.arc-foot-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--accent, #c8553d);
+}
+
+.arc-foot-title {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--ink, #1f2328);
+}
+
+.arc-foot-meta {
+  color: var(--muted, #5b6470);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  align-items: center;
+}
+
+.arc-foot-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 4px;
+}
+
+.arc-foot-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .arc-inner {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    gap: 6px 8px;
+  }
+  .arc-crumb {
+    display: none;
+  }
+  .arc-btn {
+    padding: 0 8px;
+    font-size: 13px;
+  }
+}
+
+@media print {
+  .arc-band,
+  .arc-foot-nav {
+    display: none !important;
+  }
+}

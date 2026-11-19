@@ -942,6 +942,11 @@ function renderTOC(headings) {
   return html;
 }
 
+function formatKoreanDate(d) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d || '').trim());
+  return m ? `${m[1]}년 ${Number(m[2])}월 ${Number(m[3])}일` : String(d || '');
+}
+
 /**
  * Simple Mustache-like interpolation helper
  */
@@ -957,11 +962,17 @@ function interpolate(template, data) {
         if (typeof item === 'object') {
           return interpolate(inner, item);
         }
-        return inner.replace(/\{\{\.\}\}/g, item);
+        return inner.replace(/\{\{\.\}\}/g, () => String(item));
       }).join('');
     }
     if (val) {
-      return inner.replace(/\{\{\.\}\}/g, val).replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), val);
+      if (typeof val === 'boolean') {
+        return interpolate(inner, data);
+      }
+      const replaced = inner
+        .replace(/\{\{\.\}\}/g, () => String(val))
+        .replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), () => String(val));
+      return replaced.includes('{{#') ? interpolate(replaced, data) : replaced;
     }
     return '';
   });
@@ -1083,13 +1094,20 @@ async function build() {
       ? '<meta name="robots" content="noindex, nofollow">'
       : '';
 
+    const tagItems = tags.map(t => ({
+      name_html: escapeAttr(t),
+      href: `${homeUrl}?tag=${encodeURIComponent(t)}`
+    }));
+
     const articleHtml = interpolate(articleTemplate, {
       title,
       subtitle,
       date,
+      date_label: formatKoreanDate(date),
       author,
       summary,
       tags,
+      tag_items: tagItems,
       reading_time: readingTime,
       toc_html: tocHtml,
       content: contentHtml,
@@ -1098,7 +1116,8 @@ async function build() {
       robots_meta: robotsMeta,
       mermaid: ctx.hasMermaid,
       archive_url,
-      source_url
+      source_url,
+      has_links: Boolean(archive_url || source_url)
     });
 
     fs.writeFileSync(outFilePath, articleHtml, 'utf-8');
@@ -1271,6 +1290,12 @@ async function build() {
     article.tag_json = escapeAttr(JSON.stringify(article.tags));
     article.title_attr = escapeAttr(article.title);
     article.summary_attr = escapeAttr(article.summary);
+    article.date_label = formatKoreanDate(article.date);
+    article.timestamp = article._timestamp;
+    article.tag_items = (article.tags || []).map(tag => ({
+      name_html: escapeAttr(tag),
+      name_attr: escapeAttr(tag)
+    }));
     if (matched.length === 0) {
       console.warn(`  ! No preset: ${article.url}`);
     }

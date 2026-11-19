@@ -1,0 +1,32 @@
+/* Archive 최소 조화 브리지 — Tailwind CDN 기반 인터랙티브 단독 앱(2편)용
+   Tailwind 런타임·JS 다크/라이트 토글·SVG 시뮬레이터 색상은 건드리지 않고,
+   바탕면·상단 헤더·글꼴 톤만 Archive 패밀리와 자연스럽게 맞춥니다. */
+
+body {
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans CJK KR", "Malgun Gothic", system-ui, sans-serif;
+  word-break: keep-all;
+}
+
+html:not(.dark) body.bg-slate-50 {
+  background-color: #faf8f3 !important;
+  color: #1f2328 !important;
+}
+
+html.dark body.bg-slate-950 {
+  background-color: #15171a !important;
+  color: #e7e9ec !important;
+}
+
+html:not(.dark) header.sticky {
+  background-color: rgba(243, 239, 230, 0.94) !important;
+  border-bottom-color: #e6e1d6 !important;
+}
+
+html.dark header.sticky {
+  background-color: rgba(27, 30, 35, 0.94) !important;
+  border-bottom-color: #2e3238 !important;
+}
+
+#readingProgress {
+  background: linear-gradient(90deg, #c8553d, #4a6b8a) !important;
+}
