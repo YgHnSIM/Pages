@@ -589,6 +589,10 @@ C4 모델은 **네 가지 다이어그램**을 그리게 하며, 오늘 우리�
 
 ---
 
+[3강 →](cmu-software-architecture-lec03-architectural-drivers.html)
+
+---
+
 [^1]: **UML 컨텍스트 다이어그램의 표준 여부:** UML 2.5.1의 다이어그램 14종(Class, Object, Package, Composite Structure, Component, Deployment, Profile, Use Case, Activity, State Machine, Sequence, Communication, Timing, Interaction Overview)에 context diagram은 없다. 기원은 구조적 분석의 DFD 레벨 0(Gane–Sarson 등)이다. 출처: OMG UML 2.5.1 명세 https://www.omg.org/spec/UML/2.5.1/ , https://www.uml-diagrams.org/uml-25-diagrams.html , https://www.modernanalyst.com/Resources/Articles/tabid/115/ID/2012/Putting-Systems-Analysis-Into-Context-using-the-Context-Diagram.aspx
 [^2]: **C4 모델의 네 가지 다이어그램과 창안자:** 네 다이어그램은 System Context, Container, Component, Code다(초기에는 Code 대신 Classes였고 2015~2016년 무렵 바뀜). 창안자는 Simon Brown이며, 다이어그램 유형 이름은 2010년 초, 'C4'라는 이름은 2011년 초에 처음 쓰였다. 출처: https://c4model.com/ , https://c4model.com/faq
 [^3]: **우버의 서비스 확장 시기:** UberFRESH 2014년 8월 시작 → 2015년 4월 무렵 UberEATS로 이름 변경. UberRUSH는 2014년 4월 뉴욕 시범, 2015년 10월 정식 서비스, 2018년 종료. Uber Connect는 2020년 4월 무렵 시작, 2024년 12월 Uber Courier로 이름 변경. 출처: https://www.uber.com/us/en/newsroom/uberfresh-is-now-ubereats/ , https://en.wikipedia.org/wiki/Uber_Eats , https://techcrunch.com/2018/03/30/uberrush-is-shutting-down/ , https://www.engadget.com/transportation/uber-rebrands-its-courier-service-and-expands-on-demand-car-seats-to-four-more-cities-130040912.html

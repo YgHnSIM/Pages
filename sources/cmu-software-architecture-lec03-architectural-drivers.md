@@ -1,0 +1,718 @@
+---
+title: "'얼마나 잘'을 어떻게 받아 적는가 — CMU 소프트웨어 아키텍처 3강"
+subtitle: "기능·제약·품질 속성이라는 세 동인, 그리고 모호한 품질 요구를 시험할 수 있는 6부분 시나리오로 바꾸는 법"
+slug: "cmu-software-architecture-lec03-architectural-drivers"
+date: "2026-11-19"
+tags:
+  - 컴퓨터과학
+  - 소프트웨어공학
+  - 아키텍처
+  - 해설
+summary: "카네기멜런대학교(CMU) 17-635 「소프트웨어 아키텍처」 3강을 바탕으로, 아키텍처를 빚어내는 세 가지 입력(동인)—기능 요구, 제약, 품질 속성—을 어떻게 포착하고 문서화하는지 기초부터 해설한다. 온라인 쇼핑 웹 앱의 모놀리스 대 3계층 구조 비교로 구조가 품질 속성 간 트레이드오프를 낳는 원리를 살피고, '비기능 요구'와 '품질 속성'의 구분 및 사용성의 아키텍처적 의미를 짚는다. 이어 우버(Uber)의 도시 확장(DISCO) 사례로 요구와 아키텍처의 상호작용을 확인하고, 제약의 네 종류와 문서화 네 항목, 그리고 모호한 품질 요구 문장을 측정·시험 가능하게 번역하는 '6부분 품질 속성 시나리오'를 보안(SQL 인젝션), 성능(건물 관리 시스템 연기 감지기), 수정 용이성(장치 프로토콜 새 버전) 사례로 상세히 풀어낸다."
+archive_url: "https://yghnsim.github.io/Archive/pages/2026-11-19-CMU소프트웨어아키텍처3강.html"
+---
+
+## 서문: '무엇을' 너머의 '얼마나 잘'을 받아 적는 법
+
+소프트웨어를 만들기 시작할 때 사람들은 흔히 "이 앱은 어떤 기능을 해야 하는가"부터 종이에 적는다. 사용자가 버튼을 누르면 어떤 화면이 열리고, 결제 버튼을 누르면 돈이 빠져나가야 한다는 식의 목록이다. 1강에서 살폈던 '기능(무엇을)이 아니라 품질 속성(얼마나 잘)이 구조를 좌우한다'는 문제의식과, 2강에서 그린 컨텍스트 다이어그램이 던져 준 수많은 질문들을 이제 실제로 아키텍처 설계에 쓸 수 있는 입력값으로 정밀하게 받아 적을 차례다.
+
+우리가 흔히 쓰는 스마트폰 속 **차량 호출 플랫폼(우버 같은 서비스)**을 떠올려 보자. 승객이 출발지와 목적지를 입력하고 호출 버튼을 누르면, 근처의 운전자와 짝을 지어 주고, 차가 오는 경로를 지도에 띄우며, 도착 후 요금을 정산한다. 이 문장만 보면 할 일이 아주 선명해 보인다. 하지만 이 문장들만 들고 곧장 구조를 짜려고 하면 금세 막막해진다. 한 도시에만 서비스하는지 여러 도시에 동시에 서비스하는지, 출퇴근 시간대에 호출이 몰릴 때 몇 초 안에 배차 응답을 돌려줘야 하는지, 외부 지도나 결제 서비스를 그대로 써야 하는지, 개인정보 보호 규제는 어떻게 지켜야 하는지 아무것도 적혀 있지 않기 때문이다.
+
+카네기멜런대학교(CMU) 17-635 「소프트웨어 아키텍처(Software Architectures)」 3강[^1]은 바로 이 공백을 메우는 법을 다룬다. 시스템의 구조를 특정 방향으로 밀어붙이는 입력, 곧 **아키텍처 동인(architectural drivers)**에는 무엇이 있으며, 그 동인들이 구조에 어떤 영향을 미치고, 설계자가 실제로 구조를 끌어낼 수 있을 만큼 동인을 어떻게 정밀하고 쓸모 있게 문서화해야 하는지를 차근차근 짚어 나간다. 특히 "빠르게 응답해야 한다"거나 "쓰기 쉬워야 한다"처럼 뜬구름 잡기 쉬운 품질 요구가 실제 아키텍처에서 정말 구현 가능한지 따져 보고, 그것을 시험할 수 있는 문장으로 바꿔 주는 **6부분 품질 속성 시나리오(six-part quality attribute scenario)**라는 틀을 본격적으로 익힌다.
+
+> **[해설] 이 글의 읽는 법과 표기 원칙**  
+> 이 글은 소프트웨어 아키텍처를 처음 접하는 독자도 전문 기호 없이 따라올 수 있도록 **차량 호출 플랫폼**을 중심 이야기로 삼아 개념을 한 층씩 쌓아 올린다. 강의 본문에 등장하는 온라인 쇼핑 웹 앱, 건물 관리 시스템, 클라우드 라이선스, SQL 인젝션 등 다른 사례들도 빠짐없이 다루되, 각각의 사례가 차량 호출 플랫폼에서는 어떤 문제에 해당하는지 다시 이어 붙여 설명한다. 강의의 주장과 예시를 충실히 전하는 본문과 달리, 독자의 이해를 돕기 위해 덧붙인 배경 지식·가정 수치·해석은 **`[해설]`**로 구분해 적었고, 강의 밖 사실 관계에 추가 확인이 필요한 대목에는 **`(확인 필요)`**를 남겼다.
+
+---
+
+## 1. 컨텍스트 다이어그램에서 아키텍처 요구로: 질문이 동인이 되는 순간
+
+아키텍처 설계의 출발선은 시스템의 바깥 경계를 그리는 일이다. 어떤 시스템이 세상에 홀로 떠 있는 경우는 거의 없으므로, 먼저 우리 시스템이 어디까지를 책임지고 바깥의 누구와 맞닿아 있는지 그림으로 확인해야 한다. 이것이 바로 **컨텍스트 다이어그램(context diagram)**이다. 컨텍스트 다이어그램을 그리는 목적은 크게 세 가지를 분명히 하는 데 있다.
+
+1. **시스템의 범위(scope)**: 어디까지가 우리가 직접 만들어 관리할 안쪽이고, 어디부터가 바깥인지 경계를 긋는다.
+2. **사람 행위자(human actors)**: 이 시스템을 누가 쓰는가? 차량 호출 플랫폼이라면 차를 부르는 승객과 운행을 수락하는 운전자가 여기에 해당한다.
+3. **외부 실체(external entities)**: 사람이 아니지만 우리 시스템이 반드시 말을 주고받아야 하는 바깥의 대상들이다. 외부 시스템이나 외부 소프트웨어, 외부 저장소(storage), 혹은 시스템 밖에서 들어오는 외부 자극(external stimulus) 등이 모두 포함된다. 차량 호출 플랫폼으로 치면 지도 서비스, 결제를 맡는 은행, GPS 같은 것들이다.
+
+그런데 컨텍스트 다이어그램을 한 장 그려 놓고 나면, 그 그림이 곧바로 다음 질문을 쏟아 내기 시작한다. 그림에 "승객이 쓴다"라고 사람 아이콘 하나를 그려 넣었다면 자연스럽게 묻게 된다. **"그래서 사용자가 모두 몇 명인가?"** 시스템이 외부 결제 서비스나 저장소와 선으로 이어져 있다면 또 묻게 된다. **"일정 시간 동안 거래가 몇 건이나 일어나는가? 가장 붐비는 피크 시간대(peak hour) 부하는 어느 정도인가? 데이터를 쌓아 둘 저장 요구(storage requirements)는 얼마나 큰가?"**
+
+외부 시스템과 선을 그어 연결하는 순간에는 상호작용 방식에 관한 구체적인 물음도 뒤따른다. 다른 시스템을 호출할 때 인터넷을 통해 정해진 규칙으로 요청을 보내는 방식(API 호출)을 쓸 것인지, 아니면 중간에 저장소를 하나 두어 데이터를 공유할 것인지, 그것도 아니면 요청을 차례대로 줄 세워 두었다가 받아 가는 구조(메시지 큐, message queues)를 쓸 것인지 정해야 한다. 또한 요청을 보내자마자 답이 올 때까지 기다리는 동기(synchronous) 방식인지, 일단 접수를 맡겨 두고 나중에 결과를 받는 비동기(asynchronous) 방식인지도 물어야 한다.
+
+바로 이 질문 하나하나가 모여 **아키텍처 요구(architectural requirements)**가 된다. 단순히 "승객이 차를 부른다"라는 기능 목록이 아니라, 시스템을 어떤 크기로, 어떤 통신 방식으로, 얼마나 튼튼하게 세워야 하는지 결정짓는 질문들이 컨텍스트 다이어그램에서 흘러나오는 것이다.
+
+이제 이 글이 따라갈 순서를 정리해 보자. 먼저 요구사항과 아키텍처가 서로 어떤 관계를 맺고 있는지 살피고, 아키텍처에 영향을 주는 입력인 **아키텍처 동인**을 어떻게 포착해 기록하는지 알아본다. 그다음에는 동인 가운데서도 가장 다루기 까다로운 **품질 속성**을 분석하고 명세하는 틀을 익히며, 보안·성능·수정 용이성 연습 문제를 통해 그 틀을 실제로 손에 익히는 순서로 나아간다.
+
+---
+
+## 2. 같은 기능, 다른 구조, 다른 품질: 온라인 쇼핑 웹 앱과 트레이드오프
+
+아키텍처를 배우기 시작할 때 가장 먼저 깨쳐야 할 사실은 **기능을 다 만족시킨다고 해서 구조 문제가 끝나는 것이 아니다**라는 점이다. 시스템이 "무엇을 할 수 있는가"라는 기능 요구(functional requirements)가 같더라도, 내부 부품들을 어떤 구조로 엮느냐에 따라 시스템이 그 기능을 **"얼마나 잘" 수행하는가**가 완전히 달라진다.
+
+이 원리를 가장 또렷하게 보여 주는 사례가 **온라인 쇼핑 웹 애플리케이션**이다. 우리가 상품을 고르고 장바구니에 담아 결제하는 쇼핑 웹 앱을 만든다고 가정해 보자. 이 똑같은 쇼핑 앱을 두 가지 전혀 다른 구조로 만들 수 있다.
+
+첫 번째 구조는 **모놀리스(monolith)**다. 화면을 보여 주는 부분, 할인이나 장바구니 규칙을 계산하는 부분, 데이터베이스에 상품과 주문 기록을 넣고 빼는 부분을 따로 떼어 놓지 않고 하나의 커다란 덩어리(단일 프로그램·단일 프로세스) 안에 한데 묶어 넣는 방식이다. 두 번째 구조는 **계층형(layered) 아키텍처**다. 사용자에게 보여 주는 **사용자 화면(UI) 계층**, 쇼핑 규칙을 처리하는 **업무 논리(business logic) 계층**, 데이터베이스를 읽고 쓰는 **데이터 접근(data access) 계층**이라는 세 층으로 깔끔하게 분리해 놓는 방식이다.
+
+먼저 물어야 할 질문은 이것이다. 모놀리스로 만들든 3계층 구조로 만들든, 쇼핑 앱이 해야 할 기능 요구(상품 조회, 장바구니 담기, 주문 처리 등)를 모두 구현할 수 있을까? 답은 **둘 다 가능하다**이다. 많은 사람이 실무에서 계층형 웹 앱을 보아 왔겠지만, 세 층을 한 덩어리로 합쳐 놓아도 기능만 놓고 보면 똑같이 돌아가는 쇼핑 애플리케이션을 얼마든지 만들 수 있다.
+
+하지만 기능을 똑같이 구현해 놓고 나서 시스템의 성질을 하나씩 따져 보기 시작하면 두 구조의 성적표는 갈린다. 강의에서 나란히 올려놓고 비교한 네 가지 품질 속성을 차례로 살펴보자.
+
+### 2.1 수정 용이성(Modifiability): 기술이나 규칙을 바꿀 때 얼마나 손이 덜 가는가
+
+쇼핑 앱을 운영하다 보면 화면 기술을 바꿔야 할 때가 온다. 처음에는 오래된 웹 기술인 **자바 서블릿(Java servlets)** 같은 것으로 화면을 만들었는데, 이제는 요즘 많이 쓰는 **리액트(React)**로 화면을 갈아 끼우고 싶다고 하자. 이때 어느 쪽이 고치기 쉬울까? 한 덩어리로 뭉쳐 있는 모놀리스보다는 계층이 나뉘어 있는 **계층형 구조가 훨씬 수월하다**. 계층형에서는 업무 논리 계층이나 데이터 접근 계층을 건드릴 필요 없이, 맨 위쪽 화면 계층만 떼어 내어 새 화면 계층으로 교체하면 되기 때문이다.
+
+데이터 쪽을 바꿀 때도 마찬가지다. 표 형태로 데이터를 저장하는 관계형 데이터베이스(SQL)에서 문서나 키-값 형태 등을 다루는 비관계형 데이터베이스(NoSQL)로 옮기거나, 오라클(Oracle)에서 다른 SQL 데이터베이스로 갈아타고 싶을 때도 데이터 접근 계층만 분리되어 있으면 교체가 훨씬 쉽다. 가운데 있는 업무 논리 계층 역시 장바구니에 담을 수 있는 품목 수 제한 같은 규칙을 바꿀 때 다른 층에 미치는 영향을 줄이면서 손댈 수 있다. 따라서 **수정 용이성에서는 계층형이 앞선다.**
+
+### 2.2 보안(Security): 공격 지점을 줄일 것인가, 층별로 강도를 조절할 것인가
+
+보안으로 넘어가면 흥미로운 관점 차이가 드러난다. 수업에 참여한 학생들은 **모놀리스가 보안에 더 낫다**는 의견을 냈다. 모든 요소가 한 덩어리 안에 들어 있으면 계층 사이를 오가는 통신 구간이 줄어들어, 중간에 누군가 통신을 가로채는 **중간자 공격(man-in-the-middle)** 지점이 적어진다는 이유다. 강의도 그 관점이 타당하다고 인정한다.
+
+이어 나온 다른 학생의 답을 강의는 "또 다른 관점"이라고 받으며, 계층형에서는 가장 중요한(most crucial) **데이터 계층**을 따로 떼어 보호할 수 있다고 짚었다. 그리고 **자신이라면 더 높은 보안을 위해 계층형을 고르겠다**고 했다. 위험 수준에 따라 바깥쪽 화면 계층, 가운데 업무 논리 계층, 안쪽 데이터 계층에 서로 다른 강도의 보안을 걸 수 있어 훨씬 **통제된 보안(controlled security)**이 가능하다. 그렇다면 학생이 걱정한 계층 간 중간자 공격 문제는 어떻게 풀 수 있을까? 계층형에서도 백엔드 전체를 방화벽(firewalls) 등 다른 보안 메커니즘으로 감싸 막음으로써 외부 침입자를 차단하고 대응할 수 있다는 것이 강의의 설명이다. 이처럼 보안은 "구간이 적은가"라는 관점에서는 모놀리스가 유리해 보이지만, "중요한 층을 위험도별로 정교하게 통제할 수 있는가"라는 관점에서는 계층형이 강점을 갖는다.
+
+### 2.3 성능(Performance): 한 번에 부를 것인가, 관문을 여러 번 거칠 것인가
+
+이번에는 속도와 처리 속도, 즉 **성능**을 따져 보자. 어느 쪽이 빠를까? 답은 분명히 **모놀리스**다. 모놀리스 안에서는 화면 코드가 업무 논리를 부르고, 업무 논리가 데이터 코드를 부를 때 전부 한 프로세스 안에서 내부 함수(메서드)를 직접 호출하기만 하면 된다. 중간에 거추장스러운 절차가 없다.
+
+반면 계층형에서는 층이 나뉘어 있는 만큼 층과 층을 건너뛰는 비용이 든다. 프로세스 간 통신(inter-process communication)을 하거나 심지어 네트워크를 타고 통신을 건너가야 할 수도 있다. 게다가 방금 보안 이야기에서 본 것처럼 각 계층을 따로 보호하기 위해 보안 검사 장치를 층마다 끼워 넣으면, 요청 하나가 지나갈 때마다 추가 처리가 한 겹 더 얹힌다. 따라서 **성능에서는 모놀리스가 유리하다.**
+
+### 2.4 개발 속도(Speed of development): 슬라이드에 오른 넷째 속성
+
+강의는 처음에 "세 가지 품질 속성"을 비교하겠다고 운을 떼고 수정 용이성·보안·성능을 짚은 뒤, 슬라이드에 함께 올라와 있던 네 번째 속성인 **개발 속도**까지 마저 비교한다. 여러 개발자가 동시에 붙어서 빨리 만들어 내야 한다면 어느 구조가 나을까? 여기서는 **계층형이 유리하다.**
+
+계층형에서는 각 계층이 서로 말을 주고받는 경계면, 즉 **인터페이스(interfaces)**만 먼저 정해 두면 화면 팀, 업무 논리 팀, 데이터 팀이 각자 자기 층을 동시에 개발하는 **병렬 개발(parallel development)**이 가능하다. 반면에 모놀리스는 내부 요소들이 아주 팽팽하고 강하게 묶여 있어(tightly coupled) 이를 쪼개고 인터페이스를 나누어 병렬로 일하기가 쉽지 않다. 물론 모놀리스라고 해서 나누는 일이 아예 불가능한 것은 아니지만, 경계를 쪼개고 인터페이스를 정의하는 데 훨씬 더 많은 노력이 든다.
+
+<svg viewBox="0 0 420 1170" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="같은 기능, 다른 구조에 따른 품질 속성 성적표">
+<defs>
+<marker id="cmu3a_arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M 0 1 L 10 4 L 0 7 z" fill="#38bdf8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="1170" rx="12" fill="#0f172a"/>
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">같은 온라인 쇼핑 기능, 다른 구조 →</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">엇갈리는 품질 속성 성적표</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">기능 요구(무엇을)는 둘 다 만족하지만, 구조에 따라</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">'얼마나 잘'이 달라지며 모든 속성에서 1등인 구조는</text>
+<text x="210" y="120" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">없다</text>
+<rect x="16" y="140" width="388" height="272" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.8"/>
+<rect x="16" y="140" width="388" height="66" rx="10" fill="#78350f"/>
+<rect x="16" y="196" width="388" height="10" fill="#78350f"/>
+<text x="210" y="162" fill="#fde68a" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">모놀리스 (Monolith)</text>
+<text x="210" y="182" fill="#fde68a" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">한 덩어리 구조</text>
+<rect x="32" y="218" width="356" height="182" rx="8" fill="#0f172a" stroke="#fbbf24" stroke-dasharray="4 3" stroke-width="1.2"/>
+<text x="210" y="242" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">단일 프로세스 안에 모두 결합</text>
+<text x="210" y="270" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">화면(UI) + 업무 논리 + 데이터 접근</text>
+<text x="210" y="298" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">• 내부 메서드 직접 호출 (IPC/네트워크</text>
+<text x="210" y="320" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">없음)</text>
+<text x="210" y="348" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">• 강하게 결합(tightly coupled)되어 부분</text>
+<text x="210" y="370" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">교체가 어려움</text>
+<rect x="16" y="428" width="388" height="356" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+<rect x="16" y="428" width="388" height="66" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="484" width="388" height="10" fill="#0c4a6e"/>
+<text x="210" y="450" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3계층 (Layered)</text>
+<text x="210" y="470" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">역할별 분리 구조</text>
+<rect x="32" y="506" width="356" height="70" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+<text x="210" y="528" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 사용자 화면 계층 (UI)</text>
+<text x="210" y="550" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">예: Java 서블릿 → React 교체</text>
+<line x1="210" y1="576" x2="210" y2="598" stroke="#38bdf8" stroke-width="2" marker-end="url(#cmu3a_arr)"/>
+<rect x="32" y="598" width="356" height="70" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1.2"/>
+<text x="210" y="620" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 업무 논리 계층</text>
+<text x="210" y="642" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">예: 장바구니 품목 수 규칙 변경</text>
+<line x1="210" y1="668" x2="210" y2="690" stroke="#38bdf8" stroke-width="2" marker-end="url(#cmu3a_arr)"/>
+<rect x="32" y="690" width="356" height="70" rx="6" fill="#0f172a" stroke="#a78bfa" stroke-width="1.2"/>
+<text x="210" y="712" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 데이터 접근 계층</text>
+<text x="210" y="734" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">예: SQL ↔ NoSQL, Oracle 교체</text>
+<rect x="16" y="800" width="388" height="380" rx="10" fill="#0b1220" stroke="#475569" stroke-width="1.2"/>
+<text x="210" y="824" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">네 가지 품질 속성별 유불리 비교</text>
+<text x="210" y="846" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">(트레이드오프 요약)</text>
+<text x="32" y="872" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 수정 용이성:</text>
+<text x="32" y="894" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">계층형 유리 (필요한 층만 떼어 교체)</text>
+<text x="32" y="924" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 성능:</text>
+<text x="32" y="946" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">모놀리스 유리 (한 프로세스 내부 호출, 계층</text>
+<text x="32" y="968" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">보안 겹 없음)</text>
+<text x="32" y="998" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 개발 속도:</text>
+<text x="32" y="1020" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">계층형 유리 (인터페이스 정해 병렬 개발 가능)</text>
+<text x="32" y="1050" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 보안:</text>
+<text x="32" y="1072" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">강사는 계층형 선택 (데이터 계층 별도·통제</text>
+<text x="32" y="1094" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">보호, 방화벽 대응)</text>
+<text x="32" y="1124" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">학생 관점은 모놀리스 유리 (계층 간 중간자 공격</text>
+<text x="32" y="1146" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">지점이 적음)</text>
+</svg>
+
+이 네 가지 비교를 표로 다시 정리하면 두 구조의 트레이드오프가 한눈에 들어온다.
+
+| 비교 항목 | 모놀리스(Monolith) | 3계층(Layered) | 이유와 핵심 근거(원문 기준) |
+| :--- | :---: | :---: | :--- |
+| **기능 요구 충족** | 가능 | 가능 | 두 구조 모두 온라인 쇼핑의 모든 기능을 구현할 수 있음 |
+| **수정 용이성** | 불리 | **유리** | UI(Java 서블릿→React), 업무 논리(장바구니 품목 수), DB(SQL↔NoSQL·Oracle)를 층별로 교체 가능 |
+| **보안** | 학생 관점: 유리<br/>*(공격 지점 적음)* | **강사 선택: 유리**<br/>*(계층별 통제)* | 학생은 중간자 공격 지점이 적다는 점을, 강사는 가장 중요한 데이터 계층을 위험 수준별로 따로 지키고 백엔드는 방화벽 등으로 막을 수 있다는 점을 근거로 듦 |
+| **성능** | **유리** | 불리 | 모놀리스는 한 프로세스 내 메서드 호출만 하면 되지만, 계층형은 IPC·네트워크와 계층별 보안 처리가 한 겹 더 듦 |
+| **개발 속도**<br/>*(슬라이드 4번째 속성)* | 불리 | **유리** | 계층형은 인터페이스를 정해 병렬 개발이 가능하나, 모놀리스는 강하게 묶여 있어 나누는 데 더 많은 노력이 듦 |
+
+이 비교에서 얻어야 할 핵심 결론은 두 가지다. 첫째, **구조는 시스템이 기능을 "얼마나 잘" 수행하는지를 직접 결정하지만, 모든 품질 속성에서 동시에 최고점을 받는 구조는 없다.** 성능이 좋으면 수정이나 병렬 개발이 불리해지고, 층을 나누어 수정 용이성과 병렬 개발 속도를 얻으면 층간 통신 비용 때문에 성능이 깎인다. 이것이 바로 아키텍처에 **늘 트레이드오프(trade-off)**가 존재하는 이유다.
+
+둘째, **기능 요구("무엇을" 하는가)가 가장 먼저이고 가장 중요하지만, 그것만으로는 충분하지 않다.** 시스템이 제 기능을 해내지 못하면 아무 소용이 없으므로 기능 요구가 첫 번째 자리를 차지하는 것은 맞다. 하지만 그 기능을 "얼마나 잘" 해내는지는 **품질 속성**이 정한다. 결국 기능 요구와 품질 속성, 이 둘은 모두 중요하다.
+
+> **[해설] 차량 호출 플랫폼이라면 이것은 무엇에 해당하는가**  
+> 우리가 만드는 차량 호출 플랫폼에서도 똑같은 갈림길이 생긴다. 승객 화면, 배차·요금 계산 논리, 운행 기록 데이터베이스를 한 덩어리 모놀리스로 묶으면 당장 앱 안의 처리 속도는 빠를 수 있다. 하지만 지도 회사를 바꾸거나, 요금 할인 정책을 자주 고치거나, 여러 개발 팀이 승객 앱·운전자 앱·정산 서버를 동시에 개발해야 한다면 계층이나 경계를 나누지 않은 모놀리스가 금세 발목을 잡는다. 반대로 층을 너무 잘게 나누어 매 단계마다 네트워크 통신과 암호화 검사를 거치게 하면 배차 응답이 느려진다. 그래서 "우리 차량 호출 플랫폼은 당장 무엇이 더 급한가"라는 우선순위 결정이 꼭 필요하다.
+
+---
+
+## 3. '비기능 요구'와 품질 속성의 경계, 그리고 사용성 논쟁
+
+기능 요구 너머의 요구사항들을 다루다 보면 업계나 책에서 자주 마주치는 말이 있다. 바로 **비기능 요구(non-functional requirements)**라는 표현이다. 품질 속성을 흔히 비기능 요구라고 부르는 사람들도 많다. 기능 요구가 아니니까 '비기능'이라고 묶어 부르는 것이다. 하지만 CMU 소프트웨어 아키텍처 수업에서는 이 둘을 섞어 부르는 데 "약간 문제가 있다(a bit of a problem)"고 본다.
+
+### 3.1 왜 "모든 비기능 요구가 품질 속성은 아닌가"
+
+먼저 품질 속성의 이름부터 살펴보자. 품질 속성은 정의도 다양하고 종류도 끝없이 많다. 수정 용이성(modifiability), 가용성(availability), 확장성(scalability), 사용성(usability)처럼 영어 끝에 **'-ility'**가 붙는 말이 워낙 많아 아예 묶어서 **'ilities'**라고 부르기도 한다. 물론 정확도(accuracy)나 배포 용이성(deployability)처럼 그 밖의 이름들도 포함되며, 이 목록에는 끝이 없다.
+
+그렇다면 왜 이것들을 그냥 '비기능 요구'라고 부르면 안 될까? **'비기능(non-functional)'이라는 말은 문자 그대로 기능 요구가 아닌 세상 모든 요구를 다 가리키기 때문이다.** 예를 들어 이해관계자가 이런 요구를 냈다고 하자.
+
+> *"화면의 글자 색은 파란색이어야 한다."*
+
+이 문장은 시스템이 수행하는 '기능'을 설명하는가? 아니다. 따라서 기능 요구는 아니다. 그렇다면 이것은 품질 속성 요구인가? **그렇지 않다.** 글자 색을 파란색으로 할지 빨간색으로 할지는 화면의 스타일을 정하는 **UI 디자인 요구**일 뿐, 시스템의 아키텍처 구조를 어떻게 쪼개고 연결할지에는 아무런 영향도 주지 않기 때문이다. 
+
+이 차이 때문에 강의는 강하게 못 박는다. **"모든 비기능 요구가 품질 속성은 아니다. CMU 졸업생이라면 이 구분이 분명해야 한다."** 아키텍트가 특별하게 다루고 구조를 세워 풀어내야 하는 대상은 막연한 '비기능 요구 전체'가 아니라, 그중에서도 **시스템의 구조와 맞물리는 품질 속성**이다.
+
+<svg viewBox="0 0 420 458" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="비기능 요구와 품질 속성의 포함 관계">
+<defs>
+
+</defs>
+<rect x="0" y="0" width="420" height="458" rx="12" fill="#0f172a"/>
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">비기능 요구와 품질 속성의 관계: 모든</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">비기능 요구가 품질 속성은 아니다</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">판단 기준: &quot;기능이 아니다&quot;가 아니라 &quot;아키텍처</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">구조에 영향을 주는가(아키텍처적으로 중요한가)&quot;</text>
+<rect x="16" y="120" width="388" height="318" rx="28" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+<text x="210" y="148" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">기능이 아닌 요구 (비기능 요구)</text>
+<rect x="32" y="164" width="356" height="94" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1.2"/>
+<text x="210" y="188" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">아키텍처 구조에 영향을 주지 않는 요구</text>
+<text x="210" y="210" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">예: &quot;글자 색은 파란색&quot;</text>
+<text x="210" y="232" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">단순 UI 디자인 요구 (구조 무관)</text>
+<ellipse cx="210" cy="343.0" rx="178" ry="71.0" fill="#0c4a6e" fill-opacity="0.85" stroke="#38bdf8" stroke-width="2.2"/>
+<rect x="50" y="286.0" width="320" height="114" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+<text x="210" y="310.0" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">품질 속성 (Quality Attributes)</text>
+<text x="210" y="332.0" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">시스템 전체 성질 · 아키텍처적으로 중요</text>
+<text x="210" y="354.0" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">예: 사용성 · 성능 · 보안 · 수정</text>
+<text x="210" y="376.0" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">용이성</text>
+<text x="210" y="398.0" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">아키텍트가 구조 결정으로 직접 다룸</text>
+</svg>
+
+### 3.2 사용성(Usability)은 품질 속성인가, 그저 화면 디자인 문제인가
+
+이 기준을 곧바로 시험해 볼 수 있는 아주 좋은 질문이 있다. **"사용성(usability)은 품질 속성인가, 아니면 그저 평범한 비기능 요구인가?"**
+
+처음 들으면 사용성은 버튼 배치나 색상처럼 UI 디자이너가 화면만 예쁘게 꾸미면 되는 문제로 오해하기 쉽다. 교실에서도 한 학생은 사용성을 **"있으면 좋은 것(good to have)"** 정도로 보았다. 그러자 강의는 곧바로 우리의 중심 예시인 **차량 호출 앱(우버 등)**을 꺼내어 묻는다. 차량 호출 앱에서 사용성이 그저 있으면 좋은 부가 요소인가? **아니다.** 사용성이 나쁘면 고객을 모조리 잃게 되므로 사업적으로 대단히 중요하다.
+
+하지만 사업적으로 중요하다고 해서 곧바로 품질 속성이 되는 것은 아니다. 판단 기준은 정확히 두 가지다. 품질 속성으로 부르려면 **시스템 전체의 성질(systemic properties)이면서 동시에 아키텍처적으로 중요(architecturally significant)**해야 한다. 다시 말해 핵심 질문은 이것이다. **"트레이드오프는 잠시 접어 두고 보았을 때, 아키텍처를 바꿈으로써 시스템을 더 사용하기 좋게(usable) 만들 수 있는가?"**
+
+답을 찾기 위해 차량 호출 플랫폼의 사용성 안쪽을 들여다보자. 사용자가 앱을 켜서 차를 부를 때, 사용성은 단순히 화면 글꼴 하나를 뜻하지 않는다.
+
+- **로그인과 보안의 마찰**: 앱에 들어갈 때 단순 비밀번호 로그인으로 끝나는지, 2단계 인증이나 3단계 인증을 거쳐야 하는지, 제3자 인증서를 요구하는지, 아니면 한 번 로그인으로 여러 기능을 쓰는 **싱글 사인온(SSO, single sign-on)**을 지원하는지에 따라 사람이 느끼는 쓰기 쉬움이 크게 달라진다. 즉, **보안 구현 방식과 인증 흐름의 선택이 곧 사용성에 영향을 준다.**
+- **처음 배우기 쉬움(ease of learning)과 직관성·탐색 쉬움**: 우버 같은 차량 호출 앱을 오늘 처음 설치한 사람도 설명서 없이 바로 차를 부를 수 있어야 한다. 메뉴가 직관적이고, 원하는 화면으로 쉽게 이동할 수 있어야 한다.
+- **정확한 응답(accurate response)과 시기적절한 응답(timely response)**: 표시 응답 시간이 빠를 뿐 아니라 위치 정보 자체가 정확해야 한다. 운전자가 바로 근처까지 왔는데 앱 위치가 엉뚱한 곳을 가리켜 승객이 운전자를 찾아 헤매야 한다면, 그 앱은 결코 쓰기 편한 앱이 아니다.
+
+이제 한 걸음 더 들어가, **아키텍처를 어떻게 설계해야 사용성을 높일 수 있는지** 다섯 가지 구체적인 경로를 살펴보자.
+
+1. **기능 간 일관성(consistency across features) → 모듈화와 재사용성**: 차량 호출 플랫폼에서 어떤 사람은 운전자로 앱을 쓰고 어떤 사람은 승객으로 앱을 쓴다. 운전자 화면의 탐색·로그인 방식과 승객 화면의 방식이 일관되다면 훨씬 배우기 쉽고 직관적이다. 더 나아가 승객 한 사람 안에서도 '차량 호출'을 할 때와 '음식 배달(Uber Eats)'을 주문할 때 흐름이 비슷하고 직관적이어야 한다. 이를 코드 수준에서 달성하려면 시스템을 **모듈화(modularity)**하여 공통 기능을 재사용할 수 있는 별도 패키지로 묶어 내는 **재사용성(reusability)** 구조가 필요하다.
+2. **일관된 오류 처리 전략(error handling strategies)**: 오류가 났을 때 무조건 "시스템이 응답하지 않습니다"라는 퉁명스러운 한 줄만 돌려주는가, 오류에 어떻게 응답하는가, 그리고 그 방식이 시스템 전체에서 일관된가? 이것 역시 아키텍처 차원의 설계 결정이다.
+3. **캐싱과 미리 가져오기(caching and prefetching)**: 사용자가 화면을 넘길 때마다 서버에 새로 물어보느라 기다리게 하지 않고, 자주 쓰거나 곧 쓸 정보를 미리 가져와 가까이 저장해 두면 정보가 제때 화면에 뜬다. 물론 캐싱과 미리 가져오기는 다른 기능의 성능을 높이는 데도 쓰이지만, 여기서는 정보를 제때 내어 주어 체감 사용성을 끌어올리는 아키텍처 수단이 된다.
+4. **응답성(responsiveness)**: 여기서 말하는 응답성은 서버 API 하나가 응답하는 시간만을 뜻하는 좁은 이야기가 아니다. **사용자가 화면의 버튼을 누른 순간부터 실제 응답이 돌아올 때까지의 전체 지연 시간(overall latency)**이 사용자가 느끼는 사용성을 좌우한다. 화면이 얼마나 빨리 뜨는지(학생이 언급한 **콘텐츠 전송 네트워크(CDN)** 활용 등)와 **데이터 모델 설계**까지 모두 아키텍처의 문제다.
+5. **인증 흐름(authentication flow)**: 앞서 본 SSO나 다중 인증(MFA, multi-factor authentication) 중 어떤 인증 흐름을 채택하느냐도 아키텍처 결정이며 사용성에 직접적인 영향을 미친다.
+
+이 강의에서 나온 두 가지 질문도 같은 결론으로 이어졌다. 첫 번째 질문은 사용성의 여러 측면을 짚던 중에 나온 **"사용자 인터페이스 디자인이 시스템 아키텍처의 영향을 받는가?"**였다. 강의는 이 질문을 되짚으며 "Very good"이라고 받고, 그렇기 때문에 **사용성은 분명히 아키텍처적으로 중요한 속성**이라고 정리한 뒤 위의 다섯 가지 아키텍처 수단으로 넘어갔다. 두 번째 질문은 다섯 수단을 다 짚은 뒤에 나온 **"동적 UI를 개인화(personalization) 품질 속성으로 볼 수 있나?"**였다. 이에 대해서도 **그렇다, 개인화는 사용성의 일부**라고 답했다.
+
+정리하자면 사용성은 아키텍처에 아무런 기여를 하지 못하는 평범한 비기능 요구("글자 색 파란색")가 아니다. 아키텍처 결정에 영향을 주고 아키텍처 구조를 통해 높일 수 있는 명백한 **품질 속성**이다.
+
+---
+
+## 4. 세 가지 아키텍처 동인과 첫 번째 동인: 기능 요구 포착
+
+이제 아키텍처를 설계하는 자리로 들어가 보자. 아키텍트가 시스템 구조를 빚어낼 때 손에 쥐고 들어가는 입력 재료는 모두 몇 가지일까? 정확히 세 가지다. 강의는 이것을 **세 가지 아키텍처 동인(three architectural drivers)**이라고 부른다.
+
+1. **기능 요구(Functional requirements)**: 시스템이 **"무엇을" 수행해야 하는가**. 아키텍처는 무엇보다 먼저 모든 기능 요구를 빠짐없이 만족시켜야 한다.
+2. **품질 속성(Quality attributes)**: 그 능력을 **"얼마나 잘" 수행해야 하는가**. 트레이드오프가 있으므로 반드시 **우선순위**가 있어야 한다.
+3. **제약(Constraints)**: 시스템이 **어떤 조건 아래서 운영되고 개발되어야 하는가**. 아키텍처를 마음대로 백지상태에서 그릴 수 있는 자유는 거의 없다. 품질 속성과 달리 제약은 **우선순위를 매기지 않는다.**
+
+이 세 동인은 서로 따로 놀지 않고 모두 아키텍처의 입력으로 들어간다. 특히 기능 요구와 아키텍처 사이에는 한쪽이 다른 한쪽을 일방적으로 찍어 누르는 것이 아니라, 서로 영향을 주고받는 **양방향 관계**가 성립한다.
+
+<svg viewBox="0 0 420 704" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="세 가지 아키텍처 동인과 아키텍처의 상호작용">
+<defs>
+<marker id="cmu3c_arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M 0 1 L 10 4 L 0 7 z" fill="#10b981"/></marker>
+<marker id="cmu3c_gold" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M 0 1 L 10 4 L 0 7 z" fill="#fbbf24"/></marker>
+<marker id="cmu3c_bi_s" markerWidth="10" markerHeight="8" refX="1" refY="4" orient="auto"><path d="M 10 1 L 0 4 L 10 7 z" fill="#38bdf8"/></marker>
+<marker id="cmu3c_bi_e" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M 0 1 L 10 4 L 0 7 z" fill="#38bdf8"/></marker>
+<marker id="cmu3c_down" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M 0 1 L 10 4 L 0 7 z" fill="#38bdf8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="704" rx="12" fill="#0f172a"/>
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">세 가지 아키텍처 동인(Architectural</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">Drivers)과 아키텍처의 상호작용</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">기능 요구·품질 속성·제약을 모두 고려해 설계하며,</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle"> 특히 기능 요구와 아키텍처는 서로 밀고 당긴다</text>
+<rect x="16" y="118" width="348" height="70" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6"/>
+<text x="190.0" y="142" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 기능 요구 (&quot;무엇을&quot;)</text>
+<text x="190.0" y="164" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">가장 먼저 모두 만족시켜야 할 핵심</text>
+<rect x="16" y="228" width="348" height="70" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.6"/>
+<text x="190.0" y="252" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 품질 속성 (&quot;얼마나 잘&quot;)</text>
+<text x="190.0" y="274" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">트레이드오프 존재 → 우선순위 필수</text>
+<rect x="16" y="312" width="348" height="92" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.6"/>
+<text x="190.0" y="336" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 제약 (&quot;어떤 조건 아래서&quot;)</text>
+<text x="190.0" y="358" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">우선순위 없음 · 이유·여지·대안·출처</text>
+<text x="190.0" y="380" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">기록</text>
+<line x1="364" y1="153.0" x2="378" y2="153.0" stroke="#38bdf8" stroke-width="2.2" marker-start="url(#cmu3c_bi_s)" marker-end="url(#cmu3c_bi_e)"/>
+<line x1="364" y1="263.0" x2="378" y2="263.0" stroke="#10b981" stroke-width="2" marker-end="url(#cmu3c_arr)"/>
+<line x1="364" y1="358.0" x2="378" y2="358.0" stroke="#f59e0b" stroke-width="2" marker-end="url(#cmu3c_gold)"/>
+<text x="290" y="214" fill="#7dd3fc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">서로 영향 (양방향)</text>
+<line x1="378" y1="153.0" x2="378" y2="432" stroke="#64748b" stroke-width="2" marker-end="url(#cmu3c_down)"/>
+<rect x="16" y="432" width="388" height="96" rx="12" fill="#0c4a6e" stroke="#38bdf8" stroke-width="2"/>
+<text x="210" y="458" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">소프트웨어 아키텍처</text>
+<text x="210" y="482" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">• 세 동인의 입력을 수용</text>
+<text x="210" y="504" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">• 구조 변경 시 기능 요구도 다시 조정될 수 있음</text>
+<rect x="16" y="544" width="388" height="140" rx="10" fill="#0b1220" stroke="#475569" stroke-width="1.2"/>
+<text x="210" y="568" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">우버(Uber) 사례</text>
+<text x="32" y="592" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">• 새 요구: 여러 도시 확장</text>
+<text x="32" y="614" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">• 기존 구조로는 한계 → DISCO 아키텍처로 전환</text>
+<text x="32" y="636" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">구조를 못 바꾸면 반대로 &quot;여러 도시는 포기&quot;해야</text>
+<text x="32" y="658" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">함</text>
+</svg>
+
+### 4.1 기능 요구를 포착할 때 빠뜨리면 안 되는 다섯 가지
+
+기능 요구를 받아 적는 도구 자체는 이미 널리 쓰이고 있다. **유스케이스(use cases)**, **사용자 스토리(user stories)**, **기능(feature) 설명**, **운영 설명(operational description)**, 혹은 다른 **형식 명세(formal specifications)** 등 팀에 맞는 어떤 방식이든 쓸 수 있다. 중요한 것은 형식이 아니라 내용이다. 기능 요구를 쓸 때는 정상적으로 잘 굴러가는 경우만 적어서는 안 되며, 다음 다섯 가지를 반드시 명시적으로(explicitly) 적어야 한다.
+
+1. **사전 조건과 가정(preconditions / assumptions)**: 이 기능이 시작되기 전에 미리 참이어야 하는 조건은 무엇인가?
+2. **정상 흐름(happy path)**: 아무런 문제 없이 기대한 대로 흘러갈 때의 순서.
+3. **대체 흐름(alternate flows)**: 정상에서 살짝 벗어나는 경우. 예컨대 로그인 유스케이스에서 **아이디와 비밀번호가 틀렸다면** 시스템은 무엇을 해야 하는가?
+4. **오류 조건(error conditions)**: 정상 동작 자체가 막히는 예외 상황. 예컨대 아이디와 비밀번호를 확인하려고 하는데 **데이터베이스에 접근할 수 없다면** 오류 조건을 어떻게 처리해야 하는가?
+5. **사후 조건(postconditions)**: 이 기능이 끝난 뒤 시스템은 어떤 상태가 되어야 하는가?
+
+현장에서는 보통 **업무 분석가(business analyst)**가 기능 요구를 꼼꼼히 정리하는 데 집중한다. 이때 아키텍트도 그 자리에 함께 들어가야 한다. 다만 아키텍트가 던지는 질문의 초점은 조금 다르다. 아키텍트는 기능 목록을 들으면서 곧바로 아키텍처 요구, 즉 앞서 말한 모든 **'-ilities'에 기여하는 질문들**을 캐묻는다. 그리고 트레이드오프가 늘 따라다니기 때문에 **어느 품질 속성이 더 중요한지 우선순위(priorities)**까지 그 자리에서 함께 받아 적는다.
+
+### 4.2 우버 사례: 요구와 아키텍처가 서로 밀고 당기는 이유
+
+왜 아키텍트가 요구를 잡는 단계부터 들어가야 할까? **아키텍처 설계를 더 깊이 이해할수록 기능 요구가 바뀔 수 있고, 반대로 기능 요구가 바뀌면 아키텍처가 바뀌기 때문이다.** 우버(Uber)의 진화 과정이 이 관계를 보여 준다.
+
+우버가 처음 시스템을 설계할 때는 범위를 아주 단순하게 잡았다. **"일단은 한 도시에만 배포한다"**고 정한 것이다. 그 전제 아래에서 승객(commuter)과 운전자를 짝지어 주는 매칭 알고리즘을 오직 그 한 도시만 고려해 작성했다. 모듈 하나, 그 도시의 데이터 한 벌, 지도 하나 — 그것이 초기 우버의 아키텍처였다.[^2]
+
+그런데 사업이 커지면서 판이 달라졌다. **"이제 여러 도시를 동시에 처리해야 한다"**는 새로운 기능 요구가 들어온 것이다. 과연 한 도시만 염두에 두고 짠 기존 아키텍처가 이 새 요구를 만족시킬 수 있었을까? **만족시키지 못했다.** 기존 구조를 그대로 유지한 채 여러 도시를 억지로 우겨넣었더라면, 짝짓기 자체는 어찌저찌 돌아갔을지 몰라도 응답 시간이 훨씬 길어져 **성능**이 무너졌을 것이고, 그 결과 도시를 넘나드는 상황에서 **사용성**까지 함께 망가졌을 것이다.
+
+그래서 우버 앞에는 두 갈래 선택지밖에 없었다. 아키텍처를 바꾸든가, 아니면 "여러 도시는 하지 않겠다"고 기능 요구를 포기하든가. 우버는 아키텍처를 통째로 바꾸는 길을 택했고, 그렇게 탄생한 것이 **DISCO(dispatch optimization, 배차 최적화)** 아키텍처다.[^3] DISCO의 핵심은 지역 전체를 **셀(cell)**이라는 작은 칸들로 쪼개고, 승객과 운전자를 짝짓는 알고리즘이 그 전체 지도가 아니라 각 셀만 고려하도록 바꾼 데 있다. 이 구조 변화로 인해 짝짓기·배차 알고리즘만 바뀐 것이 아니다. 운전자와 통신해 지금 운행 가능한 상태(availability)를 받아 오는 방식, 호출 요청을 몇 명의 어떤 운전자에게 뿌릴지(broadcast)까지 시스템의 뼈대가 전부 바뀌었다. 강의는 이 DISCO 아키텍처를 우버가 가진 강점 중 하나로 꼽는다.
+
+이 교훈은 거대 서비스에만 해당하지 않는다. 아주 작은 시스템을 처음 만들 때도 마찬가지다. 당장 초기 기능 요구가 작은 일부 기능뿐이라 하더라도, 처음부터 **확장 가능하게(extensible)** 아키텍처를 잡아 두면 나중에 사업 쪽에서 "이 새 기능도 넣을 수 있나요?"라고 물었을 때 "네, 지금 아키텍처로 할 수 있습니다"라고 답하며 새 기능을 매끄럽게 받아들일 수 있다. 이처럼 **기능 요구와 아키텍처 사이에는 늘 한쪽에서 다른 쪽으로, 다시 이쪽에서 저쪽으로 밀고 당기는 주고받음(to and fro)이 일어난다.**
+
+---
+
+## 5. 두 번째 동인: 피할 수 없는 제약과 기록하는 법
+
+실제로 아키텍트가 아키텍처 결정을 내릴 자유를 혼자 다 쥐고 있는 경우는 드물다. 자기 스타트업이라면 모를까, 스타트업에도 제약은 있다. 한마디로 **"제약은 늘 있다."**
+
+### 5.1 제약은 어디서 오는가: 기존 시스템, 상용 컴포넌트, 시장의 힘, 그리고 내 선택
+
+제약이 생기는 경로는 다양하다. 첫째, 완전히 새 시스템을 짓는 것이 아니라 **기존 시스템에 새 기능을 더할 때**다. 이때는 기존 시스템이 만들어진 방식을 따라야 한다. 내가 맡은 새 기능에 새로운 구조가 필요해 보인다고 해서 전체 아키텍처를 갈아엎을 수는 없기 때문이다.
+
+둘째, 모든 것을 직접 개발하는 데 시간을 쓰는 대신 이미 검증된 기존 구성 요소나 **상용 구성 요소(commercial components)**를 가져다 쓰기로 할 때다. 간단한 알고리즘부터 거대 언어 모델(LLM)까지 무엇이든 해당한다. 예를 들어 우리 시스템에 특정 LLM을 붙이기로 결정하면, 그 LLM이 제공하는 고유한 **API** 방식에 우리 아키텍처가 맞춰 움직여야 한다.
+
+셋째, **시장의 힘(market forces)**도 제약을 만든다. 예컨대 경력이 오래된 팀장이 "나는 자바 서블릿(Java servlets)에 익숙하니 자바 서블릿으로 짜자"고 말할 수도 있다. 하지만 오늘날 시장에서 자바 서블릿은 오래된 기술이라 받아들여지지 않는다. 결국 "자바 서블릿은 쓸 수 없다"는 사실 자체가 하나의 제약으로 작용한다.
+
+넷째, 흥미롭게도 **우리가 스스로 편하자고 고른 도구가 곧 제약이 되기도 한다.** AI 에이전트를 쉽게 만들고 싶어서 **랭체인(LangChain)** 프레임워크의 **랭그래프(LangGraph)**를 쓰기로 정했다고 해 보자. 그 순간부터 우리의 아키텍처는 자유롭지 않다. LangGraph와 LangChain이 짜 놓은 아키텍처 방식에 맞춰 우리 시스템을 움직여야 하기 때문이다. 이처럼 제약은 어떤 모양으로든 피할 수 없다.
+
+### 5.2 제약의 네 종류
+
+강의는 아키텍트가 부딪히는 피할 수 없는 제약을 크게 **네 종류**로 나누어 설명한다.[^4]
+
+| 제약의 종류 | 핵심 의미 | 강의 속 예시 | 차량 호출 플랫폼 연결 (`[해설]`) |
+| :--- | :--- | :--- | :--- |
+| **기술 제약**<br/>*(Technical)* | 이미 쓰고 있는 기술·플랫폼·API에 맞춰야 하는 조건 | 회사가 AWS를 쓰고 있다면, 기존 시스템에 새 기능을 얹을 때 반드시 AWS로 아키텍처해야 함 | 기존 배차 서버가 특정 클라우드와 DB 위에서 돌고 있다면 새 정산 기능도 그 기술 스택 위에서 설계해야 함 |
+| **사업 제약**<br/>*(Business)* | 회사의 계약·라이선스·사업 정책이 정하는 조건 | *(가상 예)* 대학이 애저(Azure) 라이선스를 대량으로 샀으니 AWS는 쓰지 않고 다른 클라우드 예산도 없음 | 플랫폼 회사가 특정 지도·결제 업체와 장기 독점 계약을 맺었다면 다른 업체를 고를 수 없음 |
+| **프로젝트 제약**<br/>*(Project)* | 프로젝트에 배정된 돈·사람·시간·역량의 한계 | 비용·재무 예산(학생의 실무 경험), 인력 수, 시간과 일정, 팀의 기술 역량(skill sets) | 예를 들어 출시까지 석 달, 백엔드 엔지니어 두 명뿐이라고 가정하면, 그 조건 때문에 복잡한 분산 구조 대신 단순한 구조를 택함 |
+| **규제 제약**<br/>*(Regulatory)* | 법과 개인정보·산업 규제가 강제하는 조건 | 개인정보 보호를 위해 **GDPR**을 준수해야 함 | 승객과 운전자의 위치·결제·이동 기록을 보관·삭제할 때 해당 지역의 개인정보 보호법을 따라야 함 |
+
+> **[해설] 가상의 대학 라이선스 예시 주의**  
+> 표에서 다룬 "대학(CMU)이 애저(Azure) 라이선스를 천 석 규모로 샀으니 AWS는 쓰지 않는다"는 이야기는 실제 사실이 아니라, 사업 제약을 설명하기 위해 강의가 든 **가상의 예**다.
+
+강의는 직장에서 제약을 다뤄 본 경험이 있는지도 물었다. 한 학생이 프로젝트의 **재무 예산(financial budget)**을 들었고, 강의는 "물론(definitely)"이라며 비용도 제약이 된다고 받았다.
+
+### 5.3 제약은 왜 우선순위를 매기지 않으며, 무엇을 기록해야 하는가
+
+품질 속성에는 늘 트레이드오프가 있으므로 "성능이 1순위, 수정 용이성이 2순위"처럼 우선순위를 매긴다. 하지만 **제약은 품질 속성과 달리 우선순위를 매기지 않는다.** 모든 제약은 똑같은 무게(같은 우선순위)를 가지며, 어길 수 없고 무조건 따라야 하는 조건이기 때문이다.
+
+그렇다고 해서 제약 문서에 "Azure를 쓴다"라고 한 줄만 적어 두고 치워 버리면 안 된다. 시간이 지나면 "도대체 왜 이걸 쓰기로 했지?"라는 배경을 잃어버리기 쉽다. 그래서 제약은 중요한 정보를 잃지 않도록 **정해진 네 가지 항목**으로 기록한다.
+
+1. **이유(Rationale)**: 왜 이 제약이 프로젝트에 걸려 있는가?
+2. **관련 여지(Associated flexibility)**: 제약 안에서 선택할 수 있는 폭이 있는가?
+3. **고려할 만한 대안(Suitable alternatives)**: 혹시 검토해 볼 수 있는 다른 선택지가 있는가?
+4. **제약을 낸 이해관계자(Originating stakeholders)**: 이 제약을 건 당사자가 누구인가?
+
+여기서 자칫 헷갈리기 쉬운 대목 하나를 짚고 넘어가자. 한편으로는 "제약에는 여지(flexibility)가 없고 우선순위도 없다"고 하면서, 다른 한편으로는 문서화 칸에 "관련 여지(associated flexibility)"를 적으라고 하니 겉보기에 말이 어긋나는 것처럼 들린다. 하지만 강의가 든 가상의 애저(Azure) 제약 예시를 보면 뜻이 아주 명쾌해진다.
+
+| 제약 문서화 항목 | 가상의 애저(Azure) 제약 문서화 예시 |
+| :--- | :--- |
+| **제약 내용** | 개발과 배포에 Azure 플랫폼을 사용해야 한다. |
+| **이유 (Rationale)** | 대학이 이미 Azure 라이선스를 구매했고, 다른 클라우드를 쓰려면 학과에서 추가 비용을 내야 한다. |
+| **관련 여지 (Associated flexibility)** | Azure라는 플랫폼 자체는 바꿀 수 없지만, Azure 안에는 수많은 서비스가 있으니 그중 우리에게 필요한 서비스만 골라 쓸 수 있다. |
+| **고려할 만한 대안 (Alternatives)** | 저장 공간에 제한이 있지만 월 200 정도인 AWS의 요금제(강의 표현은 "pro plan")를 검토해 보았고, 큰돈이 아니므로 학과에 요청해 볼 수도 있다. |
+| **제약을 낸 이해관계자 (Originating stakeholders)** | 대학(CMU). |
+
+즉, **제약 조건 자체("Azure를 써야 한다")는 협상할 수 없지만, 그 울타리 안에서 무엇을 어떻게 골라 쓸 수 있는가("Azure의 모든 서비스가 아니라 필요한 것만 고른다")가 바로 '관련 여지'**다.
+
+> **[해설] 1강과 이어지는 '왜(Rationale)'의 기록**  
+> 1강에서 다루었던 소프트웨어 아키텍처의 제2법칙("'어떻게'보다 '왜'가 더 중요하다" — Mark Richards·Neal Ford, 『Fundamentals of Software Architecture』)이 바로 여기서 제약 문서화와 맞닿는다. 제약 역시 "Azure를 쓴다"라는 결론만 남기는 대신, 왜 묶였는지·안에서 어디까지 고를 수 있는지·어떤 대안을 따져 보았는지·누가 요구했는지를 적어 두어야 나중에 환경이나 예산이 바뀌었을 때 다시 판단할 수 있다.
+
+---
+
+## 6. 세 번째 동인, 그리고 모호한 품질 요구가 위험한 이유
+
+이제 세 번째 동인인 **품질 속성**을 본격적으로 다룰 차례다. 품질 속성은 시스템이 기능을 "얼마나 잘" 해내는지를 결정하는 핵심 동인이지만, 실무에서 가장 다루기 골치 아픈 녀석이기도 하다. 기능을 말로 적는 일은 다들 꽤 익숙하지만, 품질 속성은 **처음부터 찾아내기도(uncover) 어렵고, 나중에 시험해 볼 수 있게(testable) 문서로 적기도 매우 어렵기 때문**이다.
+
+### 6.1 업계에서 흔히 보는 모호한 요구 문장들
+
+실제 프로젝트에서 아키텍트와 기획자가 흔히 적어 내는 품질 요구 문장 몇 가지를 들여다보자. 강의는 업계에서 흔히 마주치는 다음 네 가지 문장을 예로 든다.
+
+1. *"시스템은 모든 동작에 0.5초 이내로 응답해야 한다."*
+2. *"명령 보내기, 화면 전환, 그래픽 같은 시간이 중요한 기능은 충분한 성능을 가져야 한다."*
+3. *"장애의 영향은 최소화되거나 제거되어야 한다(결함 허용)."*
+4. *"고객별 맞춤 룩앤필(customer-specific look and feel)."*
+
+얼핏 보면 "0.5초 이내"라는 숫자까지 들어간 첫 번째 문장은 제법 구체적이고 잘 쓴 요구사항처럼 보인다. 거의 모든 프로젝트와 많은 아키텍트가 실제로 이런 식으로 요구사항을 적는다. 하지만 강의는 곧장 묻는다. **이 문장들을 들고 아키텍처를 실제로 설계할 수 있을 만큼 분명한가?**
+
+첫 번째 문장인 **"시스템의 모든 동작 응답 시간은 0.5초 미만이어야 한다"**를 하나씩 뜯어보자.
+
+- **'모든 동작(all actions)'이란 정확히 무엇인가?** 화면에서 사용자가 버튼을 누르는 동작만 가리키는가, 아니면 다른 외부 시스템이 우리 서버로 보내는 요청까지 전부 포함하는가?
+- **정말 측정 가능한가(measurable)?** 0.5초라는 숫자는 있지만, 어디서부터 어디까지를 어떻게 재겠다는 것인지 빠져 있다.
+- **모든 동작에 예외 없이 0.5초를 적용할 수 있는가?** 커다란 파일을 업로드하거나 다운로드하는 동작에도 0.5초가 적용되는가? "전체 검색(search all)"을 하거나 "모든 상품 표시(display all products)"를 누를 때도 0.5초 안에 끝내야 하는가? 이 문장만으로는 아무것도 알 수 없다.
+
+다른 속성들도 마찬가지다. **사용성**을 요구하면서 "사용자가 시스템을 쉽게 쓸 수 있어야 한다"고 적는다면, 대체 어떤 측면에서 '쉽다'는 뜻인가? 처음 배우기 쉬움인가, 메뉴 탐색 쉬움인가, 응답 속도인가, 위치나 결과의 정확도인가? 또 **수정 용이성**이라면 "내 시스템은 수정 가능해야 한다"고만 적어서는 안 된다. 왜 수정 가능해야 하며, **어떤 측면에서** 바꿀 수 있어야 하고, 그것이 사업에 어떻게 기여하는지 분명해야 한다.
+
+### 6.2 차량 호출 플랫폼에서의 질문: 수치화·측정 가능성·시험 가능성
+
+우리 중심 예시인 **차량 호출 플랫폼(우버)**으로 이 질문을 가져와 보자. 승객이 차량 호출 버튼을 눌렀을 때 돌아오는 응답 시간은 사업에 중요하다. 하지만 단순히 "빨리 응답해야 한다"고 적어서는 설계를 시작할 수 없다.
+
+- **얼마나 빨라야 하는지 수치화(quantify)해야 한다.**
+- **어느 지역을 덮는 상황인가?**
+- **어떤 사용자를 대상으로 하는가?** 예를 들어 집에서 회사까지 **2마일도 안 되는 짧은 거리**를 이동하려는 사용자에게 배차 응답을 주는 상황인지, 전혀 다른 조건인지 따져야 한다.
+- **그러려면 시스템의 어느 부분이 수정 가능해야 하는가?** 바로 **배차 알고리즘(dispatch algorithm)**이다.
+
+결국 품질 속성을 다룰 때는 세 가지가 분명해야 한다. **그 품질 속성이 정확히 무엇인지**, **사업적으로 왜 중요한지(그래야 우선순위를 정할 수 있다)**, 그리고 **측정 가능하고(measurable) 시험 가능한지(testable)**다. 만약 측정하고 시험할 수 없다면, 나중에 아키텍처를 다 만들어 놓고도 **"이 요구사항이 제대로 만족됐다"고 어떻게 체크 표시(tick)를 할 수 있겠는가?** 바로 그 막연함을 없애고 확실히 체크할 수 있게 해 주는 **틀(framework)**이 필요하다.
+
+---
+
+## 7. 모호함을 번역하는 틀: 6부분 품질 속성 시나리오
+
+모호한 문장을 설계와 시험에 쓸 수 있는 정밀한 요구로 바꾸기 위해 도입하는 도구가 바로 **6부분 품질 속성 시나리오(Six-Part Quality Attribute Scenario)**다. 이 틀은 본 과목의 교재(『Software Architecture in Practice』)에 실려 있으며, 강의에 따르면 **SEI(Software Engineering Institute)가 보쉬(Bosch)에 컨설팅하며 시스템을 개발할 때 만든 틀**이다 `(확인 필요)`.[^5] `[해설]` 이 기원을 뒷받침하는 자료는 찾지 못했고, 확인된 것은 이 틀이 교재 2판(2003)에서 체계적으로 소개됐다는 점이다.
+
+기능 요구를 구체화할 때 '누가 무엇을 누르면 어떤 일이 일어난다'는 식의 유스케이스 시나리오를 쓰는 것처럼, 품질 속성을 더 잘 분류하고 구체화할 때는 품질 속성 시나리오를 쓴다. 이 틀은 어떤 품질 요구든 **여섯 개의 칸**으로 쪼개어 빈틈없이 채우도록 만든다.
+
+### 7.1 여섯 가지 구성 요소
+
+1. **자극의 근원(Source of stimulus)**: 이 일(자극)을 일으키는 출발점이 어디인가? 사람일 수도 있고, 외부 시스템이나 센서, 혹은 내부 개발자·관리자일 수도 있다.
+2. **자극(Stimulus)**: 시스템에 도달하는 사건 그 자체가 정확히 무엇인가? (예: 악의적 요청, 경보 이벤트, 새 장치 지원 요청)
+3. **대상(Artifact)**: 그 자극이 시스템의 어느 부분에 영향을 미치는가? 요구사항을 처음 모으는 초기 단계라면 아직 내부 구조를 쪼개기 전이므로 보통 **'시스템'** 전체가 되며, 이미 시스템을 여러 계층이나 모듈로 분해했다면 그중 영향을 받는 구체적인 부분(예: 데이터베이스 계층)이 된다.
+4. **환경(Environment)**: 자극이 일어났을 때 **우리 시스템**이 놓여 있는 조건·상태는 어떠한가? 정상 운영(normal operation) 중인가, 가장 붐비는 피크 부하(peak load) 상태인가, 한산한 때(lean time)인가, 밤 시간인가, 아니면 코드를 고치는 개발 시간(development time)인가?
+5. **응답(Response)**: 그 자극이 들어왔을 때 우리 시스템(또는 팀)은 어떻게 반응하고 무엇을 해야 하는가?
+6. **응답 측정(Response measure)**: 시스템이 제대로 반응하여 품질 속성이 충족되었다고 **무엇으로 재고 평가할 것인가?** 수치나 검증 가능한 기준이 여기에 들어간다.
+
+이 여섯 부분은 아래 그림처럼 한눈에 연결되는 흐름으로 그릴 수도 있고, 여섯 줄짜리 문장이나 표로 정리할 수도 있다.
+
+<svg viewBox="0 0 420 852" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="6부분 품질 속성 시나리오의 일반형">
+<defs>
+<marker id="cmu3d_arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M 0 1 L 10 4 L 0 7 z" fill="#38bdf8"/></marker>
+</defs>
+<rect x="0" y="0" width="420" height="852" rx="12" fill="#0f172a"/>
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">6부분 품질 속성 시나리오(Six-Part</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">Quality Attribute Scenario)의 일반형</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">자극이 근원에서 나와 환경 속의 대상에 들어가고,</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">대상의 응답을 측정 기준으로 평가한다</text>
+<rect x="40" y="118" width="340" height="94" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.6"/>
+<text x="210" y="142" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 자극의 근원</text>
+<text x="210" y="164" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Source</text>
+<text x="210" y="186" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">어디서 오는가</text>
+<line x1="210" y1="212" x2="210" y2="234" stroke="#38bdf8" stroke-width="2" marker-end="url(#cmu3d_arr)"/>
+<rect x="40" y="234" width="340" height="94" rx="10" fill="#1e293b" stroke="#ec4899" stroke-width="1.6"/>
+<text x="210" y="258" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 자극</text>
+<text x="210" y="280" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Stimulus</text>
+<text x="210" y="302" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">무엇이 들어오는가</text>
+<line x1="210" y1="328" x2="210" y2="350" stroke="#38bdf8" stroke-width="2" marker-end="url(#cmu3d_arr)"/>
+<rect x="16" y="350" width="388" height="184" rx="12" fill="#0b1220" stroke="#a78bfa" stroke-width="1.8" stroke-dasharray="5 3"/>
+<text x="210" y="374" fill="#e9d5ff" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">4. 환경 (Environment)</text>
+<text x="210" y="396" fill="#c4b5fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">시스템의 조건 (정상/피크/개발 등)</text>
+<rect x="40" y="412" width="340" height="94" rx="10" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1.8"/>
+<text x="210" y="436" fill="#e0f2fe" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 대상</text>
+<text x="210" y="458" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Artifact</text>
+<text x="210" y="480" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">시스템 또는 특정 부분</text>
+<line x1="210" y1="534" x2="210" y2="556" stroke="#38bdf8" stroke-width="2" marker-end="url(#cmu3d_arr)"/>
+<rect x="40" y="556" width="340" height="94" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.6"/>
+<text x="210" y="580" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">5. 응답</text>
+<text x="210" y="602" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Response</text>
+<text x="210" y="624" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">어떻게 반응하는가</text>
+<line x1="210" y1="650" x2="210" y2="672" stroke="#38bdf8" stroke-width="2" marker-end="url(#cmu3d_arr)"/>
+<rect x="40" y="672" width="340" height="94" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6"/>
+<text x="210" y="696" fill="#f8fafc" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">6. 응답 측정</text>
+<text x="210" y="718" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Measure</text>
+<text x="210" y="740" fill="#cbd5e1" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">충족 여부를 잴 기준</text>
+<text x="210" y="784" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">핵심: 여섯 칸이 모두 채워져야 아키텍처가 어떻게</text>
+<text x="210" y="806" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">반응하고, 개발 후 어떻게 시험해 '통과'를 판정할지</text>
+<text x="210" y="828" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">알 수 있다.</text>
+</svg>
+
+이 틀이 왜 필요한지는 업계의 모호한 요구 문장을 6부분 시나리오와 나란히 놓아 보면 한눈에 드러난다.
+
+| 구분 | 모호한 요구 문장 (설계·시험 불가) | 6부분 품질 속성 시나리오로 바꿨을 때 (설계·시험 가능) |
+| :--- | :--- | :--- |
+| **빠진 정보** | "모든 동작 0.5초 이내", "충분한 성능", "쉽게 쓸 수 있어야 함" | **누가·무엇을·어느 부분에·어떤 조건에서·어떻게 반응하고·무엇으로 잴지** 여섯 칸을 빠짐없이 채움 |
+| **조건(환경)** | 평상시인지 피크 부하인지 불명확함 | **정상 운영**인지 **피크 부하**인지 **개발 시간**인지 시스템의 상태를 못 박음 |
+| **검증(측정)** | 파일 업로드·전체 검색도 0.5초인지 알 수 없어 통과 체크 불가 | "피크 시간에도 0.5초 이내", "성공 0건·100% 차단·1초 내 기록", "1인월 내 아키텍처 무변경"처럼 시험 기준이 확정됨 |
+
+이 여섯 칸의 위력을 실제로 느끼려면 세 가지 대표적인 품질 속성—**보안, 성능, 수정 용이성**—에 직접 적용해 보는 것이 가장 좋다.
+
+### 7.2 실전 연습 1 — 보안: SQL 인젝션 공격 막기
+
+첫 번째 연습 주제는 **보안**이다. 목표로 삼은 품질 속성은 **"우리 시스템이 악의적인 SQL 인젝션(SQL injection) 공격을 받아도 뚫리지 않고 견뎌야 한다"**는 것이다. 여기서 SQL 인젝션이란 웹 요청이나 입력 칸에 평범한 문자나 숫자 데이터를 넣는 대신, 데이터베이스를 조작하는 명령문을 몰래 끼워 넣어 비정상적으로 데이터를 훔치거나 망가뜨리는 공격을 말한다.
+
+수업에서 학생들과 함께 이 요구를 여섯 칸으로 먼저 채워 본 과정은 다음과 같았다.
+
+- **자극의 근원**: 웹 요청(HTTP request) 입력 칸에 무언가를 쳐 넣는 사람, 혹은 우리 API나 서비스를 호출하는 외부 프로그램.
+- **자극**: 악의적인 SQL 명령문을 담은 요청(질의나 API 호출 등).
+- **대상**: 아직 구조를 쪼개기 전이라면 일단 우리 시스템.
+- **환경**: 정상 운영 중(단, 어떤 상황인지 구체적으로 정해 주어야 한다).
+- **응답**: 이 공격을 막아 내는 안전장치(guardrails)가 작동해야 한다.
+- **응답 측정**: 막아 냈는가? 학생들과 주고받은 답을 거쳐 몇 번이나 막아야 하느냐고 물었을 때 **"항상(all the time)"**이라는 답이 나왔고, 즉 **성공한 SQL 인젝션이 0건**이어야 한다는 기준으로 이어졌다.
+
+하지만 이것만으로는 아키텍트가 실제 방어 구조를 세우기에 조금 더 촘촘해야 한다. 이어서 강의가 제시한 완성된 정답을 보자. 여섯 칸이 얼마나 선명하고 시험 가능하게 변하는지 확인할 수 있다.
+
+1. **자극의 근원**: 인터넷 사용자 또는 **탈취된 클라이언트(compromised client)**.
+2. **자극**: 악의적인 SQL이 주입된 입력.
+3. **대상**: 시스템 전체, 또는 이미 내부를 분해했다면 **데이터베이스 계층**.
+4. **환경**: 시스템이 정상적으로 운영 중인 상태(normal operation).
+5. **응답**: 단순 차단에서 끝나지 않고 다섯 가지를 분명히 적는다.
+   - 악의적 입력을 탐지(detect)하고 거부(reject)한다.
+   - 누가 어디서 보냈는지 추적할 수 있는 식별 번호(상관 ID, correlation ID 등)와 함께 시도 내역을 기록(log)한다.
+   - **안전하고 일반적인 오류 메시지(safe and generic error message)**를 돌려준다.
+   - 허가되지 않은 SQL 명령이 단 하나도 실행되지 않도록 보장한다.
+   - 성능 저하 없이(without degrading) 계속 운영한다.
+6. **응답 측정**: 합격 기준을 구체적인 수치와 조건으로 못 박는다.
+   - **성공한 SQL 인젝션 0건**.
+   - 악의적 입력 데이터(페이로드, payload)의 **100%**가 **입력 검증(validation)과 매개변수화(parameterization)**로 차단될 것. *(여기서 매개변수화란 사용자가 넣은 값을 데이터베이스 명령어 자체가 아니라 순수한 '값'으로만 취급해 실행되도록 분리해 넘기는 처리 방식을 뜻한다.)*
+   - 사후 분석에 필요한 세부 정보를 모두 담은 기록을 **1초 안에** 남길 것.
+   - 데이터 손상이 전혀 없을 것(no data corrupted).
+   - 무단 접근(unauthorized access)이 발생하지 않을 것.
+   - 공격 때문에 서비스가 중단(down)되지 않을 것.
+
+처음의 막연한 "SQL 인젝션에 견뎌야 한다"라는 문장과 비교해 보라. 여섯 칸을 다 채우고 나면 아키텍트가 무엇을 설계해야 하고, QA나 시험 단계에서 무엇을 재어 보아야 이 품질 속성에 **"체크(tick)"** 표시를 줄 수 있는지 분명해진다.
+
+### 7.3 실전 연습 2 — 성능(과 안전): 건물 관리 시스템의 연기 감지기
+
+두 번째 연습은 주어진 요구 문장이 아키텍처의 입력으로 충분한지 여섯 칸에 대입해 따져 보는 문제다. 대상은 **건물 관리 시스템(BMS, building management system)**이다. 문장은 이렇다.
+
+> *"외부 연기 감지기가 피크 부하 중에 경보 이벤트를 보낸다. 건물 관리 시스템은 이벤트를 받아 0.5초 안에 경보를 울린다."*
+
+이 문장은 아키텍처의 입력으로 충분할까? 여섯 칸에 하나씩 대입해 보자.
+
+- **자극의 근원**: **외부 연기 감지기(external smoke detector)**. *(연기 자체는 감지기보다도 앞선 바깥의 일이고, 우리 시스템에 자극을 보내는 근원은 감지기다.)*
+- **자극**: **경보 이벤트(alarm event)**. 감지기가 연기를 감지하고 우리 시스템에 경보를 보낸다.
+- **대상**: **건물 관리 시스템(building management system)**.
+- **환경**: **피크 부하(peak load / peak hours)**. 즉, 이 품질 속성은 시스템이 한가할 때가 아니라 가장 바쁘게 몰리는 피크 부하 조건에서 평가해야 한다는 뜻이다.
+- **응답**: **경보를 울린다(raise the alarm)**.
+- **응답 측정**: **피크 시간에도 0.5초 이내**.
+
+여섯 가지 요소가 하나도 빠짐없이 모두 들어 있다! 따라서 이것은 아키텍처 입력으로 **매우 잘 쓴 요구사항**이다. 이 시나리오를 받아 든 아키텍트는 시스템이 가장 붐비는 피크 시간대에도 연기 감지기의 경보 이벤트를 놓치지 않고 0.5초 안에 경보를 울릴 수 있도록 BMS의 구조를 설계해야 한다.
+
+이 대목에서 **"그러면 환경의 정의가 바뀌나?"**라는 질문이 나왔다. 강의의 답은 짧다. **환경은 '우리 시스템'에 관한 것이다(the environment is about our system).** 즉, 자극이 닥쳤을 때 우리 시스템이 어떤 상태(정상 운영인지, 피크 부하인지 등)에 놓여 있는지를 뜻한다. 여섯 부분을 제대로 채울 수 있으면 시스템을 어떻게 지어야 하고, 어떻게 반응해야 하며, 요구대로 반응하는지 어떻게 시험할지 모두 알게 된다. 이것이 모든 품질 속성에 6부분 분석을 하는 이유다.
+
+또 하나 흥미로운 물음이 이어졌다. **"이 시나리오는 어떤 품질 속성을 다루고 있는가?"** 강의는 "0.5초가 매우 중요하니" **성능(performance)**이라고 짚었다. 이어 덧붙일 것이 있느냐고 묻고 학생의 말을 들은 뒤, 강의는 **"처음엔 안전(safety)이라고 생각했지만 측정이 0.5라고 되어 있으니 성능, 안전, 둘 다"**라고 정리했다. 결론은 **성능과 안전 둘 다**이며, 측정 기준이 0.5초라는 점에서 성능이 드러난다. `[해설]` 같은 상황이라도 **여섯 번째 칸인 '응답 측정'에 무엇을 적느냐**에 따라 아키텍트가 겨냥해야 할 핵심 품질 속성이 드러난다는 점을 보여 주는 대목이다.
+
+### 7.4 실전 연습 3 — 수정 용이성: 비용·용이성·누가·언제 바꾸는가
+
+세 번째 연습 주제는 **수정 용이성(modifiability)**이다. 성능을 잴 때는 주로 **시간(얼마나 빠른가)**이나 처리량(throughput)을 본다면, 수정 용이성의 초점은 전혀 다르다. 핵심은 **변경 비용(cost of change)**과 **변경 용이성(ease of change)**이다.
+
+- **변경 비용**: 그 수정을 하는 데 사람이 몇 명이나 필요한가(엔지니어 한 명 한 명이 모두 비용이다)? 그리고 시간은 얼마나 걸리는가(이틀인가, 사흘인가, 한 달인가)?
+- **변경 용이성**: 한 가지를 고치려고 할 때 코드의 몇 군데를 손봐야 하는가? 하나를 바꾸면 엉뚱한 다른 곳까지 줄줄이 영향받는 **파급 효과(ripple effects)**는 없는가? 예상치 못한 **부작용(side effects)**은 생기지 않는가?
+
+| 비교 기준 | 성능 (Performance) | 수정 용이성 (Modifiability) |
+| :--- | :--- | :--- |
+| **핵심 초점** | 시스템이 얼마나 빠르게·많이 처리하는가 | 시스템을 고치는 데 돈과 수고가 얼마나 드는가 |
+| **주요 측정 대상** | 응답 시간(예: 0.5초 이내), 처리량(throughput) 등 | **변경 비용**(투입 인력 수, 소요 기간)과 **변경 용이성**(수정 지점 수, 파급 효과, 부작용) |
+| **주된 평가 시점** `[해설]` | 주로 실행 중(정상 운영, 피크 부하 등) | 주로 개발 시간, 빌드·컴파일·설계 시간, 혹은 실행 시간의 설정 변경 |
+
+따라서 "내 시스템은 수정 가능하다"라고 막연히 말할 수 없다. 반드시 **"어떤 측면에서 수정 가능한가"**를 밝혀야 하며, 그 답은 **사업(business)**이 정한다. 구체적으로 다음 네 가지 질문에 답할 수 있어야 한다.
+
+1. **무엇이 바뀌는가?** 알고리즘인지, 화면 프레임워크나 플랫폼(예: React에서 Vue로 교체)인지, 하드웨어인지, 운영체제(예: 마이크로소프트에서 애플 플랫폼으로 이동)인지, 아니면 통신 프로토콜(예: REST에서 GraphQL로 전환)인지 짚어야 한다.
+2. **왜 바꾸는가(사업 동인과 품질 속성)?** 이 변경이 사업에 어떤 영향을 주는지 분명해야 한다. 또한 어떤 다른 품질 속성을 위해 수정 가능하게 만드는지도 따져야 한다. 예컨대 **성능**을 높이려고 알고리즘을 교체 가능하게 두거나, **보안**을 강화하려고 암호화 알고리즘을 바꿀 수 있게 하거나, 앞으로의 **수정 용이성** 자체를 위해 특정 장치나 소프트웨어를 **플러그 앤 플레이(plug-and-play)**로 쉽게 꽂아 쓸 수 있게 만드는 경우다.
+3. **언제 바꾸는가?** 지금 당장인가, 새 하드웨어가 도착했을 때인가? 실행 시간(runtime)인가, 컴파일 시간(compile time)인가, 빌드 시간(build time)인가, 아니면 설계 시간(design time)인가?
+4. **누가 바꾸는가?** 이 질문에 따라 아키텍처의 모양이 달라진다. 아키텍트가 직접 나서야 하는 변경인가, 소프트웨어 엔지니어 몇 명이 코드를 고치면 되는 변경인가, 아니면 **현장에서 장치를 꽂고 설정(configuration)만 바꾸는 시스템 엔지니어**면 충분한 변경인가? **누가 바꾸느냐에 따라 아키텍처를 다르게 설계해야 한다.** 설정 값만 바꾸어 되게 만들 것인지, 새 소프트웨어를 짜서 플러그인처럼 끼워 넣게 만들 것인지가 여기서 갈린다.
+
+수정 용이성 시나리오의 **일반형**을 여섯 칸으로 정리하면 이렇다.
+
+- **근원**: 최종 사용자(기능을 원할 때), 프로젝트 관리자, 지금 구조가 최적이 아니라고 판단한 개발자, 시스템 관리자 등.
+- **자극**: 기능의 추가·수정·삭제, 또는 특정 품질 속성의 개선 요청.
+- **대상**: 소프트웨어 시스템 등.
+- **환경**: 변경이 이루어지는 시점(실행 시간, 컴파일 시간, 설계 시간, 빌드 시간 등).
+- **응답**: 어디를 고쳐야 하는지 찾고, 부작용 없이 고친 뒤, 시험하고 배포까지 마침.
+- **응답 측정**: 수정에 드는 비용, 그리고 그 수정이 다른 품질 속성에 영향을 주는 정도.
+
+이제 이 일반형을 실제 구체적인 문장 하나에 적용해 보자. 강의가 제시한 **건물 자동화·제어 시스템(building automation and control system)** 사례다.
+
+> *"제품 관리자가 건물 자동화·제어 시스템이 어떤 프로토콜 표준의 다음 버전을 지원하는 장치를 수용하도록 요청한다. 시스템은 소프트웨어 아키텍처 변경 없이 1인월(one person-month)의 노력으로 이 장치들을 수용할 수 있다."*
+
+이 요구 문장을 6부분으로 분해하면 다음과 같이 딱 맞아떨어진다.
+
+- **자극의 근원**: **제품 관리자(product manager)**.
+- **자극**: **새 장치 버전 추가** 요청. *(제품 관리자가 이 요청을 해야 비로소 변경 작업이 촉발된다.)*
+- **대상**: **시스템**.
+- **환경**: **개발 시간(development time)**. *(인월 단위의 개발 노력이 들어간다는 점에서 개발 시간의 변경임을 알 수 있다.)*
+- **응답**: 고쳐야 할 코드 부분을 찾아내고(identify), 수정하고(modify), 시험하고(test), 변경 사항을 배포한다(deploy).
+- **응답 측정**: **한 달(1인월) 안에**, 그리고 **소프트웨어 아키텍처에 아무런 영향 없이(with no architectural impact)**.
+
+> **[해설] '1인월(one person-month)'과 '한 달(within one month)'**  
+> 원 시나리오 문장에는 노력의 총량을 뜻하는 `1인월(one person-month)`이 적혀 있고, 강의는 응답 측정을 정리할 때 `한 달(within one month)`이라고 줄여 부른다. 엄밀히 말하면 1인월은 한 사람이 한 달 동안 투입하는 작업량을 뜻하므로 두 사람이 반 달을 일해도 1인월이 될 수 있고, 달력상 기간 한 달과 항상 똑같지는 않다. 시나리오를 실제 현업에서 쓸 때는 이 둘을 구분해 적는 것이 안전하다.
+
+이 시나리오를 손에 쥐었다면, 아키텍처를 설계할 때 반드시 이 질문으로 구조를 시험해 보아야 한다. **"지금 우리가 세운 이 구조에서, 새 프로토콜 장치 지원이라는 변경이 정말 아키텍처 변경 없이 한 달(1인월) 안에 들어가는가?"** *(참고로 강의에서는 성능 시나리오 연습 문제를 하나 더 다루려 했으나 수업 시간이 다 되어 학생들이 각자 풀어 보도록 과제로 넘겼다.)*
+
+<svg viewBox="0 0 420 1012" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="보안·성능·수정 용이성 6부분 시나리오">
+<defs>
+
+</defs>
+<rect x="0" y="0" width="420" height="1012" rx="12" fill="#0f172a"/>
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">세 가지 6부분 시나리오 나란히 보기: 보안 ·</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">성능 · 수정 용이성</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">같은 여섯 칸 틀을 쓰더라도 품질 속성에 따라</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">'환경(언제)'과 '응답 측정(무엇으로 재나)'의 성격이</text>
+<text x="210" y="120" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">달라진다</text>
+<rect x="16" y="140" width="388" height="288" rx="10" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+<rect x="16" y="140" width="388" height="46" rx="10" fill="#881337"/>
+<rect x="16" y="176" width="388" height="10" fill="#881337"/>
+<text x="210" y="162" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">1. 보안 — SQL 인젝션</text>
+<text x="32" y="208" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">근원:</text>
+<text x="86" y="208" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">인터넷 사용자 · 탈취된 클라이언트</text>
+<text x="32" y="238" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">자극:</text>
+<text x="86" y="238" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">SQL이 주입된 악의적 입력</text>
+<text x="32" y="268" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">대상:</text>
+<text x="86" y="268" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">시스템 또는 DB 계층</text>
+<text x="32" y="298" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">환경:</text>
+<text x="86" y="298" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">정상 운영</text>
+<text x="32" y="328" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">응답:</text>
+<text x="86" y="328" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">탐지·거부, 상관 ID 기록, 일반 오류</text>
+<text x="86" y="350" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">무단 SQL 차단, 저하 없이 계속 운영</text>
+<text x="32" y="380" fill="#fecdd3" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">측정:</text>
+<text x="86" y="380" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">성공 0건 · 100% 검증/매개변수화</text>
+<text x="86" y="402" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">1초 내 로그, 손상·무단접근·중단 없음</text>
+<rect x="16" y="444" width="388" height="266" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6"/>
+<rect x="16" y="444" width="388" height="46" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="480" width="388" height="10" fill="#0c4a6e"/>
+<text x="210" y="466" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">2. 성능(·안전) — BMS 연기 감지기</text>
+<text x="32" y="512" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">근원:</text>
+<text x="86" y="512" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">외부 연기 감지기</text>
+<text x="32" y="542" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">자극:</text>
+<text x="86" y="542" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">경보 이벤트 전송</text>
+<text x="32" y="572" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">대상:</text>
+<text x="86" y="572" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">건물 관리 시스템 (BMS)</text>
+<text x="32" y="602" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">환경:</text>
+<text x="86" y="602" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">피크 부하 (가장 붐비는 시간)</text>
+<text x="32" y="632" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">응답:</text>
+<text x="86" y="632" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">경보를 울림</text>
+<text x="32" y="662" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">측정:</text>
+<text x="86" y="662" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">피크 시간에도 0.5초 이내</text>
+<text x="86" y="684" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">(측정이 시간 기준이므로 성능이 핵심)</text>
+<rect x="16" y="726" width="388" height="266" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.6"/>
+<rect x="16" y="726" width="388" height="46" rx="10" fill="#064e3b"/>
+<rect x="16" y="762" width="388" height="10" fill="#064e3b"/>
+<text x="210" y="748" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">3. 수정 용이성 — 장치 프로토콜</text>
+<text x="32" y="794" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">근원:</text>
+<text x="86" y="794" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">제품 관리자</text>
+<text x="32" y="824" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">자극:</text>
+<text x="86" y="824" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">새 프로토콜 장치 버전 추가 요청</text>
+<text x="32" y="854" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">대상:</text>
+<text x="86" y="854" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">건물 자동화·제어 시스템</text>
+<text x="32" y="884" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">환경:</text>
+<text x="86" y="884" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">개발 시간 (Development time)</text>
+<text x="32" y="914" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">응답:</text>
+<text x="86" y="914" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">대상 코드 식별·수정·시험·배포</text>
+<text x="32" y="944" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">측정:</text>
+<text x="86" y="944" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">한 달(1인월) 안에, 아키텍처 변경·영향</text>
+<text x="86" y="966" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">없이 수용 완료</text>
+</svg>
+
+강의에서 다룬 세 가지 시나리오를 표로 한 번 더 나란히 비교하면, 여섯 칸의 역할이 더욱 선명해진다.
+
+| 6부분 요소 | 예 1: 보안 (SQL 인젝션) | 예 2: 성능·안전 (BMS 연기 감지기) | 예 3: 수정 용이성 (프로토콜 새 버전) |
+| :--- | :--- | :--- | :--- |
+| **1. 자극의 근원** | 인터넷 사용자 또는 탈취된 클라이언트 | 외부 연기 감지기 | 제품 관리자 |
+| **2. 자극** | SQL이 주입된 입력 | 경보 이벤트(연기 감지 후 전송) | 새 장치 버전 추가 요청 |
+| **3. 대상 (Artifact)** | 시스템 또는 데이터베이스 계층 | 건물 관리 시스템(BMS) | 건물 자동화·제어 시스템 |
+| **4. 환경** | 정상 운영 | 피크 부하 | 개발 시간 |
+| **5. 응답** | 악의적 입력 탐지·거부, 상관 ID 등 출처 포함 기록, 안전하고 일반적인 오류 반환, 무단 SQL 실행 차단, 성능 저하 없이 계속 운영 | 경보를 울림 | 수정할 코드 식별·수정·시험·배포 |
+| **6. 응답 측정** | 성공한 인젝션 0건, 100% 검증·매개변수화 차단, 1초 내 분석용 상세 기록, 데이터 손상·무단 접근·서비스 중단 없음 | 피크 시간에도 0.5초 이내 | 한 달(1인월) 안에, 소프트웨어 아키텍처 변경·영향 없이 |
+
+### 7.5 차량 호출 플랫폼에 6부분 시나리오 적용해 보기
+
+이제 처음에 세웠던 **차량 호출 플랫폼** 이야기로 돌아와 마침표를 찍어 보자. 강의에서는 우버를 예로 들면서 "호출 응답 시간이 얼마나 빨라야 하는지 수치화해야 하고, 어느 지역·어떤 사용자(예: 집에서 회사까지 2마일도 안 되는 이동)를 다루는지 정해야 한다", 그리고 "그러려면 배차 알고리즘이 수정 가능해야 한다"고 짚었다. 이 두 가지 핵심 지점을 6부분 시나리오 양식에 담아 보면 모호한 문장이 어떻게 설계 입력으로 바뀌는지 바로 확인할 수 있다.
+
+> **[해설] 중심 예시에 적용한 6부분 시나리오 (가정 수치 포함)**  
+> 아래 그림과 수치는 강의에 실제로 나온 수치가 아니라, 강의에서 짚은 우버의 두 가지 과제(호출 응답 시간과 배차 알고리즘 수정)를 6부분 틀에 맞추어 **가정으로 채워 본 예시**다. 예를 들어 "피크 시간대에 호출 응답을 몇 초 안에 줄 것인가"와 "배차 알고리즘을 얼마나 적은 인력과 기간 안에 바꿀 수 있을 것인가"를 가정해 적으면 다음과 같다.
+
+<svg viewBox="0 0 420 922" width="420" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="차량 호출 플랫폼에 적용한 가정 6부분 시나리오">
+<defs>
+
+</defs>
+<rect x="0" y="0" width="420" height="922" rx="12" fill="#0f172a"/>
+<text x="210" y="28" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">[해설] 차량 호출 플랫폼에 적용한 6부분</text>
+<text x="210" y="52" fill="#f8fafc" font-size="18px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">시나리오 (강의 밖 가정 수치 예시)</text>
+<text x="210" y="76" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">강의의 우버 예시(호출 응답 시간 · 배차 알고리즘</text>
+<text x="210" y="98" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">수정)를 바탕으로 여섯 칸을 채운 가정 시나리오</text>
+<rect x="16" y="118" width="388" height="384" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6"/>
+<rect x="16" y="118" width="388" height="68" rx="10" fill="#0c4a6e"/>
+<rect x="16" y="176" width="388" height="10" fill="#0c4a6e"/>
+<text x="210" y="140" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">시나리오 A (성능): 출퇴근 피크 시간 차량</text>
+<text x="210" y="162" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">호출 응답</text>
+<text x="32" y="208" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 근원 / 자극:</text>
+<text x="32" y="230" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">승객(2마일 이내 단거리 등) / 배차 호출 요청</text>
+<text x="32" y="258" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 대상 / 환경:</text>
+<text x="32" y="280" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">차량 호출 플랫폼(배차 엔진) / 출퇴근 피크</text>
+<text x="32" y="302" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">부하</text>
+<text x="32" y="330" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 응답:</text>
+<text x="32" y="352" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">근처 운전자 후보를 추려 호출 전송 및 응답</text>
+<text x="32" y="374" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">반환</text>
+<text x="32" y="402" fill="#bae6fd" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 응답 측정:</text>
+<text x="32" y="424" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">(가정) 피크 부하에서도 3초 이내 1차 배차</text>
+<text x="32" y="446" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">응답</text>
+<text x="32" y="474" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">→ 셀 단위 분리 등 지연 시간 절감 구조 요구</text>
+<rect x="16" y="518" width="388" height="384" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.6"/>
+<rect x="16" y="518" width="388" height="46" rx="10" fill="#064e3b"/>
+<rect x="16" y="554" width="388" height="10" fill="#064e3b"/>
+<text x="210" y="540" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">시나리오 B (수정 용이성): 배차 알고리즘 교체</text>
+<text x="32" y="586" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 근원 / 자극:</text>
+<text x="32" y="608" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">제품 관리자 / 특정 도시용 새 배차 알고리즘</text>
+<text x="32" y="630" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">적용</text>
+<text x="32" y="658" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 대상 / 환경:</text>
+<text x="32" y="680" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">차량 호출 플랫폼(배차 모듈) / 개발 시간</text>
+<text x="32" y="708" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 응답:</text>
+<text x="32" y="730" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">결제·지도 등 타 모듈 수정 없이 알고리즘만</text>
+<text x="32" y="752" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">교체·배포</text>
+<text x="32" y="780" fill="#a7f3d0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="start">• 응답 측정:</text>
+<text x="32" y="802" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">(가정) 엔지니어 2명이 2주 내 아키텍처 변경</text>
+<text x="32" y="824" fill="#e2e8f0" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">없이 완료</text>
+<text x="32" y="852" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">→ 배차 알고리즘을 별도 인터페이스로</text>
+<text x="32" y="874" fill="#94a3b8" font-size="16px" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">분리해야 함</text>
+</svg>
+
+`[해설]` 이 두 가정 시나리오를 나란히 놓으면 아키텍트는 다음 설계 단계로 넘어갈 수 있다. 예컨대 가정한 수치대로라면 "피크 부하에서도 3초 안에 답하려면 한 도시에 묶인 덩어리를 셀로 쪼개야겠구나", "배차 알고리즘을 다른 모듈과 분리해 인터페이스로 감싸야 2주 안에 부작용 없이 갈아 끼울 수 있겠구나" 하는 구조 결정이 여섯 칸의 문장에서 나온다.
+
+---
+
+## 맺음말: 요구를 받아 적는 손끝에서 아키텍처가 시작된다
+
+1강의 '무엇을이 아니라 얼마나 잘', 2강의 컨텍스트 다이어그램에서 뻗어 나온 질문들이 이제 아키텍처의 정확한 입력 명세로 완성되었다. 3강 전체를 관통하는 여섯 가지 핵심 통찰을 다시 한 줄씩 꿰어 보면, 코딩 전에 무엇을 어떻게 받아 적어야 하는지 전체 그림이 잡힌다.
+
+1. **같은 기능, 다른 구조, 다른 품질.** 모놀리스와 3계층 구조는 온라인 쇼핑이라는 같은 기능을 모두 구현할 수 있지만, 수정 용이성·보안·성능·개발 속도의 성적표는 엇갈린다. 모든 품질 속성에서 동시에 최고가 되는 구조는 없으므로, 품질 속성에는 반드시 **우선순위**가 필요하다.
+2. **'비기능'이라는 모호한 말을 버리는 이유.** 아키텍트가 품질 속성을 가려내는 기준은 "기능이 아니다"가 아니라 **"구조를 바꾸면 달라지는가(아키텍처적 중요성)"**다. 그래서 "글자 색은 파란색"은 단순 UI 디자인 요구로 빠지고, 겉보기엔 화면 문제처럼 보이는 **사용성**은 모듈화·재사용성·오류 처리·캐싱·인증 흐름 같은 구조 결정과 직결되므로 분명한 품질 속성으로 들어온다.
+3. **요구와 아키텍처는 한 방향으로만 흐르지 않는다.** 우버가 한 도시에서 여러 도시로 확장하며 DISCO 아키텍처로 구조를 뒤바꾼 것처럼, 새 기능 요구가 구조를 바꾸기도 하고 반대로 구조의 한계 때문에 기능 요구를 접기도 한다. 아키텍트가 요구 수집 단계부터 함께 들어가 품질 속성과 우선순위를 받아 적어야 하는 이유다.
+4. **제약은 협상하지 않되, 이유는 남긴다.** 기술·사업·프로젝트·규제 제약과 스스로 고른 프레임워크의 제약은 모두 우선순위 없이 따라야 하는 조건이다. 그러나 이유·관련 여지·대안·이해관계자라는 네 항목을 기록해 두어야 나중에 무엇이 왜 묶여 있는지, 그 울타리 안에서 어디까지 고를 수 있는지 알 수 있다.
+5. **체크할 수 없는 요구는 아키텍처의 입력이 아니다.** "0.5초 이내", "쉽게", "충분한 성능" 같은 문장만으로는 구조를 잡을 수도, 완성 후 통과 여부를 시험할 수도 없다. 6부분 품질 속성 시나리오는 모호한 바람을 근원·자극·대상·환경·응답·응답 측정으로 번역하며, 특히 **환경**(정상 운영인가 피크 부하인가)과 **응답 측정**이 정해져야 비로소 시험 가능한 요구가 된다.
+6. **수정 용이성은 "무엇을, 왜, 언제, 누가" 바꾸는가의 문제다.** 막연히 "수정 가능하게"가 아니라, 알고리즘·프레임워크·프로토콜 중 무엇이 바뀌는지, 누가(설정만 바꾸는 운영자인가 코드를 고치는 엔지니어인가) 언제 바꾸는지가 정해져야 아키텍처를 설정 변경형으로 짤지 플러그인형으로 짤지 결정할 수 있다.
+
+---
+
+[← 2강](cmu-software-architecture-lec02-setting-the-context.html)
+
+---
+
+[^1]: **과목과 강사:** 카네기멜런대학교(CMU) 17-635 「Software Architectures」(2026년 봄 학기). Swarnalatha Ashok(Associate Teaching Professor)과 Scott Pavetti(Assistant Teaching Professor)가 과목 강사로 등재되어 있다.
+[^2]: **우버 초기 단일 도시 아키텍처:** `[해설]` 우버(당시 UberCab)는 2010년 6~7월경 샌프란시스코에서 서비스를 시작했고, 두 번째 도시는 2011년 5월 뉴욕이다. 우버 엔지니어링 블로그도 초기 시스템이 한 도시·한 서비스(UberBLACK)를 전제로 한 모놀리스였고 여러 도시·제품으로 넓히며 구조를 다시 짰다고 밝힌다. 출처: https://www.uber.com/blog/service-oriented-architecture/
+[^3]: **우버 DISCO 아키텍처:** `[해설]` DISCO는 Dispatch Optimization의 약자로, 공급(운전자)과 수요(승객)를 짝짓는 시스템이다. 2015년경 당시 우버 수석 시스템 아키텍트 Matt Ranney의 발표로 공개됐다. 셀 분할에는 Google S2를 썼고, 우버의 자체 격자 체계 H3는 그 뒤에 나왔다. 여러 도시로의 확장은 재작성의 중요한 동기 가운데 하나였고, 더 복잡한 매칭·미래 수요 예측·여러 제품 지원도 함께 동기였다. 출처: https://www.infoq.com/news/2015/03/uber-realtime-market-platform/ , https://www.uber.com/blog/h3/
+[^4]: **제약의 네 분류와 비기능 요구 구분 출처:** 제약을 기술·사업·프로젝트·규제의 네 종류로 나누는 것과 "비기능 요구와 품질 속성은 다르다(CMU에서는 구분한다)"는 입장은 이 강의의 설명이다. 『Software Architecture in Practice』나 SEI 문헌에서 이 네 분류나 "비기능 요구라고 부르는 데 반대한다"는 명시적 문장은 찾지 못했다. 이 책은 품질 속성이라는 용어를 쓰고 기본 기능을 넘어서는 측정·시험 가능한 성질로 정의하며, 기술·사업 제약 같은 구분은 있지만 위의 네 분류와 같지는 않다 `(확인 필요)`.
+
+[^5]: **품질 속성 시나리오의 기원:** `[해설]` SEI와 Bosch의 작업에서 이 틀이 나왔다는 강의 설명을 뒷받침하는 자료는 찾지 못했다(반대로 그렇지 않다는 자료도 확인하지 못했다). 확인된 것은 이 6부분 틀이 『Software Architecture in Practice』 2판(2003)에서 체계적으로 소개됐다는 점이며, 그 전의 SEI 작업(ATAM, QAW 등)도 시나리오를 썼다. 참고: https://people.ece.ubc.ca/matei/EECE417/BASS/ , https://www.sei.cmu.edu/library/ (근거가 약한 2차 자료)
